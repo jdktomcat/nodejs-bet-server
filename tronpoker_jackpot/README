@@ -1,0 +1,137 @@
+-- 箱子
+create table `poker_box`(
+    bid int8 not null auto_increment primary key,
+    addr char(34),
+    num int UNSIGNED default 0,
+    freeNum int UNSIGNED default 0,
+    UNIQUE KEY `box_addr` (`addr`)
+);
+
+-- 用户操作日志
+create table `poker_oprate_logs`(
+    log_id int8 not null auto_increment primary key,
+    addr char(34),
+    types int comment '类型 => 1 : buy, 2 : sell, 3:exchange, 4: open box',
+    num float,
+    ts int8
+);
+
+-- 用户操作日志详情
+create table `poker_log_detail`(
+    dt_id int8 not null auto_increment primary key,
+    log_id int not null,
+    gid int comment '箱子类型, 1 ~ 54',
+    num int
+);
+
+-- 用户背包
+create table `poker_user_bag`(
+    bag_id int8 not null auto_increment primary key,
+    addr char(34),
+    gid int comment '箱子类型, 1 ~ 54',
+    num int UNSIGNED default 0,
+    UNIQUE KEY `addr_gid` (`addr`,`gid`)
+);
+
+-- order
+create table `poker_block_order`(
+    order_id int8 not null auto_increment primary key,
+    addr char(34),
+    block_id int8,
+    num int,
+    ts int8,
+    UNIQUE KEY `addr_block_id` (`addr`,`block_id`)
+);
+
+--payment
+create table `poker_pay2user`(
+    pid int8 not null auto_increment primary key,
+    addr char(34),
+    tx_id char(130),
+    amount int8,
+    log_id int8,
+    ts int8
+);
+
+-- 下注订单
+create table `poker_bet_order`(
+    order_id int8 not null auto_increment primary key,
+    addr char(34),
+    bet_id int8,
+    num int,
+    ts int8,
+    UNIQUE KEY `addr_bet_id` (`addr`,`bet_id`)
+);
+
+-- 星光
+create table `poker_suit_score`(
+    order_id int8 not null auto_increment primary key,
+    round int,
+    addr char(34),
+    score int8,
+    UNIQUE KEY `address_round` (`round`, `addr`)
+);
+
+
+create table `poker_score_reward_log`(
+    log_id int8 not null auto_increment primary key,
+    round int,
+    addr char(34),
+    score int8,
+    ante int,
+    trx int,
+    ts int8,
+    status int default 0,
+    tx_id char(130),
+    UNIQUE KEY `address_round` (`round`, `addr`)
+);
+
+create table `charity_order`(
+    id bigint not null auto_increment primary key,
+    addr char(64),
+    txId char(160),
+    amount bigint,
+    coinType char(32),
+    ts bigint,
+    blockNum bigint,
+    UNIQUE KEY `address_txId` (`addr`, `txId`)
+);
+
+create table `charity_user`(
+    charityCode bigint not null auto_increment primary key,
+    addr char(64),
+    coinType char(32),
+    amount bigint,
+    ts bigint,
+    txId char(160),
+    UNIQUE KEY `charityCode_key` (`charityCode`)
+);
+
+create table `charity_reward_log`(
+    addr char(64),
+    charityCode char(32),
+    coinType char(32),
+    rewardLevel int,
+    rewardDetail char(128),
+    ts bigint
+);
+
+
+
+create table `poker_jackpot_log`(
+    jackpotId bigint not null primary key,
+    winner char(64),
+    tableId bigint,
+    round bigint,
+    cardType char(20),
+    jackpotType int,
+    trx bigint,
+    pool bigint,
+    reachTs bigint,
+    reachTx char(160),
+    getTs bigint,
+    getTx char(160),
+    status int default 0
+);
+
+create index jackpot_addr_idx on poker_jackpot_log(winner);

@@ -1,0 +1,19 @@
+数据表设计如下:
+
+create table swagger_transaction_log(
+    transactionId varchar(64),
+    uid bigint,
+    email varchar(64),
+    round varchar(64),
+    isFree smallint default 0,
+    gameId int,
+    currency varchar(32),
+    bet varchar(32),
+    amount bigint,
+    win bigint default 0,
+    adAmount bigint default 0,
+    resultTxId  varchar(64) default '',
+    status smallint UNSIGNED default 1,
+    UNIQUE KEY `transactionIdIDX` (`transactionId`),
+    UNIQUE KEY `resultTxIdIDX` (`resultTxId`)
+);

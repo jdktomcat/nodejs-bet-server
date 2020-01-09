@@ -1,0 +1,28 @@
+
+管理员用户 0
+产品用户   3
+运营用户   2
+普通用户   1
+
+create table total_data(
+    ts bigint,
+    days int,
+    game varchar(32),
+    amount bigint,
+    profit bigint,
+    playCnt int,
+    userCnt int,
+    unique key days_game(`game`, `days`)
+);
+
+create table live_group_data(
+    ts bigint,
+    days int,
+    cate varchar(32),
+    game varchar(32),
+    amount bigint,
+    profit bigint,
+    playCnt int,
+    userCnt int,
+    unique key days_game(`game`, `days`)
+);

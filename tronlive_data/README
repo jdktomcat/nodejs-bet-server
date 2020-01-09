@@ -1,0 +1,41 @@
+create table live_bet_info(
+    round int,
+    addr varchar(64),
+    amount bigint,
+    win bigint,
+    ts bigint,
+    unique key(round, addr)
+);
+
+
+
+create table live_tmp_new_user(
+    addr varchar(64) primary key,
+    ts bigint
+)
+
+create table live_freespin_user(
+    addr varchar(64) primary key,
+    nickName varchar(128),
+    emUserId varchar(64),
+    fsNum int
+);
+
+create table live_freespin_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    orderId varchar(64),
+    endTs bigint,
+    ts bigint,
+);
+
+create table live_expr(
+    addr varchar(64),
+    amount bigint,
+    win bigint,
+    ts bigint,
+    unique key(addr)
+);
+
+1. 查询用户登录情况， 记录新登入用户和时间
+2. 根据下注情况查询， 满足freespin的用户记录， 并发送freespin

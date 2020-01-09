@@ -1,0 +1,29 @@
+{
+  "scripts": {
+    "start": "npm i &&cross-env NODE_ENV=production node index.js",
+    "dev": "npm i &&cross-env NODE_ENV=development node index.js",
+    "test": "npm i &&cross-env NODE_ENV=test node index.js"
+  },
+  "dependencies": {
+    "cross-env": "^5.2.0",
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-cors": "0.0.16",
+    "koa-log4": "^2.3.2",
+    "koa-logger": "^3.2.0",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.12.3",
+    "koa2": "^2.0.0-alpha.7",
+    "lodash": "^4.17.11",
+    "log4js": "^4.0.2",
+    "moment": "^2.24.0",
+    "mysql2": "^1.6.5",
+    "njwt": "^1.0.0",
+    "node-schedule": "^1.3.2",
+    "redis": "^2.8.0",
+    "request": "^2.88.0",
+    "tronweb": "^2.1.32",
+    "uuid": "^3.3.2",
+    "uuid-to-hex": "^1.0.3"
+  }
+}

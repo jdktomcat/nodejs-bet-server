@@ -1,0 +1,60 @@
+{
+  "name": "tronnew",
+  "description": "application created by thinkjs",
+  "version": "1.0.0",
+  "author": "wangshisan",
+  "scripts": {
+    "start": "node production.js",
+    "dev": "node development.js",
+    "test": "node test.js",
+    "compile": "npm run lint && tsc",
+    "lint": "tslint \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "js-base64": "^2.4.9",
+    "js-sha256": "^0.9.0",
+    "njwt": "^0.4.0",
+    "redis": "^2.8.0",
+    "secure-random": "^1.1.1",
+    "think-cache": "^1.0.7",
+    "think-cache-file": "^1.0.8",
+    "think-cache-redis": "^1.2.0",
+    "think-model": "^1.1.5",
+    "think-model-mysql": "^1.0.0",
+    "think-redis": "^1.1.1",
+    "think-session": "^1.0.3",
+    "think-session-file": "^1.0.5",
+    "think-session-jwt": "^1.0.7",
+    "think-view": "^1.0.11",
+    "think-view-nunjucks": "^1.0.1",
+    "thinkjs": "^3.2.3",
+    "tronweb": "^2.1.4",
+    "underscore": "^1.9.1"
+  },
+  "devDependencies": {
+    "typescript": "^2.5.3",
+    "@types/koa": "*",
+    "node-notifier": "^5.0.2",
+    "think-watcher": "^3.0.0",
+    "think-inspect": "0.0.2",
+    "think-typescript": "^1.0.4",
+    "tslint": "^5.8.0"
+  },
+  "repository": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md",
+  "thinkjs": {
+    "metadata": {
+      "name": "tronnew",
+      "description": "application created by thinkjs",
+      "author": "wangshisan"
+    },
+    "projectName": "tronnew",
+    "template": "typescript",
+    "clone": false,
+    "isMultiModule": false
+  }
+}

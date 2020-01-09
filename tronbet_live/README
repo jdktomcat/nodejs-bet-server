@@ -1,0 +1,263 @@
+tronbet 直播版本代码
+数据表设计如下:
+
+; 用户表
+create table live_user(
+    addr varchar(64) primary key,
+    nickName varchar(128),
+    level int default 1,
+    exps bigint default 0,
+    trx bigint(8) UNSIGNED default 0,
+    sessionId varchar(64),
+    loginTs bigint
+);
+
+create index live_user_sessuid_idx on live_user(sessionId);
+ALTER TABLE live_user ADD CONSTRAINT ids_unique_session UNIQUE (sessionId);
+
+ALTER TABLE live_user add column userkey varchar(64);
+ALTER TABLE live_user add column sportsSession varchar(64);
+-- 充值记录表
+create table live_charge_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    amount bigint,
+    ts bigint,
+    txId varchar(160),
+    UNIQUE KEY `txId` (`txId`)
+);
+
+create index live_charge_log_addr_idx on live_charge_log(addr);
+
+-- 提现记录表
+create table live_withdraw_log(
+    logId bigint not null auto_increment primary key,
+    orderId varchar(64),
+    addr varchar(64),
+    amount bigint,
+    lefts bigint,
+    startTs bigint,
+    endTs bigint,
+    txId varchar(160),
+    status smallint default 0,
+    UNIQUE KEY `orderId` (`orderId`)
+);
+
+-- 操作记录表
+create table live_action_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    GPGameId varchar(64),
+    EMGameId varchar(64),
+    TransactionId varchar(64),
+    GPId int,
+    RoundId varchar(64),
+    Device varchar(32),
+    Amount bigint,
+    AddsAmount bigint default 0,
+    ts bigint,
+    txId varchar(160),
+    RoundStatus varchar(32),
+    action varchar(32),
+    txStatus smallint UNSIGNED default 1,
+    UNIQUE KEY `TransactionId_unikey` (`TransactionId`)
+);
+
+create index live_action_log_addr_idx on live_action_log(addr);
+create index live_action_log_TransactionId_idx on live_action_log(TransactionId);
+alter table live_action_log add column AddsAmount float default 0;
+alter table live_action_log change column Amount Amount float;
+alter table live_action_log change column AddsAmount AddsAmount float default 0;
+
+-- 登录日志
+create table live_login_log(
+    logId bigint not null auto_increment primary key,
+    addr char(34),
+    ts bigint
+);
+
+create table live_profit_log(
+    days int not null primary key,
+    profit bigint not null
+);
+
+create table live_amount_rank_log(
+    logId bigint not null auto_increment primary key,
+    round int not null,
+    addr varchar(34),
+    amount bigint not null,
+    wardAmount bigint not null,
+    txId varchar(160),
+    ts bigint,
+    UNIQUE KEY `round_addr` (round, addr)
+);
+
+create table live_payout_rank_log(
+    logId bigint not null auto_increment primary key,
+    round int not null,
+    addr varchar(34),
+    amount bigint not null,
+    wardAmount bigint not null,
+    txId varchar(160),
+    ts bigint,
+    UNIQUE KEY `round_addr` (round, addr)
+);
+
+create table live_register_code(
+    logId bigint not null auto_increment primary key,
+    email varchar(64),
+    code varchar(32),
+    ts bigint
+);
+
+create table live_login_code(
+    logId bigint not null auto_increment primary key,
+    email varchar(64),
+    code varchar(32),
+    ts bigint
+);
+
+create table live_account(
+    uid bigint not null auto_increment primary key,
+    email varchar(64), //对应的live_user 里面的addr
+    passwd varchar(128),
+    head varchar(128),
+    lv smallint default 1,
+    nickName varchar(128),
+    currency varchar(32) default 'BTC',
+    sessionId varchar(64),
+    userkey varchar(64),
+    sportsSession varchar(64),
+    registerTs bigint,
+    loginTs bigint,
+    bindStatus smallint default 0,
+    UNIQUE KEY `email_idx` (email),
+    UNIQUE KEY `sessionId_idx` (sessionId),
+    UNIQUE KEY `userkey_idx` (userkey),
+    UNIQUE KEY `sportsSession_idx` (sportsSession),
+    UNIQUE KEY `nickName` (nickName)
+);
+
+create table live_balance(
+    uid bigint,
+    currency varchar(32),
+    addr varchar(128),
+    tag varchar(128),
+    balance bigint UNSIGNED default 0,
+    UNIQUE KEY `uid_addr` (uid, currency),
+    UNIQUE KEY `currency_addr` (currency, addr)
+);
+
+
+create table live_cb_deposit_log(
+    logId bigint not null auto_increment primary key,
+    uid bigint,
+    currency varchar(32),
+    addr varchar(128),
+    tag varchar(64),
+    amount bigint,
+    ts bigint,
+    txId varchar(160),
+    UNIQUE KEY `txId` (`txId`)
+);
+
+
+create table live_cb_withdraw_log(
+    logId bigint not null auto_increment primary key,
+    uid bigint,
+    email varchar(64),
+    orderId varchar(64),
+    currency varchar(32),
+    addr varchar(128),
+    amount bigint,
+    startTs bigint,
+    endTs bigint,
+    txId varchar(160),
+    status smallint default 0,
+    UNIQUE KEY `orderId` (`orderId`)
+);
+
+create table live_forgot_pass(
+    logId bigint not null auto_increment primary key,
+    email varchar(64),
+    ip varchar(32),
+    code varchar(64),
+    ts bigint
+);
+
+整体流程:
+
+ 1. 客户端签名地址发送至服务端验证
+ 2. 服务端验证通过之后, 视为用户登录或者注册成功
+ 3. 用户在客户端选择充值
+ 4. 用户点击进入游戏
+ 5. 服务端检测用户资金足够, 发送创建session的请求给三方服务器, 等待第三方返回前端所需的launch options
+
+
+关于登录:
+ 1. 自带tronlink钱包的登录
+    使用钱包签名信息进行登录, 需要客户端告知, 是属于什么样的登录类型
+ 2. 使用email进行账号注册的登录
+    使用账号进行登录
+ 3. 验证码, 一分钟发送一次, 校验是两分钟之内发送的都有效, 十次输入验证码错误的, 将账号锁定
+
+修改之前获取key和session的接口, 必须要使用服务端颁发的auth token才能获取
+两种登录方式, 服务端颁发的auth token 是一样的. 同一个玩家如果同时登录了tronlink钱包和账号系统, 两者的auth token 应该是一样的
+也就是说, 从钱包地址, 和email, 还有uid三者 都要能够找到auth token的相关信息.
+
+充值:
+ 1. 获取充值地址  done
+ 2. 充值到账   TODO
+ 3. 游戏(每个游戏增加, 关键在于, 玩家下注与payout的时候, 能够正确结算) TODO
+
+提现:
+ 1. 获取验证码  TODO  -> done
+ 2. 提交提现地址  TODO -> done
+ 3. 扣款, 提现成功 TODO -> done
+
+
+几个需要后面确认的问题:
+ 1. 关于EM 的sessionId的问题, 是每次获取都一样, 还是每次获取都不一样
+ 2. EM接入时候, 下注, 结果, 回滚等回调都没有货币类型, 需要看看怎么解决
+ 3. 邮箱验证或者可以辅助google两步验证, 使得账户更安全
+
+后续扩展:
+ 目前采用的是签名或者邮箱两者选其一的方式, 后续如果需要把trx统一成一种验证方式, 只需将trx的账户和邮箱的账户进行绑定
+ 但是, 绑定完成之后, 依然需要特殊处理trx的充提方式(coinspaid没有trx的充提, 如果将来有, 则可以完全和其他币种使用统一的方式处理)
+
+
+尚未完成
+1. 用户等级和聊天, 需要后面补充
+
+
+-- 操作记录表
+create table live_action_log_v2(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    GPGameId varchar(64),
+    EMGameId varchar(64),
+    TransactionId varchar(64),
+    GPId int,
+    RoundId varchar(64),
+    Device varchar(32),
+    Amount float,
+    AddsAmount float default 0,
+    ts bigint,
+    txId varchar(160),
+    RoundStatus varchar(32),
+    action varchar(32),
+    currency varchar(32),
+    txStatus smallint UNSIGNED default 1,
+    UNIQUE KEY `TransactionId_unikey` (`TransactionId`)
+);
+
+create index live_action_log_v2_addr_idx on live_action_log_v2(addr);
+create index live_action_log_v2_TransactionId_idx on live_action_log_v2(TransactionId);
+
+
+
+本次更新:
+ 1. 重建live的table, 讲用户和余额分开存储, slots等下注订单记录币种信息, tronbet_live代码更新较多
+ 2. tronlive_data 中新增加根据币种兑换trx计算用户经验等级
+ 3. tronlive_airdrop 空投时候只选择trx的下注订单空投
+ 4. tronsport_teckserver 第三方厂商回调接口全部修改

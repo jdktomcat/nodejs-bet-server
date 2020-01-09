@@ -1,0 +1,20 @@
+module.exports = {
+    coin: "TRX",
+    token: "",
+    full: "https://full.tronbet.com",
+    solidity: "http://10.4.24.126:8091",
+    percentage: 100,
+    amount: 15232.0,
+    witnessesUrl : 'http://54.84.137.17:8091/walletsolidity/listwitnesses',
+    dbname: "tron_bet_admin",
+    dbuser: "root",
+    dbpass: "",
+    dbhost: "192.169.80.66",
+    moonOrderAddr : '419cf6d5a6e0ff356e260432016f3afafec0235af9',
+    startBlockNum : 4537660,
+    donations: {},
+    donationspercentage: {},
+    private: false,
+    whitelist: [],
+    skip: []
+}

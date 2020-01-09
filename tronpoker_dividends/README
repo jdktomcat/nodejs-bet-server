@@ -1,0 +1,26 @@
+CREATE TABLE `rake_div_info` (
+  `round` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '分红期数',
+  `total_token` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '累计已冻结trx数(单位sun)',
+  `total_trx` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '本期分红TRX(单位sun)',
+  `rank_trx` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '本期分红TRX(单位sun)',
+  `mark_ts` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '统计分红数据时间戳',
+  `send_ts` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '发送分红时间戳',
+  `div_state` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '分红状态 0:等待统计 1:等待分红 2:分红完毕',
+  PRIMARY KEY (`round`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='rake token分红总揽' ;
+
+CREATE TABLE `rake_div_detail` (
+  `log_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增日志ID',
+  `round` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '期数',
+  `addr` char(34) NOT NULL DEFAULT '' COMMENT '用户地址',
+  `token` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '本期玩家持有TOken数(单位sun)',
+  `trx` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '本期应分玩家TRX数（单位sun）',
+  `total_trx` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '本期奖池总trx(单位sun)',
+  `total_token` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '截止本期共释放Token数（单位sun）',
+  `tx_id` char(64) NOT NULL DEFAULT '' COMMENT '分红交易ID',
+  `state` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '状态 0:无 1:已快照 2:已发送 3:已确认 4:交易失败',
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='rake token分红详情' ;
+
+
+分红过程

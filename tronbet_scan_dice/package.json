@@ -1,0 +1,27 @@
+{
+  "name": "tronbet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clear": "node clear.js",
+    "start": "node clear.js && cross-env NODE_ENV=production node index.js",
+    "dev": "node clear.js && cross-env NODE_ENV=development node index.js",
+    "test": "node clear.js && cross-env NODE_ENV=test node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.6.1",
+    "axios": "^0.18.0",
+    "bignumber.js": "^7.2.1",
+    "cross-env": "^5.2.0",
+    "ioredis": "^4.2.0",
+    "js-sha3": "^0.8.0",
+    "log4js": "^3.0.6",
+    "moment": "^2.22.2",
+    "mysql2": "^1.6.1",
+    "tronweb": "^2.0.9",
+    "underscore": "^1.9.1"
+  }
+}

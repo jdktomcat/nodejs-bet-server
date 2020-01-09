@@ -1,0 +1,79 @@
+1. 空投相关
+空投思路 : 
+    根据用户下注的记录和赢取的记录, 按照一定的比例空投给玩家相应的token
+    空投时间 1-2分钟延迟, 等待区块确认, 或者等待第三方回调结束
+    
+2. 分红相关
+    //分红暂时先不放在此, 计划另起程序执行
+    扫区块统计分红比例, 按照比例给玩家发钱???
+
+
+-- 空投日志
+create table live_airdrop_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    actionLogId bigint not null,
+    actionId varchar(64),
+    betAmount bigint not null,
+    adAmount bigint not null,
+    ts bigint,
+    txId varchar(160),
+    status smallint default 0,
+    UNIQUE KEY `actionLogId` (`actionLogId`)
+);
+
+
+// new method
+create table live_airdrop_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    startTs bigint,
+    endTs bigint,
+    betAmount bigint not null,
+    adAmount bigint not null,
+    txId varchar(160),
+    status smallint default 0,
+    confirmedStatus smallint default 0,
+    UNIQUE KEY `addr_startTs_endTs` (`addr`, `startTs`, `endTs`)
+);
+
+
+// solidity
+create table live_confimed_airdrop_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    startTs bigint,
+    endTs bigint,
+    betAmount bigint not null,
+    adAmount bigint not null,
+    txId varchar(160),
+    status smallint default 0
+);
+
+
+create table makeup_air_drop(
+    addr varchar(64),
+    airDropAmount bigint,
+    status smallint default 0
+);
+
+create table robot(
+    addr varchar(64),
+    privateKey varchar(120),
+    sessionId varchar(64)
+);
+
+1. 空投函数值只去就算本次时间范围内该空投的数据， 并且尝试去空投token， 尝试tx确认20次， 如果失败， 不在尝试继续提交
+2. check函数， 每两分钟检测一次， 如果检测到有失败空投， 再次提交数据， 尝试第二次空投 
+3. 空投时， 会去检测到底有多少空投失败的数据， 如果空投失败次数太多（超过1200次）， 暂停空投
+
+
+insert into live_action_log(addr, Amount, ts, action) values('TLA8xpn9uS7Wc5rdS8LLJJvQ3WbPVaitP3', 10000, 1555328858000,'bet');
+insert into live_action_log(addr, Amount, ts, action) values('TLA8xpn9uS7Wc5rdS8LLJJvQ3WbPVaitP3', 10000, 1555328858000,'bet');
+insert into live_action_log(addr, Amount, ts, action) values('TLA8xpn9uS7Wc5rdS8LLJJvQ3WbPVaitP3', 10000, 1555328858000,'bet');
+insert into live_action_log(addr, Amount, ts, action) values('TQRMbC9WRmqatjeZShNBznsBUj1Ypo2Ndc', 1000, 1555328858000,'bet');
+insert into live_action_log(addr, Amount, ts, action) values('TQRMbC9WRmqatjeZShNBznsBUj1Ypo2Ndc', 2000, 1555328858000,'bet');
+insert into live_action_log(addr, Amount, ts, action) values('TQRMbC9WRmqatjeZShNBznsBUj1Ypo2Ndc', 3000, 1555328858000,'bet');
+insert into live_action_log(addr, Amount, ts, action) values('TQRMbC9WRmqatjeZShNBznsBUj1Ypo2Ndc', 4000, 1555328858000,'bet');
+insert into live_action_log(addr, Amount, ts, action) values('TQRMbC9WRmqatjeZShNBznsBUj1Ypo2Ndc', 5000, 1555328858000,'bet');
+insert into live_action_log(addr, Amount, ts, action) values('TQRMbC9WRmqatjeZShNBznsBUj1Ypo2Ndc', 5000, 1555328858000,'bet');

@@ -1,0 +1,81 @@
+数据表设计如下:
+
+ALTER TABLE live_user add column userkey varchar(64);
+ALTER TABLE live_user add column sportsSession varchar(64);
+ALTER TABLE live_user ADD CONSTRAINT ids_unique_userKey UNIQUE (userKey);
+ALTER TABLE live_user ADD CONSTRAINT ids_unique_sportsSession UNIQUE (sportsSession);
+
+
+-- 操作记录表
+create table sports_transaction_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    transactionId bigint,
+    betslipId bigint,
+    ts bigint,
+    status smallint,
+    amount bigint,
+    win bigint default 0,
+    crossRateEuro float,
+    action varchar(12),
+    currency varchar(4),
+    UNIQUE KEY `transactionId_key` (`transactionId`)
+);
+
+create index sports_transaction_log_ts_idx on sports_transaction_log(ts);
+create index sports_transaction_log_status_idx on sports_transaction_log(status);
+
+create table sports_result_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    transactionId bigint,
+    betTransactionId bigint,
+    bonusId bigint,
+    betslipId bigint,
+    ts bigint,
+    amount bigint,
+    currency varchar(4),
+    action varchar(12),
+    reason varchar(128),
+    status smallint,
+    UNIQUE KEY `transactionId_key` (`transactionId`)
+);
+
+create table sports_bet_detail_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    transactionId bigint,
+    betslipId bigint,
+    currency varchar(4),
+    sumAmount bigint,
+    types varchar(32),
+    betK float,
+    betId bigint,
+    sportId bigint,
+    eventId bigint,
+    tournamentId bigint,
+    categoryId bigint,
+    live smallint,
+    competitorName varchar(256),
+    outcomeName varchar(64),
+    scheduled bigint,
+    odds varchar(64),
+    UNIQUE KEY `betId_key` (`betId`)
+);
+
+create table sports_bonus(
+    addr varchar(64) primary key,
+    trx bigint(8) UNSIGNED default 0,
+    btt bigint(8) UNSIGNED default 0,
+    wink bigint(8) UNSIGNED default 0
+);
+
+create table sports_send_bonus_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    bonusType smallint,
+
+);
+
+
+alter table sports_transaction_log add column adAmount bigint default 0;
