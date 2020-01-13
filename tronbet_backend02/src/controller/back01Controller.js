@@ -15,7 +15,7 @@ const promiseRequest = function (options) {
     })
 }
 const path = require('path')
-const basePath = liveUrl
+const basePath = back01Url
 const getOptions = function (ctx) {
     const method = ctx.request.method
     const url = ctx.request.url
