@@ -14,6 +14,6 @@ router.use('/query', query.routes(), query.allowedMethods())
 router.use('/supply', supply.routes(), supply.allowedMethods())
 router.use('/user', user.routes(), user.allowedMethods())
 router.use('/div', div.routes(), div.allowedMethods())
-router.use('/better', better.routes(), better.allowedMethods())
+router.use('/beter', better.routes(), better.allowedMethods())
 
 module.exports = router
