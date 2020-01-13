@@ -25,11 +25,9 @@ const getOptions = function (ctx) {
             method: method,
             url: urlPath,
             headers: {
-                'cache-control': 'no-cache',
-                'content-type': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: body,
-            json: true
+            form: body
         };
         return options
     }
