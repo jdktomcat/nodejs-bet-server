@@ -20,6 +20,7 @@ const getOptions = function (ctx) {
     const url = ctx.request.url
     if (method === 'POST') {
         const body = ctx.request.body
+        console.log("debug-body--->",ctx.request)
         console.log("debug-body--->",body)
         const urlPath = basePath + url
         const options = {
