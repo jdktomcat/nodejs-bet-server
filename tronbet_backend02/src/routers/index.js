@@ -6,7 +6,7 @@ const query = require('./query')
 const supply = require('./supply')
 const user = require('./user')
 const div = require('./div')
-const better = require('./better')
+const better = require('./back01')
 
 router.use('/data', action.routes(), action.allowedMethods())
 router.use('/sum', sum.routes(), sum.allowedMethods())
