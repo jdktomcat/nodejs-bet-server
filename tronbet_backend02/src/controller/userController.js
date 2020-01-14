@@ -1,5 +1,6 @@
-const {addUser, queryUser} = require("../service/backendUser")
+const {addUser, queryUser, addOldUser, removeOldUser, removeNewUser} = require("../service/backendUser")
 const crypto = require('crypto')
+const sha256 = require('js-sha256')
 
 function md5Crypto(password) {
     const hash = crypto.createHash('md5')
@@ -40,7 +41,7 @@ class UserController {
     static async register(ctx) {
         // const params = ctx.body
         const params = ctx.request.body
-        console.log("debug-------->",params)
+        console.log("debug-------->", params)
         const username = params.username || '';
         const password = params.password || '';
         if (password === '') {
@@ -56,9 +57,39 @@ class UserController {
     }
 
 
-    static async test(ctx) {
-        console.log(6666666666)
-        ctx.body = 200
+    static async addOld(ctx) {
+        const params = ctx.request.body
+        console.log("debug-------->", params)
+        const username = params.username || '';
+        const password = params.password || '';
+        const role = params.role || '';
+        if (password === '') {
+            return ctx.body = {code: 500, message: "password is empty!"}
+        }
+        //
+        let hash = sha256.create();
+        hash.update(password);
+        let passwdHash = hash.hex();
+        //
+        const data = await addOldUser(username, passwdHash, role)
+        ctx.body = {success: 200, msg: '创建成功！',data};
+    }
+
+
+    static async removeOldUser(ctx) {
+        const params = ctx.request.body
+        console.log("debug-------->", params)
+        const username = params.username || '';
+        const data = await removeOldUser(username)
+        ctx.body = {success: 200, msg: '移除成功！',data};
+    }
+
+    static async removeNewUser(ctx) {
+        const params = ctx.request.body
+        console.log("debug-------->", params)
+        const username = params.username || '';
+        const data = await removeNewUser(username)
+        ctx.body = {success: 200, msg: '移除成功！',data};
     }
 
 }

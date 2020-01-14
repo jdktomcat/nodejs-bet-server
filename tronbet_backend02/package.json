@@ -5,6 +5,7 @@
     "test": "npm i &&cross-env NODE_ENV=test node index.js"
   },
   "dependencies": {
+    "js-sha256": "^0.9.0",
     "cross-env": "^5.2.0",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
