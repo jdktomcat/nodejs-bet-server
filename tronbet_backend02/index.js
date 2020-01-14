@@ -62,8 +62,8 @@ app.use(async (ctx, next) => {
         const filterList = ['/query', '/supply']
         const s = filterList.some(e => url.startsWith(e))
         console.log(url)
-        if (url !== '/query/getAddrTransaction' && s) {
-            console.log("debu----->", ctx.session.user)
+        if (s) {
+            console.log("debug session----->", ctx.session.user)
             const id = ctx.session.user || ''
             if (id === '') {
                 return ctx.body = {

@@ -4,7 +4,7 @@ let config = {
     env: 'dev',
     debug: false,
     app: {
-        http_port : 9016,
+        http_port : 18056,
         websocket_port: 9012,
         logPath: path.resolve(__dirname, '../../logs'),
         log: true, //开启日志,

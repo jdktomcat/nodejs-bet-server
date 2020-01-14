@@ -80,10 +80,12 @@ let config = {
 }
 
 config.liveUrl = "http://localhost:18066"
+config.back01Url = "http://localhost:18055"
 if (process.env.NODE_ENV === 'production' && fs.existsSync(__dirname + '/config.js')) {
     //生产环境
     console.log('>>>Use production config!');
     config.liveUrl = "https://pro-live.wink.org"
+    config.back01Url = "https://pro-profile.wink.org"
 } else if (process.env.NODE_ENV === 'test' && fs.existsSync(__dirname + '/config_test.js')) {
     //测试环境
     config = Object.assign(config, require('./config_test.js'));
