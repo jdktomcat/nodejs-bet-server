@@ -10,7 +10,6 @@ const axios = require('axios');
 const RankInitTs = app.RankInitTs;
 
 let timer = setInterval(async () => {
-  console.log("live 实时盈亏计算", now);
   let now = Math.floor(new Date().getTime() / 1000);
   let profit = await usermodel.getRealTimeProfitAmount(now);
   let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
