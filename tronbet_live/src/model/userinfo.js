@@ -233,7 +233,7 @@ async function getRealTimeProfitAmount(ts) {
 
     // console.log('lastTotalProfit,totalDividends ++++>', lastTotalProfit,totalDividends)
     let totalDividends = await getDividendsAmount()
-    console.log('lastTotalProfit - totalDividends + betAmount - resultAmount, soportsRealTimeProfit, swaggerRealProfit ====>', Number(lastTotalProfit), totalDividends, betAmount, resultAmount, soportsRealTimeProfit, swaggerRealProfit)
+    console.log('now: lastTotalProfit - totalDividends + betAmount - resultAmount, soportsRealTimeProfit, swaggerRealProfit ====>', now, Number(lastTotalProfit), totalDividends, betAmount, resultAmount, soportsRealTimeProfit, swaggerRealProfit)
 
     return Number(lastTotalProfit) - Number(totalDividends) + Number(betAmount) - Number(resultAmount) + Number(soportsRealTimeProfit) + Number(swaggerRealProfit)
 }
