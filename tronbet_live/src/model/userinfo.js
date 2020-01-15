@@ -185,8 +185,8 @@ async function getRealTimeProfitAmount(ts) {
     let betAmount = await db.exec(sql, [startTs, endTs * 10, 'bet'])
     let resultAmount = await db.exec(sql, [startTs, endTs * 10, 'result'])
     let soportsRealTimeProfit = await getSportsProfit(startTs, endTs * 10)
-    // let swaggerRealProfit = await getSwaggerProfit(startTs, now)
-    let swaggerRealProfit = await getSwaggerProfit(startTs, endTs * 10)
+    let swaggerRealProfit = await getSwaggerProfit(startTs, now)
+    // let swaggerRealProfit = await getSwaggerProfit(startTs, endTs * 10)
 
     let lastDay = Math.floor(ts / dividendsDuration) - 1
     if (lastDay >= 0) {
