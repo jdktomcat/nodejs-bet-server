@@ -21,7 +21,9 @@ let config = {
     pay_addr: prdCfg.contract.LivePay,
     dividends_addr: prdCfg.contract.LiveStakingDividend, //分红合约地址
     staker_addr: prdCfg.contract.TronBetLiveStaker,
-    min_pool_trx: 1, //最小分红奖池（单位TRX）
+    // min_pool_trx: 1, //最小分红奖池（单位TRX）
+    // 设置个大值 暂时屏蔽分红 1亿
+    min_pool_trx: 100000000, //最小分红奖池（单位TRX）
     min_interval_ts: 1500, //发奖最小间隔时间(秒)
     test_trx: 0, //测试要发送的TRX数量 0:按实际奖池数量发送 ***
     ignore_round_in_db: 0, //忽略数据库中不存在的轮次 ***
