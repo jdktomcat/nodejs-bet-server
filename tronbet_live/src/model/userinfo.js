@@ -186,6 +186,7 @@ async function getRealTimeProfitAmount(ts) {
     let resultAmount = await db.exec(sql, [startTs, endTs * 10, 'result'])
     let soportsRealTimeProfit = await getSportsProfit(startTs, endTs * 10)
     let swaggerRealProfit = await getSwaggerProfit(startTs, now)
+    // let swaggerRealProfit = await getSwaggerProfit(startTs, endTs * 10)
 
     let lastDay = Math.floor(ts / dividendsDuration) - 1
     if (lastDay >= 0) {
@@ -231,7 +232,7 @@ async function getRealTimeProfitAmount(ts) {
 
     // console.log('lastTotalProfit,totalDividends ++++>', lastTotalProfit,totalDividends)
     let totalDividends = await getDividendsAmount()
-    console.log('lastTotalProfit - totalDividends + betAmount - resultAmount, soportsRealTimeProfit ====>', Number(lastTotalProfit), totalDividends, betAmount, resultAmount, soportsRealTimeProfit)
+    console.log('lastTotalProfit - totalDividends + betAmount - resultAmount, soportsRealTimeProfit, swaggerRealProfit ====>', Number(lastTotalProfit), totalDividends, betAmount, resultAmount, soportsRealTimeProfit, swaggerRealProfit)
 
     return Number(lastTotalProfit) - Number(totalDividends) + Number(betAmount) - Number(resultAmount) + Number(soportsRealTimeProfit) + Number(swaggerRealProfit)
 }
