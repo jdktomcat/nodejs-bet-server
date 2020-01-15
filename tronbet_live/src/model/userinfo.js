@@ -187,7 +187,7 @@ async function getRealTimeProfitAmount(ts) {
     let soportsRealTimeProfit = await getSportsProfit(startTs, endTs * 10)
     // let swaggerRealProfit = await getSwaggerProfit(startTs, now)
     let swaggerRealProfit = await getSwaggerProfit(startTs, endTs * 10)
-
+    console("swaggerRealProfit====>bug", swaggerRealProfit);
     let lastDay = Math.floor(ts / dividendsDuration) - 1
     if (lastDay >= 0) {
         let hasYestodayProfit = await hasLastDayProfit(lastDay)
