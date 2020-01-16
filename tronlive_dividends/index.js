@@ -138,6 +138,9 @@ async function preDivide(round) {
     let now = Math.floor((new Date().getTime()) / 1000)
     let balance = await dbService.getProfitAmount(now);
 
+    // 抽回部分底池 累计有效分红100次
+    balance = balance - 100000;
+
     balance = Math.floor(balance * 1e6 * 0.5)
     // if (balance <= min_pool_trx) {
     //     console.log("奖池余额:" + balance / 1e6 + " TRX < 最小分红要求" + min_pool_trx / 1e6 + " TRX");
