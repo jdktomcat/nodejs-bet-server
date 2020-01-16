@@ -264,7 +264,7 @@ async function openMultiBox(num) {
 }
 
 async function lottery() {
-    let luckyNum = await getRandomInt(1, 382800)
+    let luckyNum = await getRandomInt(1, 999000)
     let sum = 0
     let rate = boxConf.lotteryRate
     for (let i =0; i< rate.length; i++) {
