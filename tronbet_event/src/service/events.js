@@ -572,10 +572,10 @@ async function startLottry(ctx) {
         result.push({...lotrewards[ltyId], angle})
     } else if (lotrewards[ltyId].type == 'free') {
         let isWardTrxRes = await common.isWardTrx()
-        if (isWardTrxRes) {
-            num = await common.randTrx()
-            types = 'rTrx'
-            result.push({type: 'rTrx', order: lotrewards[ltyId].order, angle, num})
+        if (1 > 2) {
+            // num = await common.randTrx()
+            // types = 'rTrx'
+            // result.push({type: 'rTrx', order: lotrewards[ltyId].order, angle, num})
         } else {
             let multi = await common.randomMulti()
             result.push({type: 'multi', num : multi, order: lotrewards[ltyId].order, angle})
