@@ -226,6 +226,7 @@ async function updateTxidToDailyRankWardLog(round, addr, tx_id) {
 }
 
 async function betLuckyUser(message) {
+    console.log("debug betLuckyUser----------->",message)
     let conn = null
     // return
     try {
