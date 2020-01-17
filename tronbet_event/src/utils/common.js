@@ -317,7 +317,8 @@ async function randomMulti(){
 
 async function randomBMW() {
     // 暂时屏蔽掉
-    let luckyNum = await getRandomInt(1, 100000)
+    // let luckyNum = await getRandomInt(1, 100000)
+    let luckyNum = await getRandomInt(1, 150)
 
     // 概率 100 / 100000  大概是 1/1000
     if (luckyNum <= 100){
