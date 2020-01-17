@@ -82,7 +82,7 @@ const lotteryLog = async function () {
  *
  */
 const lotteryCount = async function () {
-    const t = `select ltyId as rollId,count(1) as count from years_lottery_log group by ltyId `
+    const t = `select ltyId as rollId,count(1) as count from tron_bet_event.years_lottery_log group by ltyId `
     const data = await raw(t, [])
     return data
 }
@@ -91,21 +91,21 @@ const lotteryCount = async function () {
  *
  */
 const getBonus = async function () {
-    const t = `select id,name,status,ts from years_bonus_name order by ts desc`
+    const t = `select id,name,status,ts from tron_bet_event.years_bonus_name order by ts desc`
     const data = await raw(t, [])
     return data
 }
 
 
 const addBonus = async function (name) {
-    const t = `insert into years_bonus_name(name,status,ts) values (?,?,?)`
+    const t = `insert into tron_bet_event.years_bonus_name(name,status,ts) values (?,?,?)`
     const data = await raw(t, [name, '0', Date.now()])
     return data
 }
 
 
 const removeBonus = async function (id) {
-    const t = `delete from years_bonus_name where id = ?`
+    const t = `delete from tron_bet_event.years_bonus_name where id = ?`
     const data = await raw(t, [id])
     return data
 }
