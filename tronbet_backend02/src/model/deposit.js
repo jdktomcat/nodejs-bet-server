@@ -78,9 +78,45 @@ const lotteryLog = async function () {
     return data
 }
 
+/**
+ *
+ */
+const lotteryCount = async function () {
+    const t = `select ltyId as rollId,count(1) as count from years_lottery_log group by ltyId `
+    const data = await raw(t, [])
+    return data
+}
+
+/**
+ *
+ */
+const getBonus = async function () {
+    const t = `select id,name,status,ts from years_bonus_name order by ts desc`
+    const data = await raw(t, [])
+    return data
+}
+
+
+const addBonus = async function (name) {
+    const t = `insert into years_bonus_name(name,status,ts) values (?,?,?)`
+    const data = await raw(t, [name, '0', Date.now()])
+    return data
+}
+
+
+const removeBonus = async function (id) {
+    const t = `delete from years_bonus_name where id = ?`
+    const data = await raw(t, [id])
+    return data
+}
+
 
 module.exports = {
     depositData,
     getPages,
-    lotteryLog
+    lotteryLog,
+    lotteryCount,
+    getBonus,
+    addBonus,
+    removeBonus,
 }
