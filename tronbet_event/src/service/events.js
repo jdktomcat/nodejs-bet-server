@@ -569,19 +569,20 @@ async function startLottry(ctx) {
         let isWardTrxRes = await common.isWardTrx()
         console.log("enter free----->")
         if (true) {
-            // num = await common.randTrx()
-            // types = 'rTrx'
-            // result.push({type: 'rTrx', order: lotrewards[ltyId].order, angle, num})
-        // } else {
-            let multi = await common.randomMulti()
-            result.push({type: 'multi', num: multi, order: lotrewards[ltyId].order, angle})
-
-            let ltyIdNew = await common.lotteryFree()
-            let Newangle = randomAngle(lotrewards[ltyIdNew].order - 1)
-            types = lotrewards[ltyIdNew].type
-            num = lotrewards[ltyIdNew].num * multi
-
-            result.push({...lotrewards[ltyIdNew], angle: Newangle})
+            num = await common.randTrx()
+            types = 'rTrx'
+            result.push({type: 'rTrx', order: lotrewards[ltyId].order, angle, num})
+        } else {
+        //     let multi = await common.randomMulti()
+        //     result.push({type: 'multi', num: multi, order: lotrewards[ltyId].order, angle})
+        //
+        //     let ltyIdNew = await common.lotteryFree()
+        //     let Newangle = randomAngle(lotrewards[ltyIdNew].order - 1)
+        //     // types = lotrewards[ltyIdNew].type
+        //     types = lotrewards[ltyIdNew].type
+        //     num = lotrewards[ltyIdNew].num * multi
+        //
+        //     result.push({...lotrewards[ltyIdNew], angle: Newangle})
         }
     } else if (ltyId == 10) {
         // let bmwNum = await redisUtil.hincrby('tronbetEvent', 'bmwNum1', 1)

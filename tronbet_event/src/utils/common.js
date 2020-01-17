@@ -287,10 +287,14 @@ async function lotteryFree() {
 
 async function randTrx() {
     let luckyNum = await getRandomInt(1, 100000)
-    if (luckyNum <=  90100) return getRandomInt(20, 50)
-    if (luckyNum <=  99100) return getRandomInt(51, 1000)
-    if (luckyNum <=  99900) return getRandomInt(1001, 10000)
-    if (luckyNum <=  100000) return getRandomInt(10001, 99999)
+    if (luckyNum <=  90100){
+        return getRandomInt(20, 50)
+    }else {
+        return  100
+    }
+    // if (luckyNum <=  99100) return getRandomInt(51, 1000)
+    // if (luckyNum <=  99900) return getRandomInt(1001, 10000)
+    // if (luckyNum <=  100000) return getRandomInt(10001, 99999)
 }
 
 async function isWardTrx() {
