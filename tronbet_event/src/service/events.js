@@ -541,51 +541,47 @@ async function startLottry(ctx) {
     let num = 0
     // MacBookAir
     // DoubleFlyTour
-    let lotrewards ={
-       1: {type: 'jail', num : 0, order: 1},
-       4: {type: 'trx', num : 20, order: 2},
-       7: {type: 'hat', num : 0, order: 3},
-       5: {type: 'score', num : 200, order: 4},
-       9: {type: 'free', num : 0, order: 5}, 
-       2: {type: 'jail', num : 0, order: 6},
-       6: {type: 'trx', num : 50, order: 7},
-       8: {type: 'gift_card', num : 0, order: 8},
-       3: {type: 'score', num : 100, order: 9},
-       10: {type: 'DoubleFlyTour', num : 1, order: 10}
+    let lotrewards = {
+        1: {type: 'jail', num: 0, order: 1},
+        4: {type: 'trx', num: 20, order: 2},
+        7: {type: 'hat', num: 0, order: 3},
+        5: {type: 'score', num: 200, order: 4},
+        9: {type: 'free', num: 0, order: 5},
+        2: {type: 'jail', num: 0, order: 6},
+        6: {type: 'trx', num: 50, order: 7},
+        8: {type: 'gift_card', num: 0, order: 8},
+        3: {type: 'score', num: 100, order: 9},
+        10: {type: 'DoubleFlyTour', num: 1, order: 10}
     }
     //什么情况下等于10？TODO
     let result = []
     let angle = randomAngle(lotrewards[ltyId].order - 1)
-    if (lotrewards[ltyId].type == 'jail') {
+    //
+    const nType = lotrewards[ltyId].type || ''
+    console.log("debug------>", addr, ltyId,nType)
+    if (nType === 'jail') {
         result.push({...lotrewards[ltyId], angle})
-    } else if (lotrewards[ltyId].type == 'trx') {
-        types = "trx"
+    } else if (['trx','hat','gift_card','score'].includes(nType)) {
+        types = nType
         num = lotrewards[ltyId].num
         result.push({...lotrewards[ltyId], angle})
-    } else if (lotrewards[ltyId].type == 'hat' || lotrewards[ltyId].type == 'gift_card' ) {
-        types = lotrewards[ltyId].type
-        num = lotrewards[ltyId].num
-        result.push({...lotrewards[ltyId], angle})
-    } else if (lotrewards[ltyId].type == 'score') {
-        types = "score"
-        num = lotrewards[ltyId].num
-        result.push({...lotrewards[ltyId], angle})
-    } else if (lotrewards[ltyId].type == 'free') {
+    } else if (nType === 'free') {
         let isWardTrxRes = await common.isWardTrx()
-        if (1 > 2) {
+        console.log("enter free----->")
+        if (true) {
             // num = await common.randTrx()
             // types = 'rTrx'
             // result.push({type: 'rTrx', order: lotrewards[ltyId].order, angle, num})
-        } else {
+        // } else {
             let multi = await common.randomMulti()
-            result.push({type: 'multi', num : multi, order: lotrewards[ltyId].order, angle})
+            result.push({type: 'multi', num: multi, order: lotrewards[ltyId].order, angle})
 
             let ltyIdNew = await common.lotteryFree()
             let Newangle = randomAngle(lotrewards[ltyIdNew].order - 1)
             types = lotrewards[ltyIdNew].type
             num = lotrewards[ltyIdNew].num * multi
 
-            result.push({...lotrewards[ltyIdNew], angle : Newangle})
+            result.push({...lotrewards[ltyIdNew], angle: Newangle})
         }
     } else if (ltyId == 10) {
         // let bmwNum = await redisUtil.hincrby('tronbetEvent', 'bmwNum1', 1)
