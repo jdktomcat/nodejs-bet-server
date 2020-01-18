@@ -29,7 +29,7 @@ let config = {
     RankInitTs: 1555646400,
     userInfoUrl: prdCfg.userInfoUrl,
     rankRate: [47.887, 23.943, 11.972, 5.986, 2.993, 1.496, 1.197, 0.958, 0.766, 0.613, 0.49, 0.392, 0.314, 0.251, 0.201, 0.161, 0.129, 0.103, 0.082, 0.066],
-    blacklist: { 'TGZTHbshfat5enRMRaZmRen3htTEhpA5hz': true, 'TKVpkrQGhP9nJNiK13qxBrE2GTYRZHxSMu': true, 'TW1aHPKJpDDcs2aUQfM9yaAcBo491YHFAB': true,'TCt5SterEopvsvKcZCjGQ9XTqNf9bDXDyr': true }
+    blacklist: { 'TGZTHbshfat5enRMRaZmRen3htTEhpA5hz': true, 'TKVpkrQGhP9nJNiK13qxBrE2GTYRZHxSMu': true, 'TW1aHPKJpDDcs2aUQfM9yaAcBo491YHFAB': true,'TCt5SterEopvsvKcZCjGQ9XTqNf9bDXDyr': true,'TUsPCrcLJPUvyi9SFJVgfGPSjmc4G16YE6': true,'TNAXtunrUYWoHcTp9o98KHn8ooTLGwH8iM': true }
   },
   mysqlConfig: {
     db_host: prdCfg.mysql.host,
