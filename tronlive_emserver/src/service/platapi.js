@@ -350,6 +350,7 @@ async function Wager(ctx) {
   Balance = await usermodel.getUserBalanceByCurrency(user[0].uid, Currency);
   if (Currency != "TRX") {
     Balance = Balance / 1000;
+    Amount = Amount / 1000;
   }
   let result = {
     BonusMoneyBet: Amount,
