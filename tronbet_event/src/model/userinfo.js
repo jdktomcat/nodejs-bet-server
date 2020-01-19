@@ -316,7 +316,7 @@ async function getLotLogs(addr, num) {
 
 
 async function getBonusName() {
-    let sql = "select name from years_bonus_name where ts >= ? order by ts asc limit 0,1"
+    let sql = "select name from years_bonus_name order by ts desc limit 0,1"
     let res = await db.exec(sql, [Date.now()])
     if(res.length === 1){
         const a = res[0] || {}

@@ -124,10 +124,12 @@ const openSchedule = function () {
         //刷新 sport 的倍率
         const a = await refreshRate.getRateSport()
         console.log("nowSportRate1 is ",a)
-        if(a !== 1.5){
-            await refreshRate.refreshSport(1.5);
-            const rateSport = await refreshRate.getRateSport()
-            console.log("nowSportRate is ",rateSport)
+        if(Date.now() > 1579968000000){
+            if(a !== 1.5){
+                await refreshRate.refreshSport(1.5);
+                const rateSport = await refreshRate.getRateSport()
+                console.log("nowSportRate is ",rateSport)
+            }
         }
     })
 }
