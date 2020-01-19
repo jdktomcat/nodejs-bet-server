@@ -42,6 +42,12 @@ class RefreshRateUtils {
         return data
     }
 
+    static async getRateEM(gameItem) {
+        const redisKey = "tronlive:addition"
+        const data = await new RedisRate(redisKey).getRate(gameItem);
+        return data
+    }
+
     static async refreshHub88(gameItem) {
         const redisKey = "tronlive:hub88:addition"
         const data = await RedisRate.setAndGetRate(redisKey, gameItem);
@@ -55,10 +61,21 @@ class RefreshRateUtils {
         return data
     }
 
-    static async getRateEM(gameItem) {
-        const redisKey = "tronlive:addition"
-        const data = await new RedisRate(redisKey).getRate(gameItem);
-        return data
+
+    static async refreshSport(num) {
+        let info = {};
+        info.type = "all";
+        info.num = num;
+        let redisRes = await redisUtil.hset("tronlive:sport:addition", "" + info.type, info.num);
+        console.log("redisRes", info.type, redisRes);
+    }
+
+    //
+    static async getRateSport() {
+        let multi = await redisUtil.hget("tronlive:sport:addition", "" + "all");
+        console.log("tronlive:sport:addition", multi);
+        if (!multi) return 1;
+        return Number(multi);
     }
 
 }
