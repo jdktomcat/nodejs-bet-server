@@ -278,9 +278,53 @@ async function decreaseUserLtynum(addr, conn) {
     return res
 }
 
+const getTimeStr = function (time) {
+    const date = new Date(time)
+    const y = date.getUTCFullYear()
+    const m = date.getUTCMonth() + 1
+    const d = date.getUTCDate()
+    const h = date.getUTCHours()
+    const min = date.getUTCMinutes()
+    const ss = date.getUTCSeconds()
+    const o = y + '-' + m + '-' + d + ` ${h}:${min}:${ss} GMT`
+    return o
+}
+
 async function getLotLogs(addr, num) {
     let sql = "select * from years_lottery_log where addr = ? order by log_id desc limit ?"
     let res = await db.exec(sql, [addr, num])
+    //GMT+00:00
+    res.forEach(e=>{
+        const ts = e.ts
+        if(String(e.ltyId) === '10'){
+            e.types = 'Signed Jersey'
+            if(ts >= 1580400000000 && ts < 1580486400000){
+                // 31号到 2 月 1 号
+                e.types = 'Samsung Q60R 65inch'
+            }else if(ts >= 1580486400000 && ts < 1580572800000){
+                // 0201->0202
+                e.types = '13inch Macbook Pro'
+            }else if(ts >= 1580572800000 && ts < 1580745600000){
+                // 0202->0204
+                e.types = 'iPad, iPhone, Mac'
+            }
+        }
+        e.ts = getTimeStr(ts)
+    })
+    return res
+}
+
+
+async function getBonusName() {
+    let sql = "select name from years_bonus_name where ts >= ? order by ts asc limit 0,1"
+    let res = await db.exec(sql, [Date.now()])
+    if(res.length === 1){
+        const a = res[0] || {}
+        const name = a.name || ''
+        const b = name.split(' ').join('')
+        const key = b + Date.now()
+        return key
+    }
     return res
 }
 
@@ -316,5 +360,6 @@ module.exports = {
     addLotteryLog,
     decreaseUserLtynum,
     updatePay2UserTx,
-    getLotLogs
+    getLotLogs,
+    getBonusName
 }

@@ -524,9 +524,11 @@ async function startLottry(ctx) {
     //判断抽奖中宝马的逻辑TODO
     let ltyId = 1
     let hasBMW = await common.randomBMW()
+    let hasBMWName = ''
     if (hasBMW) {
+        hasBMWName = await userinfo.getBonusName()
         // let BMWNUM = await redisUtil.hincrby('tronbetEvent', 'bmwRandomnum1', 1)
-        let BMWNUM = await redisUtil.hincrby('tronbetEvent', 'DoubleFlyTourRandomnum1', 1)
+        let BMWNUM = await redisUtil.hincrby('tronbetEvent', '1-'+hasBMWName, 1)
         console.log("BMWNUM", BMWNUM);
         if (BMWNUM == 1) {
             ltyId = 10
@@ -586,7 +588,7 @@ async function startLottry(ctx) {
         }
     } else if (ltyId == 10) {
         // let bmwNum = await redisUtil.hincrby('tronbetEvent', 'bmwNum1', 1)
-        let bmwNum = await redisUtil.hincrby('tronbetEvent', 'DoubleFlyTourNum1', 1)
+        let bmwNum = await redisUtil.hincrby('tronbetEvent', '2-'+hasBMWName, 1)
         console.log("bmwNum", bmwNum);
         if (bmwNum > 1) {
             num = 0
