@@ -559,7 +559,7 @@ async function startLottry(ctx) {
             num = 0
             ltyId = 1
         } else {
-            types = "bmw"
+            types = "bigbonus"
             num = 1
         }
 

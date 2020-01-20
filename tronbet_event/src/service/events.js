@@ -595,7 +595,7 @@ async function startLottry(ctx) {
             num = 0
             ltyId = 1
         } else {
-            types = "DoubleFlyTour"
+            types = "bigbonus"
             num = 1
         }
         let Newangle = randomAngle(lotrewards[ltyId].order - 1)
