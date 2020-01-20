@@ -320,7 +320,8 @@ async function randomBMW() {
     // 暂时屏蔽掉
     let luckyNum = await getRandomInt(1, 100000)
     // 概率 100 / 100000  大概是 1/1000
-    if (luckyNum <= 100) {
+    // if (luckyNum <= 100) {
+    if (luckyNum >= 100) {
         return true
     }
     return false
