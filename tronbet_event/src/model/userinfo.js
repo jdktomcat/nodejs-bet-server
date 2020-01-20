@@ -331,8 +331,7 @@ async function getBonusName() {
         const a = res[0] || {}
         const name = a.name || ''
         const b = name.split(' ').join('')
-        const key = b + Date.now()
-        return key
+        return b
     }
     return res
 }
