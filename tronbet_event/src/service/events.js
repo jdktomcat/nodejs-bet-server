@@ -528,6 +528,7 @@ async function startLottry(ctx) {
     if (hasBMW) {
         hasBMWName = await userinfo.getBonusName()
         // let BMWNUM = await redisUtil.hincrby('tronbetEvent', 'bmwRandomnum1', 1)
+        console.log("bigbonus name is ",hasBMWName)
         let BMWNUM = await redisUtil.hincrby('tronbetEvent', '1-'+hasBMWName, 1)
         console.log("BMWNUM", BMWNUM);
         if (BMWNUM == 1) {
