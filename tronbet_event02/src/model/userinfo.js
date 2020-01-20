@@ -277,9 +277,61 @@ async function decreaseUserLtynum(addr, conn) {
     return res
 }
 
+const getTimeStr = function (time) {
+    const date = new Date(time)
+    const y = date.getUTCFullYear()
+    const m = date.getUTCMonth() + 1
+    const d = date.getUTCDate()
+    const h = date.getUTCHours()
+    const min = date.getUTCMinutes()
+    const ss = date.getUTCSeconds()
+    const o = y + '-' + m + '-' + d + ` ${h}:${min}:${ss} GMT`
+    return o
+}
+
+function newUtcTs(today) {
+    let start = new Date(today);
+    start.setUTCHours(0)
+    start.setUTCMinutes(0)
+    start.setUTCSeconds(0)
+    start.setUTCMilliseconds(0)
+    return start.getTime()
+}
+
 async function getLotLogs(addr, num) {
     let sql = "select * from years_lottery_log where addr = ? order by log_id desc limit ?"
     let res = await db.exec(sql, [addr, num])
+    //GMT+00:00
+    res.forEach(e=>{
+        const ts = e.ts
+        if(String(e.ltyId) === '10'){
+            e.types = 'Signed Jersey'
+            if(ts >= newUtcTs('2020-01-31') && ts < newUtcTs('2020-02-01')){
+                // 31号到 2 月 1 号
+                e.types = 'Samsung Q60R 65inch'
+            }else if(ts >= newUtcTs('2020-02-01') && ts < newUtcTs('2020-02-02')){
+                // 0201->0202
+                e.types = '13inch Macbook Pro'
+            }else if(ts >= newUtcTs('2020-02-02') && ts < newUtcTs('2020-02-04')){
+                // 0202->0204
+                e.types = 'iPad, iPhone, Mac'
+            }
+        }
+        e.ts = getTimeStr(ts)
+    })
+    return res
+}
+
+
+async function getBonusName() {
+    let sql = "select name from years_bonus_name order by ts desc limit 0,1"
+    let res = await db.exec(sql, [Date.now()])
+    if(res.length === 1){
+        const a = res[0] || {}
+        const name = a.name || ''
+        const b = name.split(' ').join('')
+        return b
+    }
     return res
 }
 
@@ -315,5 +367,6 @@ module.exports = {
     addLotteryLog,
     decreaseUserLtynum,
     updatePay2UserTx,
-    getLotLogs
+    getLotLogs,
+    getBonusName
 }
