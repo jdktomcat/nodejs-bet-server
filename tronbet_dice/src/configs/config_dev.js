@@ -128,8 +128,8 @@ let config = {
     // 聊天官方id
     MANAGER_LIST: [{ addr: 'TGKpnHx8RrnmFdJ27Cc4aqV7CH329RqFs5', name: 'Admin_SOON', pwd: 'sam' }, { addr: 'TYGVyrQsqVtTYLBsSGEnH8YX3J88WZKJt1', name: 'Ben_MOD', pwd: 'ben' }, { addr: 'TMUDXGz5n8DgyuKt9Ww6VGg417kh36Jgoh', name: 'Simeon_MOD', pwd: 'simeon' }, { addr: 'TDPNfUMA3Uux6DT3DzoxBLWuUKhNa7bGhY', name: 'Crika_MOD', pwd: 'crika' }],
 
-    ACTIVITY_START_TS: 1577174400000,//2019-12-24 16:00:00;
-    ACTIVITY_END_TS: 1577836800000,//2020-01-01 08:00:00;
+    ACTIVITY_START_TS: 1579996800000,//2020-01-26 00:00:00;
+    ACTIVITY_END_TS: 1580774400000,//2020-02-04 00:00:00;
 
   },
   task: {

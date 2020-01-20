@@ -68,8 +68,8 @@ let config = {
     broadcast_player_info_when_action: true, //是否玩家进出推送完整玩家信息列表
     check_key: false, //开启玩家数据验证
 
-    ACTIVITY_START_TS: 1577174400000,//2019-12-24 16:00:00;
-    ACTIVITY_END_TS: 1577836800000,//2020-01-01 08:00:00;
+    ACTIVITY_START_TS: 1579996800000,//2020-01-26 00:00:00;
+    ACTIVITY_END_TS: 1580774400000,//2020-02-04 00:00:00;
 
     task_bet: 10, //任务投注额要求
     task_2_val: 0, //任务2要求逃脱倍率
