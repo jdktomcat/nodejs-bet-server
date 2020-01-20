@@ -37,8 +37,7 @@ function sendGameMsg(addr, order_id, trxAmount, currency) {
     if (_r <= persent) {
         hit = true;
     }
-    // if (hit === true) {
-    if (1 === 1) {
+    if (hit === true) {
         let msg = { addr: addr, order_id: order_id, box_num: 1, game_type: _GAME_TYPE };
         // loggerDefault.info("sendGameMsg", msg);
         redisUtils.redis.publish("game_message", JSON.stringify(msg));

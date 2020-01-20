@@ -290,6 +290,15 @@ const getTimeStr = function (time) {
     return o
 }
 
+function newUtcTs(today) {
+    let start = new Date(today);
+    start.setUTCHours(0)
+    start.setUTCMinutes(0)
+    start.setUTCSeconds(0)
+    start.setUTCMilliseconds(0)
+    return start.getTime()
+}
+
 async function getLotLogs(addr, num) {
     let sql = "select * from years_lottery_log where addr = ? order by log_id desc limit ?"
     let res = await db.exec(sql, [addr, num])
@@ -298,13 +307,13 @@ async function getLotLogs(addr, num) {
         const ts = e.ts
         if(String(e.ltyId) === '10'){
             e.types = 'Signed Jersey'
-            if(ts >= 1580400000000 && ts < 1580486400000){
+            if(ts >= newUtcTs('2020-01-31') && ts < newUtcTs('2020-02-01')){
                 // 31号到 2 月 1 号
                 e.types = 'Samsung Q60R 65inch'
-            }else if(ts >= 1580486400000 && ts < 1580572800000){
+            }else if(ts >= newUtcTs('2020-02-01') && ts < newUtcTs('2020-02-02')){
                 // 0201->0202
                 e.types = '13inch Macbook Pro'
-            }else if(ts >= 1580572800000 && ts < 1580745600000){
+            }else if(ts >= newUtcTs('2020-02-02') && ts < newUtcTs('2020-02-04')){
                 // 0202->0204
                 e.types = 'iPad, iPhone, Mac'
             }
