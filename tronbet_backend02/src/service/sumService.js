@@ -46,41 +46,10 @@ async function bonusCount(ctx) {
     }
 }
 
-async function addBonusAPI(ctx) {
-    let params = ctx.request.body
-    if (_.isEmpty(params)) {
-        params = ctx.request.query
-    }
-    let name = params.name || ''
-    if (name === '') {
-        ctx.body = "address is empty."
-    }
-    const data = await addBonus(name)
-    ctx.body = {
-        code: 200,
-        data: data,
-    }
-}
-
-async function removeBonusAPI(ctx) {
-    let params = ctx.request.query
-    let id = params.id || ''
-    if (id === '') {
-        ctx.body = {code : 500, message : "id is empty.",}
-    }
-    const data = await removeBonus(id)
-    ctx.body = {
-        code: 200,
-        data: data,
-    }
-}
-
 module.exports = {
     queryDepositTmp,
     queryPages,
     getLotteryLog,
     getBonusAPI,
-    addBonusAPI,
-    removeBonusAPI,
     bonusCount,
 }
