@@ -494,7 +494,6 @@ function sendGameMsg(addr, order_id, trxAmount) {
         hit = true;
     }
     if (hit === true) {
-        console.log("========》 add bag",addr)
         let msg = { addr: addr, order_id: order_id, box_num: 1, game_type: _GAME_TYPE };
         // loggerDefault.info("sendGameMsg", msg);
         redis.publish("game_message", JSON.stringify(msg));
