@@ -61,23 +61,6 @@ class RefreshRateUtils {
         return data
     }
 
-
-    static async refreshSport(num) {
-        let info = {};
-        info.type = "all";
-        info.num = num;
-        let redisRes = await redisUtil.hset("tronlive:sport:addition", "" + info.type, info.num);
-        console.log("redisRes", info.type, redisRes);
-    }
-
-    //
-    static async getRateSport() {
-        let multi = await redisUtil.hget("tronlive:sport:addition", "" + "all");
-        console.log("tronlive:sport:addition", multi);
-        if (!multi) return 1;
-        return Number(multi);
-    }
-
 }
 
 module.exports = RefreshRateUtils

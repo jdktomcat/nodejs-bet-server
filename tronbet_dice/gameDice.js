@@ -480,9 +480,7 @@ let _GAME_TYPE = "dice";
 let ACTIVITY_START_TS = config.dice.ACTIVITY_START_TS || 0;
 let ACTIVITY_END_TS = config.dice.ACTIVITY_END_TS || 0;
 function sendGameMsg(addr, order_id, trxAmount) {
-    console.log("begin send game message==============>",new Date(ACTIVITY_START_TS),new Date(ACTIVITY_END_TS))
     let _now = _.now();
-    console.log("now is ", new Date(_now))
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
 
     if (trxAmount < 100) return [trxAmount, 0, false];
@@ -495,8 +493,7 @@ function sendGameMsg(addr, order_id, trxAmount) {
     if (_r <= persent) {
         hit = true;
     }
-    if (1 === 1) {
-    // if (hit === true) {
+    if (hit === true) {
         console.log("========》 add bag",addr)
         let msg = { addr: addr, order_id: order_id, box_num: 1, game_type: _GAME_TYPE };
         // loggerDefault.info("sendGameMsg", msg);
