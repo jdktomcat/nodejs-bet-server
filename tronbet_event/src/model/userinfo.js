@@ -309,11 +309,14 @@ async function getLotLogs(addr, num) {
             e.types = 'Signed Jersey'
             if(ts >= newUtcTs('2020-01-31') && ts < newUtcTs('2020-02-01')){
                 // 31号到 2 月 1 号
-                e.types = 'Samsung Q60R 65inch'
+                e.types = 'Signed Jersey'
             }else if(ts >= newUtcTs('2020-02-01') && ts < newUtcTs('2020-02-02')){
                 // 0201->0202
                 e.types = '13inch Macbook Pro'
-            }else if(ts >= newUtcTs('2020-02-02') && ts < newUtcTs('2020-02-04')){
+            }else if(ts >= newUtcTs('2020-02-02') && ts < newUtcTs('2020-02-03')){
+                // 0202->0204
+                e.types = 'Samsung Q60R 65inch'
+            }else if(ts >= newUtcTs('2020-02-03') && ts < newUtcTs('2020-02-04')){
                 // 0202->0204
                 e.types = 'iPad, iPhone, Mac'
             }

@@ -131,9 +131,7 @@ const parseDice = async function () {
 
 const addBonusName = async function () {
     const now = Date.now()
-    if (now > newUtcTime('2020-02-02').getTime() && now < newUtcTime('2020-02-03').getTime()) {
-        console.log("nothing")
-    } else if (now > newUtcTime('2020-02-04').getTime()) {
+    if (now > newUtcTime('2020-02-04').getTime()) {
         console.log("nothing")
     } else {
         let s = ''
