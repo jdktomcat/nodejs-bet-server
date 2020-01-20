@@ -554,7 +554,7 @@ async function startLottry(ctx) {
         6: {type: 'trx', num: 50, order: 7},
         8: {type: 'gift_card', num: 0, order: 8},
         3: {type: 'score', num: 100, order: 9},
-        10: {type: 'DoubleFlyTour', num: 1, order: 10}
+        10: {type: 'bigbonus', num: 1, order: 10}
     }
     //什么情况下等于10？TODO
     let result = []
