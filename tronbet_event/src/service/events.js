@@ -524,9 +524,12 @@ async function startLottry(ctx) {
     //判断抽奖中宝马的逻辑TODO
     let ltyId = 1
     let hasBMW = await common.randomBMW()
+    let hasBMWName = ''
     if (hasBMW) {
+        hasBMWName = await userinfo.getBonusName()
         // let BMWNUM = await redisUtil.hincrby('tronbetEvent', 'bmwRandomnum1', 1)
-        let BMWNUM = await redisUtil.hincrby('tronbetEvent', 'DoubleFlyTourRandomnum1', 1)
+        console.log("bigbonus name is ",hasBMWName)
+        let BMWNUM = await redisUtil.hincrby('tronbetEvent', '1-'+hasBMWName, 1)
         console.log("BMWNUM", BMWNUM);
         if (BMWNUM == 1) {
             ltyId = 10
@@ -541,57 +544,58 @@ async function startLottry(ctx) {
     let num = 0
     // MacBookAir
     // DoubleFlyTour
-    let lotrewards ={
-       1: {type: 'jail', num : 0, order: 1},
-       4: {type: 'trx', num : 20, order: 2},
-       7: {type: 'free', num : 0, order: 3},
-       5: {type: 'score', num : 200, order: 4},
-       9: {type: 'free', num : 0, order: 5}, 
-       2: {type: 'jail', num : 0, order: 6},
-       6: {type: 'trx', num : 50, order: 7},
-       8: {type: 'free', num : 0, order: 8},
-       3: {type: 'score', num : 100, order: 9},
-       10: {type: 'DoubleFlyTour', num : 1, order: 10}
+    let lotrewards = {
+        1: {type: 'jail', num: 0, order: 1},
+        4: {type: 'trx', num: 20, order: 2},
+        7: {type: 'hat', num: 0, order: 3},
+        5: {type: 'score', num: 200, order: 4},
+        9: {type: 'free', num: 0, order: 5},
+        2: {type: 'jail', num: 0, order: 6},
+        6: {type: 'trx', num: 50, order: 7},
+        8: {type: 'gift_card', num: 0, order: 8},
+        3: {type: 'score', num: 100, order: 9},
+        10: {type: 'bigbonus', num: 1, order: 10}
     }
     //什么情况下等于10？TODO
     let result = []
     let angle = randomAngle(lotrewards[ltyId].order - 1)
-    if (lotrewards[ltyId].type == 'jail') {
+    //
+    const nType = lotrewards[ltyId].type || ''
+    console.log("debug------>", addr, ltyId,nType)
+    if (nType === 'jail') {
         result.push({...lotrewards[ltyId], angle})
-    } else if (lotrewards[ltyId].type == 'trx') {
-        types = "trx"
+    } else if (['trx','hat','gift_card','score'].includes(nType)) {
+        types = nType
         num = lotrewards[ltyId].num
         result.push({...lotrewards[ltyId], angle})
-    } else if (lotrewards[ltyId].type == 'score') {
-        types = "score"
-        num = lotrewards[ltyId].num
-        result.push({...lotrewards[ltyId], angle})
-    } else if (lotrewards[ltyId].type == 'free') {
+    } else if (nType === 'free') {
         let isWardTrxRes = await common.isWardTrx()
-        if (isWardTrxRes) {
+        console.log("enter free----->")
+        if (true) {
             num = await common.randTrx()
             types = 'rTrx'
             result.push({type: 'rTrx', order: lotrewards[ltyId].order, angle, num})
         } else {
-            let multi = await common.randomMulti()
-            result.push({type: 'multi', num : multi, order: lotrewards[ltyId].order, angle})
-
-            let ltyIdNew = await common.lotteryFree()
-            let Newangle = randomAngle(lotrewards[ltyIdNew].order - 1)
-            types = lotrewards[ltyIdNew].type
-            num = lotrewards[ltyIdNew].num * multi
-
-            result.push({...lotrewards[ltyIdNew], angle : Newangle})
+        //     let multi = await common.randomMulti()
+        //     result.push({type: 'multi', num: multi, order: lotrewards[ltyId].order, angle})
+        //
+        //     let ltyIdNew = await common.lotteryFree()
+        //     let Newangle = randomAngle(lotrewards[ltyIdNew].order - 1)
+        //     // types = lotrewards[ltyIdNew].type
+        //     types = lotrewards[ltyIdNew].type
+        //     num = lotrewards[ltyIdNew].num * multi
+        //
+        //     result.push({...lotrewards[ltyIdNew], angle: Newangle})
         }
     } else if (ltyId == 10) {
         // let bmwNum = await redisUtil.hincrby('tronbetEvent', 'bmwNum1', 1)
-        let bmwNum = await redisUtil.hincrby('tronbetEvent', 'DoubleFlyTourNum1', 1)
+        let bmwNum = await redisUtil.hincrby('tronbetEvent', '2-'+hasBMWName, 1)
         console.log("bmwNum", bmwNum);
         if (bmwNum > 1) {
             num = 0
             ltyId = 1
         } else {
-            types = "DoubleFlyTour"
+            types = "bigbonus"
             num = 1
         }
         let Newangle = randomAngle(lotrewards[ltyId].order - 1)

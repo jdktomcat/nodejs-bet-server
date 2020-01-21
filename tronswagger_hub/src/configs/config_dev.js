@@ -35,8 +35,8 @@ let config = {
     slaveEventNode: 'http://47.252.82.6:8090'
   },
   event:{
-    ACTIVITY_START_TS: 1577174400000,//2019-12-24 16:00:00;
-    ACTIVITY_END_TS: 1577836800000,//2020-01-01 08:00:00;
+    ACTIVITY_START_TS: 1579996800000,//2020-01-26 00:00:00;
+    ACTIVITY_END_TS: 1580774400000,//2020-02-04 00:00:00;
   },
   swaghub: {
     host: 'https://api.server1.ih.testenv.io',

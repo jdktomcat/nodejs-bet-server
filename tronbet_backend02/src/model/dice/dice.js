@@ -124,8 +124,25 @@ const parseDice = async function () {
             console.log("end------>", endDateStr)
             await getData(startDateStr, endDateStr)
         }
-        //
+        //todo
+        await addBonusName()
     });
+}
+
+const addBonusName = async function () {
+    const now = Date.now()
+    if (now > newUtcTime('2020-02-04').getTime()) {
+        console.log("nothing")
+    } else {
+        let s = ''
+        if(now < newUtcTime('2020-01-26').getTime()){
+            s = "bonus" + getTimeStr(new Date('2020-01-26 00:00:00'))
+        }else{
+            s = "bonus" + getTimeStr(now)
+        }
+        const sql = `insert into tron_bet_event.years_bonus_name(name,status,ts) values(?,'1',?)`
+        await raw(sql, [s, Date.now()])
+    }
 }
 
 const getDiceData = async function (startDate, endDate) {

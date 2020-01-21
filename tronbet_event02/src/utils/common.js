@@ -264,7 +264,7 @@ async function openMultiBox(num) {
 }
 
 async function lottery() {
-    let luckyNum = await getRandomInt(1, 382800)
+    let luckyNum = await getRandomInt(1, 999000)
     let sum = 0
     let rate = boxConf.lotteryRate
     for (let i =0; i< rate.length; i++) {
@@ -287,10 +287,15 @@ async function lotteryFree() {
 
 async function randTrx() {
     let luckyNum = await getRandomInt(1, 100000)
-    if (luckyNum <=  90100) return getRandomInt(20, 50)
-    if (luckyNum <=  99100) return getRandomInt(51, 1000)
-    if (luckyNum <=  99900) return getRandomInt(1001, 10000)
-    if (luckyNum <=  100000) return getRandomInt(10001, 99999)
+    if (luckyNum <=  90100){
+        return getRandomInt(20, 50)
+    }else{
+        return  100
+    }
+        // if (luckyNum <=  90100) return getRandomInt(20, 50)
+    // if (luckyNum <=  99100) return getRandomInt(51, 1000)
+    // if (luckyNum <=  99900) return getRandomInt(1001, 10000)
+    // if (luckyNum <=  100000) return getRandomInt(10001, 99999)
 }
 
 async function isWardTrx() {
@@ -313,8 +318,11 @@ async function randomMulti(){
 
 async function randomBMW() {
     // 暂时屏蔽掉
-    // let luckyNum = await getRandomInt(1, 100000)
-    // if (luckyNum <= 20) return true
+    let luckyNum = await getRandomInt(1, 100000)
+    // 概率 100 / 100000  大概是 1/1000
+    if (luckyNum <= 100) {
+        return true
+    }
     return false
 }
 

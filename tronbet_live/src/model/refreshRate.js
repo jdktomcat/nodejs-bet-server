@@ -42,6 +42,12 @@ class RefreshRateUtils {
         return data
     }
 
+    static async getRateEM(gameItem) {
+        const redisKey = "tronlive:addition"
+        const data = await new RedisRate(redisKey).getRate(gameItem);
+        return data
+    }
+
     static async refreshHub88(gameItem) {
         const redisKey = "tronlive:hub88:addition"
         const data = await RedisRate.setAndGetRate(redisKey, gameItem);
@@ -51,12 +57,6 @@ class RefreshRateUtils {
     //
     static async getRateHub88(gameItem) {
         const redisKey = "tronlive:hub88:addition"
-        const data = await new RedisRate(redisKey).getRate(gameItem);
-        return data
-    }
-
-    static async getRateEM(gameItem) {
-        const redisKey = "tronlive:addition"
         const data = await new RedisRate(redisKey).getRate(gameItem);
         return data
     }

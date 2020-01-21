@@ -120,7 +120,6 @@ const taskList = async function () {
 
 const openSchedule = function () {
     const j = schedule.scheduleJob('*/1 * * * *', async function () {
-        // console.log("test--------------->")
         await taskList()
     })
 }
