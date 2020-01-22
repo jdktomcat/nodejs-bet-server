@@ -149,7 +149,7 @@ async function preDivide(round) {
     //     loggerDefault.info("奖池余额:" + balance + " TRX");
     // }
 
-    console.log('=======Round,balance=====>', round, balance)
+    console.log('=======Round,balance=====>', round, balance, min_pool_trx)
 
     if (test_trx > 0) {
         balance = test_trx * 1e6;
