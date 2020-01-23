@@ -19,9 +19,9 @@ let timer = setInterval(async () => {
   // 抽回部分底池 累计有效分红100次 每次抽20万 第507轮开始
   profit = profit - 400000;
 
-  // 盈利暂时放开 10% 
+  // 盈利暂时放开 50% 
   if( profit > 0 ){
-    profit = profit * 0.1
+    profit = profit * 0.5
   }
   await redisUtil.hset('tronlive:realtime', 'profit', profit);
   await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
