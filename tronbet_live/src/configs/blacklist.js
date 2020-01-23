@@ -6,7 +6,6 @@ const blacklist = {
   "TUsPCrcLJPUvyi9SFJVgfGPSjmc4G16YE6": true,
   "TNAXtunrUYWoHcTp9o98KHn8ooTLGwH8iM": true,
   "TFPYSwYtA3nE9h4dxv7Zj3m9RR5fBkMRJo": true,
-  "TQ8q5dEmo1JhwA4PptKqDWwr9Br5L3UVmF": true,
   
   "TNm9RWnf4YftryPLqfBKTUKqZZG9xBk4iF": true,
   "TWmqNUYVyf89ZYvAC4gPkEwGDKKRCB8zax": true,
