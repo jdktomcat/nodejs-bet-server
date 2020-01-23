@@ -4,64 +4,47 @@ const evnets = require('events')
 const cronEvent = new evnets.EventEmitter()
 const userinfo = require('../model/userinfo')
 const db = require('../utils/dbUtil')
-const tronUtils = require('../utils/tronUtil')
 const startTs  = app.startTs
 const interval = app.interval
 
-// cronEvent.on('dailyRankReward', () => {
-//     let timer = setInterval(async () => {
-//         let now = new Date().getTime()
+cronEvent.on('dailyRankReward', () => {
+    let timer = setInterval(async () => {
+        let now = new Date().getTime()
         
-//         let newRound =  Math.floor((now - startTs) / interval)
-//         let lastRound = await userinfo.maxRewardRound()
-//         console.log(lastRound, newRound)
+        let newRound =  Math.floor((now - startTs) / interval)
+        let lastRound = await userinfo.maxRewardRound()
+        console.log(lastRound, newRound)
 
-//         if (newRound - lastRound <= 1) {
-//             console.log('not in reward time, check it...')
-//             return console.log('try next time, ~~~~~~~~~~~~~~~~')
-//         }
+        if (newRound - lastRound <= 1) {
+            console.log('not in reward time, check it...')
+            return console.log('try next time, ~~~~~~~~~~~~~~~~')
+        }
 
-//         let result = await userinfo.allRank(newRound - 1, 50)
+        let result = await userinfo.allRank(newRound - 1, 50)
 
-//         console.log(result)
+        console.log(result)
+        console.log("begin round count===========>",newRound)
+        let wardconf = rewards
 
-//         let wardconf = rewards
-
-//         let conn = null
-//         //快照数据放入日志
-//         try {
-//             conn = await db.getConnection()
-//             if (conn == null) {
-//                 return console.error('Shit, get db connection failed!!!!!!!!!!!!!!')            }
-//             conn.beginTransaction()
-//             for (let index = 0; index < result.length ; index++) {
-//                 await userinfo.addDailyRankWardLog(newRound - 1, result[index].addr, result[index].score, 0, wardconf[index], now, conn)
-//             }
-//             conn.commit()
-//         } catch (error) {
-//             console.log(error)
-//             if(conn) conn.rollback()
-//         } finally {
-//             if(conn) conn.release()
-//         }
-
-//         // 开始发奖
-//         for (let index = 0; index < result.length ; index++) {
-//             console.log('result[index].addr, wardconf[index]=======>', result[index].addr, wardconf[index])
-//             try {
-//                 let tx = await tronUtils.sendTRX(result[index].addr, wardconf[index])
-//                 console.log(tx)
-//                 if (tx.result == true) {
-//                     await userinfo.updateTxidToDailyRankWardLog(newRound - 1, result[index].addr,  tx.transaction.txID)
-//                 }
-                
-//             } catch (error) {
-//                 console.log(error)
-//             }
-//         }
-//         console.log('send daily rank success, lalalalalalala!!!')
-//     }, 240000);
-// })
+        let conn = null
+        //快照数据放入日志
+        try {
+            conn = await db.getConnection()
+            if (conn == null) {
+                return console.error('Shit, get db connection failed!!!!!!!!!!!!!!')            }
+            conn.beginTransaction()
+            for (let index = 0; index < result.length ; index++) {
+                await userinfo.addDailyRankWardLog(newRound - 1, result[index].addr, result[index].score, 0, wardconf[index], now, conn)
+            }
+            conn.commit()
+        } catch (error) {
+            console.log(error)
+            if(conn) conn.rollback()
+        } finally {
+            if(conn) conn.release()
+        }
+    }, 240000);
+})
 
 cronEvent.on('totalRankReward', async () => {
   // let allRank = await userinfo.allTotalRank(48)
