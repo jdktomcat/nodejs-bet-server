@@ -13,6 +13,11 @@ let timer = setInterval(async () => {
   let now = Math.floor(new Date().getTime() / 1000);
   let profit = await usermodel.getRealTimeProfitAmount(now);
   let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
+
+  // 盈利暂时放开 10% 
+  if( profit > 0 ){
+    profit = profit * 0.1
+  }
   await redisUtil.hset('tronlive:realtime', 'profit', profit);
   await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
 }, 70000);
