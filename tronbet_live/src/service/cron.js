@@ -14,6 +14,11 @@ let timer = setInterval(async () => {
   let profit = await usermodel.getRealTimeProfitAmount(now);
   let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
 
+  // 抽回部分底池 累计有效分红100次 每次抽10万 第500轮开始
+  // profit = profit - 200000;
+  // 抽回部分底池 累计有效分红100次 每次抽20万 第507轮开始
+  profit = profit - 400000;
+
   // 盈利暂时放开 10% 
   if( profit > 0 ){
     profit = profit * 0.1
