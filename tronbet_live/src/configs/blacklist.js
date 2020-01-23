@@ -5,7 +5,7 @@ const blacklist = {
   "TCt5SterEopvsvKcZCjGQ9XTqNf9bDXDyr": true,
   "TUsPCrcLJPUvyi9SFJVgfGPSjmc4G16YE6": true,
   "TNAXtunrUYWoHcTp9o98KHn8ooTLGwH8iM": true,
-  "TFPYSwYtA3nE9h4dxv7Zj3m9RR5fBkMRJo": true,
+  // "TFPYSwYtA3nE9h4dxv7Zj3m9RR5fBkMRJo": true,
   
   "TNm9RWnf4YftryPLqfBKTUKqZZG9xBk4iF": true,
   "TWmqNUYVyf89ZYvAC4gPkEwGDKKRCB8zax": true,
