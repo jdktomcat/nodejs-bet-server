@@ -111,6 +111,47 @@ const removeBonus = async function (id) {
 }
 
 
+
+const queryScores = async function () {
+    const t = `select round,addr,score from tron_bet_event.years_suit_score group by round desc,score desc`
+    const data = await raw(t, [])
+    const dict = {
+        '0' : '2020-01-26',
+        '1' : '2020-01-27',
+        '2' : '2020-01-28',
+        '3' : '2020-01-29',
+        '4' : '2020-01-30',
+        '5' : '2020-01-31',
+        '6' : '2020-02-01',
+        '7' : '2020-02-02',
+        '8' : '2020-02-03',
+    }
+    data.forEach(e=>e.day = dict[e.round] || '')
+    return data
+}
+
+const queryScoresFile = async function() {
+    const data = await queryScores()
+    const keys = Object.keys(data[0])
+    let sbody = ''
+    keys.forEach(e => {
+        sbody += e + "\t"
+    })
+    sbody = sbody.trim()
+    sbody += "\n"
+    //
+    data.forEach(e => {
+        keys.forEach((k) => {
+            let t = e[k] || 0
+            sbody = sbody + t + '\t'
+        })
+        sbody = sbody.trim()
+        sbody += '\n'
+    })
+    return sbody
+}
+
+
 module.exports = {
     depositData,
     getPages,
@@ -119,4 +160,6 @@ module.exports = {
     getBonus,
     addBonus,
     removeBonus,
+    queryScores,
+    queryScoresFile,
 }
