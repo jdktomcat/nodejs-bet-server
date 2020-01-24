@@ -23,9 +23,9 @@ let timer = setInterval(async () => {
   profit = profit * 0.9;
 
   // 盈利暂时放开 50% 
-  if( profit > 0 ){
-    profit = profit * 0.5
-  }
+  // if( profit > 0 ){
+  //   profit = profit * 0.5
+  // }
   await redisUtil.hset('tronlive:realtime', 'profit', profit);
   await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
 }, 70000);
