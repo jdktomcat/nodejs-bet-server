@@ -62,7 +62,7 @@ async function eventAllFile(ctx) {
     s.push(data);
     s.push(null);
     //
-    const fileName = 'activity_'+ Date.now()
+    const fileName = 'activity_'+ Date.now() + '.xls'
     ctx.response.set('Content-disposition', `attachment;filename=${fileName}`);
     ctx.response.set("content-type", "txt/html");
     ctx.body = s
