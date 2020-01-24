@@ -1,4 +1,4 @@
-const {depositData, getPages, lotteryLog,lotteryCount, getBonus, addBonus, removeBonus} = require('../model/deposit')
+const {depositData, getPages, lotteryLog,lotteryCount, getBonus, queryScores,queryScoresFile} = require('../model/deposit')
 //
 const _ = require("lodash")
 
@@ -46,10 +46,34 @@ async function bonusCount(ctx) {
     }
 }
 
+async function eventAll(ctx) {
+    const data = await queryScores()
+    ctx.body = {
+        code: 200,
+        data: data,
+    }
+}
+
+async function eventAllFile(ctx) {
+    const data = await queryScoresFile()
+    const Readable = require('stream').Readable;
+    const s = new Readable();
+    s._read = () => {}; // redundant? see update below
+    s.push(data);
+    s.push(null);
+    //
+    const fileName = 'activity_'+ Date.now() + '.xls'
+    ctx.response.set('Content-disposition', `attachment;filename=${fileName}`);
+    ctx.response.set("content-type", "txt/html");
+    ctx.body = s
+}
+
 module.exports = {
     queryDepositTmp,
     queryPages,
     getLotteryLog,
     getBonusAPI,
     bonusCount,
+    eventAll,
+    eventAllFile,
 }

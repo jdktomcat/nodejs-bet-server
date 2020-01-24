@@ -8,3 +8,6 @@ module.exports = router.get('/bonusCount', service.bonusCount)
 module.exports = router.get('/reissueList', action.reissueList)
 module.exports = router.get('/page', service.queryPages)
 module.exports = router.get('/lottery_log', service.getLotteryLog)
+//activity
+module.exports = router.get('/events', service.eventAll)
+module.exports = router.get('/eventsFile', service.eventAllFile)
