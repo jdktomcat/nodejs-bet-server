@@ -638,6 +638,8 @@ async function betDiscard(ctx) {
 
     // let user = await userinfo.getAccountByEmail(transactionParams.addr);
     let user = await userinfo.getAccountByEmail(addr);
+    console.log("user", addr, user);
+
     if (_.isEmpty(user)) return sendErrorMessage2Client(ctx, 400, 2004);
 
     let transactionParams = {
