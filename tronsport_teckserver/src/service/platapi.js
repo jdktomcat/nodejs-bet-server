@@ -628,6 +628,7 @@ async function betDiscard(ctx) {
     let addr = datas.ext_player_id;
     let transaction_id = datas.transaction_id;
     let transaction = await userinfo.getTransactionByIdAndStatus(transaction_id, tranStatus.bet);
+    console.log("transaction", transaction);
     if (_.isEmpty(transaction) || transaction[0].addr != addr) {
       return sendErrorMessage2Client(ctx, 400, 2003);
     }
