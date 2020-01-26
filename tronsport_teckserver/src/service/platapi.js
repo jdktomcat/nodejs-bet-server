@@ -636,7 +636,8 @@ async function betDiscard(ctx) {
       return sendErrorMessage2Client(ctx, 200, 0);
     }
 
-    let user = await userinfo.getAccountByEmail(transactionParams.addr);
+    // let user = await userinfo.getAccountByEmail(transactionParams.addr);
+    let user = await userinfo.getAccountByEmail(addr);
     if (_.isEmpty(user)) return sendErrorMessage2Client(ctx, 400, 2004);
 
     let transactionParams = {
