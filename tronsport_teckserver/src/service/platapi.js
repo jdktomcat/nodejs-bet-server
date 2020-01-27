@@ -630,6 +630,8 @@ async function betDiscard(ctx) {
     let transaction = await userinfo.getTransactionByIdAndStatus(transaction_id, tranStatus.bet);
     console.log("transaction", transaction);
     if (_.isEmpty(transaction) || transaction[0].addr != addr) {
+      let test = await userinfo.getTransactionByIdAndStatus(transaction_id);
+      console.log("transaction test", tranStatus.bet, test);
       return sendErrorMessage2Client(ctx, 400, 2003);
     }
 
