@@ -13,6 +13,7 @@ async function getTotalPool() {
     if (!result) {
         result = {totalPot: 0}
     }
+    console.log("getTotalPool result==>", result)
     return result
 }
 
