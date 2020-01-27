@@ -15,8 +15,8 @@ let config = {
     http_port: prdCfg.port.tronbet_event01,
     logPath: path.resolve(__dirname, "../../logs"),
     log: true, //开启日志,
-    startTs: 1577174400000,//2019-12-24 16:00:00;
-    endTs: 1577836800000,//2020-01-01 08:00:00;
+    startTs: 1580108400000,//Mon Jan 27 2020 15:00:00
+    endTs: 1580799600000,//Tue Feb 04 2020 15:00:00
     interval: 86400000,
     randomSalt: "hi,can-you-hear-me?"
   },
