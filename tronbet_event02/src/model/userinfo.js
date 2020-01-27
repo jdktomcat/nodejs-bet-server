@@ -291,7 +291,7 @@ const getTimeStr = function (time) {
 
 function newUtcTs(today) {
     let start = new Date(today);
-    start.setUTCHours(0)
+    start.setUTCHours(15)
     start.setUTCMinutes(0)
     start.setUTCSeconds(0)
     start.setUTCMilliseconds(0)
