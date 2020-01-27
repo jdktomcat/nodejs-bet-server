@@ -8,9 +8,9 @@ let timer = setInterval(async () => {
     let divedAmount = await usermodel.getTotalDivAmount()
     let totalAmount = await divInfo.getTotalPool()
     let profit = Math.floor(((totalAmount.totalPot || 0) - divedAmount) / 1e6)
-    console.log("divedAmount",divedAmount)
-    console.log("totalAmount",totalAmount)
-    console.log("profit",profit)
+    console.log("divedAmount==>",divedAmount)
+    console.log("totalAmount==>",totalAmount.totalPot)
+    console.log("profit==>",profit)
     if (profit < 0) profit = 0
     if (profit > 1e10) profit = 0
     await redisUtil.hset('tronpoker:realtime', 'profit', profit)
