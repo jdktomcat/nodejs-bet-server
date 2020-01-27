@@ -243,6 +243,7 @@ class TronTexasLobby {
         let gamePotValue = Math.floor(fee * 0.97);
         this.totalPot += gamePotValue;
         this.jackpot += (fee - gamePotValue);
+        console.log("addTotalFee==>", fee, this.totalFee, this.totalPot, this.jackpot)
         dbService.saveLobby({ totalFee: this.totalFee, totalPot: this.totalPot, jackpot: this.jackpot })
         return true;
     }
