@@ -16,7 +16,7 @@ let config = {
     log: true, //开启日志
     init_ts: 1563850800, //初始截止时间戳 2019/7/23 11:00 NEW DICE
     duration: 86400, //每轮有效时间（秒） 86400
-    time_out: 3600, //超时时间（秒）
+    time_out: 3600 * 12, //超时时间（秒）
     dividends_addr: prdCfg.contract.TronBetDiceDivider, //分红合约地址
     pool_addr: prdCfg.contract.TronBetPool, //奖池合约地址
     min_pool_trx: 1, //最小分红奖池（单位TRX）
