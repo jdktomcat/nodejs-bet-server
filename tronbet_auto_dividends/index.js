@@ -266,12 +266,12 @@ function scan() {
         }
 
         let _now = Math.floor(Date.now() / 1000);
+        roundInfo.deadline = roundInfo.deadline - 24*60*60
         if (ignore_ts > 0 && ignore_ts === roundInfo.deadline) { //该时间ignore_ts之前跳出逻辑处理（因为上次判断时余额不足）
             loggerDefault.info("Round " + roundInfo.round + " => 余额不足 => 忽略");
+        } else if (_now < roundInfo.deadline) {
+            loggerDefault.info("Round " + roundInfo.round + " 未到分红时间，还差 " + (roundInfo.deadline - _now) + "秒");
         } 
-        // else if (_now < roundInfo.deadline) {
-        //     loggerDefault.info("Round " + roundInfo.round + " 未到分红时间，还差 " + (roundInfo.deadline - _now) + "秒");
-        // } 
         else {
             let preRound = roundInfo.round - 1;
             if (preRound > 0 && preRound > (ignore_round_in_db) || 0) {
