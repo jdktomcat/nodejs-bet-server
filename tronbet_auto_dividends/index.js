@@ -271,8 +271,7 @@ function scan() {
             loggerDefault.info("Round " + roundInfo.round + " => 余额不足 => 忽略");
         } else if (_now < roundInfo.deadline) {
             loggerDefault.info("Round " + roundInfo.round + " 未到分红时间，还差 " + (roundInfo.deadline - _now) + "秒");
-        } 
-        else {
+        } else {
             let preRound = roundInfo.round - 1;
             if (preRound > 0 && preRound > (ignore_round_in_db) || 0) {
                 let preRoundInfo = await dbService.getPreRoundInfo(preRound);
