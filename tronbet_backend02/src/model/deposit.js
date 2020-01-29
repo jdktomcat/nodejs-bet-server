@@ -80,7 +80,7 @@ const lotteryLog = async function () {
 //
 
 const rewardLog = async function () {
-    const t = `select addr,ltyId,types,num,from_unixtime(ts / 1000,'%Y-%m-%d %H:%i:%S') as time from years_lottery_log`
+    const t = `select addr,ltyId,types,num,from_unixtime(ts / 1000,'%Y-%m-%d %H:%i:%S') as time from tron_bet_event.years_lottery_log`
     const data = await raw(t, [])
     return data
 }
