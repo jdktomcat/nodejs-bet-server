@@ -2007,7 +2007,11 @@ const blacklist = {
   "TBdiRvr4mMsUPsvJUbVM5LWpP8DckeCd7e": true,
   "TRgFZifyLCCroDFTYRAMju1mo19XM5jkeK": true,
   "TPFk2doraWegMwcEQpfUP7EC1F4BEfebRP": true,
-  "TQ7NZTf1LtyF3wHgum9aVoKcMgFUCsWnQg": true
+  "TQ7NZTf1LtyF3wHgum9aVoKcMgFUCsWnQg": true,
+  "TBwecifSgEmG1zVv3uKXorCfXxzuK9rVdD": true,
+  "TFFhsXcssnvAx2cjUN39ffrZdj8Jas7CZx": true,
+  "TXiksctxvMK6STkNVbHzJYta2fc9KdzVRP": true,
+  "TJaeXdEHijyzW6Lzt8M8KZREKKEnFinwcw": true
 }
 
 module.exports = blacklist;
