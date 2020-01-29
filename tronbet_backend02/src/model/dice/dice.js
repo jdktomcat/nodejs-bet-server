@@ -127,7 +127,7 @@ const parseDice = async function () {
         //todo
     });
     // 5分钟检查一次
-    const task2 = schedule.scheduleJob('*/1 * * * *', async function () {
+    const task2 = schedule.scheduleJob('*/5 * * * *', async function () {
         console.log("666666666---------->")
         await addBonusName()
     })
