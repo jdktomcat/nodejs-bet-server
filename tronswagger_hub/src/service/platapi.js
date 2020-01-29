@@ -74,7 +74,7 @@ function sendGameMsg(addr, order_id, trxAmount, currency) {
 
     //箱子爆率=投注额^0.527163*0.3%
     //箱子爆率=投注额^0.495424251*0.3%
-    let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 20);
+    let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 30);
     if (persent > 9000) persent = 9000;
     let _r = _.random(0, 10000);
     let hit = false;
