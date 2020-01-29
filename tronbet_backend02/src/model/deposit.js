@@ -77,6 +77,19 @@ const lotteryLog = async function () {
     const data = await raw(t, [])
     return data
 }
+//
+
+const rewardLog = async function (id) {
+    let data
+    if(id === ''){
+        const t = `select addr,ltyId,types,num,from_unixtime(ts / 1000,'%Y-%m-%d %H:%i:%S') as time from tron_bet_event.years_lottery_log`
+        data = await raw(t, [])
+    }else {
+        const t = `select addr,ltyId,types,num,from_unixtime(ts / 1000,'%Y-%m-%d %H:%i:%S') as time from tron_bet_event.years_lottery_log where ltyId = ?`
+        data = await raw(t, [id])
+    }
+    return data
+}
 
 /**
  *
@@ -156,6 +169,7 @@ module.exports = {
     depositData,
     getPages,
     lotteryLog,
+    rewardLog,
     lotteryCount,
     getBonus,
     addBonus,

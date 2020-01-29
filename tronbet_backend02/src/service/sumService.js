@@ -1,4 +1,4 @@
-const {depositData, getPages, lotteryLog,lotteryCount, getBonus, queryScores,queryScoresFile} = require('../model/deposit')
+const {depositData, getPages, lotteryLog,rewardLog,lotteryCount, getBonus, queryScores,queryScoresFile} = require('../model/deposit')
 //
 const _ = require("lodash")
 
@@ -27,6 +27,13 @@ async function queryPages(ctx) {
 
 async function getLotteryLog(ctx) {
     const data = await lotteryLog()
+    ctx.body = data
+}
+
+async function getReward(ctx) {
+    const params = ctx.request.query || {}
+    const id = params.id || ''
+    const data = await rewardLog(id)
     ctx.body = data
 }
 
@@ -72,6 +79,7 @@ module.exports = {
     queryDepositTmp,
     queryPages,
     getLotteryLog,
+    getReward,
     getBonusAPI,
     bonusCount,
     eventAll,

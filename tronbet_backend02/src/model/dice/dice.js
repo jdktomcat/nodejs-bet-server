@@ -125,23 +125,25 @@ const parseDice = async function () {
             await getData(startDateStr, endDateStr)
         }
         //todo
-        await addBonusName()
     });
+    // 5分钟检查一次
+    const task2 = schedule.scheduleJob('*/5 * * * *', async function () {
+        console.log("666666666---------->")
+        await addBonusName()
+    })
 }
 
 const addBonusName = async function () {
     const now = Date.now()
-    if (now > newUtcTime('2020-02-04').getTime()) {
-        console.log("nothing")
-    } else {
-        let s = ''
-        if(now < newUtcTime('2020-01-26').getTime()){
-            s = "bonus" + getTimeStr(new Date('2020-01-26 00:00:00'))
-        }else{
-            s = "bonus" + getTimeStr(now)
+    if (now < newUtcTime('2020-02-04 7:00').getTime()) {
+        let s = "bonus" + getTimeStr(new Date(now))
+        console.log("bonus_name is ", s)
+        const sql0 = `select * from tron_bet_event.years_bonus_name where name = ?`
+        const data0 = await raw(sql0, [s])
+        if(data0.length === 0){
+            const sql = `insert into tron_bet_event.years_bonus_name(name,status,ts) values(?,'1',?)`
+            await raw(sql, [s, Date.now()])
         }
-        const sql = `insert into tron_bet_event.years_bonus_name(name,status,ts) values(?,'1',?)`
-        await raw(sql, [s, Date.now()])
     }
 }
 
