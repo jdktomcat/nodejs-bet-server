@@ -31,7 +31,9 @@ async function getLotteryLog(ctx) {
 }
 
 async function getReward(ctx) {
-    const data = await rewardLog()
+    const params = ctx.request.query || {}
+    const id = params.id || ''
+    const data = await rewardLog(id)
     ctx.body = data
 }
 
