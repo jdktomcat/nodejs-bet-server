@@ -124,6 +124,10 @@ async function airdrop() {
     }
     //空投
     for (let item of datas) {
+        console.log("===>tokeRake", item, minedAmount)
+        // if(item.Amount > minedAmount){
+        //     continue
+        // }
         let adAmount = await getMinedAnte(item.addr, item.Amount, minedAmount)  //
         if (item.airDropAmount && item.airDropAmount != 0) {
             let extra = Math.floor(item.airDropAmount) || 1
