@@ -3,7 +3,7 @@ const _ = require('lodash')._
 
 
 async function getLiveAirdropData(startTs, endTs) {
-    let sql = "select sum(bet + 4 * payout) Amount, uid addr from poker_statistics_log where ts >= ? and ts < ? group by addr"
+    let sql = "select sum(bet + 4 * payout) Amount, uid addr from poker_statistics_log where ts >= ? and ts < ? and bet < 1000000000000000 and payout < 1000000000000000 group by addr"
     let res = await db.exec(sql, [startTs , endTs])
     return res
 }
