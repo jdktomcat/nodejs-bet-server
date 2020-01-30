@@ -124,7 +124,7 @@ async function airdrop() {
     }
     //空投
     for (let item of datas) {
-        console.log("===>tokeRake", item, minedAmount)
+        // console.log("===>tokeRake", item, minedAmount)
         // if(item.Amount > minedAmount){
         //     continue
         // }
