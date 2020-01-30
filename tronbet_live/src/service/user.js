@@ -163,12 +163,12 @@ async function withdraw(ctx) {
 
   // 并发限制
   let withdrawLimit = await redisUtils.hget(redisUserKeyPrefix + addr, 'withdrawLimit');
-  if(withdrawLimit){
+  if(withdrawLimit === "true"){
     // 不能提现
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }else{
     // 可以提现 加限制
-    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', true);
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "true");
   }
 
   if (isNaN(amount) || amount < 1) {
@@ -278,8 +278,8 @@ async function withdraw(ctx) {
     if (conn) conn.release();
   }
 
-  // 接触限制
-  await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', false);
+  // 解除限制
+  await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
   return await common.sendMsgToClient(ctx, 0, '', { balance: balance - amount / 1e6 });
 }
 
