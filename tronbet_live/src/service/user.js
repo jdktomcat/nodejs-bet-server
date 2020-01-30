@@ -165,6 +165,7 @@ async function withdraw(ctx) {
   let withdrawLimit = await redisUtils.hget(redisUserKeyPrefix + addr, 'withdrawLimit');
   if(withdrawLimit === "true"){
     // 不能提现
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }else{
     // 可以提现 加限制
@@ -172,10 +173,12 @@ async function withdraw(ctx) {
   }
 
   if (isNaN(amount) || amount < 1) {
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1010, 'amount error');
   }
 
   if (!currency) {
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1010, 'currency error');
   }
 
@@ -189,24 +192,31 @@ async function withdraw(ctx) {
   
   if (!profit || profit < profitMin) {
     console.log("profit",profit, profitMin)
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }
 
   if (!TronWeb.isAddress(addr) || signature == null) {
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1010, 'atron address error!!!');
   }
 
-  if (app.blacklist[addr]) return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
+  if (app.blacklist[addr]) {
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
+    return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
+  }
 
   //签名校验
   let signResult = await tronUtils.verifySignature(signature, addr);
   if (!signResult) {
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1010, 'sign verify failed!!!!!!!!!');
   }
 
   //个人每天提现次数限制
   let todayWithdrawTimes = await usermodel.findTodayWithdrawTimes(addr);
   if (todayWithdrawTimes >= app.withdrawMaxTimes) {
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1009, 'withdraw reached max times');
   }
 
@@ -219,29 +229,35 @@ async function withdraw(ctx) {
 
   // 每次提现最大额度
   if (amount > withdrawMaxAmount) {
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }
 
   //限制提现金额每天玩家额度50w trx
   let todayAmount = await usermodel.findTodayWithdrawAmount(addr, currency);
   if (Number(todayAmount) + amount > withdrawMaxAmount) {
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }
 
   let totalAmount = await usermodel.findTodayTotalWithdrawAmount(currency);
 
   //限制提现金额每天总额度250w trx
-  if (Number(totalAmount) + amount >= withdrawMaxAmountDaily)
+  if (Number(totalAmount) + amount >= withdrawMaxAmountDaily){
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
+  }
 
   let wOrderId = common.getRandomSeed(64);
 
   let user = await usermodel.getUserByEmail(addr);
   if (_.isEmpty(user)) {
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1010, 'amount error');
   }
 
   if (user[0].bindStatus != 0) {
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1010, 'addr has bind to account,  please use mail to login');
   }
 
@@ -249,6 +265,7 @@ async function withdraw(ctx) {
   let balance = await usermodel.getUserBalanceByCurrency(user[0].uid, currency);
 
   if (balance * 1e6 < amount) {
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1010, 'amount error');
   }
 
@@ -273,6 +290,7 @@ async function withdraw(ctx) {
   } catch (error) {
     conn.rollback();
     loggerDefault.error(error);
+    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1010, 'amount not enough');
   } finally {
     if (conn) conn.release();
