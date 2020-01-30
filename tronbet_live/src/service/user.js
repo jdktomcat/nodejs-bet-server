@@ -163,6 +163,7 @@ async function withdraw(ctx) {
 
   // 并发限制
   let withdrawLimit = await redisUtils.hget(redisUserKeyPrefix + addr, 'withdrawLimit');
+  console.log(redisUserKeyPrefix + addr, "withdrawLimit", withdrawLimit)
   if(withdrawLimit === "1"){
     // 不能提现
     await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
