@@ -166,7 +166,6 @@ async function withdraw(ctx) {
   console.log(redisUserKeyPrefix + addr, "withdrawLimit", withdrawLimit)
   if(withdrawLimit === "1"){
     // 不能提现
-    await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }else{
     // 可以提现 加限制
