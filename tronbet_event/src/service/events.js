@@ -436,17 +436,18 @@ async function totalRank(ctx) {
         // let position = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
         let position = [2, 4]
         let tempallRank = [];
+        let tmpScore = [58000,13356]
         for(let index in robots){
             let obj = {};
 
             // 从 allRank 取出 position[index] - 1 这个位置的玩家积分
-            if(allRank[position[index] - 1]){
-                let tempScore = allRank[position[index] - 1].score
-                obj.score = Number(tempScore) + 1000
-            }else{
-                obj.score = 100
-            }
-            
+            // if(allRank[position[index] - 1]){
+            //     let tempScore = allRank[position[index] - 1].score
+            //     obj.score = Number(tempScore) + 1000
+            // }else{
+            //     obj.score = 100
+            // }
+            obj.score = tmpScore[index]
             obj.addr = robots[index];
             tempallRank.push(obj);
         }
