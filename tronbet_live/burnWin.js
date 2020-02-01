@@ -35,4 +35,4 @@ async function burn() {
   return transactionID;
 }
 
-// burn();
+burn();
