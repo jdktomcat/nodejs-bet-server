@@ -20,25 +20,17 @@ async function main() {
   let obj1 = {};
   obj1.type = 2;
   obj1.addr = "THtbMw6byXuiFhsRv1o1BQRtzvube9X1jx";
-  obj1.amount = 1374436821600;
-  obj1.ts = 1577435502000;
-  obj1.tx = "f864242eaeea953343def98f9e4dd415977270c9a30d9534d90ee736d9029ee7";
+  obj1.amount = 87648144528800;
+  obj1.ts = 1580563764000;
+  obj1.tx = "59c33bd4138ebccaee01a7c4f9ff7fa80290f73f45c58e98d2eb914cf1075e23";
   info.push(obj1);
-
-  let obj2 = {};
-  obj2.type = 2;
-  obj2.addr = "THtbMw6byXuiFhsRv1o1BQRtzvube9X1jx";
-  obj2.amount = 52629319184200;
-  obj2.ts = 1577419311000;
-  obj2.tx = "b90070ab768499de75c48b83ddb42c478efaacb638e0ad85352d087d21613928";
-  info.push(obj2);
 
   let obj3 = {};
   obj3.type = 1;
-  obj3.addr = "TEA1MCjwRhwKp3NvDis7vcpByt7kMYqRRn";
-  obj3.amount = 106023831440000;
-  obj3.ts = 1577440476000;
-  obj3.tx = "ffbba1c2eb0f8225e0b3867b8e81a62f92b7e1a4d62042fb222362c0c229331c";
+  obj3.addr = "TGu15y1eQk5yxax985VVNAikLca8usBtyp";
+  obj3.amount = 226665923000000;
+  obj3.ts = 1580715984000;
+  obj3.tx = "1cbacf205517f0a6ffd7b985ac276efa5f46555fab7065792a9b9ccabb8d10c8";
   info.push(obj3);
 
   for (let item of info) {
