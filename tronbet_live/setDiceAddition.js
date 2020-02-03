@@ -37,12 +37,12 @@ async function setDiceRate(gameId, startDate, endDate, rate) {
 }
 
 let gameId = [1, 2, 3, 4];
-let startTime = new Date("2019-12-18 00:00:00").getTime() / 1000;
-let endTime = new Date("2019-12-22 00:00:00").getTime() / 1000;
+let startTime = new Date("2020-02-03 09:30:00").getTime() / 1000;
+let endTime = new Date("2020-02-04 09:30:00").getTime() / 1000;
 const rateInit = 10000;
 let rate = 1.5 * rateInit;
 
-// setDiceRate(gameId[0], startTime, endTime, rate);
+setDiceRate(gameId[0], startTime, endTime, rate);
 // setDiceRate(gameId[1], startTime, endTime, rate);
 // setDiceRate(gameId[2], startTime, endTime, rate);
 // setDiceRate(gameId[3], startTime, endTime, rate);
