@@ -319,11 +319,8 @@ async function randomBMW() {
     // 暂时屏蔽掉
     let luckyNum = await getRandomInt(1, 100000)
     // 概率 200 / 100000  大概是 2/1000
-    if (luckyNum <= 200){
-        return true
-    }
-    
-    return false
+    // 暂时开启
+    return true
 }
 
 module.exports = {

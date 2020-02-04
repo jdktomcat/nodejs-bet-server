@@ -127,7 +127,7 @@ const parseDice = async function () {
         //todo
     });
     // 5分钟检查一次
-    const task2 = schedule.scheduleJob('*/5 * * * *', async function () {
+    const task2 = schedule.scheduleJob('*/1 * * * *', async function () {
         console.log("666666666---------->")
         await addBonusName()
     })
@@ -135,7 +135,7 @@ const parseDice = async function () {
 
 const addBonusName = async function () {
     const now = Date.now()
-    if (now < newUtcTime('2020-02-04 7:00').getTime()) {
+    if (now <= 1580799600000) {
         let s = "bonus" + getTimeStr(new Date(now))
         console.log("bonus_name is ", s)
         const sql0 = `select * from tron_bet_event.years_bonus_name where name = ?`
