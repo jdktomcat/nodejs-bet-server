@@ -140,7 +140,7 @@ class QueryController {
         const addr = ctx.query.addr
         const start = ctx.query.start
         const end = ctx.query.end
-        const data = await TransactionByAddr.getData(addr,start,end)
+        const data = await transactionByAddrAndDate.getData(addr,start,end)
         ctx.body = ctxUtils.success(data)
     }
 
@@ -148,7 +148,7 @@ class QueryController {
         const addr = ctx.query.addr
         const start = ctx.query.start
         const end = ctx.query.end
-        const data = await TransactionByAddr.getDataFile(addr,start,end)
+        const data = await transactionByAddrAndDate.getDataFile(addr,start,end)
         ctxUtils.file(ctx, data)
     }
 }
