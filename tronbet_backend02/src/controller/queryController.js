@@ -4,6 +4,7 @@ const DrainageTransaction = require("../model/drainageTransaction")
 const TopGameId = require("../model/topGameId")
 const TopUser = require("../model/topUsers")
 const TransactionByAddr = require("../model/transactionByAddr")
+const transactionByAddrAndDate = require("../model/transactionByAddrAndDate")
 const ctxUtils = require("./ctxUtils")
 
 class QueryController {
@@ -129,6 +130,25 @@ class QueryController {
     static async getAddrTransaction(ctx) {
         const addr = ctx.query.addr
         const data = await TransactionByAddr.getDataFile(addr)
+        ctxUtils.file(ctx, data)
+    }
+    //
+    /**
+     * 搜索部分用户区间段交易
+     */
+    static async getAddrDateList(ctx) {
+        const addr = ctx.query.addr
+        const start = ctx.query.start
+        const end = ctx.query.end
+        const data = await TransactionByAddr.getData(addr,start,end)
+        ctx.body = ctxUtils.success(data)
+    }
+
+    static async getAddrDate(ctx) {
+        const addr = ctx.query.addr
+        const start = ctx.query.start
+        const end = ctx.query.end
+        const data = await TransactionByAddr.getDataFile(addr,start,end)
         ctxUtils.file(ctx, data)
     }
 }

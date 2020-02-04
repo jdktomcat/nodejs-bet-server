@@ -31,3 +31,9 @@ module.exports = router.get('/topUserList', controller.topUserList)
  */
 module.exports = router.get('/getAddrTransactionList', controller.getAddrTransactionList)
 module.exports = router.get('/getAddrTransaction', controller.getAddrTransaction)
+
+/**
+ * 玩家区间交易
+ */
+module.exports = router.get('/getAddrDateList', controller.getAddrDateList)
+module.exports = router.get('/getAddrDate', controller.getAddrDate)
