@@ -128,23 +128,23 @@ const parseDice = async function () {
     });
     // 5分钟检查一次
     const task2 = schedule.scheduleJob('*/1 * * * *', async function () {
-        console.log("666666666---------->")
-        await addBonusName()
+        // console.log("666666666---------->")
+        // await addBonusName()
     })
 }
 
 const addBonusName = async function () {
-    const now = Date.now()
-    if (now <= 1580799600000) {
-        let s = "bonus" + getTimeStr(new Date(now))
-        console.log("bonus_name is ", s)
-        const sql0 = `select * from tron_bet_event.years_bonus_name where name = ?`
-        const data0 = await raw(sql0, [s])
-        if(data0.length === 0){
-            const sql = `insert into tron_bet_event.years_bonus_name(name,status,ts) values(?,'1',?)`
-            await raw(sql, [s, Date.now()])
-        }
-    }
+    // const now = Date.now()
+    // if (now <= 1580799600000) {
+    //     let s = "bonus" + getTimeStr(new Date(now))
+    //     console.log("bonus_name is ", s)
+    //     const sql0 = `select * from tron_bet_event.years_bonus_name where name = ?`
+    //     const data0 = await raw(sql0, [s])
+    //     if(data0.length === 0){
+    //         const sql = `insert into tron_bet_event.years_bonus_name(name,status,ts) values(?,'1',?)`
+    //         await raw(sql, [s, Date.now()])
+    //     }
+    // }
 }
 
 const getDiceData = async function (startDate, endDate) {
