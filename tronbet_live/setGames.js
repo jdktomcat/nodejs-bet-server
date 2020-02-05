@@ -18,12 +18,12 @@
 
 const db = require("./src/utils/dbUtil");
 async function fixBalance() {
-    let sqlbefore = "select * from live_balance where addr = '0x5b6abfaa7a32f2e5ab35b6918c93f4593a311b1f' and currency = 'ETH'";
+    let sqlbefore = "select * from tron_live.live_balance where addr = '0x5b6abfaa7a32f2e5ab35b6918c93f4593a311b1f' and currency = 'ETH'";
     let rs1 = await db.exec(sqlbefore)
     console.log("before is --->",rs1[0].balance)
     //
     let sql =
-    "update live_balance set balance = balance + ? where addr = '0x5b6abfaa7a32f2e5ab35b6918c93f4593a311b1f' and currency = 'ETH'";
+    "update tron_live.live_balance set balance = balance + ? where addr = '0x5b6abfaa7a32f2e5ab35b6918c93f4593a311b1f' and currency = 'ETH'";
     let balance = 0.48 * 1e9
     let res = await db.exec(sql, [balance]);
     //
