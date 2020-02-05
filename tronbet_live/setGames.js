@@ -26,7 +26,6 @@ async function fixBalance() {
     "update live_balance set balance = balance + ? where addr = '0x5b6abfaa7a32f2e5ab35b6918c93f4593a311b1f' and currency = 'ETH'";
     let balance = 0.48 * 1e9
     let res = await db.exec(sql, [balance]);
-    console.log("update res->",res)
     //
     let rs2 = await db.exec(sqlbefore)
     console.log("after is --->",rs2[0].balance)
