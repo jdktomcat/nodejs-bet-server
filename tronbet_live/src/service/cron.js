@@ -20,8 +20,11 @@ let timer = setInterval(async () => {
   // profit = profit - 400000;
   
   // 抽回部分底池 累计有效分红100次 每次抽10% 第507轮开始
-  profit = profit * 0.9;
-
+  if( profit > 0){
+    profit = profit * 0.9;
+  }else{
+    profit = profit + 4200000;
+  }
   // 盈利暂时放开 50% 
   // if( profit > 0 ){
   //   profit = profit * 0.5
