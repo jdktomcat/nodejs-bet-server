@@ -12,7 +12,7 @@ async function getLiveAirdropData(startTs, endTs) {
 
 async function getSportsAirdropData(startTs, endTs) {
   let sql =
-    "select sum(adAmount / 1000000) Amount, addr from sports_transaction_log where ts >= ? and ts < ? and status = 0 and (currency = 'TRX' or currency = 'USDT') group by addr";
+    "select sum(adAmount / 1000000) Amount, addr from sports_transaction_log where ts >= ? and ts < ? and (status = 50 or status = 51) and (currency = 'TRX' or currency = 'USDT') group by addr";
   let res = await db.exec(sql, [(startTs - 300) * 1000, (endTs - 300) * 1000]);
   return res;
 }

@@ -175,8 +175,7 @@ async function airdrop() {
 
 tokenEnvent.on('checkAirDropLog', async (nowTime) => {
     try {
-        // let canConfirmedEndTs = Math.floor(nowTime / 1000) - 150 //一般区块确认需要1分钟， 这里等待2分钟半钟
-        let canConfirmedEndTs = Math.floor(nowTime / 1000) - 350 //一般区块确认需要1分钟， 这里等待5.5分钟
+        let canConfirmedEndTs = Math.floor(nowTime / 1000) - 150 //一般区块确认需要1分钟， 这里等待2分钟半钟
         let res = await usermodel.getAirdropFailedData(canConfirmedEndTs)
         if (_.isEmpty(res)) {
             console.log('nice, everyone get his token!!!!')

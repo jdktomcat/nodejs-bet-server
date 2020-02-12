@@ -13,8 +13,7 @@ async function airdropAll() {
             }
         }
         console.log('---------------------------------airdrop end-------------------------------')
-    }, 300 * 1000)
-    // }, 120000)
+    }, 120000)
 }
 
 async function checkAll() {
