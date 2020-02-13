@@ -166,7 +166,7 @@ async function withdraw(ctx) {
     const tmp5Limit = Date.now() - min5Limit
     if(tmp5Limit <= 5 * 60 * 1000){
       // 5min内不能提现
-      return await common.sendMsgToClient(ctx, 1008, '5 min can not create a new withdraw');
+      return await common.sendMsgToClient(ctx, 1010, '5 min can not create a new withdraw');
     }
   }
 
