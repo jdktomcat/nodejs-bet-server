@@ -646,7 +646,7 @@ async function getWithdrawLast24HCnt(uid) {
 }
 
 async function getWithdraw5minLimit(addr) {
-    let sql = "select startTs ts from live_cb_withdraw_log where addr = ? order by startTs asc limit 1"
+    let sql = "select startTs ts from tron_live.live_cb_withdraw_log where addr = ? order by startTs desc limit 1"
     let res = await db.exec(sql, [addr])
     if (_.isEmpty(res)) return 0
     return res[0].ts || 0
