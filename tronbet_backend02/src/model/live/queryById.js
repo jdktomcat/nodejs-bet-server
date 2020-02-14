@@ -93,7 +93,7 @@ const getDataOfSport = async function (startDateTmp, endDateTmp, gameId) {
             tron_live.sports_transaction_log a
             left join (
                 select distinct transactionId as transactionId
-                from sports_bet_detail_log
+                from tron_live.sports_bet_detail_log
                 where sportId = ?
             )  b  on a.transactionId = b.transactionId
         WHERE
