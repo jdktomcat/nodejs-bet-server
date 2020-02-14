@@ -645,6 +645,13 @@ async function getWithdrawLast24HCnt(uid) {
     return res[0].cnt || 0
 }
 
+async function getWithdraw5minLimit(addr) {
+    let sql = "select startTs ts from tron_live.live_cb_withdraw_log where addr = ? order by startTs desc limit 1"
+    let res = await db.exec(sql, [addr])
+    if (_.isEmpty(res)) return 0
+    return res[0].ts || 0
+}
+
 module.exports = {
     getUserBalance,
     userRegister,
@@ -708,5 +715,6 @@ module.exports = {
     getDepositHistLogsCntByCurrency,
     getWithdrawLast24HCnt,
     findTodayWithdrawAmount,
-    findTodayTotalWithdrawAmount
+    findTodayTotalWithdrawAmount,
+    getWithdraw5minLimit
 }

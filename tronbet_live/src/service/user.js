@@ -160,6 +160,15 @@ async function withdraw(ctx) {
   let addr = params.addr;
   let currency = params.currency;
   let amount = Math.floor(params.amount * 1e6);
+  // 5 分钟提现限制
+  const min5Limit = await usermodel.getWithdraw5minLimit(addr)
+  if(min5Limit !== 0){
+    const tmp5Limit = Date.now() - min5Limit
+    if(tmp5Limit <= 5 * 60 * 1000){
+      // 5min内不能提现
+      return await common.sendMsgToClient(ctx, 1010, '5 min can not create a new withdraw');
+    }
+  }
 
   // 并发限制
   let withdrawLimit = await redisUtils.hget(redisUserKeyPrefix + addr, 'withdrawLimit');
