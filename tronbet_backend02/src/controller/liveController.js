@@ -20,7 +20,7 @@ class LiveController {
         const start = ctx.query.start
         const end = ctx.query.end
         const game_id = ctx.query.game_id
-        const data = await queryUsers.getDataFile(type, start, end,game_id)
+        const data = await QueryById.getDataFile(type, start, end,game_id)
         ctxUtils.file(ctx, data)
     }
 
@@ -28,7 +28,7 @@ class LiveController {
     static async getAccount(ctx) {
         const email = ctx.query.email
         const data = await QueryUsers.getAccount(email)
-        ctxUtils.file(ctx, data)
+        ctx.body = ctxUtils.success(data)
     }
 
 }
