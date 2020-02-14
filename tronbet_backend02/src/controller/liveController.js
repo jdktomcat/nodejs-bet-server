@@ -15,7 +15,7 @@ class LiveController {
         ctx.body = ctxUtils.success(data)
     }
 
-    static async getFlieByGameId(ctx) {
+    static async getFileByGameId(ctx) {
         const type = ctx.query.type
         const start = ctx.query.start
         const end = ctx.query.end
