@@ -4,6 +4,7 @@ const {newUtcTime, raw} = require("./../utils/dbutils")
 const getDataOfEM = async function (startDate, endDate, gameId) {
     const sql = `
         select
+            g.day,
             g.dau,
             sum(g.all_amount) as all_amount,
             sum(g.all_win) as all_win,
