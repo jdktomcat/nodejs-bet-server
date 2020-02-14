@@ -133,7 +133,7 @@ class QueryById {
     }
 
     static async getDataFile(type, startDate, endDate,gameId) {
-        const data = await this.getTopLoss(type, startDate, endDate)
+        const data = await this.getData(type, startDate, endDate,gameId)
         const keys = Object.keys(data[0])
         let sbody = ''
         keys.forEach(e => {
@@ -153,10 +153,5 @@ class QueryById {
         return sbody
     }
 }
-
-QueryById.getData('sport','2020-02-01','2020-02-10','1').then(e=>{
-    console.log(e)
-})
-
 
 module.exports = QueryById
