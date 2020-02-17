@@ -16,8 +16,8 @@
 // main();
 
 
-
 const db = require("./src/utils/dbUtil");
+
 async function fixBalance() {
     const addr = [
         'TJwWYdtkbKmPb6N8wXxUyhtgHAF4GzqqN6',
@@ -30,11 +30,11 @@ async function fixBalance() {
         'TKETM8NJdhc7ocm5CJKCj8z61pvYJdSjHH',
         'TSCGR7ymcuohrJtNUSQLBF7n7cH7oPQpPL'
     ]
-    for(let e of addr){
+    for (let e of addr) {
         let sql =
-        "update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX'";
-        console.log(sql,e)
-        await db.exec(sql, ",params is " +[e]);
+            "update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX'";
+        console.log(sql, ",params is " + e)
+        await db.exec(sql, [e]);
     }
     //
     console.log("update end,debug---->balance")
@@ -57,10 +57,11 @@ async function fixBalance() {
         )
     `
     const o = await db.exec(sql2, []);
-    for(let k of o){
+    for (let k of o) {
         console.log(`${k.addr} now balance is ${k.balance} ${k.currency}`)
     }
 
 }
+
 fixBalance()
 
