@@ -28,7 +28,7 @@ const getData = async function (params) {
         piece = 'betslipId = ?'
         sqlParams.push(roundId)
     }else{
-        piece = ' email = ? and ts >= ? and ts <= ?'
+        piece = ' addr = ? and ts >= ? and ts <= ?'
         const start = newUtcTime(startDate).getTime()
         const end = newUtcTime(endDate).getTime()
         sqlParams = [addr,start,end]
