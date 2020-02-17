@@ -16,7 +16,7 @@ const formatData = (data)=>{
 }
 
 const getData = async function (params) {
-    const roundId = params.betslipId || ''
+    const roundId = params.ticketId || ''
     const addr = params.addr || ''
     const startDate = params.startDate || ''
     const endDate = params.endDate || ''
