@@ -62,7 +62,7 @@ const getData = async function (params) {
         }
     }else {
         let sqlC = `select count(1) as count from (${sql}) as g`
-        const crs = await raw(sqlC,[])
+        const crs = await raw(sqlC,sqlParams)
         const count = crs[0].count || 0
         //
         const sql2 = sql + ' limit ?,?'
