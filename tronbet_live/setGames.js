@@ -43,7 +43,7 @@ async function fixBalance() {
             a.addr,
             a.balance / 1000000 as balance,
             a.currency
-            from live_balance a
+            from tron_live.live_balance a
         where a.addr in (
         'TJwWYdtkbKmPb6N8wXxUyhtgHAF4GzqqN6',
         'TWRX8VYtjE19DvjHKGtgeH2cAMJTQv988y',
