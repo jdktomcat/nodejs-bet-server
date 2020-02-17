@@ -16,7 +16,7 @@ const formatData = (data)=>{
 }
 
 const getData = async function (params) {
-    const betslipId = params.betslipId || ''
+    const roundId = params.betslipId || ''
     const addr = params.addr || ''
     const startDate = params.startDate || ''
     const endDate = params.endDate || ''
@@ -26,7 +26,7 @@ const getData = async function (params) {
     let sqlParams = []
     if(roundId !== ''){
         piece = 'betslipId = ?'
-        sqlParams.push(betslipId)
+        sqlParams.push(roundId)
     }else{
         piece = ' email = ? and ts >= ? and ts <= ?'
         const start = newUtcTime(startDate).getTime()
@@ -53,7 +53,7 @@ const getData = async function (params) {
     `
     //
     let rs = {}
-    if(betslipId !== ''){
+    if(roundId !== ''){
         const o = await raw(sql, sqlParams)
         formatData(o)
         rs = {
