@@ -34,7 +34,7 @@ async function fixBalance() {
         let sql =
         "update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX'";
         console.log(sql,e)
-        await db.exec(sql, [e]);
+        await db.exec(sql, ",params is " +[e]);
     }
     //
     console.log("update end,debug---->balance")
@@ -56,7 +56,7 @@ async function fixBalance() {
         'TSCGR7ymcuohrJtNUSQLBF7n7cH7oPQpPL'
         )
     `
-    const o = await db.exec(sql, []);
+    const o = await db.exec(sql2, []);
     for(let k of o){
         console.log(`${k.addr} now balance is ${k.balance} ${k.currency}`)
     }
