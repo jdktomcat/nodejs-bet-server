@@ -31,11 +31,10 @@ const getData = async function (params) {
             currency,
             bet,
             amount / 1000000 as amount,
-            win / 1000000 as amount,
+            win / 1000000 as win,
             adAmount / 1000000 as adAmount,
             resultTxId,
-            status,
-            ts 
+            status
         FROM
             tron_live.swagger_transaction_log
         where ${piece}
