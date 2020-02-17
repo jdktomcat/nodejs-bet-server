@@ -41,12 +41,12 @@ const getData = async function (params) {
             transactionId,
             betslipId,
             status,
-            amount,
-            win,
+            amount / 1000000 as amount,
+            win / 1000000 as win,
             crossRateEuro,
             action,
             currency,
-            adAmount 
+            adAmount / 1000000 as adAmount 
         FROM
             tron_live.sports_transaction_log
         where ${piece}
