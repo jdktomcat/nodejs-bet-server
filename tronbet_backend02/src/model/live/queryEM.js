@@ -47,7 +47,7 @@ const getDataOfEM = async function (params) {
             rows : o
         }
     }else {
-        let sqlC = `select count(1) as count from (${sql})`
+        let sqlC = `select count(1) as count from (${sql}) as g`
         const crs = await raw(sqlC,[])
         const count = crs[0].count || 0
         //
