@@ -24,7 +24,7 @@ const getData = async function (params) {
     //
     let sqlParams = [addr, start, end]
     //
-    const sql = `         
+    let sql = `         
         SELECT
             email,
             orderId,
@@ -37,12 +37,13 @@ const getData = async function (params) {
             status 
         FROM
     tron_live.live_cb_withdraw_log
-        where addr = ? and startTs >= ? and startTs <= ? limit ?,?
+        where addr = ? and startTs >= ? and startTs <= ?
     `
     let sqlC = `select count(1) as count from (${sql}) as g`
     const crs = await raw(sqlC, sqlParams)
     const count = crs[0].count || 0
     //
+    sql += ' limit ?,?'
     sqlParams = sqlParams.concat([offset, limit])
     const rsData = await raw(sql, sqlParams)
     formatData(rsData)

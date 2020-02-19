@@ -24,7 +24,7 @@ const getData = async function (params) {
     //
     let sqlParams = [addr, start, end]
     //
-    const sql = `         
+    let sql = `         
         SELECT
             from_unixtime(ts / 1000,'%Y-%m-%d %H:%i:%s') as day,
             currency,
@@ -33,12 +33,13 @@ const getData = async function (params) {
             txId 
         FROM
             tron_live.live_cb_deposit_log
-        where addr = ? and ts >= ? and ts <= ? limit ?,?
+        where addr = ? and ts >= ? and ts <= ? 
     `
     let sqlC = `select count(1) as count from (${sql}) as g`
     const crs = await raw(sqlC, sqlParams)
     const count = crs[0].count || 0
     //
+    sql += ' limit ?,?'
     sqlParams = sqlParams.concat([offset, limit])
     const rsData = await raw(sql, sqlParams)
     formatData(rsData)
