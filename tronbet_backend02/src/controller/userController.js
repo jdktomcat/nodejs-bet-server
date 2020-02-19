@@ -16,6 +16,7 @@ function getRole(username) {
         '/edition': "定时产品倍率关闭",
     }
     const others = {
+        '/customer': "流水管理",
         '/typeAdmin': "游戏统计",
         '/lossList': "亏损排行",
         "/getDrainageList":"引流管理",
