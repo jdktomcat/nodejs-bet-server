@@ -13,19 +13,21 @@ function md5Crypto(password) {
 function getRole(username) {
     const admin = {
         '/activation': "游戏管理",
-        '/edition': "定时产品倍率关闭",
+        '/edition': "定时活动倍率关闭",
     }
     const others = {
-        '/customer': "流水管理",
-        '/typeAdmin': "游戏统计",
-        '/lossList': "亏损排行",
+        '/customer': "用户流水查询",
+        '/typeAdmin': "每日流水查询",
         "/getDrainageList":"引流管理",
-        "/userTop":"玩家排行",
-        "/LiveGame":"liveGame查询",
+        "/userTop":"每周玩家排行",
+        '/lossList': "Live亏损游戏排行",
+        "/LiveGame":"live单个游戏查询",
         "/liveManey":"live余额查询",
         "/liveEMList":"EM流水查询",
         "/liveHub88List":"Hub88流水查询",
         "/liveSportList":"Sport流水查询",
+        "/liveDeposit": "Live充值流水",
+        "/liveWithDraw": "Live提现流水"
     }
     //
     if(username === 'admin'){
