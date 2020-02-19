@@ -10,6 +10,34 @@ function md5Crypto(password) {
     return md5Password;
 }
 
+function getRole(username) {
+    const admin = {
+        '/activation': "游戏管理",
+        '/edition': "定时活动倍率关闭",
+    }
+    const others = {
+        '/customer': "用户流水查询",
+        '/typeAdmin': "每日流水查询",
+        "/getDrainageList":"引流管理",
+        "/userTop":"每周玩家排行",
+        '/lossList': "Live亏损游戏排行",
+        "/LiveGame":"live单个游戏查询",
+        "/liveManey":"live余额查询",
+        "/liveEMList":"EM流水查询",
+        "/liveHub88List":"Hub88流水查询",
+        "/liveSportList":"Sport流水查询",
+        "/liveDeposit": "Live充值流水",
+        "/liveWithDraw": "Live提现流水"
+    }
+    //
+    if(username === 'admin'){
+        return Object.assign({},admin,others)
+    }else {
+        return others
+    }
+}
+
+
 class UserController {
 
     /**
@@ -30,9 +58,11 @@ class UserController {
             return ctx.body = {code: 500, message: "user is not exist!"}
         }
         const pwd = md5Crypto(password)
-        if (u[0].password === pwd) {
+        if (u[0].password === pwd && u[0].username === username) {
             ctx.session.user = username;
-            ctx.body = {code: 200, message: '登录成功！'};
+            //
+            const data = getRole(username)
+            ctx.body = {code: 200, message: '登录成功！',data:data};
         } else {
             ctx.body = {code: 500, message: '账号或密码错误！'};
         }
@@ -72,7 +102,7 @@ class UserController {
         let passwdHash = hash.hex();
         //
         const data = await addOldUser(username, passwdHash, role)
-        ctx.body = {success: 200, msg: '创建成功！',data};
+        ctx.body = {success: 200, msg: '创建成功！', data};
     }
 
 
@@ -81,7 +111,7 @@ class UserController {
         console.log("debug-------->", params)
         const username = params.username || '';
         const data = await removeOldUser(username)
-        ctx.body = {success: 200, msg: '移除成功！',data};
+        ctx.body = {success: 200, msg: '移除成功！', data};
     }
 
     static async removeNewUser(ctx) {
@@ -89,7 +119,7 @@ class UserController {
         console.log("debug-------->", params)
         const username = params.username || '';
         const data = await removeNewUser(username)
-        ctx.body = {success: 200, msg: '移除成功！',data};
+        ctx.body = {success: 200, msg: '移除成功！', data};
     }
 
 }
