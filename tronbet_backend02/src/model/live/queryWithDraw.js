@@ -37,7 +37,7 @@ const getData = async function (params) {
             status 
         FROM
     tron_live.live_cb_withdraw_log
-        where addr = ? and ts >= ? and ts <= ? limit ?,?
+        where addr = ? and startTs >= ? and startTs <= ? limit ?,?
     `
     let sqlC = `select count(1) as count from (${sql}) as g`
     const crs = await raw(sqlC, sqlParams)
