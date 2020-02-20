@@ -5,6 +5,7 @@ const getMoon = async function (startDate, endDate) {
     const sql = `
             SELECT
             from_unixtime(ts / 1000,'%Y-%m-%d') as day,
+            count(distinct addr)  as dau,
             count(1) as count,
             sum(amount) / 1000000 as all_amount,
             sum(win) / 1000000  as all_win,
@@ -29,6 +30,7 @@ const getRing = async function (startDate, endDate) {
     const sql = `
         SELECT
             from_unixtime(ts / 1000,'%Y-%m-%d') as day,
+            count(distinct addr)  as dau,
             count(1) as count,
             sum(amount) / 1000000 as all_amount,
             sum(win) / 1000000  as all_win,
@@ -53,6 +55,7 @@ const getDuel = async function (startDate, endDate) {
     const sql = `
 SELECT
     from_unixtime(endTs / 1000,'%Y-%m-%d') as day,
+    count(distinct player1)  as dau,
     count(1) as count,
     sum(amount * playerCnt) / 1000000 as all_amount,
     sum(win) / 1000000  as all_win,
@@ -76,85 +79,58 @@ WHERE
 const getEM = async function (startDate, endDate) {
     const sql = `
     select
-        count(1) as count,
-        from_unixtime(ts / 1000,'%Y-%m-%d') as day,
-        sum(amount) as all_amount
-    from
-        tron_live.live_action_log
-    where
-        ts >= ?
-        AND ts < ?
-        and action = ?
-        and txstatus = 1
-        group by from_unixtime(ts / 1000,'%Y-%m-%d')    
-    union all
-    select
-        count(1) as count,
-        from_unixtime(ts / 1000,'%Y-%m-%d') as day,
-        sum(amount) as all_amount
-    from
-        tron_live.live_action_log_v2
-    where
-        ts >= ?
-        AND ts < ?
-        and action = ?
-        and txstatus = 1
-        and currency = 'trx'
-        group by from_unixtime(ts / 1000,'%Y-%m-%d')
+    g.day,
+    sum(g.dau) as dau,   
+    sum(g.count) as count,   
+    sum(g.all_amount) as all_amount,   
+    sum(g.all_win) as all_win   
+    from (    
+        select
+            count(distinct addr)  as dau,
+            count(1) as count,
+            from_unixtime(ts / 1000,'%Y-%m-%d') as day,
+            sum(amount) as all_amount,
+            0 as all_win
+        from
+            tron_live.live_action_log_v2
+        where
+            ts >= ?
+            AND ts < ?
+            and action = 'bet'
+            and txstatus = 1
+            group by from_unixtime(ts / 1000,'%Y-%m-%d')    
+        union all
+        select
+            count(distinct addr)  as dau,
+            0 as count,
+            from_unixtime(ts / 1000,'%Y-%m-%d') as day,
+            0 as all_amount,
+            sum(amount) as all_win
+        from
+            tron_live.live_action_log_v2
+        where
+            ts >= ?
+            AND ts < ?
+            and action = 'result'
+            and txstatus = 1
+            and currency = 'trx'
+            group by from_unixtime(ts / 1000,'%Y-%m-%d')
+    ) as g group by g.day
     `
-    const actions = ['bet', 'result']
-    const actionsStart = newUtcTime(startDate).getTime()
-    const actionsEnd = newUtcTime(endDate).getTime()
-    const params1 = [
-        actionsStart, actionsEnd, actions[0], actionsStart, actionsEnd, actions[0]
+    const start = newUtcTime(startDate).getTime()
+    const end = newUtcTime(endDate).getTime()
+    const params = [
+        start, end, start, end
     ]
-    const params2 = [
-        actionsStart, actionsEnd, actions[1], actionsStart, actionsEnd, actions[1]
-    ]
-    const rs1 = await raw(sql, params1)
-    const rs2 = await raw(sql, params2)
-    //
-    let dict1 = {}
-    let countDict1 = {}
-    rs1.forEach(e => {
-        dict1[e.day] = e.all_amount || 0
-        countDict1[e.day] = e.count || 0
-    })
-    //
-    let dict2 = {}
-    let countDict2 = {}
-    rs2.forEach(e => {
-        dict2[e.day] = e.all_amount || 0
-        countDict2[e.day] = e.count || 0
-    })
-    //
-    const dataArray = getdayList(startDate,endDate)
-    dataArray.pop()
-    let s = []
-    for(let e of dataArray){
-        const key = getTimeFormat(e)
-        //
-        let all_amount = dict1[key] || 0
-        let count = countDict1[key] || 0
-        let all_win = dict2[key] || 0
-        let balance = Number(all_amount) - Number(all_win)
-        let ele1 = {
-            day: key,
-            count: count,
-            all_amount: all_amount,
-            all_win: all_win,
-            balance: balance
-        }
-        s.push(ele1)
-    }
-    return s
-
+    const rs1 = await raw(sql, params)
+    return rs1
 }
 
 const getHub88 = async function (startDate, endDate) {
     const sql = `
         SELECT
             from_unixtime(ts / 1000,'%Y-%m-%d') as day,
+            count(distinct email)  as dau,
             count(1) as count,
             sum(amount) / 1000000 as all_amount,
             sum(win) / 1000000  as all_win,
@@ -180,6 +156,7 @@ const getSport = async function (startDate, endDate) {
     const sql = `
         SELECT
             from_unixtime(ts / 1000,'%Y-%m-%d') as day,
+            count(distinct addr)  as dau,
             count(1) as count,
             sum(amount) / 1000000 as all_amount,
             sum(win) / 1000000  as all_win,
@@ -205,6 +182,7 @@ const getPoker = async function (startDate, endDate) {
     const sql = `
         select
             from_unixtime(optime,'%Y-%m-%d') as day,
+            count(distinct addr)  as dau,
             count(1) as count,
             sum(amount) / 1000000 as all_amount,
             0 as all_win,

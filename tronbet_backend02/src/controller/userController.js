@@ -16,10 +16,10 @@ function getRole(username) {
         '/edition': "定时活动倍率关闭",
     }
     const others = {
-        '/customer': "用户流水查询",
         '/typeAdmin': "每日流水查询",
-        "/getDrainageList":"引流管理",
-        "/userTop":"每周玩家排行",
+        '/customer': "用户流水查询",
+        // "/getDrainageList":"引流管理",
+        // "/userTop":"每周玩家排行",
         '/lossList': "Live亏损游戏排行",
         "/LiveGame":"live单个游戏查询",
         "/liveManey":"live余额查询",

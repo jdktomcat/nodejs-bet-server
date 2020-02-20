@@ -119,6 +119,17 @@ const generateDataToCsv = function (rs) {
 }
 
 
+function getCustomDay(today, n = 1) {
+    var start = new Date(today);
+    start.setUTCDate(new Date(today.getTime()).getDate() + n);
+    start.setUTCHours(0)
+    start.setUTCMinutes(0)
+    start.setUTCSeconds(0)
+    start.setUTCMilliseconds(0)
+    return start
+}
+
+
 module.exports = {
     getTimeFormat,
     getNextDayUtcTime,
@@ -128,5 +139,6 @@ module.exports = {
     raw,
     formatDataToTRX,
     generateDataToCsv,
-    getDaysByNum
+    getDaysByNum,
+    getCustomDay
 }
