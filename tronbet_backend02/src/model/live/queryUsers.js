@@ -11,12 +11,13 @@ const getAccount = async function (email) {
             left join live_account b
             on a.uid = b.uid
         where a.uid = b.uid
-        
     `
     let params = []
     if(email !== ''){
         params.push(email)
         sql += 'and b.email = ?'
+    }else {
+        return []
     }
     const t = await raw(sql, params)
     return t
