@@ -305,6 +305,9 @@ const getPoker = async function (addr) {
 
 class TransactionByAddr {
     static async getData(addr) {
+        if(addr === ''){
+            return []
+        }
         const typeDict = {
             "dice": getDice,
             "moon": getMoon,
