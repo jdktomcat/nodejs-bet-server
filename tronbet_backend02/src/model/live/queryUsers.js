@@ -1,5 +1,16 @@
 const {raw} = require("./../utils/dbutils")
 
+const formatData = (data) => {
+    data.forEach(e => {
+        if (e.currency === 'TRX') {
+            e.amount = e.amount / 1e6
+        } else {
+            e.amount = e.amount / 1e9
+        }
+    })
+}
+
+
 const getAccount = async function (email) {
     let sql = `
         select
@@ -20,6 +31,7 @@ const getAccount = async function (email) {
         return []
     }
     const t = await raw(sql, params)
+    formatData(t)
     return t
 }
 
