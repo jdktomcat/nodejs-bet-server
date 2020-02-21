@@ -93,6 +93,10 @@ const getAir = async function (params) {
 class QueryDrop {
 
     static async getData(params) {
+        const addr = params.addr || ''
+        if(addr === ''){
+            return []
+        }
         const oldEM = await getOldEM(params)
         const em = await getEM(params)
         const hub88 = await getHub88(params)
@@ -109,7 +113,7 @@ class QueryDrop {
             air_amount: air_amount,
             air_live: air_live,
         }
-        return data
+        return [data]
     }
 }
 
