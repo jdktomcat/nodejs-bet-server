@@ -6,6 +6,7 @@ const queryHub88 = require("../model/live/queryHub88")
 const querySport = require("../model/live/querySport")
 const queryDeposit = require("../model/live/queryDeposit")
 const queryWithDraw = require("../model/live/queryWithDraw")
+const QueryAirDrop = require("../model/live/QueryAirDrop")
 
 class LiveController {
     /**
@@ -66,6 +67,13 @@ class LiveController {
         const data = await queryWithDraw.getData(params)
         ctx.body = ctxUtils.success(data)
     }
+
+    static async getDropList(ctx) {
+        const params = ctx.query || {}
+        const data = await QueryAirDrop.getData(params)
+        ctx.body = ctxUtils.success(data)
+    }
+
 }
 
 module.exports = LiveController
