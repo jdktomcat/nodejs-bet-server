@@ -30,7 +30,26 @@ async function getOnlineList() {
 }
 
 
+async function getIsNewArray() {
+    let sql = "select *  from tron_live.live_online_game where is_new = '1'"
+    let res = await db.exec(sql, [])
+    //
+    const hub88 = res.filter(e => e.vendor === dict.hub88).map(e => e.game_name)
+    // em
+    const slots = res.filter(e => e.vendor === dict.em && e.em_type === emDict.slots).map(k => k.game_name);
+    const table = res.filter(e => e.vendor === dict.em && e.em_type === emDict.table).map(k => k.game_name);
+    const live = res.filter(e => e.vendor === dict.em && e.em_type === emDict.live).map(k => k.game_id);
+    return {
+        hub88: hub88,
+        emSlot: slots,
+        emTable: table,
+        emLive: live,
+    }
+}
+
+
 
 module.exports = {
     getGameList: getOnlineList,
+    getIsNewArray : getIsNewArray,
 }
