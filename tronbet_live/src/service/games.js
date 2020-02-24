@@ -338,16 +338,17 @@ async function parseGames() {
     let swaggerGame = await getSwaggerGames();
     swaggerGame['Video Slots'].sort(sortbySwaggerGames);
     //
-    const slotGames = [...swaggerGame['Video Slots'], ...slots]
+    let slotGames = [...swaggerGame['Video Slots'], ...slots]
     //sort by newGame sort desc
-    slotGames.sort((c, d) => {
+    slotGames.sort(function (c,d) {
         let index1 = newGameArray.indexOf(c);
         let index2 = newGameArray.indexOf(d);
-        if (index1 > index2) return 1;
+        if (index1 > index2) return -1;
         if (index1 === index2) return 0;
-        return -1;
+        return 1;
     })
     return {
+        test1:newGameArray,
         newFlag: newGameFlag,
         slots: slotGames,
         balckjackt: balckjack,
