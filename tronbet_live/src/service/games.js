@@ -359,7 +359,9 @@ async function parseGames() {
 
     return {
         newFlag: newGameFlag,
-        slots: newSlot,
+        test1 : slotGamesNames,
+        test2 : newGameArray,
+        slots: slotGames,
         balckjackt: balckjack,
         baccaratt: baccarat,
         roulettet: roulette,
