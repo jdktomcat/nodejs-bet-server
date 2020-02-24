@@ -42,6 +42,7 @@ async function updateLiveGame(params) {
     em_type = ? ,
     status = ?,
     rate = ?,
+    is_new = ?,
     ts = ? 
     where id = ?`
     const p = [
@@ -52,6 +53,7 @@ async function updateLiveGame(params) {
         params.status,
         Number(params.rate),
         Date.now(),
+        Number(params.is_new),
         Number(params.id)
     ]
     let res = await raw(sql, p)

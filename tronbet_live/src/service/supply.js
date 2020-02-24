@@ -144,9 +144,10 @@ async function editGame(ctx) {
 
 async function updateGames(ctx) {
     let body = ctx.request.body || {}
-    const args = ['vendor', 'game_id', 'game_name', 'em_type', 'status', 'rate', 'id',]
+    const args = ['vendor', 'game_id', 'game_name', 'em_type', 'status', 'rate', 'id','is_new']
     let p = {}
     args.forEach(e => p[e] = body[e] || '')
+    p.is_new = p.is_new || '0'
     //
     if (!["hub88", "em"].includes(p.vendor)) {
         return ctx.body = {code: 500, message: "param vendor is error"}
