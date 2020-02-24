@@ -192,7 +192,7 @@ async function getSortGamesByTsDesc(slotGames, newGameArray) {
     //     if (index1 === index2) return 0;
     //     return -1;
     // })
-    //排序有问题，这里强制按数据库重新生成一个
+    //排序有问题，这里强制按数据库时间重新生成一个
     const slotDataNames = slotGames.map(e => e.gameName)
     let newSlot = []
     newGameArray.forEach(e => {
@@ -360,12 +360,21 @@ async function parseGames() {
     swaggerGame['Video Slots'].sort(sortbySwaggerGames);
     //
     let slotGames = [...swaggerGame['Video Slots'], ...slots]
-    const newSlotGames = getSortGamesByTsDesc(slotGames,newSortNames)
+    // const newSlotGames = getSortGamesByTsDesc(slotGames,newSortNames)
+    const slotDataNames = slotGames.map(e => e.gameName)
+    let newSlot = []
+    newSortNames.forEach(e => {
+        if (slotDataNames.includes(e)) {
+            const gNames = slotGames.find(k => k.gameName.includes(e.trim()))
+            newSlot.push(gNames)
+        }
+    })
 
     return {
         newFlag: newGameFlag,
         test1: newSortNames,
-        slots: newSlotGames,
+        test2: slotGames,
+        slots: newSlot,
         balckjackt: balckjack,
         baccaratt: baccarat,
         roulettet: roulette,
