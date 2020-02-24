@@ -52,8 +52,8 @@ async function updateLiveGame(params) {
         params.em_type,
         params.status,
         Number(params.rate),
-        Date.now(),
         Number(params.is_new),
+        Date.now(),
         Number(params.id)
     ]
     let res = await raw(sql, p)
