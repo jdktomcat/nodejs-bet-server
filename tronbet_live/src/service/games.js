@@ -350,18 +350,16 @@ async function parseGames() {
     //排序有问题，这里强制按数据库重新生成一个
     const slotGamesNames = slotGames.map(e=>e.gameName)
     let newSlot = []
-    newGameArray.forEach(e=>{
-        if(slotGamesNames.includes(e)){
-            const gNames = slotGames.find(k=>k.name === e)
+    slotGamesNames.forEach(e => {
+        if(newGameArray.includes(e)){
+            const gNames = slotGames.find(k => k.gameName.includes(e.trim()))
             newSlot.push(gNames)
         }
     })
 
     return {
         newFlag: newGameFlag,
-        test1 : slotGamesNames,
-        test2 : newGameArray,
-        slots: slotGames,
+        slots: newSlot,
         balckjackt: balckjack,
         baccaratt: baccarat,
         roulettet: roulette,
