@@ -1,11 +1,48 @@
-const {raw, newUtcTime,getdayList,getTimeFormat} = require("./utils/dbutils")
-const {getDiceData} = require("./dice/dice")
+const {raw, newUtcTime, getCustomDay, getTimeFormat} = require("../utils/dbutils")
+
+const getDice = async function (start, end) {
+    const sql = `
+        select
+                      count(1) as count,
+                      sum(g.amount_sun) / 1000000 as all_amount,
+                      sum(g.payout_sun) / 1000000 as all_win,
+                      (sum(g.amount_sun)- sum(g.payout_sun)) / 1000000  as balance
+         from (
+          SELECT
+                    dice_user_order.addr,
+                    dice_user_order.tx_id,
+                    dice_user_order.order_id,
+                    dice_user_order.sign,
+                    dice_user_order.ts,
+                    tron_bet_wzc.dice_events_v3.amount_sun,
+                    tron_bet_wzc.dice_events_v3.payout_sun
+                  FROM
+                    tron_bet_admin.dice_user_order
+                  LEFT JOIN
+                    tron_bet_wzc.dice_events_v3
+                  ON
+                    dice_user_order.order_id = tron_bet_wzc.dice_events_v3.order_id and dice_user_order.addr = tron_bet_wzc.dice_events_v3.addr
+                  WHERE
+                    dice_user_order.ts >= ? and dice_user_order.ts <= ?
+                  ORDER BY
+                    dice_user_order.ts DESC
+                    ) as g
+    `
+    const params = [start.getTime(), end.getTime()]
+    let rs = await raw(sql, params)
+    const rs2 = rs[0] || {}
+    let ccc1 = {
+        count: rs2.count || 0,
+        all_amount: rs2.all_amount || 0,
+        all_win: rs2.all_win || 0,
+        balance: rs2.balance || 0,
+    }
+    return ccc1
+}
 
 const getMoon = async function (startDate, endDate) {
     const sql = `
             SELECT
-            from_unixtime(ts / 1000,'%Y-%m-%d') as day,
-            count(distinct addr)  as dau,
             count(1) as count,
             sum(amount) / 1000000 as all_amount,
             sum(win) / 1000000  as all_win,
@@ -16,21 +53,25 @@ const getMoon = async function (startDate, endDate) {
             ts >= ?
             AND ts < ?
             And crashAt is not null 
-            group by from_unixtime(ts / 1000,'%Y-%m-%d')
     `
     const params = [
         newUtcTime(startDate).getTime(),
         newUtcTime(endDate).getTime()
     ]
     const t = await raw(sql, params)
-    return t
+    const rs2 = t[0] || {}
+    let ccc1 = {
+        count: rs2.count || 0,
+        all_amount: rs2.all_amount || 0,
+        all_win: rs2.all_win || 0,
+        balance: rs2.balance || 0,
+    }
+    return ccc1
 }
 
 const getRing = async function (startDate, endDate) {
     const sql = `
         SELECT
-            from_unixtime(ts / 1000,'%Y-%m-%d') as day,
-            count(distinct addr)  as dau,
             count(1) as count,
             sum(amount) / 1000000 as all_amount,
             sum(win) / 1000000  as all_win,
@@ -41,53 +82,60 @@ const getRing = async function (startDate, endDate) {
             roll is not null
             AND ts >= ?
             AND ts < ?
-            group by from_unixtime(ts / 1000,'%Y-%m-%d')
     `
     const params = [
         newUtcTime(startDate).getTime(),
         newUtcTime(endDate).getTime()
     ]
     const t = await raw(sql, params)
-    return t
+    const rs2 = t[0] || {}
+    let ccc1 = {
+        count: rs2.count || 0,
+        all_amount: rs2.all_amount || 0,
+        all_win: rs2.all_win || 0,
+        balance: rs2.balance || 0,
+    }
+    return ccc1
 }
 
 const getDuel = async function (startDate, endDate) {
     const sql = `
-SELECT
-    from_unixtime(endTs / 1000,'%Y-%m-%d') as day,
-    count(distinct player1)  as dau,
-    count(1) as count,
-    sum(amount * playerCnt) / 1000000 as all_amount,
-    sum(win) / 1000000  as all_win,
-    (sum(amount * playerCnt) - sum(win)) / 1000000  as balance
-FROM
-    tron_bet_admin.wheel_solo_order
-WHERE
-    status = 3
-    AND endTs >= ?
-    AND endTs < ?
-    group by from_unixtime(endTs / 1000,'%Y-%m-%d')
+    SELECT
+        count(1) as count,
+        sum(amount * playerCnt) / 1000000 as all_amount,
+        sum(win) / 1000000  as all_win,
+        (sum(amount * playerCnt) - sum(win)) / 1000000  as balance
+    FROM
+        tron_bet_admin.wheel_solo_order
+    WHERE
+        status = 3
+        AND endTs >= ?
+        AND endTs < ?
     `
     const params = [
         newUtcTime(startDate).getTime(),
         newUtcTime(endDate).getTime()
     ]
-    const t = await raw(sql, params)
-    return t
+    const rs1 = await raw(sql, params)
+    const rs2 = rs1[0] || {}
+    let ccc1 = {
+        count: rs2.count || 0,
+        all_amount: rs2.all_amount || 0,
+        all_win: rs2.all_win || 0,
+        balance: rs2.balance || 0,
+    }
+    return ccc1
 }
 
 const getEM = async function (startDate, endDate) {
     const sql = `
     select
-        g.day,
-        sum(g.dau) as dau,   
         sum(g.count) as count,   
         sum(g.all_amount) as all_amount,   
         sum(g.all_win) as all_win,
         sum(g.all_amount) - sum(g.all_win) as balance   
     from (    
         select
-            count(distinct addr)  as dau,
             count(1) as count,
             from_unixtime(ts / 1000,'%Y-%m-%d') as day,
             sum(amount) as all_amount,
@@ -102,7 +150,6 @@ const getEM = async function (startDate, endDate) {
             group by from_unixtime(ts / 1000,'%Y-%m-%d')    
         union all
         select
-            count(distinct addr)  as dau,
             0 as count,
             from_unixtime(ts / 1000,'%Y-%m-%d') as day,
             0 as all_amount,
@@ -116,22 +163,28 @@ const getEM = async function (startDate, endDate) {
             and txstatus = 1
             and currency = 'trx'
             group by from_unixtime(ts / 1000,'%Y-%m-%d')
-    ) as g group by g.day
+    ) as g
     `
-    const start = newUtcTime(startDate).getTime()
-    const end = newUtcTime(endDate).getTime()
     const params = [
-        start, end, start, end
+        newUtcTime(startDate).getTime(),
+        newUtcTime(endDate).getTime(),
+        newUtcTime(startDate).getTime(),
+        newUtcTime(endDate).getTime(),
     ]
     const rs1 = await raw(sql, params)
-    return rs1
+    const rs2 = rs1[0] || {}
+    let ccc1 = {
+        count: rs2.count || 0,
+        all_amount: rs2.all_amount || 0,
+        all_win: rs2.all_win || 0,
+        balance: rs2.balance || 0,
+    }
+    return ccc1
 }
 
 const getHub88 = async function (startDate, endDate) {
     const sql = `
         SELECT
-            from_unixtime(ts / 1000,'%Y-%m-%d') as day,
-            count(distinct email)  as dau,
             count(1) as count,
             sum(amount) / 1000000 as all_amount,
             sum(win) / 1000000  as all_win,
@@ -142,22 +195,25 @@ const getHub88 = async function (startDate, endDate) {
             ts >= ?
             AND ts < ?
             AND status = 1
-            AND currency = 'TRX'
-            group by from_unixtime(ts / 1000,'%Y-%m-%d')
     `
     const params = [
         newUtcTime(startDate).getTime(),
         newUtcTime(endDate).getTime()
     ]
     const data = await raw(sql, params)
-    return data
+    const rs2 = data[0] || {}
+    let ccc1 = {
+        count: rs2.count || 0,
+        all_amount: rs2.all_amount || 0,
+        all_win: rs2.all_win || 0,
+        balance: rs2.balance || 0,
+    }
+    return ccc1
 }
 
 const getSport = async function (startDate, endDate) {
     const sql = `
         SELECT
-            from_unixtime(ts / 1000,'%Y-%m-%d') as day,
-            count(distinct addr)  as dau,
             count(1) as count,
             sum(amount) / 1000000 as all_amount,
             sum(win) / 1000000  as all_win,
@@ -168,22 +224,25 @@ const getSport = async function (startDate, endDate) {
             ts >= ?
             AND ts < ?
             AND status >= 50
-            AND currency = 'TRX'
-            group by from_unixtime(ts / 1000,'%Y-%m-%d')
     `
     const params = [
         newUtcTime(startDate).getTime(),
         newUtcTime(endDate).getTime()
     ]
     const data = await raw(sql, params)
-    return data
+    const rs2 = data[0] || {}
+    let ccc1 = {
+        count: rs2.count || 0,
+        all_amount: rs2.all_amount || 0,
+        all_win: rs2.all_win || 0,
+        balance: rs2.balance || 0,
+    }
+    return ccc1
 }
 
 const getPoker = async function (startDate, endDate) {
     const sql = `
         select
-            from_unixtime(optime,'%Y-%m-%d') as day,
-            count(distinct addr)  as dau,
             count(1) as count,
             sum(amount) / 1000000 as all_amount,
             0 as all_win,
@@ -195,21 +254,27 @@ const getPoker = async function (startDate, endDate) {
             AND action < 100
             AND  optime >= ?
             AND optime < ?
-            group by from_unixtime(optime,'%Y-%m-%d')
     `
     const params = [
         newUtcTime(startDate).getTime() / 1000,
         newUtcTime(endDate).getTime() / 1000
     ]
     const data = await raw(sql, params)
-    return data
+    const rs2 = data[0] || {}
+    let ccc1 = {
+        count: rs2.count || 0,
+        all_amount: rs2.all_amount || 0,
+        all_win: rs2.all_win || 0,
+        balance: rs2.balance || 0,
+    }
+    return ccc1
 }
 
-class DailyTransaction{
+class DailyAmount {
 
-    static async getDailyData(type, startDate, endDate){
+    static async getData(startDate,endDate) {
         const typeDict = {
-            "dice": getDiceData,
+            "dice": getDice,
             "moon": getMoon,
             "ring": getRing,
             "duel": getDuel,
@@ -218,31 +283,23 @@ class DailyTransaction{
             "sport": getSport,
             "poker": getPoker,
         }
-        const data = await typeDict[type](startDate, endDate)
-        return data
-    }
-
-
-    static async getDailyDataFile(type, startDate, endDate) {
-        const data = await this.getDailyData(type, startDate, endDate)
-        const keys = Object.keys(data[0])
-        let sbody = ''
-        keys.forEach(e => {
-            sbody += e + "\t"
-        })
-        sbody = sbody.trim()
-        sbody += "\n"
-        //
-        data.forEach(e => {
-            keys.forEach((k) => {
-                let t = e[k] || 0
-                sbody = sbody + t + '\t'
+        const keys = Object.keys(typeDict)
+        let o = {
+            count: 0,
+            all_amount: 0,
+            all_win: 0,
+            balance: 0,
+        }
+        for (let e of keys) {
+            const tmp = await typeDict[e](startDate, endDate)
+            console.log(e,tmp)
+            Object.keys(o).forEach(k=>{
+                o[k] = o[k] + Number(tmp[k])
             })
-            sbody = sbody.trim()
-            sbody += '\n'
-        })
-        return sbody
+        }
+        return o
     }
 }
 
-module.exports = DailyTransaction
+
+module.exports = DailyAmount

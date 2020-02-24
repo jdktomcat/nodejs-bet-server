@@ -47,9 +47,15 @@ async function getIsNewArray() {
     }
 }
 
-
+async function getNameSortArray() {
+    let sql = "select game_name  from tron_live.live_online_game order by ts asc"
+    let res = await db.exec(sql, [])
+    const name = res.map(e => e.game_name)
+    return name
+}
 
 module.exports = {
     getGameList: getOnlineList,
-    getIsNewArray : getIsNewArray,
+    getIsNewArray: getIsNewArray,
+    getNameSortArray: getNameSortArray,
 }

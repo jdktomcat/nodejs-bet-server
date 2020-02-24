@@ -5,7 +5,7 @@ const TopGameId = require("../model/topGameId")
 const TopUser = require("../model/topUsers")
 const TransactionByAddr = require("../model/transactionByAddr")
 const transactionByAddrAndDate = require("../model/transactionByAddrAndDate")
-const dailyDAU = require("../model/dailyDAU")
+const dailyDAU = require("../model/dailySchedule/dailyDAU")
 const ctxUtils = require("./ctxUtils")
 
 class QueryController {

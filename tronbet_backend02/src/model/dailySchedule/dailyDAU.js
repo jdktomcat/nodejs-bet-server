@@ -1,6 +1,4 @@
-const {raw, newUtcTime, getCustomDay, getTimeFormat} = require("./utils/dbutils")
-const {getDiceData} = require("./dice/dice")
-
+const {raw, newUtcTime, getCustomDay, getTimeFormat} = require("../utils/dbutils")
 
 const getDice = async function (startDate, endDate) {
     const sql = `
@@ -17,7 +15,8 @@ const getDice = async function (startDate, endDate) {
         newUtcTime(endDate).getTime()
     ]
     const t = await raw(sql, params)
-    return t
+    const addr = t.map(e => e.addr || '')
+    return addr
 }
 
 const getMoon = async function (startDate, endDate) {
@@ -36,7 +35,8 @@ const getMoon = async function (startDate, endDate) {
         newUtcTime(endDate).getTime()
     ]
     const t = await raw(sql, params)
-    return t
+    const addr = t.map(e => e.addr || '')
+    return addr
 }
 
 const getRing = async function (startDate, endDate) {
@@ -55,13 +55,17 @@ const getRing = async function (startDate, endDate) {
         newUtcTime(endDate).getTime()
     ]
     const t = await raw(sql, params)
-    return t
+    const addr = t.map(e => e.addr || '')
+    return addr
 }
 
 const getDuel = async function (startDate, endDate) {
     const sql = `
     SELECT
-        distinct player1  as addr
+        player1,
+        player2,
+        player3,
+        player4
     FROM
         tron_bet_admin.wheel_solo_order
     WHERE
@@ -73,7 +77,17 @@ const getDuel = async function (startDate, endDate) {
         newUtcTime(endDate).getTime()
     ]
     const t = await raw(sql, params)
-    return t
+    let dict = {}
+    t.forEach(k => {
+        const keys = [k.player1, k.player2, k.player3, k.player4]
+        keys.forEach(ele => {
+            if (ele !== '' && ele !== null && dict[ele] !== 1) {
+                dict[ele] = 1
+            }
+        })
+    })
+    const arr = Object.keys(dict)
+    return arr
 }
 
 const getEM = async function (startDate, endDate) {
@@ -88,13 +102,13 @@ const getEM = async function (startDate, endDate) {
             and action = 'bet'
             and txstatus = 1 
     `
-    const start = newUtcTime(startDate).getTime()
-    const end = newUtcTime(endDate).getTime()
     const params = [
-        start, end, start, end
+        newUtcTime(startDate).getTime(),
+        newUtcTime(endDate).getTime()
     ]
-    const rs1 = await raw(sql, params)
-    return rs1
+    const t = await raw(sql, params)
+    const addr = t.map(e => e.addr || '')
+    return addr
 }
 
 const getHub88 = async function (startDate, endDate) {
@@ -112,8 +126,9 @@ const getHub88 = async function (startDate, endDate) {
         newUtcTime(startDate).getTime(),
         newUtcTime(endDate).getTime()
     ]
-    const data = await raw(sql, params)
-    return data
+    const t = await raw(sql, params)
+    const addr = t.map(e => e.addr || '')
+    return addr
 }
 
 const getSport = async function (startDate, endDate) {
@@ -130,8 +145,9 @@ const getSport = async function (startDate, endDate) {
         newUtcTime(startDate).getTime(),
         newUtcTime(endDate).getTime()
     ]
-    const data = await raw(sql, params)
-    return data
+    const t = await raw(sql, params)
+    const addr = t.map(e => e.addr || '')
+    return addr
 }
 
 const getPoker = async function (startDate, endDate) {
@@ -148,13 +164,14 @@ const getPoker = async function (startDate, endDate) {
         newUtcTime(startDate).getTime() / 1000,
         newUtcTime(endDate).getTime() / 1000
     ]
-    const data = await raw(sql, params)
-    return data
+    const t = await raw(sql, params)
+    const addr = t.map(e => e.addr || '')
+    return addr
 }
 
 class DailyDAU {
 
-    static async getDailyData(day) {
+    static async getData(startDate, endDate) {
         const typeDict = {
             "dice": getDice,
             "moon": getMoon,
@@ -165,23 +182,13 @@ class DailyDAU {
             "sport": getSport,
             "poker": getPoker,
         }
-        const start = newUtcTime(Date.now())
-        const end = getCustomDay(start,-1 * day)
-        //
-        const startDate = getTimeFormat(start)
-        const endDate = getTimeFormat(end)
-        //
         const keys = Object.keys(typeDict)
         let a = []
         for (let e of keys) {
             const tmp = await typeDict[e](startDate, endDate)
-            const addr = tmp.map(e => e.addr || '')
-            a = a.concat(addr)
+            a = a.concat(tmp)
         }
         const na = Array.from(new Set(a))
-        console.log("debug------>na ",na.slice(0, 2))
-        // console.log("debug------>na1 ",startDate,start)
-        // console.log("debug------>na2 ",endDate,end)
         return na.length
     }
 
