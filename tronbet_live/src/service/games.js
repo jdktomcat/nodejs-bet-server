@@ -340,18 +340,27 @@ async function parseGames() {
     //
     let slotGames = [...swaggerGame['Video Slots'], ...slots]
     //sort by newGame sort desc
-    slotGames.sort(function (c,d) {
-        let index1 = newGameArray.indexOf(c);
-        let index2 = newGameArray.indexOf(d);
-        if (index1 > index2) return 1;
-        if (index1 === index2) return 0;
-        return -1;
+    // slotGames.sort(function (c,d) {
+    //     let index1 = newGameArray.indexOf(c);
+    //     let index2 = newGameArray.indexOf(d);
+    //     if (index1 > index2) return 1;
+    //     if (index1 === index2) return 0;
+    //     return -1;
+    // })
+    //排序有问题，这里强制按数据库重新生成一个
+    const slotGamesNames = slotGames.map(e=>e.gameName)
+    let newSlot = []
+    newGameArray.forEach(e=>{
+        if(slotGamesNames.includes(e)){
+            const gNames = slotGames.find(k=>k.name === e){
+                newSlot.push(gNames)
+            }
+        }
     })
 
     return {
-        test1:newGameArray,
         newFlag: newGameFlag,
-        slots: slotGames,
+        slots: newSlot,
         balckjackt: balckjack,
         baccaratt: baccarat,
         roulettet: roulette,
