@@ -183,6 +183,27 @@ async function getIndexOfTableGames(gameName) {
     return index;
 }
 
+async function sortGamesByTsDesc(slotGames, newGameArray) {
+    //sort by newGame sort desc
+    // slotGames.sort(function (c,d) {
+    //     let index1 = newGameArray.indexOf(c);
+    //     let index2 = newGameArray.indexOf(d);
+    //     if (index1 > index2) return 1;
+    //     if (index1 === index2) return 0;
+    //     return -1;
+    // })
+    //排序有问题，这里强制按数据库重新生成一个
+    const slotDataGames = slotGames.map(e => e.gameName)
+    let newSlot = []
+    newGameArray.forEach(e => {
+        if (slotDataGames.includes(e)) {
+            const gNames = slotGames.find(k => k.gameName.includes(e.trim()))
+            newSlot.push(gNames)
+        }
+    })
+    return newSlot
+}
+
 async function initData() {
     const rs = await getGameList();
     swaggerGames = rs.swaggerGames
@@ -195,7 +216,7 @@ async function parseGames() {
     //init data
     await initData();
     const newGameFlag = await getIsNewArray()
-    const newGameArray = await getNameSortArray()
+    const newSortNames = await getNameSortArray()
     //
     let data = await getAllGamesFromEM();
 
@@ -339,23 +360,7 @@ async function parseGames() {
     swaggerGame['Video Slots'].sort(sortbySwaggerGames);
     //
     let slotGames = [...swaggerGame['Video Slots'], ...slots]
-    //sort by newGame sort desc
-    // slotGames.sort(function (c,d) {
-    //     let index1 = newGameArray.indexOf(c);
-    //     let index2 = newGameArray.indexOf(d);
-    //     if (index1 > index2) return 1;
-    //     if (index1 === index2) return 0;
-    //     return -1;
-    // })
-    //排序有问题，这里强制按数据库重新生成一个
-    const slotDataGames = slotGames.map(e=>e.gameName)
-    let newSlot = []
-    newGameArray.forEach(e => {
-        if(slotDataGames.includes(e)){
-            const gNames = slotGames.find(k => k.gameName.includes(e.trim()))
-            newSlot.push(gNames)
-        }
-    })
+    const newSlot = sortGamesByTsDesc(slotGames,newSortNames)
 
     return {
         newFlag: newGameFlag,
