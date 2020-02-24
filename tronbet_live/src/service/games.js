@@ -343,10 +343,11 @@ async function parseGames() {
     slotGames.sort(function (c,d) {
         let index1 = newGameArray.indexOf(c);
         let index2 = newGameArray.indexOf(d);
-        if (index1 > index2) return -1;
+        if (index1 > index2) return 1;
         if (index1 === index2) return 0;
-        return 1;
+        return -1;
     })
+
     return {
         test1:newGameArray,
         newFlag: newGameFlag,
