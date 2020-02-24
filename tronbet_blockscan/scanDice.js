@@ -55,8 +55,6 @@ async function getBlockData(blockNum) {
 async function alysisBlockData(blockData, blockNumber) {
   let ts = blockData.block_header.raw_data.timestamp;
   let transactions = blockData.transactions;
-  console.log("debug--->alysisBlockData1",transactions && !_.isEmpty(transactions) && _.isArray(transactions) && transactions.length > 0)
-  console.log("debug--->alysisBlockData2",transactions)
   if (transactions && !_.isEmpty(transactions) && _.isArray(transactions) && transactions.length > 0) {
     let txCount = transactions ? transactions.length : 0;
     console.log('-----------------------------------------------------------------------------------------------------------------');
@@ -156,10 +154,11 @@ function hexStringToTronAddress1(_hexStr) {
 async function scanNext(blockNum) {
   try {
     let blockData = await getBlockData(blockNum);
-    console.log("now blockId is ",blockData)
     if (_.isEmpty(blockData)) {
       return false;
     }
+    console.log("now blockId is ",blockData)
+    console.log("prd url is  ",conf.tronConfig.tron_url_solidity , ' now point is' ,blockNum)
     let result = await alysisBlockData(blockData, blockNum);
     return result;
   } catch (e) {
