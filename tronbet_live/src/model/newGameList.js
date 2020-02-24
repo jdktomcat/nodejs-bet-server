@@ -42,6 +42,7 @@ async function updateLiveGame(params) {
     em_type = ? ,
     status = ?,
     rate = ?,
+    is_new = ?,
     ts = ? 
     where id = ?`
     const p = [
@@ -51,6 +52,7 @@ async function updateLiveGame(params) {
         params.em_type,
         params.status,
         Number(params.rate),
+        Number(params.is_new),
         Date.now(),
         Number(params.id)
     ]

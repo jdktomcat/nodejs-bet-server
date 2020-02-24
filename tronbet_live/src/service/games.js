@@ -15,7 +15,7 @@ const privateKey = swaghub.privetKey;
 // init with default keypair and digest type
 const hmCrypto = HmCrypto(digestType, privateKey, publicKey);
 //
-const {getGameList,getIsNewArray} = require("../static/getGameList")
+const {getGameList, getIsNewArray, getNameSortArray} = require("../static/getGameList")
 //
 let swaggerGames = []
 let GameSWhilte = []
@@ -183,6 +183,27 @@ async function getIndexOfTableGames(gameName) {
     return index;
 }
 
+// async function getSortGamesByTsDesc(slotGames, newSortNames) {
+//     //sort by newGame sort desc
+//     // slotGames.sort(function (c,d) {
+//     //     let index1 = newGameArray.indexOf(c);
+//     //     let index2 = newGameArray.indexOf(d);
+//     //     if (index1 > index2) return 1;
+//     //     if (index1 === index2) return 0;
+//     //     return -1;
+//     // })
+//     //排序有问题，这里强制按数据库时间重新生成一个
+//     const slotDataNames = slotGames.map(e => e.gameName)
+//     let newSlot = []
+//     newSortNames.forEach(e => {
+//         if (slotDataNames.includes(e)) {
+//             const gNames = slotGames.find(k => k.gameName.includes(e.trim()))
+//             newSlot.push(gNames)
+//         }
+//     })
+//     return newSlot
+// }
+
 async function initData() {
     const rs = await getGameList();
     swaggerGames = rs.swaggerGames
@@ -195,6 +216,7 @@ async function parseGames() {
     //init data
     await initData();
     const newGameFlag = await getIsNewArray()
+    const newSortNames = await getNameSortArray()
     //
     let data = await getAllGamesFromEM();
 
@@ -336,10 +358,20 @@ async function parseGames() {
 
     let swaggerGame = await getSwaggerGames();
     swaggerGame['Video Slots'].sort(sortbySwaggerGames);
+    //
+    let slotGames = [...swaggerGame['Video Slots'], ...slots]
+    const slotDataNames = slotGames.map(e => e.gameName)
+    let newSlot = []
+    newSortNames.forEach(e => {
+        if (slotDataNames.includes(e)) {
+            const gNames = slotGames.find(k => k.gameName.includes(e.trim()))
+            newSlot.push(gNames)
+        }
+    })
 
     return {
-        newFlag : newGameFlag,
-        slots: [...swaggerGame['Video Slots'], ...slots],
+        newFlag: newGameFlag,
+        slots: newSlot,
         balckjackt: balckjack,
         baccaratt: baccarat,
         roulettet: roulette,

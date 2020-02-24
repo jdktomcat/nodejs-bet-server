@@ -28,11 +28,11 @@ async function makeUpLiveToken() {
         await addData2AirDrop(sql);
     }
 }
-
-async function main() {
-    await makeUpLiveToken()
-    console.log("makeup Done");
-    process.exit(0);
-}
-
-main();
+//
+// async function main() {
+//     await makeUpLiveToken()
+//     console.log("makeup Done");
+//     process.exit(0);
+// }
+//
+// main();
