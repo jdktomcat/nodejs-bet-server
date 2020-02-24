@@ -5,6 +5,7 @@ const TopGameId = require("../model/topGameId")
 const TopUser = require("../model/topUsers")
 const TransactionByAddr = require("../model/transactionByAddr")
 const transactionByAddrAndDate = require("../model/transactionByAddrAndDate")
+const dailyDAU = require("../model/dailyDAU")
 const ctxUtils = require("./ctxUtils")
 
 class QueryController {
@@ -132,6 +133,7 @@ class QueryController {
         const data = await TransactionByAddr.getDataFile(addr)
         ctxUtils.file(ctx, data)
     }
+
     //
     /**
      * 搜索部分用户区间段交易
@@ -151,6 +153,16 @@ class QueryController {
         const data = await transactionByAddrAndDate.getDataFile(addr,start,end)
         ctxUtils.file(ctx, data)
     }
+
+    /**
+     * 根据用户获取交易
+     */
+    static async getDAU(ctx) {
+        const day = ctx.query.day
+        const data = await dailyDAU.getDailyData(day)
+        ctx.body = ctxUtils.success(data)
+    }
+
 }
 
 module.exports = QueryController

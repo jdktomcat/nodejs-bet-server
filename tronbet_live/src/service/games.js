@@ -15,7 +15,7 @@ const privateKey = swaghub.privetKey;
 // init with default keypair and digest type
 const hmCrypto = HmCrypto(digestType, privateKey, publicKey);
 //
-const {getGameList} = require("../static/getGameList")
+const {getGameList,getIsNewArray} = require("../static/getGameList")
 //
 let swaggerGames = []
 let GameSWhilte = []
@@ -194,6 +194,7 @@ async function initData() {
 async function parseGames() {
     //init data
     await initData();
+    const newGameFlag = await getIsNewArray()
     //
     let data = await getAllGamesFromEM();
 
@@ -337,6 +338,7 @@ async function parseGames() {
     swaggerGame['Video Slots'].sort(sortbySwaggerGames);
 
     return {
+        newFlag : newGameFlag,
         slots: [...swaggerGame['Video Slots'], ...slots],
         balckjackt: balckjack,
         baccaratt: baccarat,

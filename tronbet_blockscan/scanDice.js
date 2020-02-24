@@ -154,6 +154,7 @@ function hexStringToTronAddress1(_hexStr) {
 async function scanNext(blockNum) {
   try {
     let blockData = await getBlockData(blockNum);
+    console.log("now blockId is ",blockData.blockID,blockNum,_.isEmpty(blockData))
     if (_.isEmpty(blockData)) {
       return false;
     }
