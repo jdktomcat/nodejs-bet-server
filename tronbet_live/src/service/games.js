@@ -183,7 +183,7 @@ async function getIndexOfTableGames(gameName) {
     return index;
 }
 
-async function sortGamesByTsDesc(slotGames, newGameArray) {
+async function getSortGamesByTsDesc(slotGames, newGameArray) {
     //sort by newGame sort desc
     // slotGames.sort(function (c,d) {
     //     let index1 = newGameArray.indexOf(c);
@@ -193,10 +193,10 @@ async function sortGamesByTsDesc(slotGames, newGameArray) {
     //     return -1;
     // })
     //排序有问题，这里强制按数据库重新生成一个
-    const slotDataGames = slotGames.map(e => e.gameName)
+    const slotDataNames = slotGames.map(e => e.gameName)
     let newSlot = []
     newGameArray.forEach(e => {
-        if (slotDataGames.includes(e)) {
+        if (slotDataNames.includes(e)) {
             const gNames = slotGames.find(k => k.gameName.includes(e.trim()))
             newSlot.push(gNames)
         }
@@ -360,11 +360,12 @@ async function parseGames() {
     swaggerGame['Video Slots'].sort(sortbySwaggerGames);
     //
     let slotGames = [...swaggerGame['Video Slots'], ...slots]
-    const newSlot = sortGamesByTsDesc(slotGames,newSortNames)
+    const newSlotGames = getSortGamesByTsDesc(slotGames,newSortNames)
 
     return {
         newFlag: newGameFlag,
-        slots: newSlot,
+        test1: newSortNames,
+        slots: newSlotGames,
         balckjackt: balckjack,
         baccaratt: baccarat,
         roulettet: roulette,
