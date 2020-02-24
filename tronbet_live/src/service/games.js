@@ -348,10 +348,10 @@ async function parseGames() {
     //     return -1;
     // })
     //排序有问题，这里强制按数据库重新生成一个
-    const slotGamesNames = slotGames.map(e=>e.gameName)
+    const slotDataGames = slotGames.map(e=>e.gameName)
     let newSlot = []
-    slotGamesNames.forEach(e => {
-        if(newGameArray.includes(e)){
+    newGameArray.forEach(e => {
+        if(slotDataGames.includes(e)){
             const gNames = slotGames.find(k => k.gameName.includes(e.trim()))
             newSlot.push(gNames)
         }
