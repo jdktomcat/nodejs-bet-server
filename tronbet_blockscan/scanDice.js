@@ -157,8 +157,6 @@ async function scanNext(blockNum) {
     if (_.isEmpty(blockData)) {
       return false;
     }
-    // console.log("now blockId is ",blockData)
-    // console.log("prd url is  ",conf.tronConfig.tron_url_solidity , ' now point is' ,blockNum)
     let result = await alysisBlockData(blockData, blockNum);
     return result;
   } catch (e) {
