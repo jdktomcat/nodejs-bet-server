@@ -352,9 +352,8 @@ async function parseGames() {
     let newSlot = []
     newGameArray.forEach(e=>{
         if(slotGamesNames.includes(e)){
-            const gNames = slotGames.find(k=>k.name === e){
-                newSlot.push(gNames)
-            }
+            const gNames = slotGames.find(k=>k.name === e)
+            newSlot.push(gNames)
         }
     })
 
