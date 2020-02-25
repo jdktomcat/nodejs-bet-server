@@ -105,7 +105,8 @@ const addDiceData = async function (day_str, data_str, ts) {
 
 
 const parseDice = async function () {
-    const j = schedule.scheduleJob('0 1 * * *', async function () {
+    // const j = schedule.scheduleJob('0 1 * * *', async function () {
+    const j = schedule.scheduleJob('*/1 * * * *', async function () {
         // console.log('The answer to life, the universe, and everything!');
         //
         const dbLastDay = await queryLastDay()
