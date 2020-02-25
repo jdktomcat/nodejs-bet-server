@@ -44,7 +44,7 @@ async function alterTable() {
     console.log(sql)
     console.log("res is ",res)
     //
-    const sql2 = `CREATE TABLE sum_addr_detail (
+    const sql2 = `CREATE TABLE tron_bet_admin.sum_addr_detail (
         id int(11) NOT NULL AUTO_INCREMENT,
         day varchar(20) DEFAULT NULL,
         addr varchar(255) DEFAULT NULL,
