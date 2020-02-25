@@ -169,9 +169,114 @@ const getPoker = async function (startDate, endDate) {
     // return addr
 }
 
+
+const getAll = async function (startDate, endDate) {
+    const sql = `
+    select
+    count(distinct g.addr) as sum
+    from (
+        SELECT
+         distinct addr  as addr
+        FROM
+        tron_bet_admin.dice_user_order
+        WHERE ts >= ? AND ts < ?
+        
+        union all
+        
+        SELECT
+            distinct addr  as addr
+        FROM
+            tron_bet_admin.moon_user_order
+        WHERE
+            ts >= ?
+            AND ts < ?
+            And crashAt is not null   
+       
+        union all
+       
+        SELECT
+            distinct addr  as addr
+        FROM
+            tron_bet_admin.wheel_user_order
+        WHERE
+            roll is not null
+            AND ts >= ?
+            AND ts < ? 
+        
+        union all
+        
+        select
+            distinct addr  as addr
+        from
+            tron_live.live_action_log_v2
+        where
+            ts >= ?
+            AND ts < ?
+            and action = 'bet'
+            and txstatus = 1 
+        
+        union all
+        
+        SELECT
+            distinct email  as addr
+        FROM
+            tron_live.swagger_transaction_log
+        WHERE
+            ts >= ?
+            AND ts < ?
+            AND status = 1
+            
+        union all
+        
+        SELECT
+            distinct addr as addr
+        FROM
+            tron_live.sports_transaction_log
+        WHERE
+            ts >= ?
+            AND ts < ?    
+    ) as g    
+    `
+    const start = newUtcTime(startDate).getTime()
+    const end = newUtcTime(endDate).getTime()
+    const params = [
+        start, end,
+        start, end,
+        start, end,
+        start, end,
+        start, end,
+        start, end,
+    ]
+    const t = await raw(sql, params)
+    return t
+}
+
+
+const addAddrData = async function (params) {
+    const sql0 = 'select * from tron_bet_admin.sum_addr_detail where addr = ?'
+    const data0 = await raw(sql0, [params.addr])
+    if (data0.length === 0) {
+        const sql = `insert into tron_bet_admin.sum_addr_detail(day,addr,ts) values (?,?,?)`
+        await raw(sql, [params.day, params.addr, params.ts])
+    }
+}
+
+
 class DailyDAU {
 
     static async getData(startDate, endDate) {
+        const data = await getAll(startDate, endDate)
+        console.log(data)
+        if (data.length === 0) {
+            return 0
+        } else {
+            const rs = data[0] || {}
+            const num = rs.sum || 0
+            return num
+        }
+    }
+
+    static async generateDailyData(startDate, endDate) {
         const typeDict = {
             "dice": getDice,
             "moon": getMoon,
@@ -181,13 +286,21 @@ class DailyDAU {
             "sport": getSport,
         }
         const keys = Object.keys(typeDict)
-        let a = []
+        // let a = []
         for (let e of keys) {
             const tmp = await typeDict[e](startDate, endDate)
-            a = a.concat(tmp)
+            const na = Array.from(new Set(tmp))
+            //
+            for (let addr of na) {
+                const k = {
+                    'day': startDate,
+                    'addr': addr,
+                    'ts': newUtcTime(startDate).getTime()
+                }
+                //todo insert
+                await addAddrData(k)
+            }
         }
-        const na = Array.from(new Set(a))
-        return na.length
     }
 
 }

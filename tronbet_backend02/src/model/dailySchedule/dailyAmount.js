@@ -28,7 +28,10 @@ const getDice = async function (start, end) {
                     dice_user_order.ts DESC
                     ) as g
     `
-    const params = [start.getTime(), end.getTime()]
+    const params = [
+        newUtcTime(start).getTime(),
+        newUtcTime(end).getTime()
+    ]
     let rs = await raw(sql, params)
     const rs2 = rs[0] || {}
     let ccc1 = {
