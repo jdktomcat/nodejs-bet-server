@@ -60,34 +60,34 @@ const getRing = async function (startDate, endDate) {
 }
 
 const getDuel = async function (startDate, endDate) {
-    const sql = `
-    SELECT
-        player1,
-        player2,
-        player3,
-        player4
-    FROM
-        tron_bet_admin.wheel_solo_order
-    WHERE
-        endTs >= ?
-        AND endTs < ?
-    `
-    const params = [
-        newUtcTime(startDate).getTime(),
-        newUtcTime(endDate).getTime()
-    ]
-    const t = await raw(sql, params)
-    let dict = {}
-    t.forEach(k => {
-        const keys = [k.player1, k.player2, k.player3, k.player4]
-        keys.forEach(ele => {
-            if (ele !== '' && ele !== null && dict[ele] !== 1) {
-                dict[ele] = 1
-            }
-        })
-    })
-    const arr = Object.keys(dict)
-    return arr
+    // const sql = `
+    // SELECT
+    //     player1,
+    //     player2,
+    //     player3,
+    //     player4
+    // FROM
+    //     tron_bet_admin.wheel_solo_order
+    // WHERE
+    //     endTs >= ?
+    //     AND endTs < ?
+    // `
+    // const params = [
+    //     newUtcTime(startDate).getTime(),
+    //     newUtcTime(endDate).getTime()
+    // ]
+    // const t = await raw(sql, params)
+    // let dict = {}
+    // t.forEach(k => {
+    //     const keys = [k.player1, k.player2, k.player3, k.player4]
+    //     keys.forEach(ele => {
+    //         if (ele !== '' && ele !== null && dict[ele] !== 1) {
+    //             dict[ele] = 1
+    //         }
+    //     })
+    // })
+    // const arr = Object.keys(dict)
+    // return arr
 }
 
 const getEM = async function (startDate, endDate) {
@@ -151,22 +151,22 @@ const getSport = async function (startDate, endDate) {
 }
 
 const getPoker = async function (startDate, endDate) {
-    const sql = `
-        select
-            distinct addr
-        from
-            tronbet_poker_log.poker_revenue_log
-        where
-            optime >= ?
-            AND  optime < ?
-    `
-    const params = [
-        newUtcTime(startDate).getTime() / 1000,
-        newUtcTime(endDate).getTime() / 1000
-    ]
-    const t = await raw(sql, params)
-    const addr = t.map(e => e.addr || '')
-    return addr
+    // const sql = `
+    //     select
+    //         distinct addr
+    //     from
+    //         tronbet_poker_log.poker_revenue_log
+    //     where
+    //         optime >= ?
+    //         AND  optime < ?
+    // `
+    // const params = [
+    //     newUtcTime(startDate).getTime() / 1000,
+    //     newUtcTime(endDate).getTime() / 1000
+    // ]
+    // const t = await raw(sql, params)
+    // const addr = t.map(e => e.addr || '')
+    // return addr
 }
 
 class DailyDAU {
@@ -176,11 +176,9 @@ class DailyDAU {
             "dice": getDice,
             "moon": getMoon,
             "ring": getRing,
-            "duel": getDuel,
             "em": getEM,
             "hub88": getHub88,
             "sport": getSport,
-            "poker": getPoker,
         }
         const keys = Object.keys(typeDict)
         let a = []
