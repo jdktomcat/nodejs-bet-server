@@ -170,7 +170,7 @@ const getPoker = async function (startDate, endDate) {
 }
 
 
-const getAll = async function(startDate, endDate){
+const getAll = async function (startDate, endDate) {
     const sql = `
     select
     count(distinct g.addr) as sum
@@ -253,26 +253,30 @@ const getAll = async function(startDate, endDate){
 
 
 const addAddrData = async function (params) {
-    const sql = `insert into tron_bet_admin.sum_addr_detail(day,addr,ts) values (?,?,?)`
-    await raw(sql, [params.day, params.addr, params.ts])
+    const sql0 = 'select * from tron_bet_admin.sum_addr_detail where addr = ?'
+    const data0 = await raw(sql0, [params.addr])
+    if (data0.length === 0) {
+        const sql = `insert into tron_bet_admin.sum_addr_detail(day,addr,ts) values (?,?,?)`
+        await raw(sql, [params.day, params.addr, params.ts])
+    }
 }
 
 
 class DailyDAU {
 
     static async getData(startDate, endDate) {
-        const data = await getAll(startDate,endDate)
-        console.log(data )
-        if(data.length === 0){
+        const data = await getAll(startDate, endDate)
+        console.log(data)
+        if (data.length === 0) {
             return 0
-        }else{
+        } else {
             const rs = data[0] || {}
             const num = rs.sum || 0
             return num
         }
     }
 
-    static async generateDailyData(startDate, endDate){
+    static async generateDailyData(startDate, endDate) {
         const typeDict = {
             "dice": getDice,
             "moon": getMoon,
@@ -287,11 +291,11 @@ class DailyDAU {
             const tmp = await typeDict[e](startDate, endDate)
             const na = Array.from(new Set(tmp))
             //
-            for(let addr of na){
+            for (let addr of na) {
                 const k = {
                     'day': startDate,
-                    'addr' : addr,
-                    'ts' : newUtcTime(startDate).getTime()
+                    'addr': addr,
+                    'ts': newUtcTime(startDate).getTime()
                 }
                 //todo insert
                 await addAddrData(k)
