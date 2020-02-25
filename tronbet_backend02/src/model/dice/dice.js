@@ -105,8 +105,7 @@ const addDiceData = async function (day_str, data_str, ts) {
 
 
 const parseDice = async function () {
-    // const j = schedule.scheduleJob('0 1 * * *', async function () {
-    const j = schedule.scheduleJob('*/1 * * * *', async function () {
+    const j = schedule.scheduleJob('0 1 * * *', async function () {
         // console.log('The answer to life, the universe, and everything!');
         //
         const dbLastDay = await queryLastDay()
@@ -132,8 +131,8 @@ const parseDice = async function () {
         }
         //todo
     });
-    // 1分钟检查一次
-    const task2 = schedule.scheduleJob('*/1 * * * *', async function () {
+    // 5分钟检查一次
+    const task2 = schedule.scheduleJob('*/5 * * * *', async function () {
         await startSche()
     })
 }
