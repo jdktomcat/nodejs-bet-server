@@ -36,3 +36,15 @@ async function makeUpLiveToken() {
 // }
 //
 // main();
+
+
+async function alterTable() {
+    const sql = "ALTER TABLE tron_live.live_online_game ADD is_new VARCHAR (1) DEFAULT '0' "
+    let res = await db.exec(sql, []);
+    console.log(sql)
+    console.log("res is ",res)
+}
+
+alterTable().then(e=>{
+    process.exit(0);
+})
