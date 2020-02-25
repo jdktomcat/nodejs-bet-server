@@ -43,6 +43,18 @@ async function alterTable() {
     let res = await db.exec(sql, []);
     console.log(sql)
     console.log("res is ",res)
+    //
+    const sql2 = `CREATE TABLE sum_addr_detail (
+        id int(11) NOT NULL AUTO_INCREMENT,
+        day varchar(20) DEFAULT NULL,
+        addr varchar(255) DEFAULT NULL,
+        ts bigint(20) DEFAULT NULL,
+        PRIMARY KEY (id),
+        KEY sum_dice_data_index1 (day)
+    )`
+    let res2 = await db.exec(sql2, []);
+    console.log(sql2)
+    console.log("res is ",res2)
 }
 
 alterTable().then(e=>{

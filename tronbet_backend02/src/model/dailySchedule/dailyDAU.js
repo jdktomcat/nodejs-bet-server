@@ -251,25 +251,16 @@ const getAll = async function(startDate, endDate){
     return t
 }
 
+
+const addAddrData = async function (params) {
+    const sql = `insert into tron_bet_admin.sum_addr_detail(day,addr,ts) values (?,?,?)`
+    await raw(sql, [params.day, params.addr, params.ts])
+}
+
+
 class DailyDAU {
 
     static async getData(startDate, endDate) {
-        // const typeDict = {
-        //     "dice": getDice,
-        //     "moon": getMoon,
-        //     "ring": getRing,
-        //     "em": getEM,
-        //     "hub88": getHub88,
-        //     "sport": getSport,
-        // }
-        // const keys = Object.keys(typeDict)
-        // let a = []
-        // for (let e of keys) {
-        //     const tmp = await typeDict[e](startDate, endDate)
-        //     a = a.concat(tmp)
-        // }
-        // const na = Array.from(new Set(a))
-        // return na.length
         const data = await getAll(startDate,endDate)
         console.log(data )
         if(data.length === 0){
@@ -278,6 +269,33 @@ class DailyDAU {
             const rs = data[0] || {}
             const num = rs.sum || 0
             return num
+        }
+    }
+
+    static async generateDailyData(startDate, endDate){
+        const typeDict = {
+            "dice": getDice,
+            "moon": getMoon,
+            "ring": getRing,
+            "em": getEM,
+            "hub88": getHub88,
+            "sport": getSport,
+        }
+        const keys = Object.keys(typeDict)
+        // let a = []
+        for (let e of keys) {
+            const tmp = await typeDict[e](startDate, endDate)
+            const na = Array.from(new Set(tmp))
+            //
+            for(let addr of na){
+                const k = {
+                    'day': startDate,
+                    'addr' : addr,
+                    'ts' : newUtcTime(startDate).getTime()
+                }
+                //todo insert
+                await addAddrData(k)
+            }
         }
     }
 

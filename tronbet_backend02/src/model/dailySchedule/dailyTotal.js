@@ -1,4 +1,4 @@
-const {getdayList,getTimeFormat,newUtcTime,raw} = require('./../utils/dbutils')
+const {getdayList, getTimeFormat, newUtcTime, raw} = require('./../utils/dbutils')
 const dailyDAU = require('./dailyDAU')
 const dailyAmount = require('./dailyAmount')
 
@@ -9,33 +9,31 @@ const addAllData = async function (day_str, data_str, ts) {
 
 const queryEmptyData = async function () {
     const sql = `select * from tron_bet_admin.sum_dice_data where type = 'all'`
-    const data = await raw(sql,[])
-    if(data.length === 0){
+    const data = await raw(sql, [])
+    if (data.length === 0) {
         return true
-    }else {
+    } else {
         return false
     }
 }
 
-const processAllData = async function (start ,end) {
-    const c = getdayList(start ,end)
-    const now = getTimeFormat(new Date())
-    let ss = []
+const processAllData = async function (startDate, endDate) {
+    const c = getdayList(startDate, endDate)
     for (let i = 0; i < c.length - 1; i++) {
-        let start = c[i]
-        let end = c[i + 1]
-        console.log(getTimeFormat(start),getTimeFormat(end))
-        const dau = await dailyDAU.getData(start,end)
+        let start = getTimeFormat(c[i])
+        let end = getTimeFormat(c[i + 1])
+        // console.log(getTimeFormat(start),getTimeFormat(end))
+        const dau = await dailyDAU.getData(start, end)
         //数据过大，生产暂时无法计算
         // const totalAddr = await dailyDAU.getData('2019-01-01',now)
         const totalAddr = 0
-        const amount = await dailyAmount.getData(start,end)
+        const amount = await dailyAmount.getData(start, end)
         const o = {
-            day : getTimeFormat(start),
-            dau : dau,
-            totalAddr : totalAddr,
+            day: start,
+            dau: dau,
+            totalAddr: totalAddr,
         }
-        Object.assign(o,amount)
+        Object.assign(o, amount)
         const data_str = JSON.stringify(o)
         //
         const day_str = o.day
@@ -45,17 +43,28 @@ const processAllData = async function (start ,end) {
 }
 
 
-const startSche = async function(){
+const processAllAddr = async function (startDate, endDate) {
+    const c = getdayList(startDate, endDate)
+    for (let i = 0; i < c.length - 1; i++) {
+        let start = getTimeFormat(c[i])
+        let end = getTimeFormat(c[i + 1])
+        await dailyDAU.generateDailyData(start, end)
+    }
+}
+
+
+const startSche = async function () {
     const bool = await queryEmptyData()
-    if(bool){
-        await processAllData('2019-11-04','2020-02-25')
-    }else {
+    if (bool) {
+        await processAllData('2019-11-04', '2020-02-26')
+        await processAllAddr('2019-01-01', '2020-02-26')
+    } else {
         console.log("do not need insert")
     }
 }
 
 
-const queryAllData = async function (startDate,endDate) {
+const queryAllData = async function (startDate, endDate) {
     const sql = `select * from tron_bet_admin.sum_dice_data where type = 'all' and ts >= ? and ts < ? order by ts desc`
     const params = [
         newUtcTime(startDate).getTime(),
@@ -71,8 +80,8 @@ const queryAllData = async function (startDate,endDate) {
     return r
 }
 
-const queryAllDataFile = async function(startDate,endDate){
-    const data = await queryAllData(startDate,endDate)
+const queryAllDataFile = async function (startDate, endDate) {
+    const data = await queryAllData(startDate, endDate)
     const keys = Object.keys(data[0])
     let sbody = ''
     keys.forEach(e => {
