@@ -18,6 +18,7 @@ function getRole(username) {
     const others = {
         '/typeAdmin': "每日流水查询",
         '/customer': "用户流水查询",
+        '/total': "平台流水查询",
         // "/getDrainageList":"引流管理",
         // "/userTop":"每周玩家排行",
         '/lossList': "Live亏损游戏排行",
