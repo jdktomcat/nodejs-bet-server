@@ -99,32 +99,32 @@ const getRing = async function (startDate, endDate) {
 }
 
 const getDuel = async function (startDate, endDate) {
-    const sql = `
-    SELECT
-        count(1) as count,
-        sum(amount * playerCnt) / 1000000 as all_amount,
-        sum(win) / 1000000  as all_win,
-        (sum(amount * playerCnt) - sum(win)) / 1000000  as balance
-    FROM
-        tron_bet_admin.wheel_solo_order
-    WHERE
-        status = 3
-        AND endTs >= ?
-        AND endTs < ?
-    `
-    const params = [
-        newUtcTime(startDate).getTime(),
-        newUtcTime(endDate).getTime()
-    ]
-    const rs1 = await raw(sql, params)
-    const rs2 = rs1[0] || {}
-    let ccc1 = {
-        count: rs2.count || 0,
-        all_amount: rs2.all_amount || 0,
-        all_win: rs2.all_win || 0,
-        balance: rs2.balance || 0,
-    }
-    return ccc1
+    // const sql = `
+    // SELECT
+    //     count(1) as count,
+    //     sum(amount * playerCnt) / 1000000 as all_amount,
+    //     sum(win) / 1000000  as all_win,
+    //     (sum(amount * playerCnt) - sum(win)) / 1000000  as balance
+    // FROM
+    //     tron_bet_admin.wheel_solo_order
+    // WHERE
+    //     status = 3
+    //     AND endTs >= ?
+    //     AND endTs < ?
+    // `
+    // const params = [
+    //     newUtcTime(startDate).getTime(),
+    //     newUtcTime(endDate).getTime()
+    // ]
+    // const rs1 = await raw(sql, params)
+    // const rs2 = rs1[0] || {}
+    // let ccc1 = {
+    //     count: rs2.count || 0,
+    //     all_amount: rs2.all_amount || 0,
+    //     all_win: rs2.all_win || 0,
+    //     balance: rs2.balance || 0,
+    // }
+    // return ccc1
 }
 
 const getEM = async function (startDate, endDate) {
@@ -241,33 +241,33 @@ const getSport = async function (startDate, endDate) {
 }
 
 const getPoker = async function (startDate, endDate) {
-    const sql = `
-        select
-            count(1) as count,
-            sum(amount) / 1000000 as all_amount,
-            0 as all_win,
-            (sum(amount) + sum(oldAmount) - sum(newAmount)) / 1000000  as balance
-        from
-            tronbet_poker_log.poker_revenue_log
-        where
-            cointype = 'TRX'
-            AND action < 100
-            AND  optime >= ?
-            AND optime < ?
-    `
-    const params = [
-        newUtcTime(startDate).getTime() / 1000,
-        newUtcTime(endDate).getTime() / 1000
-    ]
-    const data = await raw(sql, params)
-    const rs2 = data[0] || {}
-    let ccc1 = {
-        count: rs2.count || 0,
-        all_amount: rs2.all_amount || 0,
-        all_win: rs2.all_win || 0,
-        balance: rs2.balance || 0,
-    }
-    return ccc1
+    // const sql = `
+    //     select
+    //         count(1) as count,
+    //         sum(amount) / 1000000 as all_amount,
+    //         0 as all_win,
+    //         (sum(amount) + sum(oldAmount) - sum(newAmount)) / 1000000  as balance
+    //     from
+    //         tronbet_poker_log.poker_revenue_log
+    //     where
+    //         cointype = 'TRX'
+    //         AND action < 100
+    //         AND  optime >= ?
+    //         AND optime < ?
+    // `
+    // const params = [
+    //     newUtcTime(startDate).getTime() / 1000,
+    //     newUtcTime(endDate).getTime() / 1000
+    // ]
+    // const data = await raw(sql, params)
+    // const rs2 = data[0] || {}
+    // let ccc1 = {
+    //     count: rs2.count || 0,
+    //     all_amount: rs2.all_amount || 0,
+    //     all_win: rs2.all_win || 0,
+    //     balance: rs2.balance || 0,
+    // }
+    // return ccc1
 }
 
 class DailyAmount {
@@ -277,11 +277,9 @@ class DailyAmount {
             "dice": getDice,
             "moon": getMoon,
             "ring": getRing,
-            "duel": getDuel,
             "em": getEM,
             "hub88": getHub88,
             "sport": getSport,
-            "poker": getPoker,
         }
         const keys = Object.keys(typeDict)
         let o = {

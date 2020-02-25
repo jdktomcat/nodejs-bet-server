@@ -53,7 +53,47 @@ const startSche = async function(){
 }
 
 
+const queryAllData = async function (startDate,endDate) {
+    const sql = `select * from tron_bet_admin.sum_dice_data where type = 'all' and  and ts >= ? and ts < ?`
+    const params = [
+        newUtcTime(startDate).getTime(),
+        newUtcTime(endDate).getTime()
+    ]
+    const rs = await raw(sql, params)
+    const r = []
+    rs.forEach(e => {
+        const tmp = e.data_str || ""
+        const t = JSON.parse(tmp.trim())
+        r.push(t)
+    })
+    return r
+}
+
+const queryAllDataFile = async function(startDate,endDate){
+    const data = await queryAllData(startDate,endDate)
+    const keys = Object.keys(data[0])
+    let sbody = ''
+    keys.forEach(e => {
+        sbody += e + "\t"
+    })
+    sbody = sbody.trim()
+    sbody += "\n"
+    //
+    data.forEach(e => {
+        keys.forEach((k) => {
+            let t = e[k] || 0
+            sbody = sbody + t + '\t'
+        })
+        sbody = sbody.trim()
+        sbody += '\n'
+    })
+    return sbody
+}
+
+
 module.exports = {
     startSche,
-    processAllData
+    processAllData,
+    queryAllData,
+    queryAllDataFile,
 }
