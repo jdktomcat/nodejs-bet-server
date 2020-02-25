@@ -1,7 +1,7 @@
 const {raw, getdayList, newUtcTime, getLastDayUtcTime, getNextDayUtcTime} = require("../utils/dbutils")
 const db = require("../../utils/readDbUtil")
 const schedule = require('node-schedule');
-const {startSche,processAllData} = require("./../dailySchedule/dailyTotal")
+const {startSche,processAllData,processAllAddr} = require("./../dailySchedule/dailyTotal")
 
 const readDB = async function (sql, params) {
     console.log(String(sql))
@@ -128,6 +128,7 @@ const parseDice = async function () {
             await getData(startDateStr, endDateStr)
             //
             await processAllData(startDateStr, endDateStr)
+            await processAllAddr(startDateStr, endDateStr)
         }
         //todo
     });
