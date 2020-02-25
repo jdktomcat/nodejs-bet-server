@@ -54,7 +54,7 @@ const startSche = async function(){
 
 
 const queryAllData = async function (startDate,endDate) {
-    const sql = `select * from tron_bet_admin.sum_dice_data where type = 'all' and ts >= ? and ts < ?`
+    const sql = `select * from tron_bet_admin.sum_dice_data where type = 'all' and ts >= ? and ts < ? order by ts desc`
     const params = [
         newUtcTime(startDate).getTime(),
         newUtcTime(endDate).getTime()
