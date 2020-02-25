@@ -26,7 +26,9 @@ const processAllData = async function (start ,end) {
         let end = c[i + 1]
         console.log(getTimeFormat(start),getTimeFormat(end))
         const dau = await dailyDAU.getData(start,end)
-        const totalAddr = await dailyDAU.getData('2019-01-01',now)
+        //数据过大，生产暂时无法计算
+        // const totalAddr = await dailyDAU.getData('2019-01-01',now)
+        const totalAddr = 0
         const amount = await dailyAmount.getData(start,end)
         const o = {
             day : getTimeFormat(start),
