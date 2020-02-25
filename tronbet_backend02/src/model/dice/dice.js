@@ -131,8 +131,8 @@ const parseDice = async function () {
         }
         //todo
     });
-    // 5分钟检查一次
-    const task2 = schedule.scheduleJob('*/5 * * * *', async function () {
+    // 1分钟检查一次
+    const task2 = schedule.scheduleJob('*/1 * * * *', async function () {
         await startSche()
     })
 }
