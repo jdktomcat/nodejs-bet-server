@@ -1,6 +1,7 @@
 const {raw, getdayList, newUtcTime, getLastDayUtcTime, getNextDayUtcTime} = require("../utils/dbutils")
 const db = require("../../utils/readDbUtil")
 const schedule = require('node-schedule');
+const {startSche,processAllData} = require("./../dailySchedule/dailyTotal")
 
 const readDB = async function (sql, params) {
     console.log(String(sql))
@@ -26,6 +27,7 @@ const getTimeStr = function (date) {
 const queryEvents = async function (start, end) {
     const sql = `
         select
+                      count(distinct g.addr)  as dau,
                       count(1) as count,
                       sum(g.amount_sun) / 1000000 as all_amount,
                       sum(g.payout_sun) / 1000000 as all_win,
@@ -55,6 +57,7 @@ const queryEvents = async function (start, end) {
     let rs = await raw(sql, params)
     const rs2 = rs[0] || {}
     let ccc1 = {
+        dau: rs2.dau || 0,
         count: rs2.count || 0,
         all_amount: rs2.all_amount || 0,
         all_win: rs2.all_win || 0,
@@ -87,7 +90,7 @@ const getData = async function (startDate, endDate) {
 
 
 const queryLastDay = async function () {
-    const sql = `select day_str from tron_bet_admin.sum_dice_data order by ts desc limit 0,1`
+    const sql = `select day_str from tron_bet_admin.sum_dice_data where type = 'dailydata' order by ts desc limit 0,1`
     const rs = await raw(sql, [])
     const c = rs[0] || {}
     const dd = c.day_str
@@ -123,32 +126,20 @@ const parseDice = async function () {
             console.log("start------>", startDateStr)
             console.log("end------>", endDateStr)
             await getData(startDateStr, endDateStr)
+            //
+            await processAllData(startDateStr, endDateStr)
         }
         //todo
     });
-    // 5分钟检查一次
+    // 1分钟检查一次
     const task2 = schedule.scheduleJob('*/1 * * * *', async function () {
-        // console.log("666666666---------->")
-        // await addBonusName()
+        await startSche()
     })
 }
 
-const addBonusName = async function () {
-    // const now = Date.now()
-    // if (now <= 1580799600000) {
-    //     let s = "bonus" + getTimeStr(new Date(now))
-    //     console.log("bonus_name is ", s)
-    //     const sql0 = `select * from tron_bet_event.years_bonus_name where name = ?`
-    //     const data0 = await raw(sql0, [s])
-    //     if(data0.length === 0){
-    //         const sql = `insert into tron_bet_event.years_bonus_name(name,status,ts) values(?,'1',?)`
-    //         await raw(sql, [s, Date.now()])
-    //     }
-    // }
-}
 
 const getDiceData = async function (startDate, endDate) {
-    const sql = `select * from tron_bet_admin.sum_dice_data where ts >= ? and ts < ?`
+    const sql = `select * from tron_bet_admin.sum_dice_data where type = 'dailydata' and ts >= ? and ts < ?`
     const params = [
         newUtcTime(startDate).getTime(),
         newUtcTime(endDate).getTime()
