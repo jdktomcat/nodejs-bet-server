@@ -37,7 +37,6 @@ const fixBalance = async function () {
         {addr: "TDUofcLnJoLotdt7JKhjTgN5N4ZRHCD8m1", fix: 17760.03222 * 1e6},
         {addr: "TAKYEtb9xtxG5czmkvvsmvF8ui1Y4Sn8cD", fix: 14593.34716 * 1e6},
         {addr: "TUURWq51iQ9Yt5XrGpJgXk8rJUGm8Qn5YE", fix: 20032 * 1e6},
-        {addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab", fix: 10 * 1e6},
     ]
     for (let e of array) {
         const updateSql = "update tron_live.live_balance set balance = balance + ? where addr = ? and currency = 'TRX' "
