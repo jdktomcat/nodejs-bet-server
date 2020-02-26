@@ -1,7 +1,7 @@
 const {raw, getdayList, newUtcTime, getLastDayUtcTime, getNextDayUtcTime} = require("../utils/dbutils")
 const db = require("../../utils/readDbUtil")
 const schedule = require('node-schedule');
-const {startSche,processAllData,processAllAddr} = require("./../dailySchedule/dailyTotal")
+const {processAllData,processAllAddr} = require("./../dailySchedule/dailyTotal")
 
 const readDB = async function (sql, params) {
     console.log(String(sql))
@@ -67,9 +67,9 @@ const queryEvents = async function (start, end) {
 }
 
 const getData = async function (startDate, endDate) {
-    console.log(1111111, startDate, endDate)
+    // console.log(1111111, startDate, endDate)
     const c = getdayList(startDate, endDate)
-    console.log(c)
+    // console.log(c)
     let ss = []
     for (let i = 0; i < c.length - 1; i++) {
         let start = c[i]
@@ -93,7 +93,7 @@ const queryLastDay = async function () {
     const sql = `select day_str from tron_bet_admin.sum_dice_data where type = 'dailydata' order by ts desc limit 0,1`
     const rs = await raw(sql, [])
     const c = rs[0] || {}
-    const dd = c.day_str
+    const dd = c.day_str || '2019-01-01'
     return dd
 }
 
@@ -132,10 +132,6 @@ const parseDice = async function () {
         }
         //todo
     });
-    // 1分钟检查一次
-    const task2 = schedule.scheduleJob('*/1 * * * *', async function () {
-        await startSche()
-    })
 }
 
 
