@@ -115,18 +115,18 @@ const addDiceData = async function (day_str, data_str, ts) {
 const sleep = function (time) {
     const now = Date.now()
     const t = time * 1000
-    while(Date.now() - now > t * 1000){
+    while (Date.now() - now > t * 1000) {
         break
     }
 }
 
 const parseDice = async function () {
-    const j = schedule.scheduleJob('*/1 * * * *', async function () {
-        // const j = schedule.scheduleJob('0 1 * * *', async function () {
+    // const j = schedule.scheduleJob('*/1 * * * *', async function () {
+    const j = schedule.scheduleJob('0 1 * * *', async function () {
         // console.log('The answer to life, the universe, and everything!');
         //
         const rs = await getStartEnd()
-        console.log("debug----->rs is ",rs)
+        console.log("debug----->rs is ", rs)
         if (rs.dice.bool) {
             const {startDateStr, endDateStr} = rs.dice
             console.log(`schedule_dice start is ${startDateStr}, end is ${endDateStr}`)
