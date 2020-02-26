@@ -151,6 +151,8 @@ const getStartEnd = async function () {
     const dbLastDay = await queryDiceDay()
     const dbAllDay = await queryAllDay()
     const lastDay = getLastDayUtcTime(new Date())
+    const days = [dbLastDay,dbAllDay,lastDay].map(e=>getTimeStr(newUtcTime(e)))
+    const [diceDay,allDay,yesterday] = days
     let rs = {
         dice: {
             bool: false
@@ -159,9 +161,9 @@ const getStartEnd = async function () {
             bool: false
         },
     }
-    console.log(`dbLastDay : ${dbLastDay} ,dbAllDay : ${dbAllDay} ,lastDay : ${lastDay} `)
+    console.log(`diceDay : ${diceDay} ,allDay : ${allDay} ,yesterday : ${yesterday} `)
     //deal dice
-    if (getTimeStr(newUtcTime(dbLastDay)) !== getTimeStr(newUtcTime(lastDay))) {
+    if (diceDay !== yesterday) {
         const endDate = newUtcTime(Date.now())
         const endDateStr = getTimeStr(endDate)
         //
@@ -174,16 +176,26 @@ const getStartEnd = async function () {
         }
     }
     // deal with all
-    if (getTimeStr(newUtcTime(dbAllDay)) !== getTimeStr(newUtcTime(lastDay))) {
-        const endDate = newUtcTime(Date.now())
-        const endDateStr = getTimeStr(endDate)
-        //
-        const startDate = getNextDayUtcTime(new Date(dbLastDay))
-        const startDateStr = getTimeStr(startDate)
-        rs.all = {
-            bool: true,
-            startDateStr: startDateStr,
-            endDateStr: endDateStr,
+    //allDay : 2019-01-01 ,yesterday : '2020-02-25'
+    if (allDay !== yesterday) {
+        if(allDay === '2019-01-01'){
+            //首次生成数据
+            rs.all = {
+                bool: true,
+                startDateStr: '2019-01-01',
+                endDateStr: getTimeStr(newUtcTime(Date.now())),
+            }
+        }else{
+            const endDate = newUtcTime(Date.now())
+            const endDateStr = getTimeStr(endDate)
+            //
+            const startDate = getNextDayUtcTime(new Date(dbLastDay))
+            const startDateStr = getTimeStr(startDate)
+            rs.all = {
+                bool: true,
+                startDateStr: startDateStr,
+                endDateStr: endDateStr,
+            }
         }
     }
     return rs
