@@ -18,50 +18,60 @@
 
 const db = require("./src/utils/dbUtil");
 
-async function fixBalance() {
-    const addr = [
-        'TJwWYdtkbKmPb6N8wXxUyhtgHAF4GzqqN6',
-        'TWRX8VYtjE19DvjHKGtgeH2cAMJTQv988y',
-        'TLfD5vPXqBxaXk2TfZw7pAanTpCRENCmUW',
-        'TRSM44ApG4cu6QiGefCjPs4RXNKNkSz2vq',
-        'TSoCt1cNqiQzEYbXYZTtqouDFe6wJoghUK',
-        'TBUBnLxPcy4iBC6pewZaHZZ1ptzoBZ6hV6',
-        'TM2qHmUTpNhsFGVutbNGShV1hEjRabUqwf',
-        'TKETM8NJdhc7ocm5CJKCj8z61pvYJdSjHH',
-        'TSCGR7ymcuohrJtNUSQLBF7n7cH7oPQpPL'
-    ]
-    for (let e of addr) {
-        let sql =
-            "update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX'";
-        console.log(sql, ",params is " + e)
-        await db.exec(sql, [e]);
-    }
+async function removeDirtyData1() {
+    let sql1 = "select * from tron_bet_admin.sum_addr_detail";
+    const data1 = await db.exec(sql1, []);
+    let k = {}
+    let nData = []
+    data1.forEach(e=>{
+        const addr = e.addr || ''
+        if(k[addr] === undefined){
+            k[addr] = 1
+            nData.push(e)
+        }
+    })
     //
-    console.log("update end,debug---->balance")
-    const sql2 = `
-            select
-            a.addr,
-            a.balance / 1000000 as balance,
-            a.currency
-            from tron_live.live_balance a
-        where a.addr in (
-        'TJwWYdtkbKmPb6N8wXxUyhtgHAF4GzqqN6',
-        'TWRX8VYtjE19DvjHKGtgeH2cAMJTQv988y',
-        'TLfD5vPXqBxaXk2TfZw7pAanTpCRENCmUW',
-        'TRSM44ApG4cu6QiGefCjPs4RXNKNkSz2vq',
-        'TSoCt1cNqiQzEYbXYZTtqouDFe6wJoghUK',
-        'TBUBnLxPcy4iBC6pewZaHZZ1ptzoBZ6hV6',
-        'TM2qHmUTpNhsFGVutbNGShV1hEjRabUqwf',
-        'TKETM8NJdhc7ocm5CJKCj8z61pvYJdSjHH',
-        'TSCGR7ymcuohrJtNUSQLBF7n7cH7oPQpPL'
-        )
-    `
-    const o = await db.exec(sql2, []);
-    for (let k of o) {
-        console.log(`${k.addr} now balance is ${k.balance} ${k.currency}`)
+    let sql2 = "delete from tron_bet_admin.sum_addr_detail";
+    await db.exec(sql2, []);
+    for (let ele of nData){
+        const sql3 = `insert into tron_bet_admin.sum_addr_detail(day,addr,ts) values (?,?,?)`
+        const params3 = [ele.day,ele.addr,ele.ts]
+        await db.exec(sql3, params3);
     }
-
 }
 
-fixBalance()
+
+
+async function removeDirtyData2() {
+    let sql1 = "select * from tron_bet_admin.sum_dice_data where type = 'all'";
+    const data1 = await db.exec(sql1, []);
+    let k = {}
+    let nData = []
+    data1.forEach(e=>{
+        const day_str = e.day_str || ''
+        if(k[day_str] === undefined){
+            k[day_str] = 1
+            nData.push(e)
+        }
+    })
+    //
+    let sql2 = "delete from tron_bet_admin.sum_dice_data where type = 'all'";
+    await db.exec(sql2, []);
+    for (let ele of nData){
+        const sql3 = `insert into tron_bet_admin.sum_dice_data(type,day_str,data_str,ts) values ('all',?,?,?)`
+        const params3 = [ele.day_str,ele.data_str, ele.ts]
+        await db.exec(sql3, params3);
+    }
+}
+
+
+async function main() {
+    await removeDirtyData1()
+    await removeDirtyData2()
+    console.log("remove data Done");
+    process.exit(0);
+}
+
+main();
+
 

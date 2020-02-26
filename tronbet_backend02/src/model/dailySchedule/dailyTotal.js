@@ -7,16 +7,6 @@ const addAllData = async function (day_str, data_str, ts) {
     await raw(sql, [day_str, data_str, ts])
 }
 
-const queryEmptyData = async function () {
-    const sql = `select * from tron_bet_admin.sum_dice_data where type = 'all'`
-    const data = await raw(sql, [])
-    if (data.length === 0) {
-        return true
-    } else {
-        return false
-    }
-}
-
 const processAllData = async function (startDate, endDate) {
     const c = getdayList(startDate, endDate)
     for (let i = 0; i < c.length - 1; i++) {
@@ -49,17 +39,6 @@ const processAllAddr = async function (startDate, endDate) {
         let start = getTimeFormat(c[i])
         let end = getTimeFormat(c[i + 1])
         await dailyDAU.generateDailyData(start, end)
-    }
-}
-
-
-const startSche = async function () {
-    const bool = await queryEmptyData()
-    if (bool) {
-        await processAllData('2019-11-04', '2020-02-26')
-        await processAllAddr('2019-01-01', '2020-02-26')
-    } else {
-        console.log("do not need insert")
     }
 }
 
@@ -103,7 +82,6 @@ const queryAllDataFile = async function (startDate, endDate) {
 
 
 module.exports = {
-    startSche,
     processAllData,
     processAllAddr,
     queryAllData,

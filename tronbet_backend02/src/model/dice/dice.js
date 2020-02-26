@@ -1,7 +1,7 @@
 const {raw, getdayList, newUtcTime, getLastDayUtcTime, getNextDayUtcTime} = require("../utils/dbutils")
 const db = require("../../utils/readDbUtil")
 const schedule = require('node-schedule');
-const {startSche,processAllData,processAllAddr} = require("./../dailySchedule/dailyTotal")
+const {processAllData, processAllAddr} = require("./../dailySchedule/dailyTotal")
 
 const readDB = async function (sql, params) {
     console.log(String(sql))
@@ -67,9 +67,9 @@ const queryEvents = async function (start, end) {
 }
 
 const getData = async function (startDate, endDate) {
-    console.log(1111111, startDate, endDate)
+    // console.log(1111111, startDate, endDate)
     const c = getdayList(startDate, endDate)
-    console.log(c)
+    // console.log(c)
     let ss = []
     for (let i = 0; i < c.length - 1; i++) {
         let start = c[i]
@@ -89,11 +89,19 @@ const getData = async function (startDate, endDate) {
 }
 
 
-const queryLastDay = async function () {
+const queryDiceDay = async function () {
     const sql = `select day_str from tron_bet_admin.sum_dice_data where type = 'dailydata' order by ts desc limit 0,1`
     const rs = await raw(sql, [])
     const c = rs[0] || {}
-    const dd = c.day_str
+    const dd = c.day_str || '2019-01-01'
+    return dd
+}
+
+const queryAllDay = async function () {
+    const sql = `select day_str from tron_bet_admin.sum_dice_data where type = 'all' order by ts desc limit 0,1`
+    const rs = await raw(sql, [])
+    const c = rs[0] || {}
+    const dd = c.day_str || '2019-01-01'
     return dd
 }
 
@@ -104,38 +112,80 @@ const addDiceData = async function (day_str, data_str, ts) {
 }
 
 
+const sleep = function (time) {
+    const now = Date.now()
+    const t = time * 1000
+    while (Date.now() - now > t * 1000) {
+        break
+    }
+}
+
 const parseDice = async function () {
+    // const j = schedule.scheduleJob('*/1 * * * *', async function () {
     const j = schedule.scheduleJob('0 1 * * *', async function () {
         // console.log('The answer to life, the universe, and everything!');
         //
-        const dbLastDay = await queryLastDay()
-        const lastDay = getLastDayUtcTime(new Date())
-        //
-        const dbLastDayStr = getTimeStr(newUtcTime(dbLastDay))
-        const lastDayStr = getTimeStr(newUtcTime(lastDay))
-        //
-        console.log("dbLastDay------>", dbLastDayStr)
-        console.log("lastDay------>", lastDayStr)
-        if (dbLastDayStr !== lastDayStr) {
-            const endDate = newUtcTime(Date.now())
-            const endDateStr = getTimeStr(endDate)
-            //
-            const startDate = getNextDayUtcTime(new Date(dbLastDay))
-            const startDateStr = getTimeStr(startDate)
-            //
-            console.log("start------>", startDateStr)
-            console.log("end------>", endDateStr)
+        const rs = await getStartEnd()
+        console.log("debug----->rs is ", rs)
+        if (rs.dice.bool) {
+            const {startDateStr, endDateStr} = rs.dice
+            console.log(`schedule_dice start is ${startDateStr}, end is ${endDateStr}`)
             await getData(startDateStr, endDateStr)
-            //
+        }
+        //
+        console.log('sleep 30s')
+        sleep(30)
+        console.log('sleep 30s end')
+        //
+        if (rs.all.bool) {
+            const {startDateStr, endDateStr} = rs.all
+            console.log(`schedule_all start is ${startDateStr}, end is ${endDateStr}`)
             await processAllData(startDateStr, endDateStr)
             await processAllAddr(startDateStr, endDateStr)
         }
-        //todo
     });
-    // 1分钟检查一次
-    const task2 = schedule.scheduleJob('*/1 * * * *', async function () {
-        await startSche()
-    })
+}
+
+
+const getStartEnd = async function () {
+    const dbLastDay = await queryDiceDay()
+    const dbAllDay = await queryAllDay()
+    const lastDay = getLastDayUtcTime(new Date())
+    let rs = {
+        dice: {
+            bool: false
+        },
+        all: {
+            bool: false
+        },
+    }
+    //deal dice
+    if (getTimeStr(newUtcTime(dbLastDay)) !== getTimeStr(newUtcTime(lastDay))) {
+        const endDate = newUtcTime(Date.now())
+        const endDateStr = getTimeStr(endDate)
+        //
+        const startDate = getNextDayUtcTime(new Date(dbLastDay))
+        const startDateStr = getTimeStr(startDate)
+        rs.dice = {
+            bool: true,
+            startDateStr: startDateStr,
+            endDateStr: endDateStr,
+        }
+    }
+    // deal with all
+    if (getTimeStr(newUtcTime(dbAllDay)) !== getTimeStr(newUtcTime(lastDay))) {
+        const endDate = newUtcTime(Date.now())
+        const endDateStr = getTimeStr(endDate)
+        //
+        const startDate = getNextDayUtcTime(new Date(dbLastDay))
+        const startDateStr = getTimeStr(startDate)
+        rs.all = {
+            bool: true,
+            startDateStr: startDateStr,
+            endDateStr: endDateStr,
+        }
+    }
+    return rs
 }
 
 
