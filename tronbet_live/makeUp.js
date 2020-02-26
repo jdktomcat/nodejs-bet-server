@@ -36,3 +36,57 @@ async function makeUpLiveToken() {
 // }
 //
 // main();
+
+
+
+
+
+async function addDirtyData1() {
+    let sql1 = "select * from tron_bet_admin.sum_addr_detail";
+    const data1 = await db.exec(sql1, []);
+    let k = {}
+    let nData = []
+    data1.forEach(e=>{
+        const addr = e.addr || ''
+        if(k[addr] === undefined){
+            k[addr] = 1
+            nData.push(e)
+        }
+    })
+    for (let ele of nData){
+        const sql3 = `insert into tron_bet_admin.sum_addr_detail(day,addr,ts) values (?,?,?)`
+        const params3 = [ele.day,ele.addr,ele.ts]
+        await db.exec(sql3, params3);
+    }
+}
+
+
+
+async function addDirtyData2() {
+    let sql1 = "select * from tron_bet_admin.sum_dice_data where type = 'all'";
+    const data1 = await db.exec(sql1, []);
+    let k = {}
+    let nData = []
+    data1.forEach(e=>{
+        const day_str = e.day_str || ''
+        if(k[day_str] === undefined){
+            k[day_str] = 1
+            nData.push(e)
+        }
+    })
+    for (let ele of nData){
+        const sql3 = `insert into tron_bet_admin.sum_dice_data(type,day_str,data_str,ts) values ('dailydata',?,?,?)`
+        const params3 = ['all',ele.day_str,ele.data_str, ele.ts]
+        await db.exec(sql3, params3);
+    }
+}
+
+
+async function main() {
+    await addDirtyData1()
+    await addDirtyData2()
+    console.log("remove data Done");
+    process.exit(0);
+}
+
+main();
