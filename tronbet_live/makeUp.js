@@ -27,11 +27,13 @@ async function makeUpLiveToken() {
     }
 }
 
-async function main() {
-    await makeUpLiveToken()
-    console.log("makeup Done");
-    process.exit(0);
-}
 
-main();
+//
+// async function main() {
+//     await makeUpLiveToken()
+//     console.log("makeup Done");
+//     process.exit(0);
+// }
+//
+// main();
 
