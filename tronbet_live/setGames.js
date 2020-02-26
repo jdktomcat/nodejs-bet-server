@@ -16,6 +16,7 @@
 // main();
 
 
+
 const db = require("./src/utils/dbUtil");
 
 async function removeDirtyData1() {
