@@ -159,6 +159,7 @@ const getStartEnd = async function () {
             bool: false
         },
     }
+    console.log(`dbLastDay : ${dbLastDay} ,dbAllDay : ${dbAllDay} ,lastDay : ${lastDay} `)
     //deal dice
     if (getTimeStr(newUtcTime(dbLastDay)) !== getTimeStr(newUtcTime(lastDay))) {
         const endDate = newUtcTime(Date.now())
