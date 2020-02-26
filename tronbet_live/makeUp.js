@@ -26,6 +26,8 @@ async function makeUpLiveToken() {
         await addData2AirDrop(sql);
     }
 }
+
+
 //
 // async function main() {
 //     await makeUpLiveToken()

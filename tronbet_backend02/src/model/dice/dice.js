@@ -121,8 +121,8 @@ const sleep = function (time) {
 }
 
 const parseDice = async function () {
-    const j = schedule.scheduleJob('*/1 * * * *', async function () {
-    // const j = schedule.scheduleJob('0 1 * * *', async function () {
+    // const j = schedule.scheduleJob('*/1 * * * *', async function () {
+    const j = schedule.scheduleJob('0 1 * * *', async function () {
         // console.log('The answer to life, the universe, and everything!');
         //
         const rs = await getStartEnd()
@@ -151,8 +151,8 @@ const getStartEnd = async function () {
     const dbLastDay = await queryDiceDay()
     const dbAllDay = await queryAllDay()
     const lastDay = getLastDayUtcTime(new Date())
-    const days = [dbLastDay,dbAllDay,lastDay].map(e=>getTimeStr(newUtcTime(e)))
-    const [diceDay,allDay,yesterday] = days
+    const days = [dbLastDay, dbAllDay, lastDay].map(e => getTimeStr(newUtcTime(e)))
+    const [diceDay, allDay, yesterday] = days
     let rs = {
         dice: {
             bool: false
@@ -178,14 +178,14 @@ const getStartEnd = async function () {
     // deal with all
     //allDay : 2019-01-01 ,yesterday : '2020-02-25'
     if (allDay !== yesterday) {
-        if(allDay === '2019-01-01'){
+        if (allDay === '2019-01-01') {
             //首次生成数据
             rs.all = {
                 bool: true,
                 startDateStr: '2019-01-01',
                 endDateStr: getTimeStr(newUtcTime(Date.now())),
             }
-        }else{
+        } else {
             const endDate = newUtcTime(Date.now())
             const endDateStr = getTimeStr(endDate)
             //
