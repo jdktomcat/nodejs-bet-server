@@ -126,6 +126,7 @@ const parseDice = async function () {
         // console.log('The answer to life, the universe, and everything!');
         //
         const rs = getStartEnd()
+        console.log("debug----->rs is ",rs)
         if (rs.dice.bool) {
             const {startDateStr, endDateStr} = rs.dice
             console.log(`schedule_dice start is ${startDateStr}, end is ${endDateStr}`)
