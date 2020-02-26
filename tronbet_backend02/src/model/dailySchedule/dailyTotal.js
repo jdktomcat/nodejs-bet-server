@@ -82,7 +82,6 @@ const queryAllDataFile = async function (startDate, endDate) {
 
 
 module.exports = {
-    startSche,
     processAllData,
     processAllAddr,
     queryAllData,
