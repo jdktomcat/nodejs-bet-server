@@ -134,7 +134,7 @@ const parseDice = async function () {
         }
         //
         console.log('sleep 30s')
-        sleep(30)
+        sleep(300)
         console.log('sleep 30s end')
         //
         if (rs.all.bool) {
