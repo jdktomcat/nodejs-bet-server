@@ -136,14 +136,13 @@ const parseDice = async function () {
         console.log('sleep 30s')
         sleep(30)
         console.log('sleep 30s end')
-        
         //
-        // if (rs.all.bool) {
-        //     const {startDateStr, endDateStr} = rs.all
-        //     console.log(`schedule_all start is ${startDateStr}, end is ${endDateStr}`)
-        //     await processAllData(startDateStr, endDateStr)
-        //     await processAllAddr(startDateStr, endDateStr)
-        // }
+        if (rs.all.bool) {
+            const {startDateStr, endDateStr} = rs.all
+            console.log(`schedule_all start is ${startDateStr}, end is ${endDateStr}`)
+            await processAllData(startDateStr, endDateStr)
+            await processAllAddr(startDateStr, endDateStr)
+        }
     });
 }
 
