@@ -125,7 +125,7 @@ const parseDice = async function () {
         // const j = schedule.scheduleJob('0 1 * * *', async function () {
         // console.log('The answer to life, the universe, and everything!');
         //
-        const rs = getStartEnd()
+        const rs = await getStartEnd()
         console.log("debug----->rs is ",rs)
         if (rs.dice.bool) {
             const {startDateStr, endDateStr} = rs.dice
