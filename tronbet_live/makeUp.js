@@ -75,8 +75,8 @@ async function addDirtyData2() {
         }
     })
     for (let ele of nData){
-        const sql3 = `insert into tron_bet_admin.sum_dice_data(type,day_str,data_str,ts) values ('dailydata',?,?,?)`
-        const params3 = ['all',ele.day_str,ele.data_str, ele.ts]
+        const sql3 = `insert into tron_bet_admin.sum_dice_data(type,day_str,data_str,ts) values ('all',?,?,?)`
+        const params3 = [ele.day_str,ele.data_str, ele.ts]
         await db.exec(sql3, params3);
     }
 }
