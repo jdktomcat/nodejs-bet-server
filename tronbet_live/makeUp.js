@@ -30,7 +30,7 @@ async function makeUpLiveToken() {
 
 const fixBalance = async function () {
     const array = [
-        {addr: "TPUMuJZkokoXHxfXCjoerXnybBtg9LS8hT", fix: 690 * 1e6},
+        {addr: "TPUMuJZkokoXHxfXCjoerXnybBtg9LS8hT", fix: 683 * 1e6},
         {addr: "TQnckPMjwkP2uYNW26euwxgDhdzTBoWuPt", fix: 3839 * 1e6},
         {addr: "TN6rWvxATrd1XywjHceDYm2UxS7khegErV", fix: 1300 * 1e6},
         {addr: "TCVvvBLJLe53F3rz9vmHEvdpMvTCK4TmxS", fix: 170 * 1e6},
