@@ -8,7 +8,8 @@
     "start:makeup": "cross-env NODE_ENV=production node makeUp.js",
     "test:makeup": "cross-env NODE_ENV=test node makeUp.js",
     "start:hub88addition": "cross-env NODE_ENV=production node setHub88Addition.js",
-    "test:hub88addition": "cross-env NODE_ENV=test node setHub88Addition.js"
+    "test:hub88addition": "cross-env NODE_ENV=test node setHub88Addition.js",
+    "test:burn": "cross-env NODE_ENV=test node burnWin.js"
   },
   "dependencies": {
     "cross-env": "^5.2.0",
