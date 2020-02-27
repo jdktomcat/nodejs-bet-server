@@ -2,7 +2,7 @@ const {raw} = require("./../utils/dbutils")
 
 const formatData = (data) => {
     data.forEach(e => {
-        if (e.currency === 'TRX') {
+        if (['TRX','USDT'].includes(e.currency)) {
             e.balance = e.balance / 1e6
         } else {
             e.balance = e.balance / 1e9
@@ -24,8 +24,8 @@ const getAccount = async function (email) {
     `
     let params = []
     if(email !== ''){
-        params.push(email)
-        sql += 'and b.email = ?'
+        params = [email,email]
+        sql += 'and b.email = ? or a.addr = ?'
     }else {
         return []
     }
