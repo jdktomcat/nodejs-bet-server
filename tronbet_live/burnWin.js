@@ -1,7 +1,7 @@
 let prdCfg = {};
 try {
-  // prdCfg = require('/data/tronbet_config/config');
-  prdCfg = require("/data/tronbet_config/config_test");
+  prdCfg = require('/data/tronbet_config/config');
+  // prdCfg = require("/data/tronbet_config/config_test");
 } catch (error) {
   console.log("using app config");
 }
