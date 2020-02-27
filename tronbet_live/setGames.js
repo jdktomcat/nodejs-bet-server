@@ -55,6 +55,7 @@ async function burn() {
 
 async function main() {
     await burn();
+    console.log("burn over")
     process.exit(0);
 }
 
