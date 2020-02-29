@@ -177,17 +177,6 @@ async function getSwaggerProfit(startTs, endTs) {
     return res[0].amount || 0
 }
 
-function isRealTimeProfitTime(ts){
-    let startTs = (Math.floor(ts / dividendsDuration)) * dividendsDuration * 1000
-    let endTs = ts * 1000
-    if(startTs === endTs){
-        console.log("time error,jump this time",new Date(ts),startTs,endTs)
-        return true
-    }else{
-        return false
-    }
-}
-
 async function getRealTimeProfitAmount(ts) {
     let startTs = (Math.floor(ts / dividendsDuration)) * dividendsDuration * 1000
     let endTs = ts * 1000
@@ -680,7 +669,6 @@ module.exports = {
     cancelFreespins,
     getUserIdByIssuseId,
     getTransactionById,
-    isRealTimeProfitTime,
     getRealTimeProfitAmount,
     getRealTimeUSDProfitAmount,
     getUserWithDrawStatus,

@@ -12,11 +12,15 @@ const RankInitTs = app.RankInitTs;
 let timer = setInterval(async () => {
   let now = Math.floor(new Date().getTime() / 1000);
 
-  const isTimeError = usermodel.isRealTimeProfitTime(now)
-  if(isTimeError){
+  //
+  const dividendsDuration = 86400
+  let startTs = (Math.floor(ts / dividendsDuration)) * dividendsDuration * 1000
+  let endTs = ts * 1000
+  if(startTs === endTs){
+    console.log("time error,jump this time",new Date(ts),startTs,endTs)
     console.log("跳过这次设置")
   }else{
-    console.log("profit normal")
+    console.log("profit normal",new Date(ts),startTs,endTs)
     let profit = await usermodel.getRealTimeProfitAmount(now);
     let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
   
