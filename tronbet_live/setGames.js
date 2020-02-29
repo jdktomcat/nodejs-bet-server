@@ -15,50 +15,46 @@
 //
 // main();
 
-
-let prdCfg = {};
-try {
-    prdCfg = require('/data/tronbet_config/config');
-    // prdCfg = require("/data/tronbet_config/config_test");
-} catch (error) {
-    console.log("using app config");
+const db = require("./src/utils/dbUtil");
+const removeDirtyGame = async function () {
+    const updateSql = "delete from tron_live.live_online_game where status = '1'"
+    console.log("excute sql is: ",updateSql)
+    await db.exec(updateSql, [])
 }
 
-const TronWeb = require("tronweb");
-const HttpProvider = TronWeb.providers.HttpProvider;
-const fullNode = new HttpProvider(prdCfg.master_full);
-const solidityNode = new HttpProvider(prdCfg.master_solidity);
-const eventServer = prdCfg.master_event;
-const privateKey = prdCfg.operatorDice_pk;
-
-let tronWeb = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
-
-const contract_address = prdCfg.contract.TronBetPool20; //合约地址
-
-//获取合约
-async function getContractInstance() {
-    let contractInstance = await tronWeb.contract().at(contract_address);
-    return contractInstance;
+// TGT6C12BP36s21n5MTwG9Fcxa597UvKDRs  140
+// TSo2tj2YXfMhLHpb6GxFombCuErtJrJ8nD  127.74
+// TJuJFibqBZGB13ydFCH4AK8zhK18r6dD6k 14050
+const fixBalance = async function () {
+    const array = ['TGT6C12BP36s21n5MTwG9Fcxa597UvKDRs','TSo2tj2YXfMhLHpb6GxFombCuErtJrJ8nD','TJuJFibqBZGB13ydFCH4AK8zhK18r6dD6k']
+    const querySql = "select addr,balance / 1000000 as balance,currency from tron_live.live_balance where addr = ? and currency = 'TRX'"
+    const updateSql = "update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX' "
+    for (let e of array) {
+        console.log(querySql,e)
+        const a1 = await db.exec(querySql,[e])
+        if(a1.length > 0){
+            console.log(`${e} data is `,a1.length,a1[0].addr,a1[0].balance,a1[0].currency)
+        }
+        console.log(updateSql,e)
+        await db.exec(updateSql,[e])
+    }
+    console.log("\n\nafter is===>")
+    for (let e of array) {
+        console.log(querySql,e)
+        const a1 = await db.exec(querySql,[e])
+        if(a1.length > 0){
+            console.log(`${e} data is `,a1.length,a1[0].addr,a1[0].balance,a1[0].currency)
+        }
+    }
 }
 
-async function burn() {
-    let contractInstance = await getContractInstance();
-    const transactionID = await contractInstance
-        .burnWin()
-        .send()
-        .catch(error => {
-            console.log(error);
-        });
-    console.log(transactionID);
-    return transactionID;
-}
 
 async function main() {
-    await burn();
-    console.log("burn over")
+    await removeDirtyGame()
+    console.log("======分割线=====\n\n")
+    await fixBalance()
+    console.log("remove gameID Done");
     process.exit(0);
 }
 
 main();
-
-
