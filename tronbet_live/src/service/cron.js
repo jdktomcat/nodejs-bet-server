@@ -14,8 +14,8 @@ let timer = setInterval(async () => {
 
   //
   const dividendsDuration = 86400
-  let startTs = (Math.floor(ts / dividendsDuration)) * dividendsDuration * 1000
-  let endTs = ts * 1000
+  let startTs = (Math.floor(now / dividendsDuration)) * dividendsDuration * 1000
+  let endTs = now * 1000
   if(startTs === endTs){
     console.log("time error,jump this time",new Date(ts),startTs,endTs)
     console.log("跳过这次设置")
