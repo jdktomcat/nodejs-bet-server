@@ -16,6 +16,7 @@ let timer = setInterval(async () => {
   if(isTimeError){
     console.log("跳过这次设置")
   }else{
+    console.log("profit normal")
     let profit = await usermodel.getRealTimeProfitAmount(now);
     let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
   
@@ -39,7 +40,7 @@ let timer = setInterval(async () => {
     await redisUtil.hset('tronlive:realtime', 'profit', profit);
     await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
   }
-  
+
 }, 70000);
 
 let rankTimer = setInterval(async () => {
