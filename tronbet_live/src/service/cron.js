@@ -11,28 +11,35 @@ const RankInitTs = app.RankInitTs;
 
 let timer = setInterval(async () => {
   let now = Math.floor(new Date().getTime() / 1000);
-  let profit = await usermodel.getRealTimeProfitAmount(now);
-  let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
 
-  // 抽回部分底池 累计有效分红100次 每次抽10万 第500轮开始
-  // profit = profit - 200000;
-  // 抽回部分底池 累计有效分红100次 每次抽20万 第507轮开始
-  // profit = profit - 400000;
-
-
-  // 抽回部分底池 累计有效分红100次 每次抽10% 第507轮开始
-  // profit = profit * 0.9;
-  if( profit > 0){
-    profit = profit * 0.9;
+  const isTimeError = usermodel.isRealTimeProfitTime(now)
+  if(isTimeError){
+    console.log("跳过这次设置")
   }else{
-    profit = profit + 3200000;
+    let profit = await usermodel.getRealTimeProfitAmount(now);
+    let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
+  
+    // 抽回部分底池 累计有效分红100次 每次抽10万 第500轮开始
+    // profit = profit - 200000;
+    // 抽回部分底池 累计有效分红100次 每次抽20万 第507轮开始
+    // profit = profit - 400000;
+  
+  
+    // 抽回部分底池 累计有效分红100次 每次抽10% 第507轮开始
+    // profit = profit * 0.9;
+    if( profit > 0){
+      profit = profit * 0.9;
+    }else{
+      profit = profit + 3200000;
+    }
+    // 盈利暂时放开 50% 
+    // if( profit > 0 ){
+    //   profit = profit * 0.5
+    // }
+    await redisUtil.hset('tronlive:realtime', 'profit', profit);
+    await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
   }
-  // 盈利暂时放开 50% 
-  // if( profit > 0 ){
-  //   profit = profit * 0.5
-  // }
-  await redisUtil.hset('tronlive:realtime', 'profit', profit);
-  await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
+  
 }, 70000);
 
 let rankTimer = setInterval(async () => {
