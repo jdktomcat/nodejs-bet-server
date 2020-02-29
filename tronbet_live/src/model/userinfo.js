@@ -177,7 +177,7 @@ async function getSwaggerProfit(startTs, endTs) {
     return res[0].amount || 0
 }
 
-async function isRealTimeProfitTime(ts){
+function isRealTimeProfitTime(ts){
     let startTs = (Math.floor(ts / dividendsDuration)) * dividendsDuration * 1000
     let endTs = ts * 1000
     if(startTs === endTs){
