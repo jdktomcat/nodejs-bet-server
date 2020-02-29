@@ -17,10 +17,10 @@ let timer = setInterval(async () => {
   let startTs = (Math.floor(now / dividendsDuration)) * dividendsDuration * 1000
   let endTs = now * 1000
   if(startTs === endTs){
-    console.log("time error,jump this time",new Date(ts),startTs,endTs)
+    console.log("time error,jump this time",new Date(now),startTs,endTs)
     console.log("跳过这次设置")
   }else{
-    console.log("profit normal",new Date(ts),startTs,endTs)
+    console.log("profit normal",new Date(now),startTs,endTs)
     let profit = await usermodel.getRealTimeProfitAmount(now);
     let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
   
