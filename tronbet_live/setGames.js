@@ -49,12 +49,12 @@ const fixBalance = async function () {
 }
 
 
-async function main() {
-    await removeDirtyGame()
-    console.log("======分割线=====\n\n")
-    await fixBalance()
-    console.log("remove gameID Done");
-    process.exit(0);
-}
+// async function main() {
+//     await removeDirtyGame()
+//     console.log("======分割线=====\n\n")
+//     await fixBalance()
+//     console.log("remove gameID Done");
+//     process.exit(0);
+// }
 
-main();
+// main();
