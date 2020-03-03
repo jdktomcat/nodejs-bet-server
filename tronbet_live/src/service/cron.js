@@ -35,7 +35,7 @@ let timer = setInterval(async () => {
     if( profit > 0){
       profit = profit * 0.9;
     }else{
-      profit = profit + 2800000;
+      profit = profit + 2900000;
     }
     // 盈利暂时放开 50% 
     // if( profit > 0 ){
