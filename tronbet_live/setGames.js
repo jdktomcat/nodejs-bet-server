@@ -16,45 +16,51 @@
 // main();
 
 const db = require("./src/utils/dbUtil");
-const removeDirtyGame = async function () {
-    const updateSql = "delete from tron_live.live_online_game where status = '1'"
-    console.log("excute sql is: ",updateSql)
-    await db.exec(updateSql, [])
+
+async function insertDB(info) {
+    let sql =
+        "insert into tron_bet_admin.ante_burnt_log(types, call_addr, amount, ts, tx_id) values (?, ?, ?, ?, ?) ON DUPLICATE KEY update tx_id = ?";
+
+    let res = await db.exec(sql, [
+        info.type,
+        info.addr,
+        info.amount,
+        info.ts,
+        info.tx,
+        info.tx
+    ]);
+    console.log("insertDB res", res);
 }
 
-// TGT6C12BP36s21n5MTwG9Fcxa597UvKDRs  140
-// TSo2tj2YXfMhLHpb6GxFombCuErtJrJ8nD  127.74
-// TJuJFibqBZGB13ydFCH4AK8zhK18r6dD6k 14050
-const fixBalance = async function () {
-    const array = ['TGT6C12BP36s21n5MTwG9Fcxa597UvKDRs','TSo2tj2YXfMhLHpb6GxFombCuErtJrJ8nD','TJuJFibqBZGB13ydFCH4AK8zhK18r6dD6k']
-    const querySql = "select addr,balance / 1000000 as balance,currency from tron_live.live_balance where addr = ? and currency = 'TRX'"
-    const updateSql = "update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX' "
-    for (let e of array) {
-        console.log(querySql,e)
-        const a1 = await db.exec(querySql,[e])
-        if(a1.length > 0){
-            console.log(`${e} data is `,a1.length,a1[0].addr,a1[0].balance,a1[0].currency)
-        }
-        console.log(updateSql,e)
-        await db.exec(updateSql,[e])
+async function main() {
+    //平台燃烧
+    let info = [];
+    let obj1 = {};
+    obj1.type = 2;
+    obj1.addr = "THtbMw6byXuiFhsRv1o1BQRtzvube9X1jx";
+    obj1.amount = 46305130798879;
+    obj1.ts = 1582794489000;
+    obj1.tx = "2dc0917461b94e55dadbdd070e3e720599d5b729345ca3da3957a0afd885eecf";
+    info.push(obj1);
+
+
+    //回购燃烧
+    let obj3 = {};
+    obj3.type = 1;
+    obj3.addr = "THNpF5h4isLgXe7rtw6833nSgTqhfuVJLN";
+    obj3.amount = 478965413330000;
+    obj3.ts = 1583220348000;
+    obj3.tx = "8f158e5555603a4886a21918f4fd5ae92f4b3dd2b39c0a36b3d77a8b281d4003";
+    info.push(obj3);
+
+    for (let item of info) {
+        await insertDB(item);
     }
-    console.log("\n\nafter is===>")
-    for (let e of array) {
-        console.log(querySql,e)
-        const a1 = await db.exec(querySql,[e])
-        if(a1.length > 0){
-            console.log(`${e} data is `,a1.length,a1[0].addr,a1[0].balance,a1[0].currency)
-        }
-    }
+    console.log("excute end!")
+    process.exit(0);
 }
 
-
-// async function main() {
-//     await removeDirtyGame()
-//     console.log("======分割线=====\n\n")
-//     await fixBalance()
-//     console.log("remove gameID Done");
-//     process.exit(0);
-// }
-
-// main();
+main().catch(e=>{
+    console.log("error is ",e)
+    process.exit(1)
+})
