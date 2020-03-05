@@ -10,7 +10,7 @@ const axios = require('axios');
 const RankInitTs = app.RankInitTs;
 
 let timer = setInterval(async () => {
-  let now = Math.floor(new Date().getTime() / 1000);
+  let now = Date.now();
   //
   let profit = await usermodel.getRealTimeProfitAmount(now);
   let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
