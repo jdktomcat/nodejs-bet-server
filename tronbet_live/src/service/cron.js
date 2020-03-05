@@ -44,7 +44,7 @@ let timer = setInterval(async () => {
     // if( profit > 0 ){
     //   profit = profit * 0.5
     // }
-    if(usdt > 20000){
+    if(usdt > 3000){
       usdt = usdt * -1 * 0.1
     }
     await redisUtil.hset('tronlive:realtime', 'profit', profit);
