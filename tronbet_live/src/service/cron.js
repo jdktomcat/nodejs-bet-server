@@ -20,7 +20,6 @@ let timer = setInterval(async () => {
     console.log("time error,jump this time",new Date(now),startTs,endTs)
     console.log("跳过这次设置")
   }else{
-    console.log("profit normal",new Date(now * 1000),startTs,endTs)
     let profit = await usermodel.getRealTimeProfitAmount(now);
     let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
   
@@ -32,6 +31,8 @@ let timer = setInterval(async () => {
   
     // 抽回部分底池 累计有效分红100次 每次抽10% 第507轮开始
     // profit = profit * 0.9;
+    console.log("profit normal",new Date(now * 1000),startTs,endTs)
+    console.log("this time trx profit is",profit)
     if( profit > 0){
       profit = profit * 0.9;
     }else{
