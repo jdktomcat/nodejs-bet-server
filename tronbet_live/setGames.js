@@ -29,7 +29,7 @@ const main = async function(){
     process.exit(0)
 }
 
-main().catch(e=>{
-    console.log(e)
-    process.exit(1)
-})
+// main().catch(e=>{
+//     console.log(e)
+//     process.exit(1)
+// })
