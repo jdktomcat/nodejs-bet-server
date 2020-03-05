@@ -33,20 +33,15 @@ let timer = setInterval(async () => {
     // profit = profit * 0.9;
     console.log("profit normal",new Date(now * 1000),startTs,endTs)
     console.log("this time trx profit is",profit)
-    if( profit > 5000000){
-      profit = profit * 0.1;
-    }else if( profit > 0){
-      profit = profit * 0.9;
-    }else{
-      profit = profit + 215;
+    //130137.62050057614
+    if(profit > 0 && profit <= 300000){
+      profit = profit + 580000;
     }
+    console.log("after time trx profit is",profit)
     // 盈利暂时放开 50% 
     // if( profit > 0 ){
     //   profit = profit * 0.5
     // }
-    if(usdt > 3000){
-      usdt = usdt * -1 * 0.1
-    }
     await redisUtil.hset('tronlive:realtime', 'profit', profit);
     await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
   }
