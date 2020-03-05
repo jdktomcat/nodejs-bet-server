@@ -16,10 +16,10 @@ let timer = setInterval(async () => {
   const dividendsDuration = 86400
   let startTs = (Math.floor(now / dividendsDuration)) * dividendsDuration * 1000
   let endTs = now * 1000
-  if(startTs === endTs){
-    console.log("time error,jump this time",new Date(now),startTs,endTs)
-    console.log("跳过这次设置")
-  }else{
+  // if(startTs === endTs){
+  //   console.log("time error,jump this time",new Date(now),startTs,endTs)
+  //   console.log("跳过这次设置")
+  // }else{
     console.log("profit normal",new Date(now * 1000),startTs,endTs)
     let profit = await usermodel.getRealTimeProfitAmount(now);
     let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
@@ -43,7 +43,7 @@ let timer = setInterval(async () => {
     // }
     await redisUtil.hset('tronlive:realtime', 'profit', profit);
     await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
-  }
+  // }
 
 }, 70000);
 
