@@ -188,7 +188,7 @@ function newUtcTime(today) {
 
 async function getRealTimeProfitAmount(ts) {
     let startTs = newUtcTime(ts)
-    let endTs = Date.now()
+    let endTs = ts
     if(startTs === endTs){
         endTs = endTs + 1000
     }
@@ -290,7 +290,7 @@ async function getSportsTRC20Profit(startTs, endTs, currency) {
 
   async function getRealTimeUSDProfitAmount(ts) {
     let startTs = newUtcTime(ts)
-    let endTs = Date.now()
+    let endTs = ts
     if(startTs === endTs){
       endTs = endTs + 1000
     }
