@@ -45,7 +45,8 @@ let timer = setInterval(async () => {
     await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
   }
 
-}, 70000);
+}, 35000);
+// }, 70000);
 
 let rankTimer = setInterval(async () => {
   let now = Math.floor(new Date().getTime() / 1000);
