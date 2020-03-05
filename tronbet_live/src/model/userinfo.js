@@ -189,6 +189,11 @@ async function getRealTimeProfitAmount(ts) {
     // let swaggerRealProfit = await getSwaggerProfit(startTs, endTs * 10)
 
     let swaggerRealProfit = await getSwaggerProfit(startTs, endTs)
+    //
+    console.log("hub88 start is ", new Date(startTs),', ', new Date(endTs));
+    console.log("em start is ", new Date(startTs),', ', new Date(endTs * 10));
+    console.log("sport start is ", new Date(startTs),', ', new Date(endTs * 10));
+    //
     console.log("swaggerRealProfit====>bug", swaggerRealProfit);
     let lastDay = Math.floor(ts / dividendsDuration) - 1
     if (lastDay >= 0) {
@@ -277,6 +282,9 @@ async function getSportsTRC20Profit(startTs, endTs, currency) {
   async function getRealTimeUSDProfitAmount(ts) {
     let startTs = Math.floor(ts / dividendsDuration) * dividendsDuration * 1000;
     let endTs = ts * 1000;
+      //
+    console.log("usdt start is ", new Date(startTs),', ', new Date(endTs));
+      //
     let currency = 'USDT';
     let sportsRealTimeProfit = await getSportsTRC20Profit(startTs, endTs * 10, currency);
     let lastDay = Math.floor(ts / dividendsDuration) - 1;
