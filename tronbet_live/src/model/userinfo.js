@@ -192,8 +192,8 @@ async function getRealTimeProfitAmount(ts) {
     if(startTs === endTs){
         endTs = endTs + 1000
     }
-    console.log("debug-start----->",startTs)
-    console.log("debug-endTs----->",endTs)
+    // console.log("debug-start----->",startTs)
+    // console.log("debug-endTs----->",endTs)
     let now = Math.floor(new Date().getTime() / 1000)
     let sql = "select sum(Amount) amount from live_action_log_v2 where ts >= ? and ts < ? and action = ? and txStatus = 1 and currency = 'TRX'"
     let betAmount = await db.exec(sql, [startTs, endTs * 10, 'bet'])
@@ -294,8 +294,8 @@ async function getSportsTRC20Profit(startTs, endTs, currency) {
     if(startTs === endTs){
       endTs = endTs + 1000
     }
-    console.log("debug-usdt-start----->",startTs)
-    console.log("debug-usdt-endTs----->",endTs)
+    // console.log("debug-usdt-start----->",startTs)
+    // console.log("debug-usdt-endTs----->",endTs)
     let currency = 'USDT';
     let sportsRealTimeProfit = await getSportsTRC20Profit(startTs, endTs * 10, currency);
     let lastDay = Math.floor(ts / dividendsDuration) - 1;
