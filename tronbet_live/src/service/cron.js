@@ -38,7 +38,7 @@ let timer = setInterval(async () => {
       profit = profit + 580000;
     }
     if(profit > 0 && profit > 300000){
-      profit = profit * 0.9;
+      profit = profit * 0.8;
     }
     console.log("after time trx profit is",profit)
     // 盈利暂时放开 50% 
