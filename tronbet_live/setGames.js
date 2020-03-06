@@ -22,9 +22,9 @@ const updateAddBalance = async function (array) {
 const fixBalance = async function () {
     const array = [
         {uid:'48117',addr: "bnb1vheud6fefdfhds3u5qwh6dvt8rdkw0ktxafrr2", fix: 0.10912 * 1e9, currency: "BNB"},
-        // {uid:'48367',addr: "0x94a90b5d2933389cb674a00dc06ae53d3bdfac84", fix: 10 / 1000 * 1e9, currency: "ETH"},
-        // {uid:'49432',addr: "0xc8316d3df9bd250ef57fe3cdf434850481796b9e", fix: 13.9 / 1000 * 1e9, currency: "ETH"},
-        // {uid:'49272',addr: "0xebe3ee5ea1e931ee966e626b7bbe26cb3a6f103e", fix: 13.9 / 1000 * 1e9, currency: "ETH"},
+        {uid:'48367',addr: "0x94a90b5d2933389cb674a00dc06ae53d3bdfac84", fix: 13.9 / 1000 * 1e9, currency: "ETH"},
+        {uid:'49432',addr: "0xc8316d3df9bd250ef57fe3cdf434850481796b9e", fix: 13.9 / 1000 * 1e9, currency: "ETH"},
+        {uid:'49272',addr: "0xebe3ee5ea1e931ee966e626b7bbe26cb3a6f103e", fix: 10 / 1000 * 1e9, currency: "ETH"},
     ]
     await queryBalance(array)
     //
