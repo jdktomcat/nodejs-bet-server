@@ -13,7 +13,8 @@ const formatData = (data) => {
 const getAccount = async function (email) {
     let sql = `
         select
-            b.email, 
+            b.email,
+            a.uid, 
             a.addr,
             a.balance,
             a.currency
