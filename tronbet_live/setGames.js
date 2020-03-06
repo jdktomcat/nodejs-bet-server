@@ -21,11 +21,11 @@ const updateAddBalance = async function (array) {
 
 const fixBalance = async function () {
     const array = [
-        {addr: "ltc1q4vn9hxw4usnhnf7q8xysv8mnjq40xvlnwa03dq", fix: 1.21 * 1e9, currency: "LTC"},
+        {addr: "LRPTZ7aWqZJpeaTnvcUUQKhnhotfL5wyBN", fix: 1.21 * 1e9, currency: "LTC"},
         {addr: "bnb136ns6lfw4zs5hg4n85vdthaad7hq5m4gtkgf23", fix: 16.825 * 1e9, currency: "BNB"},
         {addr: "bnb136ns6lfw4zs5hg4n85vdthaad7hq5m4gtkgf23", fix: 1.377965 * 1e9, currency: "BNB"},
     ]
-    await queryBalance(array) 
+    await queryBalance(array)
     //
     console.log("begin ____> update")
     await updateAddBalance(array)
