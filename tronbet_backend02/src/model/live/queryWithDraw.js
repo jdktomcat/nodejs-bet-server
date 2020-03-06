@@ -22,13 +22,14 @@ const getData = async function (params) {
     const start = newUtcTime(startDate).getTime()
     const end = newUtcTime(endDate).getTime()
     //
-    let sqlParams = [addr, start, end]
+    let sqlParams = [addr,addr, start, end]
     //
     let sql = `         
         SELECT
             email,
             orderId,
             currency,
+            uid,
             addr,
             amount,
             from_unixtime(startTs / 1000,'%Y-%m-%d %H:%i:%s') as startTs,
@@ -37,7 +38,7 @@ const getData = async function (params) {
             status 
         FROM
     tron_live.live_cb_withdraw_log
-        where addr = ? and startTs >= ? and startTs <= ?
+        where (addr = ? or email = ?) and startTs >= ? and startTs <= ?
     `
     let sqlC = `select count(1) as count from (${sql}) as g`
     const crs = await raw(sqlC, sqlParams)

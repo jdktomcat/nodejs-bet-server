@@ -7,6 +7,7 @@ const querySport = require("../model/live/querySport")
 const queryDeposit = require("../model/live/queryDeposit")
 const queryWithDraw = require("../model/live/queryWithDraw")
 const QueryDrop = require("../model/live/queryAirDrop")
+const queryOtherCurrency = require("../model/live/queryOtherCurrency")
 
 class LiveController {
     /**
@@ -26,7 +27,7 @@ class LiveController {
         const start = ctx.query.start
         const end = ctx.query.end
         const game_id = ctx.query.game_id
-        const data = await QueryById.getDataFile(type, start, end,game_id)
+        const data = await QueryById.getDataFile(type, start, end, game_id)
         ctxUtils.file(ctx, data)
     }
 
@@ -72,6 +73,18 @@ class LiveController {
         const params = ctx.query || {}
         const data = await QueryDrop.getData(params)
         ctx.body = ctxUtils.success(data)
+    }
+
+    static async getOtherCurrencyList(ctx) {
+        const params = ctx.query || {}
+        const data = await queryOtherCurrency.getData(params)
+        ctx.body = ctxUtils.success(data)
+    }
+
+    static async getOtherCurrencyFile(ctx) {
+        const params = ctx.query || {}
+        const data = await queryOtherCurrency.getDataFile(params)
+        ctxUtils.file(ctx, data)
     }
 
 }

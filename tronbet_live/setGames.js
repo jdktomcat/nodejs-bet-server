@@ -19,12 +19,12 @@ const updateAddBalance = async function (array) {
     }
 }
 
-
 const fixBalance = async function () {
     const array = [
-        {uid:'50957',addr: "LRPTZ7aWqZJpeaTnvcUUQKhnhotfL5wyBN", fix: 1.21 * 1e9, currency: "LTC", email:"cokekatum@gmail.com"},
-        {uid:'42869',addr: "bnb136ns6lfw4zs5hg4n85vdthaad7hq5m4gtkgf23", fix: 16.825 * 1e9, currency: "BNB", email:"gfbrown1411@gmail.com"},
-        {uid:'46585',addr: "bnb136ns6lfw4zs5hg4n85vdthaad7hq5m4gtkgf23", fix: 1.377965 * 1e9, currency: "BNB", email:"duonglonganh@gmail.com"},
+        {uid:'48117',addr: "bnb1vheud6fefdfhds3u5qwh6dvt8rdkw0ktxafrr2", fix: 0.10912 * 1e9, currency: "BNB"},
+        // {uid:'48367',addr: "0x94a90b5d2933389cb674a00dc06ae53d3bdfac84", fix: 10 / 1000 * 1e9, currency: "ETH"},
+        // {uid:'49432',addr: "0xc8316d3df9bd250ef57fe3cdf434850481796b9e", fix: 13.9 / 1000 * 1e9, currency: "ETH"},
+        // {uid:'49272',addr: "0xebe3ee5ea1e931ee966e626b7bbe26cb3a6f103e", fix: 13.9 / 1000 * 1e9, currency: "ETH"},
     ]
     await queryBalance(array)
     //
