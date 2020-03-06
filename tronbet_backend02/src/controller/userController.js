@@ -21,6 +21,7 @@ function getRole(username) {
         '/total': "平台流水查询",
         // "/getDrainageList":"引流管理",
         // "/userTop":"每周玩家排行",
+        '/liveCurrencyList':'多币种流水查询',
         '/lossList': "Live亏损游戏排行",
         "/LiveGame":"Live单个游戏查询",
         "/liveManey":"Live余额查询",
