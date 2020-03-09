@@ -34,7 +34,7 @@ let timer = setInterval(async () => {
     console.log("profit normal",new Date(now * 1000),startTs,endTs)
     console.log("this time trx profit is",profit)
     //130137.62050057614
-    //抽回部分回归底池
+    //抽回部分回归底池,现底池过低
     const unitW = 10000
     if(profit > 0){
       if(profit <= 50 * unitW){
@@ -46,14 +46,12 @@ let timer = setInterval(async () => {
       }else if(profit <= 200 * unitW){
         profit = profit * 0.6
       }else if(profit <= 250 * unitW){
-        profit = profit * 0.5
-      }else if(profit <= 300 * unitW){
         profit = profit * 0.4
-      }else if(profit <= 400 * unitW){
+      }else if(profit <= 300 * unitW){
         profit = profit * 0.3
-      }else if(profit <= 500 * unitW){
+      }else if(profit <= 400 * unitW){
         profit = profit * 0.2
-      }else if(profit <= 1000 * unitW){
+      }else if(profit <= 500 * unitW){
         profit = profit * 0.1
       }else{
         profit = profit * 0.01
