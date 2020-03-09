@@ -39,7 +39,7 @@ const getAccount = async function (email) {
 const getAllBalance = async function (currency) {
     let sql = `select uid,addr, balance/? as balance,currency from live_balance where currency = ? order by balance desc`
     let params = []
-    if (['TRX','USDT'].includes(e.currency)) {
+    if (['TRX','USDT'].includes(currency)) {
         params.push(1000000)
     } else {
         params.push(1000000000)
