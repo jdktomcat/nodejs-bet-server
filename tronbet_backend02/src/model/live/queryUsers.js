@@ -36,11 +36,45 @@ const getAccount = async function (email) {
 }
 
 
+const getAllBalance = async function (currency) {
+    let sql = `select uid,addr, balance/? as balance,currency from live_balance where currency = ? order by balance desc`
+    let params = []
+    if (['TRX','USDT'].includes(e.currency)) {
+        params.push(1000000)
+    } else {
+        params.push(1000000000)
+    }
+    params.push(currency)
+    const t = await raw(sql, params)
+    return t
+}
+
 class QueryUsers {
 
     static async getAccount(email) {
         const data = await getAccount(email)
         return data
+    }
+
+    static async getBalanceFile(params) {
+        const data = await getAllBalance(params)
+        const keys = Object.keys(data[0])
+        let sbody = ''
+        keys.forEach(e => {
+            sbody += e + "\t"
+        })
+        sbody = sbody.trim()
+        sbody += "\n"
+        //
+        data.forEach(e => {
+            keys.forEach((k) => {
+                let t = e[k] || 0
+                sbody = sbody + t + '\t'
+            })
+            sbody = sbody.trim()
+            sbody += '\n'
+        })
+        return sbody
     }
 }
 
