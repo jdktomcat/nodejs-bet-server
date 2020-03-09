@@ -39,6 +39,14 @@ class LiveController {
     }
 
 
+    static async getBalanceFile(ctx) {
+        const currency = ctx.query.currency
+        const data = await QueryUsers.getBalanceFile(currency)
+        ctxUtils.file(ctx, data)
+    }
+
+
+
     static async getEM(ctx) {
         const params = ctx.query || {}
         const data = await queryEM.getData(params)
