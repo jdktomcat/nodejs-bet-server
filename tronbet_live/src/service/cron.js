@@ -47,12 +47,22 @@ let timer = setInterval(async () => {
         profit = profit * 0.6
       }else if(profit <= 400 * unitW){
         profit = profit * 0.5
-      }else if(profit <= 600 * unitW){
+      }else if(profit <= 450 * unitW){
+        profit = profit * 0.45
+      }else if(profit <= 500 * unitW){
         profit = profit * 0.4
-      }else if(profit <= 800 * unitW){
+      }else if(profit <= 550 * unitW){
+        profit = profit * 0.35
+      }else if(profit <= 600 * unitW){
         profit = profit * 0.3
-      }else{
+      }else if(profit <= 650 * unitW){
+        profit = profit * 0.25
+      }else if(profit <= 700 * unitW){
         profit = profit * 0.2
+      }else if(profit <= 750 * unitW){
+        profit = profit * 0.15
+      }else{
+        profit = profit * 0.1
       }
     }
 
