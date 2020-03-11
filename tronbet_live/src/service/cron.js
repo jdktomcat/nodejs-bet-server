@@ -37,33 +37,34 @@ let timer = setInterval(async () => {
     //抽回部分回归底池,现底池过低
     const unitW = 10000
     if(profit > 0){
-      if(profit <= 200 * unitW){
-        profit = profit * 0.9
-      }else if(profit <= 250 * unitW){
-        profit = profit * 0.8
-      }else if(profit <= 300 * unitW){
-        profit = profit * 0.7
-      }else if(profit <= 350 * unitW){
-        profit = profit * 0.6
-      }else if(profit <= 400 * unitW){
-        profit = profit * 0.5
-      }else if(profit <= 450 * unitW){
-        profit = profit * 0.45
-      }else if(profit <= 500 * unitW){
-        profit = profit * 0.4
-      }else if(profit <= 550 * unitW){
-        profit = profit * 0.35
-      }else if(profit <= 600 * unitW){
-        profit = profit * 0.3
-      }else if(profit <= 650 * unitW){
-        profit = profit * 0.25
-      }else if(profit <= 700 * unitW){
-        profit = profit * 0.2
-      }else if(profit <= 750 * unitW){
-        profit = profit * 0.15
-      }else{
-        profit = profit * 0.1
-      }
+      profit = profit * 0.3
+      // if(profit <= 200 * unitW){
+      //   profit = profit * 0.9
+      // }else if(profit <= 250 * unitW){
+      //   profit = profit * 0.8
+      // }else if(profit <= 300 * unitW){
+      //   profit = profit * 0.7
+      // }else if(profit <= 350 * unitW){
+      //   profit = profit * 0.6
+      // }else if(profit <= 400 * unitW){
+      //   profit = profit * 0.5
+      // }else if(profit <= 450 * unitW){
+      //   profit = profit * 0.45
+      // }else if(profit <= 500 * unitW){
+      //   profit = profit * 0.4
+      // }else if(profit <= 550 * unitW){
+      //   profit = profit * 0.35
+      // }else if(profit <= 600 * unitW){
+      //   profit = profit * 0.3
+      // }else if(profit <= 650 * unitW){
+      //   profit = profit * 0.25
+      // }else if(profit <= 700 * unitW){
+      //   profit = profit * 0.2
+      // }else if(profit <= 750 * unitW){
+      //   profit = profit * 0.15
+      // }else{
+      //   profit = profit * 0.1
+      // }
     }
 
     console.log("after time trx profit is",profit)
