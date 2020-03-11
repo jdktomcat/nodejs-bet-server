@@ -1,12 +1,18 @@
 const db = require("./src/utils/dbUtil");
 
 const queryBalance = async function (array) {
-    const sql = `select * from live_balance where uid = ? and currency = ?`
+    const sql = `select a.uid,a.currency,a.addr,a.balance / 1000000000 as balance,b.email from tron_live.live_balance as a left join tron_live.live_account b on a.uid = b.uid where a.uid = b.uid and a.uid = ? and a.currency = ? and a.addr = ? and b.email = ?`
+    const a1 = array.length
+    let a2 = 0
     for (let e of array) {
-        const p = [e.uid,e.currency]
+        const p = [e.uid, e.currency, e.addr, e.email]
         const a = await db.exec(sql, p)
-        console.log(sql, p, ' and result is', a)
+        if(a.length > 0){
+            a2 += 1
+        }
+        console.log(sql, JSON.stringify(p), ' and result is', a)
     }
+    return a2 === a1
 }
 
 
@@ -21,18 +27,26 @@ const updateAddBalance = async function (array) {
 
 const fixBalance = async function () {
     const array = [
-        {uid:'48117',addr: "bnb1vheud6fefdfhds3u5qwh6dvt8rdkw0ktxafrr2", fix: 0.10912 * 1e9, currency: "BNB"},
-        {uid:'48367',addr: "0x94a90b5d2933389cb674a00dc06ae53d3bdfac84", fix: 13.9 / 1000 * 1e9, currency: "ETH"},
-        {uid:'49432',addr: "0xc8316d3df9bd250ef57fe3cdf434850481796b9e", fix: 13.9 / 1000 * 1e9, currency: "ETH"},
-        {uid:'49272',addr: "0xebe3ee5ea1e931ee966e626b7bbe26cb3a6f103e", fix: 10 / 1000 * 1e9, currency: "ETH"},
+        {
+            uid: '42869',
+            addr: "bnb1vheud6fefdfhds3u5qwh6dvt8rdkw0ktxafrr2",
+            email: 'gfbrown1411@gmail.com',
+            fix: 16.02 * 1e9,
+            currency: "BNB"
+        },
     ]
-    await queryBalance(array)
+    const ifUpdate = await queryBalance(array)
     //
-    console.log("begin ____> update")
-    await updateAddBalance(array)
-    //
-    console.log("------>after is")
-    await queryBalance(array)
+    console.log("ifUpdate: ",ifUpdate)
+    if(ifUpdate){
+        console.log("begin ____> update")
+        await updateAddBalance(array)
+        //
+        console.log("------>after is")
+        await queryBalance(array)
+    }else {
+        console.log("please check your params")
+    }
 }
 
 
