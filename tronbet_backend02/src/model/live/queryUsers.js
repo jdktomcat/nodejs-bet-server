@@ -2,7 +2,7 @@ const {raw} = require("./../utils/dbutils")
 
 const formatData = (data) => {
     data.forEach(e => {
-        if (['TRX','USDT'].includes(e.currency)) {
+        if (['TRX', 'USDT'].includes(e.currency)) {
             e.balance = e.balance / 1e6
         } else {
             e.balance = e.balance / 1e9
@@ -24,10 +24,10 @@ const getAccount = async function (email) {
         where a.uid = b.uid
     `
     let params = []
-    if(email !== ''){
-        params = [email,email]
+    if (email !== '') {
+        params = [email, email]
         sql += 'and b.email = ? or a.addr = ?'
-    }else {
+    } else {
         return []
     }
     const t = await raw(sql, params)
@@ -37,9 +37,9 @@ const getAccount = async function (email) {
 
 
 const getAllBalance = async function (currency) {
-    let sql = `select uid,addr, balance/? as balance,currency from live_balance where currency = ? order by balance desc`
+    let sql = `select uid,addr, balance/? as balance,currency from tron_live.live_balance where currency = ? order by balance desc limit 2001,50000000000`
     let params = []
-    if (['TRX','USDT'].includes(currency)) {
+    if (['TRX', 'USDT'].includes(currency)) {
         params.push(1000000)
     } else {
         params.push(1000000000)
@@ -58,6 +58,9 @@ class QueryUsers {
 
     static async getBalanceFile(params) {
         const data = await getAllBalance(params)
+        if(data.length === 0){
+            return 'empty file\t\n'
+        }
         const keys = Object.keys(data[0])
         let sbody = ''
         keys.forEach(e => {
@@ -74,6 +77,16 @@ class QueryUsers {
             sbody = sbody.trim()
             sbody += '\n'
         })
+        //加一个总数
+        let sum = 0
+        if (data.length > 0) {
+            sum = data.reduce((a, b) => {
+                a = a + b.balance
+                return a
+            }, 0)
+        }
+        sbody += "总数合计" +sum + '\t\n'
+        console.log('debug----->',sbody)
         return sbody
     }
 }
