@@ -14,7 +14,7 @@ const fileGenerate = function (ctx, sbody) {
         const addr = ctx.request.query.addr || '';
         if(addr === ''){
             //给个临时名
-            fileName = Date.now() + '.xls'
+            fileName = new Date().toJSON() + '.xls'
         }else {
             //给个临时名
             fileName = addr + '.xls'
