@@ -46,7 +46,7 @@ const compareDate = async function (div_state) {
     if (date1 < now) {
         await reStartLiveDiv()
     } else {
-        console.log(`分红正常${div_state}---->`,new Date())
+        console.log(`分红正常${div_state}---->`,new Date(),new Date(start))
     }
 }
 
@@ -54,6 +54,13 @@ const compareDate = async function (div_state) {
 const divSchedule = function () {
     const j = schedule.scheduleJob('*/5 12-13 * * *', async function () {
         console.log("just a test", new Date())
+    })
+    //fortest
+    const c1 = schedule.scheduleJob('*/10 4-5 * * *', async function () {
+        await compareDate('1')
+    })
+    const c2 = schedule.scheduleJob('*/15 4-5 * * *', async function () {
+        await compareDate('2')
     })
 
     // 3点，即11点profit的时候
