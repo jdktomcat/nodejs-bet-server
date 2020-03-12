@@ -37,7 +37,7 @@ let timer = setInterval(async () => {
     //抽回部分回归底池,现底池过低
     const unitW = 10000
     if(profit > 0){
-      profit = profit * 0.2
+      profit = profit * 0.25
       // if(profit <= 200 * unitW){
       //   profit = profit * 0.9
       // }else if(profit <= 250 * unitW){
