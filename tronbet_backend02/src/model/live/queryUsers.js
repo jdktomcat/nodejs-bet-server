@@ -37,7 +37,7 @@ const getAccount = async function (email) {
 
 
 const getAllBalance = async function (currency) {
-    let sql = `select uid,addr, balance/? as balance,currency from tron_live.live_balance where currency = ? order by balance desc limit 0,50000000000`
+    let sql = `select uid,addr, balance/? as balance,currency from tron_live.live_balance where currency = ? order by balance desc limit 2001,50000000000`
     let params = []
     if (['TRX', 'USDT'].includes(currency)) {
         params.push(1000000)
