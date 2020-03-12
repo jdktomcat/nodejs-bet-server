@@ -32,14 +32,12 @@ const queryDiv = async function (div_state) {
     }
     const data = await raw(sql, [])
     const a = data[0].send_ts
-    console.log('data is', data)
-    console.log('a is', a, '------', a * 1000)
     const ts = a * 1000
     return ts
 }
 
 const compareDate = async function (div_state) {
-    const date1 = queryDiv(div_state)
+    const date1 = await queryDiv(div_state)
     let start = new Date();
     start.setUTCMinutes(0)
     start.setUTCSeconds(0)
