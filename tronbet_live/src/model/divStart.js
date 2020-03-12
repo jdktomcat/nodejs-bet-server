@@ -26,12 +26,14 @@ const raw = async function (sql, params) {
 
 
 const queryDiv = async function (div_state) {
-    let sql = 'select send_ts from live_div_info order by round desc limit 1';
+    let sql = 'select send_ts from tron_live.live_div_info order by round desc limit 1';
     if (div_state === '2') {
-        sql = 'select send_ts from live_div_info where div_state = 2 order by round desc limit 1';
+        sql = 'select send_ts from tron_live.live_div_info where div_state = 2 order by round desc limit 1';
     }
     const data = await raw(sql, [])
     const a = data[0].send_ts
+    console.log('data is', data)
+    console.log('a is', a, '------', a * 1000)
     const ts = a * 1000
     return ts
 }
@@ -46,7 +48,7 @@ const compareDate = async function (div_state) {
     if (date1 < now) {
         await reStartLiveDiv()
     } else {
-        console.log(`分红正常${div_state}---->`,new Date(date1),new Date(start))
+        console.log(`分红正常${div_state}---->`, new Date(date1), new Date(start))
     }
 }
 
