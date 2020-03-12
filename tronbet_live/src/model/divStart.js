@@ -46,7 +46,7 @@ const compareDate = async function (div_state) {
     if (date1 < now) {
         await reStartLiveDiv()
     } else {
-        console.log(`分红正常${div_state}---->`,new Date(),new Date(start))
+        console.log(`分红正常${div_state}---->`,new Date(date1),new Date(start))
     }
 }
 
