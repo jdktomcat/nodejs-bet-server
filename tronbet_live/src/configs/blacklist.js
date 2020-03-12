@@ -6,7 +6,7 @@ const blacklist = {
   "TUsPCrcLJPUvyi9SFJVgfGPSjmc4G16YE6": true,
   "TNAXtunrUYWoHcTp9o98KHn8ooTLGwH8iM": true,
   // "TFPYSwYtA3nE9h4dxv7Zj3m9RR5fBkMRJo": true,
-  
+
   "TNm9RWnf4YftryPLqfBKTUKqZZG9xBk4iF": true,
   "TWmqNUYVyf89ZYvAC4gPkEwGDKKRCB8zax": true,
   "TAeJVXWocfBGcM8Bj6VBHn4RLX4UdHLzQE": true,
@@ -2018,6 +2018,8 @@ const blacklist = {
   "TSu5GuNqL2R3JTVssxYvGXk5AF2ytYUhyD": true,
   "TWYr1Ns8fkiLxDTC8yiv8eCL3RELPKae3f": true,
   "TQMKd5kA7A4KpysifYhTmTAq6RfDAqTCDg": true,
+  "TQidG8GmsTvg5PTSsnvncSPvkyYYig5i71": true,
+  "TPovGaacw5e6959JH5GYP5WxpWWwSYySAm": true,
 }
 
 module.exports = blacklist;
