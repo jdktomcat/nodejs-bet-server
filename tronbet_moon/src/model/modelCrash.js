@@ -29,8 +29,8 @@ async function getMyLogs(round, count, addr, conn) {
     let fun = conn == null ? exec : execTrans;
     let ret = await fun(sql, params, conn);
     // console.log(ret);
-    console.log("sql is : ",sql)
-    console.log("params is : ",params)
+    // console.log("sql is : ",sql)
+    // console.log("params is : ",params)
     return ret;
 
 }
