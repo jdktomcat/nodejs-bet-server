@@ -52,17 +52,6 @@ const compareDate = async function (div_state) {
 
 
 const divSchedule = function () {
-    const j = schedule.scheduleJob('*/5 12-13 * * *', async function () {
-        console.log("just a test", new Date())
-    })
-    //fortest
-    const c1 = schedule.scheduleJob('*/2 4-5 * * *', async function () {
-        await compareDate('1')
-    })
-    const c2 = schedule.scheduleJob('*/3 4-5 * * *', async function () {
-        await compareDate('2')
-    })
-
     // 3点，即11点profit的时候
     const a1 = schedule.scheduleJob('*/10 3-4 * * *', async function () {
         await compareDate('1')
