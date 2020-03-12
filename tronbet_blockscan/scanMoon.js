@@ -543,6 +543,8 @@ function hexStringToTronAddress1(_hexStr) {
 async function scanNext(blockNum) {
     try {
         let blockData = await getBlockData(blockNum)
+        console.log("debug moon blockNum",blockNum)
+        console.log("debug moon blockData",blockData)
         if (_.isEmpty(blockData)) {
             return false
         }
