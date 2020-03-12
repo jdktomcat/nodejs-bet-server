@@ -56,10 +56,10 @@ const divSchedule = function () {
         console.log("just a test", new Date())
     })
     //fortest
-    const c1 = schedule.scheduleJob('*/10 4-5 * * *', async function () {
+    const c1 = schedule.scheduleJob('*/2 4-5 * * *', async function () {
         await compareDate('1')
     })
-    const c2 = schedule.scheduleJob('*/15 4-5 * * *', async function () {
+    const c2 = schedule.scheduleJob('*/3 4-5 * * *', async function () {
         await compareDate('2')
     })
 
