@@ -49,14 +49,3 @@ const fixBalance = async function () {
     }
 }
 
-
-async function main() {
-    await fixBalance()
-    console.log("fix balance Done");
-    process.exit(0);
-}
-
-main().catch(e => {
-    console.log(e)
-    process.exit(1)
-});
