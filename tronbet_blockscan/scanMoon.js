@@ -158,7 +158,6 @@ async function alysisTxs(tx){
                             }
                             // loggerDefault.info(log);
                             let result = await saveRoundInfo(log)
-                            await sleep(50)
                             if (!result) {
                                 return false
                             }
@@ -335,6 +334,7 @@ async function saveRoundOverView(info) {
 async function saveRoundInfo(info) {
     let sql = "insert into moon_user_order(addr, round, tx_id, minedAnte, ts, sign) values (?,?,?,?,?,?) ON DUPLICATE KEY update ts = ?, sign = ?, minedAnte =?, tx_id = ?;"
     try{
+        await sleep(120)
         let result = await query(sql, [info._playerAddr, info._round,info._tx, info._minedAnte, info._ts, info._sign,info._ts, info._sign,info._minedAnte,info._tx])
     }
     catch(e) {
