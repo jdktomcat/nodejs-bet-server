@@ -2021,6 +2021,7 @@ const blacklist = {
   "TQidG8GmsTvg5PTSsnvncSPvkyYYig5i71": true,
   "TPovGaacw5e6959JH5GYP5WxpWWwSYySAm": true,
   "TQpxD69TkkusFaCs7fE53n77KFstLZ96HC": true,
+  "TPUQofQoGZdkMi7frNgj3qDzzvSDL4jPQJ": true,
 }
 
 module.exports = blacklist;
