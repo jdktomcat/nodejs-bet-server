@@ -359,7 +359,7 @@ async function saveRoundDetailInfo(infos) {
         }
         conn.beginTransaction();
         for (let info of infos.players) {
-            await sleep(10)
+            await sleep(50)
             let result = await execTrans(sql, [
                 info._bettor,
                 infos.round,
@@ -378,6 +378,7 @@ async function saveRoundDetailInfo(infos) {
                 info._winAmount,
                 info._referralAmount], conn
             )
+            await sleep(50)
             // console.log("saveRoundDetailInfo result", result)
             let winTimes = info._winAmount > 0 ? 1 : 0
 
@@ -399,7 +400,7 @@ async function saveRoundDetailInfo(infos) {
                 winTimes
             ], conn)
             // console.log("saveRoundDetailInfo moonUpdate", moonUpdate)
-
+            await sleep(50)
         }
 
         conn.commit()
