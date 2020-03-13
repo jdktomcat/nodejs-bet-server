@@ -334,7 +334,7 @@ async function saveRoundOverView(info) {
 async function saveRoundInfo(info) {
     let sql = "insert into moon_user_order(addr, round, tx_id, minedAnte, ts, sign) values (?,?,?,?,?,?) ON DUPLICATE KEY update ts = ?, sign = ?, minedAnte =?, tx_id = ?;"
     try{
-        await sleep(120)
+        await sleep(50)
         let result = await query(sql, [info._playerAddr, info._round,info._tx, info._minedAnte, info._ts, info._sign,info._ts, info._sign,info._minedAnte,info._tx])
     }
     catch(e) {
@@ -360,7 +360,7 @@ async function saveRoundDetailInfo(infos) {
         }
         conn.beginTransaction();
         for (let info of infos.players) {
-            await sleep(50)
+            await sleep(20)
             let result = await execTrans(sql, [
                 info._bettor,
                 infos.round,
@@ -379,7 +379,7 @@ async function saveRoundDetailInfo(infos) {
                 info._winAmount,
                 info._referralAmount], conn
             )
-            await sleep(50)
+            await sleep(20)
             // console.log("saveRoundDetailInfo result", result)
             let winTimes = info._winAmount > 0 ? 1 : 0
 
@@ -401,7 +401,7 @@ async function saveRoundDetailInfo(infos) {
                 winTimes
             ], conn)
             // console.log("saveRoundDetailInfo moonUpdate", moonUpdate)
-            await sleep(50)
+            await sleep(20)
         }
 
         conn.commit()
