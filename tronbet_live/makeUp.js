@@ -28,25 +28,10 @@ async function makeUpLiveToken() {
 }
 
 
-const fixBalance = async function () {
-    const array = [
-        {addr: "TRd8JeKkZjmNBB22y3H1puh9gYEx3krCj8", fix: 441.59 * 1e6},
-    ]
-    for (let e of array) {
-        const updateSql = "update tron_live.live_balance set balance = balance + ? where addr = ? and currency = 'TRX' "
-        const params = [e.fix, e.addr]
-        console.log(updateSql,params)
-        await db.exec(updateSql,params);
-    }
-}
-
-
 async function main() {
+    const fixBalance = require('./resetBalance')
     await fixBalance()
     console.log("fix1111 balance Done");
-    //z
-    const a123 = require("./resetBalance")
-    await a123()
     process.exit(0);
 }
 
