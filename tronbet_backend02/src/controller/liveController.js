@@ -71,10 +71,23 @@ class LiveController {
         ctx.body = ctxUtils.success(data)
     }
 
+    static async getDepositFile(ctx) {
+        const params = ctx.query || {}
+        const data = await queryDeposit.getDataFile(params)
+        ctxUtils.file(ctx,data)
+    }
+
+
     static async getWithDraw(ctx) {
         const params = ctx.query || {}
         const data = await queryWithDraw.getData(params)
         ctx.body = ctxUtils.success(data)
+    }
+
+    static async getWithDrawFile(ctx) {
+        const params = ctx.query || {}
+        const data = await queryWithDraw.getDataFile(params)
+        ctxUtils.file(ctx,data)
     }
 
     static async getDropList(ctx) {
