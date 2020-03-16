@@ -69,7 +69,7 @@ async function getSwaggerGames() {
         for (let one of data) {
             // console.log(one,"    test123456789")
             if (isGameInList(one.name)) {
-                tmp = {
+                let tmp = {
                     thumbnail: one.url_thumb,
                     background: one.url_background,
                     id: one.game_id,
@@ -94,7 +94,14 @@ async function getSwaggerGames() {
         // console.log(result);
         return result;
     } catch (error) {
-        console.log(error);
+        console.log("hub88 request body is: \n", JSON.stringify({
+            url: swaghub.host + '/operator/generic/v2/game/list',
+            // url: 'http://api.server1.ih.testenv.io/operator/generic/v2/game/list',
+            method: 'post',
+            data: paramas,
+            headers: {'content-type': 'application/json', 'X-Hub88-Signature': computedSignature}
+        }))
+        console.log('hub88 request error: ', error);
         return null;
     }
 }
@@ -137,12 +144,17 @@ function sortbySwaggerGames(firstEl, secondEl) {
 
 async function getAllGamesFromEM() {
     let result = '';
-    let {data} = await axios.get(jsonFeedsUrl + 'Game');
-    // console.log(data)
-    result = data;
+    try {
+        let {data} = await axios.get(jsonFeedsUrl + 'Game');
+        // console.log(data)
+        result = data;
 
-    let tablegames = await axios.get(jsonFeedsUrl + 'table');
-    return result + tablegames.data;
+        let tablegames = await axios.get(jsonFeedsUrl + 'table');
+        return result + tablegames.data;
+    } catch (e) {
+        console.log("em request error : ", e)
+    }
+    return result
 }
 
 function isInWhiteLists(gameName) {
