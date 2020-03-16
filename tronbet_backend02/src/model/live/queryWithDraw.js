@@ -11,6 +11,7 @@ const formatData = (data) => {
 }
 
 const getData = async function (params) {
+    const type = params.type || ''
     const addr = params.addr || ''
     const startDate = params.startDate || ''
     const endDate = params.endDate || ''
@@ -22,7 +23,7 @@ const getData = async function (params) {
     const start = newUtcTime(startDate).getTime()
     const end = newUtcTime(endDate).getTime()
     //
-    let sqlParams = [addr,addr, start, end]
+    let sqlParams = [start, end]
     //
     let sql = `         
         SELECT
@@ -38,14 +39,20 @@ const getData = async function (params) {
             status 
         FROM
     tron_live.live_cb_withdraw_log
-        where (addr = ? or email = ?) and startTs >= ? and startTs <= ?
+        where startTs >= ? and startTs <= ?
     `
+    if (type !== 'all') {
+        sql = sql + ' and (addr = ? or email = ?) '
+        sqlParams = sqlParams.concat([addr, addr])
+    }
     let sqlC = `select count(1) as count from (${sql}) as g`
     const crs = await raw(sqlC, sqlParams)
     const count = crs[0].count || 0
     //
-    sql += ' limit ?,?'
-    sqlParams = sqlParams.concat([offset, limit])
+    if(type !== 'all') {
+        sql += ' limit ?,?'
+        sqlParams = sqlParams.concat([offset, limit])
+    }
     const rsData = await raw(sql, sqlParams)
     formatData(rsData)
     const rs = {
