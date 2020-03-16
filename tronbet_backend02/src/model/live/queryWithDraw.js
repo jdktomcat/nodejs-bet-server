@@ -59,6 +59,7 @@ const getData = async function (params) {
         count: count,
         rows: rsData
     }
+    console.log("debug---->rs",rs)
     return rs
 }
 
