@@ -68,7 +68,6 @@ class QueryDeposit {
     static async getDataFile(params) {
         const dataTmp = await getData(params)
         const data = dataTmp.rows
-        console.log("debug----->data ",data)
         const keys = Object.keys(data[0])
         let sbody = ''
         keys.forEach(e => {
