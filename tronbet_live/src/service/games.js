@@ -67,7 +67,7 @@ async function getSwaggerGames() {
         let result = [];
         // console.log(`===============start=================data`, data);
         for (let one of data) {
-            // console.log(one,"    test123456789")
+            console.log(one,"    test123456789")
             if (isGameInList(one.name)) {
                 let tmp = {
                     thumbnail: one.url_thumb,
