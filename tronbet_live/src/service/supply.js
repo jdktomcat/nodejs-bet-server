@@ -1,4 +1,3 @@
-const {supplyTrxToAddr, addReissueRecord} = require('../model/supply')
 const {
     insertLiveGame, getLiveRaw, updateLiveGame, getOnlineGameInfo, offlineLiveGameByUUID, editOnlineGameInfo, updateGameRate
 } = require('../model/newGameList')
@@ -43,58 +42,6 @@ async function getReissueRecord(ctx) {
     return ctx.body = {
         code: 200,
         data: data
-    }
-}
-
-async function GetEissue(ctx) {
-    let query = ctx.request.body || {}
-    // const {username,tokens} = ctx.request.headers
-    // console.log(ctx.request.headers)
-    // return ctx.body = 200
-    console.log("debug---->query---->", query)
-    let address = query.address || ''
-    let username = query.username || ''
-    let pay = query.pay || 0
-    //黑名单拦截
-    const blacklist = app.blacklist || {}
-    const black = Object.keys(blacklist).filter(e => blacklist[e] === true)
-    console.log("debug---->black", black)
-    if (black.includes(address)) {
-        const msg = 'this address is in black list!'
-        return ctx.body = {code: 500, message: msg}
-    }
-    if (username === '') {
-        const msg = 'params username is error,please check with your params!'
-        return ctx.body = {code: 500, message: msg}
-    }
-    //judge value is all number
-    if (address === '' || isNaN(Number(pay))) {
-        const msg = 'params is error,please check with your params!'
-        return ctx.body = {code: 500, message: msg}
-    }
-    if (Object.prototype.toString.call(address) !== "[object String]") {
-        const msg = 'params is error,please check with your address!'
-        return ctx.body = {code: 500, message: msg}
-    }
-    //
-    try {
-        const t = await supplyTrxToAddr(query)
-        const msg = t.result || {}
-        if (msg) {
-            const txId = t.txid
-            //todo 保存补发记录 add in 20191226
-            const amount = Number(pay) * 1000000
-            await addReissueRecord(address, amount, txId, username)
-            return ctx.body = {
-                code: 200, message: "success", data: {
-                    transactionId: txId
-                }
-            }
-        } else {
-            return ctx.body = {code: 500, message: "call contract error!"}
-        }
-    } catch (e) {
-        return ctx.body = {code: 500, message: e.toString(), data: [],}
     }
 }
 
@@ -350,7 +297,6 @@ async function allSchedule(ctx) {
 module.exports = {
     queryDeposit: queryDepositTmp,
     getReissueRecord: getReissueRecord,
-    GetEissue: GetEissue,
     addGames: addGames,
     offlineGames: offlineGames,
     setRate: setRate,
