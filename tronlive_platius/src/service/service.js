@@ -1,3 +1,4 @@
+const _ = require('lodash')._
 const usermodel = require("../model/userinfo");
 const resdisUtils = require("../utils/redisUtil");
 const config = require("../configs/config");
