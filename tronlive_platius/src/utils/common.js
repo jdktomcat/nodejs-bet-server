@@ -16,6 +16,9 @@ function getRandomSeed(length) {
     return originalSeed;
 }
 
+console.log(getRandomSeed(1))
+return
+
 function VerifySign(sign, message) {
     let key = softswiss.AUTH_TOKEN
     try {

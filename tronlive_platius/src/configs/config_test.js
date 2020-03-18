@@ -17,11 +17,11 @@ let config = {
     randomSalt: 'hi,can-you-hear-me?'
   },
   mysqlConfig: {
-    db_host: prdCfg.mysql.host,
-    db_port: prdCfg.mysql.port,
+    db_host: 'localhost',
+    db_port: 3306,
     db_name: 'tron_live',
-    db_user: prdCfg.mysql.user,
-    db_pwd: prdCfg.mysql.pwd,
+    db_user: 'root',
+    db_pwd: '123456',
     connectionLimit: 30
   },
   redisConfig: {
@@ -29,17 +29,6 @@ let config = {
     port: 6379,
     db: 1,
     pwd: ''
-  },
-  tronConfig: {
-    privateKey: prdCfg.operatorLive_pk,
-
-    masterFullNode: prdCfg.master_full,
-    masterSolidityNode: prdCfg.master_solidity,
-    masterEventNode: prdCfg.master_event,
-
-    slaveFullNode: prdCfg.slave_full,
-    slaveSolidityNode: prdCfg.slave_solidity,
-    slaveEventNode: prdCfg.slave_event
   },
   Platinus: {
     secretKey: "df1d0fa3-0634-48b4-a34c-555fc82a1fd6",
