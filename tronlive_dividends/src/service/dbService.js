@@ -32,9 +32,30 @@ async function getProfitAmount(ts) {
     }
 }
 
+
 async function addLiveFix() {
-    const sql2 = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
-    await exec(sql2, [150000,Date.now()]);
+    const tmp = Date.now()
+    const a = new Date(tmp)
+    a.setUTCMinutes(0)
+    a.setUTCSeconds(0)
+    a.setUTCMilliseconds(0)
+    //
+    const b = new Date(tmp)
+    b.setUTCMinutes(0)
+    b.setUTCHours(b.getUTCHours() + 1)
+    b.setUTCSeconds(0)
+    b.setUTCMilliseconds(0)
+    //
+    const sql1 = 'select * from tron_live.live_fix_log where ts >= ? and ts < ?'
+    const data = await exec(sql1, [a.getTime(),b.getTime()]);
+    /**
+     * insert once
+     */
+    if(data.length === 0){
+        console.log("live_fix_log_insert",new Date())
+        const sql2 = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
+        await exec(sql2, [150000,Date.now()]);
+    }
 }
 
 async function getRealTimeProfitAmount(ts) {
