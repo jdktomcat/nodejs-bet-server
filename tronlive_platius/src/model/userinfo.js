@@ -7,6 +7,7 @@ async function getBalance(tokenInfo, currency) {
     const {uid, addr} = tokenInfo
     let sql = "select round(balance / 1000000, 3) as balance from live_balance where uid = ? and addr = ? and currency = ?"
     let res = await db.exec(sql, [uid, addr, currency])
+    console.log("rs is ",res)
     if(res.length === 0){
         throw new Error("user not found")
     }
@@ -15,22 +16,23 @@ async function getBalance(tokenInfo, currency) {
 }
 
 async function checkToken(token) {
-    let msg = {
-        tokenError: false,
-        tokenInfo: {}
-    }
     try {
         const secretKey = config.Platinus.secretKey
         const payload = jwt.verify(token, secretKey)
         console.log("secretKey: ", secretKey)
         console.log("payload: ", payload)
-        msg.tokenInfo = payload
+        return {
+            tokenError: false,
+            tokenInfo: payload
+        }
     } catch (e) {
         console.log("token is: ", token)
         console.log("token is error: ", e)
-        msg.tokenError = true
+        return {
+            tokenError: true,
+            tokenInfo: {}
+        }
     }
-    return msg
 }
 
 async function parseToken(tokenInfo,currency) {

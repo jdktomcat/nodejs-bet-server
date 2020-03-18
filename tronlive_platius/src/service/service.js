@@ -84,7 +84,7 @@ const beforeBusiness = async function (ctx, typeDesc) {
     }
     //
     const params = ctx.request.body
-    params.forEach(e => params[e] = params[e] || '')
+    Object.keys(params).forEach(e => params[e] = params[e] || '')
     const {tokenError, tokenInfo} = usermodel.checkToken(params.token)
     if (tokenError) {
         rs.error = true
@@ -136,6 +136,7 @@ const beforeBusiness = async function (ctx, typeDesc) {
         type,
         addr,
         uid,
+        currency,
         amount,
         adAmount,
         tokenInfo,
@@ -149,20 +150,27 @@ const beforeBusiness = async function (ctx, typeDesc) {
 class apiCall {
 
     static async balance(ctx) {
-        const params = ctx.request.body
-        params.forEach(e => params[e] = params[e] || '')
-        const {tokenError, tokenInfo} = usermodel.checkToken(params.token)
-        if (tokenError) {
-            return await sendMsgToClient(ctx, 101, "token is error!");
+        try{
+            const params = ctx.request.body
+            console.log("debug----->param",params)
+            Object.keys(params).forEach(e => params[e] = params[e] || '')
+            const {tokenInfo,tokenError} = await usermodel.checkToken(params.token)
+            if (tokenError) {
+                return await sendMsgToClient(ctx, 101, "token is error!");
+            }
+            console.log("debug---->tokenInfo ",tokenInfo)
+            console.log("debug---->params.currency ",params.currency)
+            const balance = await usermodel.getBalance(tokenInfo, params.currency)
+            // need to query balance again
+            let result = {
+                token: params.token,
+                balance: balance,
+                currency: params.currency,
+            };
+            return await sendMsgToClient(ctx, 0, "Success", result);
+        }catch (e) {
+            return await sendMsgToClient(ctx, 500, e.toString(), {});
         }
-        const balance = await usermodel.getBalance(tokenInfo, params.currency)
-        // need to query balance again
-        let result = {
-            token: params.token,
-            balance: balance,
-            currency: params.currency,
-        };
-        return await sendMsgToClient(ctx, 0, "Success", result);
     }
 
     static async bet(ctx) {
