@@ -160,17 +160,17 @@ const getRs = async function (info) {
     return result
 }
 
-const checkBalance = async function(params){
+const checkBalance = async function (params) {
     const {tokenInfo, tokenError} = await usermodel.checkToken(params.token)
     if (tokenError) {
         throw new Error('token is error!')
     }
-    if(!['TRX','USDT'].includes(params.currency)){
+    if (!['TRX', 'USDT'].includes(params.currency)) {
         throw new Error('currency is error!')
     }
-    console.log("tokenInfo is ",tokenInfo)
-    const o = Object.assign({tokenInfo:tokenInfo},{uid:tokenInfo.uid},{type:'query_balance'})
-    console.log("o  is ",o)
+    console.log("tokenInfo is ", tokenInfo)
+    const o = Object.assign({tokenInfo: tokenInfo}, params, {uid: tokenInfo.uid, type: 'query_balance'})
+    console.log("o  is ", o)
     const data = await getRs(o)
     return data
 }
