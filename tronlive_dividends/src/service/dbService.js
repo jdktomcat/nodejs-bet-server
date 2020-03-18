@@ -34,7 +34,7 @@ async function getProfitAmount(ts) {
 
 async function addLiveFix() {
     const sql2 = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
-    await exec(sql2, []);
+    await exec(sql2, [150000,Date.now()]);
 }
 
 async function getRealTimeProfitAmount(ts) {
