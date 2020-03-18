@@ -85,7 +85,7 @@ async function rollback(params, conn) {
     }
     await db.execTrans(updateSql, [params.amount, params.uid, params.currency], conn)
     //
-    let sql = "insert into platipus_transaction_log(transaction_id,round_id, game_id, game_name, type, addr, uid, amount,currency, adAmount,status, ts) values(?,?,?,?,?,?,?,?,?,?,?)"
+    let sql = "insert into platipus_transaction_log(transaction_id,round_id, game_id, game_name, type, addr, uid, amount,currency, adAmount,status, ts) values(?,?,?,?,?,?,?,?,?,?,?,?)"
     const sqlParam = [
         params.transaction_id,
         params.round_id,
