@@ -157,8 +157,6 @@ const getRs = async function (info) {
         type: info.type,
         success: true
     };
-    console.log("getRs--->info",info)
-    console.log("getRs--->result",result)
     return result
 }
 

@@ -24,7 +24,7 @@ class apiCall {
             await service.execBet(info)
             // 触发活动
             service.sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
-            const result = service.getRs(info)
+            const result = await service.getRs(info)
             return await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {
             console.log(new Date(), ' platinus bet error : ', e)
@@ -43,7 +43,7 @@ class apiCall {
             await service.execBet(info)
             // 触发活动
             service.sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
-            const result = service.getRs(info)
+            const result = await service.getRs(info)
             await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {
             console.log(new Date(), ' platinus result error : ', e)
@@ -61,7 +61,7 @@ class apiCall {
             await service.execRollBack(info)
             // 触发活动
             service.sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
-            const result = service.getRs(info)
+            const result = await service.getRs(info)
             await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {
             console.log(new Date(), ' platinus rollback error : ', e)
