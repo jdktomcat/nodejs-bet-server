@@ -7,7 +7,6 @@ try {
 } catch (error) {
   console.log('using app config');
 }
-console.log(prdCfg)
 let config = {
   env: 'production',
   debug: false,
