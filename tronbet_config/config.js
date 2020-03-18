@@ -103,7 +103,8 @@ module.exports = {
     tronswagger_hub: 18069,
 
     tronbet_poker: 18070,
-    tronpoker_jackpot: 18071
+    tronpoker_jackpot: 18071,
+    tronlive_platinus: 18072,
   },
   // 远程接口
   // back01
