@@ -37,7 +37,10 @@ let timer = setInterval(async () => {
     //抽回部分回归底池,现底池过低
     const unitW = 10000
     if(profit > 0){
-      profit = profit * 0.7
+      // 从2020-03-18 14点开始手动减少30w
+      // 从18339 round 开始统计
+      // 现在| 18338 |   966073609994 |
+      profit = profit - 30 * unitW
       // if(profit <= 200 * unitW){
       //   profit = profit * 0.9
       // }else if(profit <= 250 * unitW){
