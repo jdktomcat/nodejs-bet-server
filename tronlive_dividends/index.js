@@ -157,6 +157,10 @@ async function preDivide(round) {
         console.warn('！！！！！！！！！！！！！！！！！奖池太低， 暂不分红！！！！！！！！！！！！！！！！')
         return
     }
+
+    //插入修正值
+    await dbService.addLiveFix()
+
     // return
     tronSrv.commitTransaction(pay_addr, "Divide(uint256,uint256)", 20000000, 0, [{ type: "uint256", value: balance }, { type: "uint256", value: round + 1000 }], defaultPK, (err, res) => {
         if (err) {

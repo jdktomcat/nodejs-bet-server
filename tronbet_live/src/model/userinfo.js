@@ -177,6 +177,13 @@ async function getSwaggerProfit(startTs, endTs) {
     return res[0].amount || 0
 }
 
+async function getLiveFix(){
+    const sql2 = `select sum(amount) as sum from tron_live.live_fix_log`
+    const rs = await db.exec(sql2, []);
+    const sum = rs[0].sum || 0
+    return sum
+}
+
 async function getRealTimeProfitAmount(ts) {
     let startTs = (Math.floor(ts / dividendsDuration)) * dividendsDuration * 1000
     let endTs = ts * 1000
@@ -725,5 +732,6 @@ module.exports = {
     getWithdrawLast24HCnt,
     findTodayWithdrawAmount,
     findTodayTotalWithdrawAmount,
-    getWithdraw5minLimit
+    getWithdraw5minLimit,
+    getLiveFix,
 }

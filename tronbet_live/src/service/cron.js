@@ -35,43 +35,12 @@ let timer = setInterval(async () => {
     console.log("this time trx profit is",profit)
     //130137.62050057614
     //抽回部分回归底池,现底池过低
-    const unitW = 10000
-    if(profit > 0){
-      // 从2020-03-18 14点开始手动减少30w
-      // 从18339 round 开始统计
-      // 现在| 18338 |   966073609994 |
-      profit = profit - 30 * unitW
-      // if(profit <= 200 * unitW){
-      //   profit = profit * 0.9
-      // }else if(profit <= 250 * unitW){
-      //   profit = profit * 0.8
-      // }else if(profit <= 300 * unitW){
-      //   profit = profit * 0.7
-      // }else if(profit <= 350 * unitW){
-      //   profit = profit * 0.6
-      // }else if(profit <= 400 * unitW){
-      //   profit = profit * 0.5
-      // }else if(profit <= 450 * unitW){
-      //   profit = profit * 0.45
-      // }else if(profit <= 500 * unitW){
-      //   profit = profit * 0.4
-      // }else if(profit <= 550 * unitW){
-      //   profit = profit * 0.35
-      // }else if(profit <= 600 * unitW){
-      //   profit = profit * 0.3
-      // }else if(profit <= 650 * unitW){
-      //   profit = profit * 0.25
-      // }else if(profit <= 700 * unitW){
-      //   profit = profit * 0.2
-      // }else if(profit <= 750 * unitW){
-      //   profit = profit * 0.15
-      // }else{
-      //   profit = profit * 0.1
-      // }
-    }
-
+    const fixSum = await usermodel.getLiveFix();
+    //
+    profit = profit - fixSum
+    console.log("this time trx fixSum is",fixSum)
     console.log("after time trx profit is",profit)
-    // 盈利暂时放开 50% 
+    // 盈利暂时放开 50%
     // if( profit > 0 ){
     //   profit = profit * 0.5
     // }
