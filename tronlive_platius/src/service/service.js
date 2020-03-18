@@ -169,7 +169,7 @@ const checkBalance = async function(params){
         throw new Error('currency is error!')
     }
     console.log("tokenInfo is ",tokenInfo)
-    const o = Object.assign({tokenInfo:tokenInfo},params,{type:'query_balance'})
+    const o = Object.assign({tokenInfo:tokenInfo},{uid:tokenInfo.uid},{type:'query_balance'})
     console.log("o  is ",o)
     const data = await getRs(o)
     return data
