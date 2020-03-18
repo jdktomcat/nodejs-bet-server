@@ -42,7 +42,7 @@ let config = {
     slaveEventNode: prdCfg.slave_event
   },
   Platinus: {
-    secretKey: "test123333",
+    secretKey: "df1d0fa3-0634-48b4-a34c-555fc82a1fd6",
   },
   event:{
     ACTIVITY_START_TS: 1579996800000,//2020-01-26 00:00:00;

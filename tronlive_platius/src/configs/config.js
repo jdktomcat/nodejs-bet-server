@@ -32,19 +32,8 @@ let config = {
     db: 1,
     pwd: ''
   },
-  tronConfig: {
-    privateKey: prdCfg.operatorLive_pk,
-
-    masterFullNode: prdCfg.master_full,
-    masterSolidityNode: prdCfg.master_solidity,
-    masterEventNode: prdCfg.master_event,
-
-    slaveFullNode: prdCfg.slave_full,
-    slaveSolidityNode: prdCfg.slave_solidity,
-    slaveEventNode: prdCfg.slave_event
-  },
   Platinus: {
-    secretKey: prdCfg.Platinus.secretKey,
+    secretKey: '',
   },
   event:{
     ACTIVITY_START_TS: 1580108400000,//Mon Jan 27 2020 15:00:00
