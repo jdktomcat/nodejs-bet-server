@@ -95,6 +95,7 @@ module.exports = {
 
 
     tronlive_emserver: 18060,
+    tronlive_platinus: 18072,
     tronbet_live: 18066,
 
     tronsport_teckserver: 18068,

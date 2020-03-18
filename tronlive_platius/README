@@ -1,0 +1,103 @@
+tronbet 直播版本代码
+数据表设计如下:
+
+; 用户表
+create table live_user(
+    addr varchar(64) primary key, 
+    nickName varchar(128),
+    level int default 1,
+    exps bigint default 0,
+    trx bigint(8) UNSIGNED default 0,
+    sessionId varchar(64),
+    loginTs bigint
+);
+
+create index live_user_sessuid_idx on live_user(sessionId);
+ALTER TABLE live_user ADD CONSTRAINT ids_unique_session UNIQUE (sessionId);
+
+-- 充值记录表
+create table live_charge_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    amount bigint,
+    ts bigint,
+    txId varchar(160),
+    UNIQUE KEY `txId` (`txId`)
+);
+
+create index live_charge_log_addr_idx on live_charge_log(addr);
+
+-- 提现记录表
+create table live_withdraw_log(
+    logId bigint not null auto_increment primary key,
+    orderId varchar(64),
+    addr varchar(64),
+    amount bigint,
+    lefts bigint,
+    startTs bigint,
+    endTs bigint,
+    txId varchar(160),
+    status smallint default 0,
+    UNIQUE KEY `orderId` (`orderId`)
+);
+
+-- 操作记录表
+create table live_action_log(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    GPGameId varchar(64),
+    EMGameId varchar(64),
+    TransactionId varchar(64),
+    GPId int,
+    RoundId varchar(64),
+    Device varchar(32),
+    Amount bigint,
+    ts bigint,
+    txId varchar(160),
+    RoundStatus varchar(32),
+    action varchar(32),
+    txStatus smallint UNSIGNED default 1,
+    UNIQUE KEY `TransactionId_unikey` (`TransactionId`)
+);
+
+create index live_action_log_addr_idx on live_action_log(addr);
+create index live_action_log_TransactionId_idx on live_action_log(TransactionId);
+
+-- 登录日志
+create table live_login_log(
+    logId bigint not null auto_increment primary key,
+    addr char(34),
+    ts bigint
+);
+
+create table live_profit_log(
+    days int not null primary key,
+    profit bigint not null
+); 
+
+
+
+与第三方游戏平台对接服务独立部署， 此项目中所有代码均完整包含于项目tronbet_live中
+
+
+账户系统修改: 
+create table live_action_log_v2(
+    logId bigint not null auto_increment primary key,
+    addr varchar(64),
+    GPGameId varchar(64),
+    EMGameId varchar(64),
+    TransactionId varchar(64),
+    GPId int,
+    RoundId varchar(64),
+    Device varchar(32),
+    Amount bigint,
+    ts bigint,
+    txId varchar(160),
+    RoundStatus varchar(32),
+    action varchar(32),
+    txStatus smallint UNSIGNED default 1,
+    UNIQUE KEY `TransactionId_unikey` (`TransactionId`)
+);
+
+create index live_action_log2_addr_idx on live_action_log_v2(addr);
+create index live_action_log2_TransactionId_idx on live_action_log_v2(TransactionId);
