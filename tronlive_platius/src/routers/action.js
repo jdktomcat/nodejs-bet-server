@@ -3,7 +3,7 @@
  */
 
 const router = require('koa-router')()
-const action = require('../service/service')
+const action = require('../controller/controller')
 
 module.exports = router.post( '/balance', action.balance)
 module.exports = router.post( '/bet', action.bet)

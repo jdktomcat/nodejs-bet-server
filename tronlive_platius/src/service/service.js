@@ -1,20 +1,14 @@
 const usermodel = require("../model/userinfo");
-const db = require("../utils/dbUtil");
-const log4js = require("../configs/log4js_config");
-const logger = log4js.getLogger("print");
-const _ = require("lodash")._;
-const crypto = require("crypto");
-const {secretKey} = require("../configs/config");
-const evnets = require("events");
-const common = require("../utils/common");
 const resdisUtils = require("../utils/redisUtil");
 const config = require("../configs/config");
+const execBet = usermodel.execBet
+const execRollBack = usermodel.execRollBack
 
 let _GAME_TYPE = "live";
 let ACTIVITY_START_TS = config.event.ACTIVITY_START_TS || 0;
 let ACTIVITY_END_TS = config.event.ACTIVITY_END_TS || 0;
 
-const sendGameMsg = function(addr, order_id, trxAmount, currency) {
+const sendGameMsg = function (addr, order_id, trxAmount, currency) {
     let _now = _.now();
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
 
@@ -46,14 +40,12 @@ const sendGameMsg = function(addr, order_id, trxAmount, currency) {
             box_num: 1,
             game_type: _GAME_TYPE
         };
-        // loggerDefault.info("sendGameMsg", msg);
         resdisUtils.redis.publish("game_message", JSON.stringify(msg));
-        // appEvent.emit('activity_info', msg); //**  */
     }
     return [trxAmount, persent, hit];
 }
 
-const sendMsgToClient = function(ctx, errno, errmsg, data) {
+const sendMsgToClient = function (ctx, errno, errmsg, data) {
     data = data || {};
     let params = ctx.request.body;
     let result = {
@@ -66,7 +58,7 @@ const sendMsgToClient = function(ctx, errno, errmsg, data) {
     ctx.body = result;
 }
 
-const getAdditionByGameId = async function(GameID) {
+const getAdditionByGameId = async function (GameID) {
     try {
         let multi = await resdisUtils.hget("live_platinus:addition", "" + GameID);
         console.log("live_platinus:addition", multi);
@@ -91,12 +83,11 @@ const beforeBusiness = async function (ctx, typeDesc) {
         rs.msg = "token is error!"
         return rs
     }
-    const {uid, addr, notExist, balance} = usermodel.parseToken(tokenInfo)
-    const {currency, transaction_id, round_id, game_id, game_name, type, amount} = params
+    const {uid, addr, notExist, balance} = await usermodel.parseToken(tokenInfo, params.currency)
+    let {currency, transaction_id, round_id, game_id, game_name, type, amount} = params
     const emptyCheck = [transaction_id, round_id, game_id, game_name].every(e => e !== '')
     //
     if (notExist) {
-        // user no found
         rs.error = true
         rs.msg = "user not found!"
         return rs
@@ -121,11 +112,18 @@ const beforeBusiness = async function (ctx, typeDesc) {
         rs.msg = "type error"
         return rs
     }
+    if (!['TRX', 'USDT'].includes(params.currency)) {
+        rs.error = true
+        rs.msg = "currency error"
+        return rs
+    }
 
     //
     const betAmount = Number(amount) * 1e6
     let multi = await getAdditionByGameId(game_id);
     let adAmount = betAmount * multi;
+    //
+    amount = betAmount
     //
     const token = params.token
     const betParams = {
@@ -147,159 +145,42 @@ const beforeBusiness = async function (ctx, typeDesc) {
     return rs
 }
 
-class apiCall {
-
-    static async balance(ctx) {
-        try{
-            const params = ctx.request.body
-            console.log("debug----->param",params)
-            Object.keys(params).forEach(e => params[e] = params[e] || '')
-            const {tokenInfo,tokenError} = await usermodel.checkToken(params.token)
-            if (tokenError) {
-                return await sendMsgToClient(ctx, 101, "token is error!");
-            }
-            console.log("debug---->tokenInfo ",tokenInfo)
-            console.log("debug---->params.currency ",params.currency)
-            const balance = await usermodel.getBalance(tokenInfo, params.currency)
-            // need to query balance again
-            let result = {
-                token: params.token,
-                balance: balance,
-                currency: params.currency,
-            };
-            return await sendMsgToClient(ctx, 0, "Success", result);
-        }catch (e) {
-            return await sendMsgToClient(ctx, 500, e.toString(), {});
-        }
-    }
-
-    static async bet(ctx) {
-        const type = 'bet'
-        const {error, msg, info} = await beforeBusiness(ctx, type)
-        if (error) {
-            return await sendMsgToClient(ctx, 500, msg);
-        }
-        /**
-         * begin insert
-         */
-        let conn = null;
-        try {
-            conn = await db.getConnection();
-            if (conn == null) {
-                return await sendMsgToClient(ctx, 501, "unknown failed");
-            }
-            conn.beginTransaction();
-            await usermodel.userAction(info, conn);
-            // 触发活动
-            sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
-            conn.commit();
-        } catch (error) {
-            logger.info(error);
-            if (conn) conn.release();
-            if (error.code === "ER_DUP_ENTRY")
-                return await sendMsgToClient(ctx, 0, "Success");
-            return await sendMsgToClient(ctx, 501, "Insufficient funds");
-        } finally {
-            if (conn) conn.release();
-        }
-        //
-        // need to query balance again
-        const balanceNow = await usermodel.getBalance(info.tokenInfo, info.currency)
-        // need to query balance again
-        let result = {
-            token: info.token,
-            balance: balanceNow,
-            currency: info.currency,
-            type: type
-        };
-        return await sendMsgToClient(ctx, 0, "Success", result);
-
-    }
-
-
-    static async result(ctx) {
-        const type = 'bet'
-        const {error, msg, info} = await beforeBusiness(ctx, type)
-        if (error) {
-            return await sendMsgToClient(ctx, 500, msg);
-        }
-        /**
-         * begin insert
-         */
-        let conn = null;
-        try {
-            conn = await db.getConnection();
-            if (conn == null) {
-                return await sendMsgToClient(ctx, 501, "unknown failed");
-            }
-            conn.beginTransaction();
-            await usermodel.userAction(info, conn);
-            // 触发活动
-            sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
-            conn.commit();
-        } catch (error) {
-            logger.info(error);
-            if (conn) conn.release();
-            if (error.code === "ER_DUP_ENTRY")
-                return await sendMsgToClient(ctx, 0, "Success");
-            return await sendMsgToClient(ctx, 501, "Insufficient funds");
-        } finally {
-            if (conn) conn.release();
-        }
-        //
-        // need to query balance again
-        const balanceNow = await usermodel.getBalance(info.tokenInfo, info.currency)
-        // need to query balance again
-        let result = {
-            token: info.token,
-            balance: balanceNow,
-            currency: info.currency,
-            type: type
-        };
-        return await sendMsgToClient(ctx, 0, "Success", result);
-    }
-
-    static async rollback(ctx) {
-        const type = 'bet'
-        const {error, msg, info} = await beforeBusiness(ctx, type)
-        if (error) {
-            return await sendMsgToClient(ctx, 500, msg);
-        }
-        /**
-         * begin insert
-         */
-        let conn = null;
-        try {
-            conn = await db.getConnection();
-            if (conn == null) {
-                return await sendMsgToClient(ctx, 501, "unknown failed");
-            }
-            conn.beginTransaction();
-            await usermodel.rollback(info, conn);
-            // 触发活动
-            sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
-            conn.commit();
-        } catch (error) {
-            logger.info(error);
-            if (conn) conn.release();
-            if (error.code === "ER_DUP_ENTRY")
-                return await sendMsgToClient(ctx, 0, "Success");
-            return await sendMsgToClient(ctx, 501, "Insufficient funds");
-        } finally {
-            if (conn) conn.release();
-        }
-        //
-        // need to query balance again
-        const balanceNow = await usermodel.getBalance(info.tokenInfo, info.currency)
-        // need to query balance again
-        let result = {
-            token: info.token,
-            balance: balanceNow,
-            currency: info.currency,
-            type: type
-        };
-        return await sendMsgToClient(ctx, 0, "Success", result);
-    }
+const getRs = async function (info) {
+    // need to query balance again
+    const balanceNow = await usermodel.getBalance(info.tokenInfo, info.currency)
+    // need to query balance again
+    let result = {
+        uid: info.uid,
+        currency: info.currency,
+        balance: balanceNow,
+        type: info.type,
+        success: true
+    };
+    return result
 }
 
-module.exports = apiCall
+const checkBalance = async function(params){
+    const {tokenInfo, tokenError} = await usermodel.checkToken(params.token)
+    if (tokenError) {
+        throw new Error('token is error!')
+    }
+    if(!['TRX','USDT'].includes(params.currency)){
+        throw new Error('currency is error!')
+    }
+    console.log("tokenInfo is ",tokenInfo)
+    const o = Object.assign({tokenInfo:tokenInfo},params,{type:'query_balance'})
+    console.log("o  is ",o)
+    const data = await getRs(o)
+    return data
+}
+
+
+module.exports = {
+    sendGameMsg,
+    sendMsgToClient,
+    beforeBusiness,
+    getRs,
+    checkBalance,
+    execBet,
+    execRollBack,
+}
