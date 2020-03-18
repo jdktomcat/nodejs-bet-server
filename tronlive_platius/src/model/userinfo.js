@@ -20,7 +20,7 @@ async function checkToken(token) {
         tokenInfo: {}
     }
     try {
-        const secretKey = config.Platinus
+        const secretKey = config.Platinus.secretKey
         const payload = jwt.verify(token, secretKey)
         console.log("secretKey: ", secretKey)
         console.log("payload: ", payload)

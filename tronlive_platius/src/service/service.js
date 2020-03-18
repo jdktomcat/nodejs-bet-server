@@ -159,7 +159,7 @@ class apiCall {
         // need to query balance again
         let result = {
             token: params.token,
-            balance: params.balance,
+            balance: balance,
             currency: params.currency,
         };
         return await sendMsgToClient(ctx, 0, "Success", result);
