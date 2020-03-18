@@ -62,6 +62,7 @@ const updateTable = async function () {
     //
     const sql2 = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
     await db.exec(sql2, [150000, Date.now()]);
+    await db.exec(sql2, [150000, Date.now()]);
 }
 
 
