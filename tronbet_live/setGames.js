@@ -1,5 +1,4 @@
 const db = require("./src/utils/dbUtil");
-const {parseGames} = require("./src/service/games");
 
 const queryBalance = async function (array) {
     const sql = `select a.uid,a.currency,a.addr,a.balance / 1000000000 as balance,b.email from tron_live.live_balance as a left join tron_live.live_account b on a.uid = b.uid where a.uid = b.uid and a.uid = ? and a.currency = ? and a.addr = ? and b.email = ?`
@@ -50,9 +49,24 @@ const fixBalance = async function () {
     // }
 }
 
+const updateTable = async function () {
+    const sql1 = `CREATE TABLE tron_live.live_fix_log (
+        log_id bigint(20) NOT NULL AUTO_INCREMENT,
+        amount bigint(20) DEFAULT NULL,
+        ts bigint(20) DEFAULT NULL,
+        PRIMARY KEY (log_id),
+        KEY live_fix_log_ts_index (ts)
+        )`
+    await db.exec(sql1, []);
+    //
+    //
+    const sql2 = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
+    await db.exec(sql2, [150000, Date.now()]);
+}
+
 
 const test = async function () {
-    let games = await parseGames();
+    await updateTable()
 }
 test().then(() => {
     console.log("end!")
