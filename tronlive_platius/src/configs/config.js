@@ -8,12 +8,11 @@ try {
   console.log('using app config');
 }
 console.log(prdCfg)
-
 let config = {
   env: 'production',
   debug: false,
   app: {
-    http_port: 18072,
+    http_port: prdCfg.port.tronlive_platinus,
     logPath: path.resolve(__dirname, '../../logs'),
     log: true, //开启日志,
     randomSalt: 'hi!can-you-hear-me?'
