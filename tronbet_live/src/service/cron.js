@@ -40,6 +40,8 @@ let timer = setInterval(async () => {
     profit = profit - fixSum
     console.log("this time trx fixSum is",fixSum)
     console.log("after time trx profit is",profit)
+    profit = profit * 0.9
+    console.log("after time trx last is",profit)
     // 盈利暂时放开 50%
     // if( profit > 0 ){
     //   profit = profit * 0.5
