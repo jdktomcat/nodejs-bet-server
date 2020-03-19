@@ -7,19 +7,23 @@ class apiCall {
             const params = ctx.request.body || {}
             console.log("debug----->param", params)
             Object.keys(params).forEach(e => params[e] = params[e] || '')
-            const data = await service.checkBalance(params)
-            await service.sendMsgToClient(ctx, 0, "Success", data);
+            const {code,error,data} = await service.checkBalance(params)
+            if(code === 0){
+                await service.sendMsgToClient(ctx, 0, "Success", data);
+            }else {
+                await service.sendMsgToClient(ctx, code, error, data);
+            }
         } catch (e) {
-            await service.sendMsgToClient(ctx, 500, e.toString());
+            await service.sendMsgToClient(ctx, 1004, e.toString());
         }
     }
 
     static async bet(ctx) {
         try {
             const type = 'bet'
-            const {error, msg, info} = await service.beforeBusiness(ctx, type)
+            const {error, msg, info,code} = await service.beforeBusiness(ctx, type)
             if (error) {
-                return await service.sendMsgToClient(ctx, 500, msg);
+                return await service.sendMsgToClient(ctx, code, msg);
             }
             await service.execBet(info)
             // 触发活动
@@ -28,7 +32,7 @@ class apiCall {
             return await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {
             console.log(new Date(), ' platinus bet error : ', e)
-            await service.sendMsgToClient(ctx, 500, e.toString());
+            await service.sendMsgToClient(ctx, 1004, e.toString());
         }
     }
 
@@ -36,9 +40,9 @@ class apiCall {
     static async result(ctx) {
         try {
             const type = 'result'
-            const {error, msg, info} = await service.beforeBusiness(ctx, type)
+            const {error, msg, info,code} = await service.beforeBusiness(ctx, type)
             if (error) {
-                return await service.sendMsgToClient(ctx, 500, msg);
+                return await service.sendMsgToClient(ctx, code, msg);
             }
             await service.execBet(info)
             // 触发活动
@@ -47,16 +51,16 @@ class apiCall {
             await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {
             console.log(new Date(), ' platinus result error : ', e)
-            await service.sendMsgToClient(ctx, 500, e.toString(), {});
+            await service.sendMsgToClient(ctx, 1004, e.toString(), {});
         }
     }
 
     static async rollback(ctx) {
         try {
             const type = 'rollback'
-            const {error, msg, info} = await service.beforeBusiness(ctx, type)
+            const {error, msg, info,code} = await service.beforeBusiness(ctx, type)
             if (error) {
-                return await service.sendMsgToClient(ctx, 500, msg);
+                return await service.sendMsgToClient(ctx, code, msg);
             }
             await service.execRollBack(info)
             // 触发活动
@@ -65,7 +69,7 @@ class apiCall {
             await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {
             console.log(new Date(), ' platinus rollback error : ', e)
-            await service.sendMsgToClient(ctx, 500, e.toString());
+            await service.sendMsgToClient(ctx, 1004, e.toString());
         }
     }
 }

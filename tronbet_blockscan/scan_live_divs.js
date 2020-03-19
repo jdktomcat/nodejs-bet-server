@@ -278,7 +278,7 @@ async function saveCompleteInfo(info) {
     // add 2020-03-19 加入修正记录
     console.log("live_fix_log_insert",new Date())
     const sql2 = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
-    await query(sql2, [10 * 10000,Date.now()]);
+    await query(sql2, [5 * 10000,Date.now()]);
     //
   } catch (error) {
     console.log(error);

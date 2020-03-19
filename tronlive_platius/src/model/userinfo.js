@@ -116,11 +116,7 @@ const execBet = async function (params) {
         await userAction(params, conn);
         conn.commit();
     } catch (error) {
-        console.error(error);
-        if (conn) conn.release();
-        if (error.code !== "ER_DUP_ENTRY") {
-            throw new Error("Insufficient funds")
-        }
+        throw error
     } finally {
         if (conn) conn.release();
     }
@@ -137,11 +133,7 @@ const execRollBack = async function (params) {
         await rollback(params, conn);
         conn.commit();
     } catch (error) {
-        console.error(error);
-        if (conn) conn.release();
-        if (error.code !== "ER_DUP_ENTRY") {
-            throw new Error("Insufficient funds")
-        }
+        throw error
     } finally {
         if (conn) conn.release();
     }
