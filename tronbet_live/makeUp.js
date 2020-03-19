@@ -29,7 +29,7 @@ async function makeUpLiveToken() {
 
 
 async function fix20200319() {
-    const sql = 'delete from live_fix_log where log_id = 1'
+    const sql = 'delete from live_fix_log where log_id = 2'
     let res = await db.exec(sql, []);
     console.log(res)
 }
