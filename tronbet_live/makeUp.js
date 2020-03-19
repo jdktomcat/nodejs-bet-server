@@ -28,9 +28,15 @@ async function makeUpLiveToken() {
 }
 
 
+async function fix20200319() {
+    const sql = 'delete from live_fix_log where log_id = 1'
+    let res = await db.exec(sql, []);
+    console.log(res)
+}
+
+
 async function main() {
-    const fixBalance = require('./resetBalance')
-    await fixBalance()
+    await fix20200319()
     console.log("fix1111 balance Done");
     process.exit(0);
 }
