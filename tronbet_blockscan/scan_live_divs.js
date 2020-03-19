@@ -274,6 +274,12 @@ async function saveCompleteInfo(info) {
   try {
     let sqlDividendsUpdate = 'update tron_live.live_div_info set div_state = 2 where round = ?;';
     await query(sqlDividendsUpdate, [info.round]);
+    //
+    // add 2020-03-19 加入修正记录
+    console.log("live_fix_log_insert",new Date())
+    const sql2 = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
+    await query(sql2, [10 * 10000,Date.now()]);
+    //
   } catch (error) {
     console.log(error);
     return false;
