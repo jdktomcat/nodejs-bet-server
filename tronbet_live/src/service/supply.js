@@ -8,6 +8,7 @@ const game = require("../service/games");
 const redisUtil = require("../utils/redisUtil");
 const {app} = require('../configs/config')
 const platiusSign = require('../cp/platius')
+const redisUtils = require('../utils/redisUtil')
 
 //
 async function updateOnlineGameList() {
@@ -300,10 +301,19 @@ async function allSchedule(ctx) {
  * schedule all
  */
 async function platinusAPI(ctx) {
+    const tokenRedisKey = "platinusToken"
     let params = ctx.request.body || {}
     let addr = params.addr
-    const token = platiusSign(addr)
-    ctx.body = {code: 200, message: "success", data: token}
+    //
+    let val = await redisUtils.get(tokenRedisKey)
+    console.log("debug--->val ",val)
+    if(val === null){
+        const token = platiusSign(addr)
+        await redisUtils.set(tokenRedisKey, token)
+        await redisUtils.expire(tokenRedisKey, 604800) // 设置过期时间为7天
+        val = await redisUtils.get(tokenRedisKey)
+    }
+    ctx.body = {code: 200, message: "success", data: val}
 }
 
 module.exports = {
