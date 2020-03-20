@@ -34,7 +34,7 @@ const sign = function (addr) {
     }
     const token = jwt.sign(obj, secretKey, {
         algorithm: 'HS256',
-        expiresIn: '10h'
+        expiresIn: '10 days'
     })
     return token
 }
