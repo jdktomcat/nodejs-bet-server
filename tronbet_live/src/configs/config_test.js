@@ -1,4 +1,4 @@
-const path = require('path');
+ const path = require('path');
 
 let prdCfg = {};
 try {
@@ -89,6 +89,9 @@ let config = {
     swagPublick: prdCfg.swaghub.swagPublick,
     publicKey: prdCfg.swaghub.publicKey,
     privetKey: prdCfg.swaghub.privetKey
+  },
+  Platinus: {
+    secretKey: "df1d0fa3-0634-48b4-a34c-555fc82a1fd6",
   },
   currency: ['BTC', 'LTC', 'BCH', 'ETH', 'BNB'],
   withdrawMaxConf: {

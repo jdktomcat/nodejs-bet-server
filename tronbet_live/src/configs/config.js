@@ -88,6 +88,9 @@ let config = {
     publicKey: prdCfg.swaghub.publicKey,
     privetKey: prdCfg.swaghub.privetKey
   },
+  Platinus: {
+    secretKey: "",
+  },
   currency: ['BTC', 'LTC', 'BCH', 'ETH', 'BNB'],
   withdrawMaxConf: {
     BTC: 2,
