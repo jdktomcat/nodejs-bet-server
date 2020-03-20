@@ -5,8 +5,8 @@ const jwt = require('jsonwebtoken');
 
 async function getBalance(params) {
     const {addr,currency} = params
-    const sqlUid = 'select uid from live_account where email = ? and currency = ?'
-    let uidArray = await db.exec(sqlUid, [addr, currency])
+    const sqlUid = 'select uid from live_account where email = ?'
+    let uidArray = await db.exec(sqlUid, [addr])
     if(uidArray.length === 0){
         throw new Error("user not found")
     }
@@ -43,7 +43,14 @@ function checkToken(token) {
 }
 
 async function parseToken(tokenInfo, currency) {
-    const {uid, addr} = tokenInfo
+    const {addr} = tokenInfo
+    const sqlUid = 'select uid from live_account where email = ?'
+    let uidArray = await db.exec(sqlUid, [addr])
+    if(uidArray.length === 0){
+        throw new Error("user not found")
+    }
+    const uid = uidArray[0].uid
+    //
     let sql = "select * from live_balance where uid = ? and addr = ? and currency = ?"
     let res = await db.exec(sql, [uid, addr, currency])
     let notExist = false
@@ -53,7 +60,7 @@ async function parseToken(tokenInfo, currency) {
     } else {
         balance = res[0].balance || 0
     }
-    const o = Object.assign({}, tokenInfo, {notExist, currency, balance})
+    const o = {uid, addr, notExist, balance}
     return o
 }
 

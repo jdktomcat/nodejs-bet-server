@@ -183,7 +183,6 @@ const checkBalance = async function (params) {
     }
     console.log("tokenInfo is ", tokenInfo)
     const o = {
-        addr : tokenInfo.addr,
         currency : params.currency,
         type: 'query_balance',
         token : params.token,
