@@ -382,12 +382,13 @@ async function parseGames() {
             newSlot.push(gNames)
         }
     })
-    newSlot = newSlot.concat(platiusSlot)
+    Array.prototype.push.apply(platiusSlot,newSlot)
+    // newSlot = newSlot.concat(platiusSlot)
     //
     const newTables = platiusTable.concat(poker)
     return {
         newFlag: newGameFlag,
-        slots: newSlot,
+        slots: platiusSlot,
         balckjackt: balckjack,
         baccaratt: baccarat,
         roulettet: roulette,
