@@ -186,6 +186,7 @@ const checkBalance = async function (params) {
         currency : params.currency,
         type: 'query_balance',
         token : params.token,
+        addr : tokenInfo.addr,
     }
     console.log("o  is ", o)
     const data = await getRs(o)
