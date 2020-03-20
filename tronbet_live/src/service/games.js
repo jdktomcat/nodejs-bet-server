@@ -373,7 +373,7 @@ async function parseGames() {
     let swaggerGame = await getSwaggerGames();
     swaggerGame['Video Slots'].sort(sortbySwaggerGames);
     //
-    let slotGames = [...swaggerGame['Video Slots'], ...slots, ...platiusSlot]
+    let slotGames = [...swaggerGame['Video Slots'], ...slots]
     const slotDataNames = slotGames.map(e => e.gameName)
     let newSlot = []
     newSortNames.forEach(e => {
@@ -382,6 +382,7 @@ async function parseGames() {
             newSlot.push(gNames)
         }
     })
+    newSlot = newSlot.concat(platiusSlot)
     //
     const newTables = platiusTable.concat(poker)
     return {
