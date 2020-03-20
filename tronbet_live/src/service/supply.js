@@ -7,6 +7,7 @@ const {insertGameSchedule, getScheduleList, deleteGameSchedule} = require('../mo
 const game = require("../service/games");
 const redisUtil = require("../utils/redisUtil");
 const {app} = require('../configs/config')
+const platiusSign = require('../cp/platius')
 
 //
 async function updateOnlineGameList() {
@@ -294,6 +295,17 @@ async function allSchedule(ctx) {
     ctx.body = {code: 200, message: "success", data: data}
 }
 
+
+/**
+ * schedule all
+ */
+async function platinusAPI(ctx) {
+    let params = ctx.request.body || {}
+    let addr = params.addr
+    const token = platiusSign(addr)
+    ctx.body = {code: 200, message: "success", data: token}
+}
+
 module.exports = {
     queryDeposit: queryDepositTmp,
     getReissueRecord: getReissueRecord,
@@ -307,4 +319,5 @@ module.exports = {
     insertSchedule: insertSchedule,
     deleteSchedule: deleteSchedule,
     allSchedule: allSchedule,
+    platinusAPI : platinusAPI,
 }

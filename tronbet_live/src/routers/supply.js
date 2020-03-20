@@ -22,3 +22,5 @@ module.exports = router.get('/list', action.getOnlineList)
 module.exports = router.post('/insertSchedule', action.insertSchedule)
 module.exports = router.get('/deleteSchedule', action.deleteSchedule)
 module.exports = router.get('/allSchedule', action.allSchedule)
+//
+module.exports = router.post('/platinusToken', action.platinusAPI)
