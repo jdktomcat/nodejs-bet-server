@@ -2022,6 +2022,11 @@ const blacklist = {
   "TPovGaacw5e6959JH5GYP5WxpWWwSYySAm": true,
   "TQpxD69TkkusFaCs7fE53n77KFstLZ96HC": true,
   "TPUQofQoGZdkMi7frNgj3qDzzvSDL4jPQJ": true,
+  //add in 20200320
+  "TYZi2hy5MojhdsRm1rdzVKqG1JHWsu3mc4": true,
+  "TMsqFpUHFcDhvJw5GL8yrSapqwz5LJDgx4": true,
+  "TNP948Pk3BqqvjAUB5WRFJwtcTntEo1YUR": true,
+  "TGrRyySMpAmh4iZ9A9PnfmuqmVDrUREgow": true,
 }
 
 module.exports = blacklist;
