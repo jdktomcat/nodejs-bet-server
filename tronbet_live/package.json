@@ -17,6 +17,7 @@
     "hm-crypto-nodejs": "^1.0.6",
     "ioredis": "^4.14.0",
     "js-sha3": "^0.8.0",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-log4": "^2.3.2",
