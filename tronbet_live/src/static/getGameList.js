@@ -1,4 +1,5 @@
 const db = require('../utils/dbUtil')
+const platiusList = require("./platiusList")
 
 const dict = {
     "hub88": "hub88",
@@ -48,14 +49,31 @@ async function getIsNewArray() {
 }
 
 async function getNameSortArray() {
-    let sql = "select game_name  from tron_live.live_online_game where game_name != '' order by is_new desc,ts desc"
+    let sql = "select game_id,game_name  from tron_live.live_online_game where game_name != '' order by is_new desc,ts desc"
     let res = await db.exec(sql, [])
     const name = res.map(e => e.game_name)
     return name
+}
+
+async function getPlatiusList(){
+    // platiusList add in 2020-03-20
+    platiusList.forEach(e=>e.type = 'platius')
+    const platiusSlot = platiusList.filter(e=>e.category === 'slots')
+    const platiusTable = platiusList.filter(e=>e.category === 'table')
+    return [platiusSlot,platiusTable]
+}
+
+async function getOnlineId() {
+    let sql = "select game_id,game_name  from tron_live.live_online_game where game_name != '' and status = '0' order by is_new desc,ts desc"
+    let res = await db.exec(sql, [])
+    const game_id = res.map(e => e.game_id)
+    return game_id
 }
 
 module.exports = {
     getGameList: getOnlineList,
     getIsNewArray: getIsNewArray,
     getNameSortArray: getNameSortArray,
+    getPlatiusList:getPlatiusList,
+    getOnlineId:getOnlineId,
 }
