@@ -157,7 +157,7 @@ const beforeBusiness = async function (ctx, typeDesc) {
 const getRs = async function (info) {
     const balanceNow = await usermodel.getBalance(info)
     let result = {
-        addr: info.addr,
+        token: info.token,
         currency: info.currency,
         balance: balanceNow,
         type: info.type,
@@ -185,7 +185,8 @@ const checkBalance = async function (params) {
     const o = {
         addr : tokenInfo.addr,
         currency : params.currency,
-        type: 'query_balance'
+        type: 'query_balance',
+        token : params.token,
     }
     console.log("o  is ", o)
     const data = await getRs(o)
