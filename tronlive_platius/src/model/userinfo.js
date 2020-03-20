@@ -3,10 +3,17 @@ const config = require('../configs/config')
 const _ = require('lodash')._
 const jwt = require('jsonwebtoken');
 
-async function getBalance(tokenInfo, currency) {
-    const {uid, addr} = tokenInfo
-    let sql = "select round(balance / 1000000, 3) as balance from live_balance where uid = ? and addr = ? and currency = ?"
-    let res = await db.exec(sql, [uid, addr, currency])
+async function getBalance(params) {
+    const {addr,currency} = params
+    const sqlUid = 'select uid from live_account where email = ? and currency = ?'
+    let uidArray = await db.exec(sqlUid, [addr, currency])
+    if(uidArray.length === 0){
+        throw new Error("user not found")
+    }
+    const uid = uidArray[0].uid
+    //
+    let sql = "select round(balance / 1000000, 3) as balance from live_balance where uid = ? and currency = ?"
+    let res = await db.exec(sql, [uid, currency])
     console.log("rs is ", res)
     if (res.length === 0) {
         throw new Error("user not found")
