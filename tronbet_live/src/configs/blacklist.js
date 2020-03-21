@@ -2027,7 +2027,6 @@ const blacklist = {
   "TMsqFpUHFcDhvJw5GL8yrSapqwz5LJDgx4": true,
   "TNP948Pk3BqqvjAUB5WRFJwtcTntEo1YUR": true,
   "TGrRyySMpAmh4iZ9A9PnfmuqmVDrUREgow": true,
-  "TRjG49QTLNqu9CESrp7f2QBVjDJf4XQpkC": true,
 }
 
 module.exports = blacklist;
