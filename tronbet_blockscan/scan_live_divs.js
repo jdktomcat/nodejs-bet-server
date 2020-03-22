@@ -245,9 +245,9 @@ async function saveAirDropLog(info) {
 async function saveRoundInfo(info) {
   let sqlDividendsInsert = 'insert into tron_live.live_div_info (round,total_token,total_trx,send_ts,div_state, rank_trx) values (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE total_token = ?,total_trx=?,send_ts=?,div_state=?';
   try {
-    console.log("info.trxAmountTotal===>pre", info.trxAmountTotal);
-    info.trxAmountTotal = info.trxAmountTotal / 0.9;
-    console.log("info.trxAmountTotal===>back", info.trxAmountTotal);
+    // console.log("info.trxAmountTotal===>pre", info.trxAmountTotal);
+    // info.trxAmountTotal = info.trxAmountTotal / 0.9;
+    // console.log("info.trxAmountTotal===>back", info.trxAmountTotal);
 
     let hotRank = Math.floor((info.trxAmountTotal * 0.03) / 0.97);
     await query(sqlDividendsInsert, [info.round, info.tokenAmountTotal, info.trxAmountTotal, info.tmCreate, 1, hotRank, info.tokenAmountTotal, info.trxAmountTotal, info.tmCreate, 1]);
