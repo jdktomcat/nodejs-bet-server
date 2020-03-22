@@ -37,10 +37,11 @@ let timer = setInterval(async () => {
     //抽回部分回归底池,现底池过低
     const fixSum = await usermodel.getLiveFix();
     //
+
     profit = profit - fixSum
     console.log("this time trx fixSum is",fixSum)
     console.log("after time trx profit is",profit)
-    profit = profit * 0.9
+    profit = profit * 0.85
     console.log("after time trx last is",profit)
     // 盈利暂时放开 50%
     // if( profit > 0 ){
