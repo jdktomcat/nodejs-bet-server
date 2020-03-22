@@ -254,17 +254,17 @@ async function saveRoundInfo(info) {
     //
     // add 2020-03-19 加入修正记录
     console.log("live_fix_log_insert",new Date())
-    const sql2 = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
+    const live_fix_log_sql = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
     //
     const fixNumberTmp = (info.trxAmountTotal / 1e6) * 0.1
     const fixNumber = Number.parseInt(fixNumberTmp)
     console.log("live_fixNumber is ",fixNumber)
     //
-    let p1 = [10 * 10000,Date.now()]
+    let fixParams = [10 * 10000,Date.now()]
     if(fixNumber < 1e6){
-      p1 = [fixNumber,Date.now()]
+      fixParams = [fixNumber,Date.now()]
     }
-    await query(sql2, p1);
+    await query(live_fix_log_sql, fixParams);
     //
   } catch (e) {
     console.log(e);
