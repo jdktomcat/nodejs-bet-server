@@ -301,13 +301,13 @@ async function allSchedule(ctx) {
  * schedule all
  */
 async function platinusAPI(ctx) {
-    const tokenRedisKey = "platinusToken"
     let params = ctx.request.body || {}
     let addr = params.addr || ''
     //
     if(addr === ''){
         return ctx.body = {code: 500, message: "error"}
     }
+    const tokenRedisKey = "platinusToken_" + addr
     let val = await redisUtils.get(tokenRedisKey)
     console.log("platinusAPI_addr: ",addr)
     console.log("platinusAPI_token: ",val)
