@@ -181,7 +181,7 @@ async function betMake(ctx) {
     let price = await userinfo.getTRXPrice(currency);
     let trxAmount = datas.amount * price * 1e4;
 
-    console.log("datas.transaction : ",JSON.stringify(datas.transaction))
+    console.log("datas.transaction : ",JSON.stringify(datas))
 
     let transactionParams = {
       addr: datas.player_id,
