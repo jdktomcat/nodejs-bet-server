@@ -309,7 +309,8 @@ async function platinusAPI(ctx) {
         return ctx.body = {code: 500, message: "error"}
     }
     let val = await redisUtils.get(tokenRedisKey)
-    console.log("platinusAPI_addr: ",val)
+    console.log("platinusAPI_addr: ",addr)
+    console.log("platinusAPI_token: ",val)
     if(val === null){
         const token = platiusSign(addr)
         await redisUtils.set(tokenRedisKey, token)
