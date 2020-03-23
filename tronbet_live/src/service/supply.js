@@ -303,10 +303,13 @@ async function allSchedule(ctx) {
 async function platinusAPI(ctx) {
     const tokenRedisKey = "platinusToken"
     let params = ctx.request.body || {}
-    let addr = params.addr
+    let addr = params.addr || ''
     //
+    if(addr === ''){
+        return ctx.body = {code: 500, message: "error"}
+    }
     let val = await redisUtils.get(tokenRedisKey)
-    console.log("debug--->val ",val)
+    console.log("platinusAPI_addr: ",val)
     if(val === null){
         const token = platiusSign(addr)
         await redisUtils.set(tokenRedisKey, token)
@@ -314,6 +317,20 @@ async function platinusAPI(ctx) {
         val = await redisUtils.get(tokenRedisKey)
     }
     ctx.body = {code: 200, message: "success", data: val}
+}
+
+
+async function getPlatinusToken(ctx) {
+    let params = ctx.request.query || {}
+    let token = params.token || ''
+    //
+    if(token === ''){
+        return ctx.body = {code: 500, message: "error"}
+    }
+    const secretKey = 'df1d0fa3-0634-48b4-a34c-555fc82a1fd6'
+    const jwt = require('jsonwebtoken');
+    const data = jwt.verify(token, secretKey)
+    ctx.body = {code: 200, message: "success", data: data}
 }
 
 module.exports = {
@@ -330,4 +347,5 @@ module.exports = {
     deleteSchedule: deleteSchedule,
     allSchedule: allSchedule,
     platinusAPI : platinusAPI,
+    getPlatinusToken : getPlatinusToken,
 }
