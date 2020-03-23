@@ -333,6 +333,7 @@ function getCurrency(address) {
 async function main() {
   let blockNum = (await getMaxBlockNum()) + 1;
   while (true) {
+    console.log("startscan_win_divs20 ")
     let stime = new Date().getTime();
     let result = await scanNext(blockNum);
     if (result) {
