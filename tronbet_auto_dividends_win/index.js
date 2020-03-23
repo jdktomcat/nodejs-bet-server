@@ -101,12 +101,6 @@ async function getRoundInfo() {
         loggerDefault.info("isBusy " + isBusy);
     }
 
-    //        // 249 有几笔0trx 被revert掉，现在卡死，先放行
-    console.log("roundInfo.round === 249  ",roundInfo.round === 249)
-    if(roundInfo.round === 249){
-        roundInfo.nextHolderIndex = 17221;
-    }
-
     return roundInfo;
 }
 
@@ -227,9 +221,6 @@ async function onComplete(event_complete) {
 async function init() {
     loggerDefault.info("启动检查");
     let roundInfo = await getRoundInfo();
-    if(roundInfo.round === 249){
-        roundInfo.nextHolderIndex = 17221
-    }
     if (roundInfo != null && roundInfo.lock === true) { //正在分红
         loggerDefault.info("启动时已开始分红！！！");
         hadSendIndex = roundInfo.nextHolderIndex;
@@ -240,11 +231,6 @@ async function init() {
             loggerDefault.info("等待分红进度反馈... 倒数 = " + n);
             if (n === 0) { //等待N次
                 clearInterval(timer);
-                console.log("before is ",JSON.stringify(roundInfo))
-                if(roundInfo.round === 249){
-                    roundInfo.nextHolderIndex = 17221
-                }
-                console.log("after is ",JSON.stringify(roundInfo))
                 if (hadSendIndex === roundInfo.nextHolderIndex) {//hadSendIndex未变化(onContiune事件触发该参数变化)，未收到分红事件
                     loggerDefault.info("分红进度: " + roundInfo.nextHolderIndex + "/" + roundInfo.maxHolderIndex + " 未变化，重新触发");
                     if (roundInfo.nextHolderIndex <= roundInfo.maxHolderIndex) {
