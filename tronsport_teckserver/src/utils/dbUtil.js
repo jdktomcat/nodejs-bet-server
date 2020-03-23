@@ -18,6 +18,7 @@ const promisePool = pool.promise();
 var db = {};
 //执行单条sql语句
 db.exec = async function (sql, param) {
+    console.log(sql,param)
     let ret = await promisePool.execute(sql, param); //return [rows, fields]; [0]=>rows
     return ret[0];
 }
