@@ -97,7 +97,7 @@ async function getRoundInfo() {
         }
     } else {
         loggerDefault.info("Round " + roundInfo.round + " is busy!");
-        loggerDefault.info("roundInfo " + roundInfo);
+        loggerDefault.info("roundInfo " + JSON.stringify(roundInfo));
         loggerDefault.info("isBusy " + isBusy);
     }
 

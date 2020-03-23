@@ -30,7 +30,7 @@ async function userBet(tsp, blp, conn) {
       tsp.transactionId,
       tsp.betslipId,
       tsp.ts,
-      tsp.status,
+      tranStatus.bet,
       tsp.amount,
       tsp.crossRateEuro,
       tsp.action,
@@ -91,7 +91,7 @@ async function userRefund(params, conn) {
       params.betTransactionId,
       params.betslipId,
       params.ts,
-      params.status,
+      tranStatus.refund,
       params.amount,
       params.action,
       params.currency
@@ -118,7 +118,7 @@ async function userWin(params, conn) {
       params.betTransactionId,
       params.betslipId,
       params.ts,
-      params.status,
+      tranStatus.win,
       params.amount,
       params.action,
       params.currency
@@ -133,7 +133,7 @@ async function userDiscard(params, conn) {
 
   let updateTransactionSql =
     'update sports_transaction_log set status = ?, win = ? where transactionId = ? and addr = ?';
-  await db.execTrans(updateTransactionSql, [53, params.amount, params.betTransactionId, params.addr], conn);
+  await db.execTrans(updateTransactionSql, [tranStatus.discard, params.amount, params.betTransactionId, params.addr], conn);
 }
 
 async function userCancel(params, conn) {
@@ -158,7 +158,7 @@ async function userCancel(params, conn) {
       params.betTransactionId,
       params.betslipId,
       params.ts,
-      params.status,
+      tranStatus.cancel,
       params.amount,
       params.action,
       params.currency,
@@ -171,19 +171,7 @@ async function userCancel(params, conn) {
 async function userBetSettle(tronsactionId, state) {
   let now = new Date().getTime();
   let sql = 'update sports_transaction_log set status = ?, ts = ? where transactionId = ?';
-  let status = -1;
-  if (state == 'win') {
-    status = tranStatus.win;
-  } else if (state == 'lost') {
-    status = tranStatus.lost;
-  } else if (state == 'refund') {
-    status = tranStatus.refund;
-  } else if (state == 'cancel') {
-    status = tranStatus.cancel;
-  } else if (state == 'rollback') {
-    status = tranStatus.rollback;
-  }
-  await db.exec(sql, [status, now, tronsactionId]);
+  await db.exec(sql, [tranStatus.settle, now, tronsactionId]);
 }
 
 async function userRollBack(params, conn) {
@@ -203,7 +191,7 @@ async function userRollBack(params, conn) {
       params.betTransactionId,
       params.betslipId,
       params.ts,
-      params.status,
+      tranStatus.rollback,
       params.amount,
       params.action,
       params.currency,
