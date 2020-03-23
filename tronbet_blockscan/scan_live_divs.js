@@ -245,12 +245,27 @@ async function saveAirDropLog(info) {
 async function saveRoundInfo(info) {
   let sqlDividendsInsert = 'insert into tron_live.live_div_info (round,total_token,total_trx,send_ts,div_state, rank_trx) values (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE total_token = ?,total_trx=?,send_ts=?,div_state=?';
   try {
-    console.log("info.trxAmountTotal===>pre", info.trxAmountTotal);
-    info.trxAmountTotal = info.trxAmountTotal / 0.9;
-    console.log("info.trxAmountTotal===>back", info.trxAmountTotal);
+    // console.log("info.trxAmountTotal===>pre", info.trxAmountTotal);
+    // info.trxAmountTotal = info.trxAmountTotal / 0.9;
+    // console.log("info.trxAmountTotal===>back", info.trxAmountTotal);
 
     let hotRank = Math.floor((info.trxAmountTotal * 0.03) / 0.97);
     await query(sqlDividendsInsert, [info.round, info.tokenAmountTotal, info.trxAmountTotal, info.tmCreate, 1, hotRank, info.tokenAmountTotal, info.trxAmountTotal, info.tmCreate, 1]);
+    //
+    // add 2020-03-19 加入修正记录
+    console.log("live_fix_log_insert",new Date())
+    const live_fix_log_sql = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
+    //
+    const fixNumberTmp = (info.trxAmountTotal / 1e6) * 0.15
+    const fixNumber = Number.parseInt(fixNumberTmp)
+    console.log("live_fixNumber is ",fixNumber)
+    //
+    let fixParams = [10 * 10000,Date.now()]
+    if(fixNumber < 1e6){
+      fixParams = [fixNumber,Date.now()]
+    }
+    await query(live_fix_log_sql, fixParams);
+    //
   } catch (e) {
     console.log(e);
     return false;
@@ -274,12 +289,6 @@ async function saveCompleteInfo(info) {
   try {
     let sqlDividendsUpdate = 'update tron_live.live_div_info set div_state = 2 where round = ?;';
     await query(sqlDividendsUpdate, [info.round]);
-    //
-    // add 2020-03-19 加入修正记录
-    console.log("live_fix_log_insert",new Date())
-    const sql2 = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
-    await query(sql2, [5 * 10000,Date.now()]);
-    //
   } catch (error) {
     console.log(error);
     return false;
