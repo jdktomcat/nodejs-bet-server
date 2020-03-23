@@ -104,16 +104,7 @@ async function getRoundInfo() {
     //        // 249 有几笔0trx 被revert掉，现在卡死，先放行
     console.log("roundInfo.round === 249  ",roundInfo.round === 249)
     if(roundInfo.round === 249){
-        let nextDeadline = roundInfo.tmStart + duration;
-        if (roundInfo.tmStart < init_ts) { //若之前分红时间小于配置的初始分红时间，则修正下次分红时间为初始分红时间
-            nextDeadline = init_ts;
-        }
-        let deadline = getDeadline(nextDeadline);
-        roundInfo.round = roundInfo.round + 1; //下一轮
-        roundInfo.deadline = deadline; //下一轮
-        roundInfo.lock = false;
-        roundInfo.timeout = false;
-        roundInfo.pass_round = 0;
+        roundInfo.nextHolderIndex = 17220;
     }
 
     return roundInfo;
