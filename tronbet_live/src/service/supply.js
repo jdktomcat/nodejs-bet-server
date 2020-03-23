@@ -3,7 +3,7 @@ const {
 } = require('../model/newGameList')
 const {depositData, reissueRecord} = require('../model/deposit')
 const RefreshRateUtils = require('../model/refreshRate')
-const {insertGameSchedule, getScheduleList, deleteGameSchedule} = require('../model/scheduleRate')
+const {insertGameSchedule, getScheduleList, deleteGameSchedule} = require('../dailyschedule/productRateSchedule')
 const game = require("../service/games");
 const redisUtil = require("../utils/redisUtil");
 const {app} = require('../configs/config')

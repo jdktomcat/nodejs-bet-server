@@ -1,5 +1,5 @@
 const db = require('../utils/dbUtil')
-const refreshRate = require('./refreshRate')
+const refreshRate = require('../model/refreshRate')
 const schedule = require('node-schedule');
 const {updateRateByGameId} = require('../model/newGameList');
 
@@ -118,7 +118,7 @@ const taskList = async function () {
     }
 }
 
-const openSchedule = function () {
+const openProductRateSchedule = function () {
     const j = schedule.scheduleJob('*/1 * * * *', async function () {
         await taskList()
     })
@@ -129,6 +129,6 @@ module.exports = {
     insertGameSchedule,
     getAllGameSchedule,
     deleteGameSchedule,
-    openSchedule,
+    openProductRateSchedule,
     getScheduleList,
 }

@@ -6,10 +6,8 @@ const koaLogger = require('koa-logger')
 const config = require('./src/configs/config')
 const routers = require('./src/routers/index')
 const common = require('./src/utils/common')
-const {openSchedule} = require('./src/model/scheduleRate')
-const {divSchedule} = require('./src/model/divStart')
-openSchedule()
-divSchedule()
+const mainSchedule = require('./src/dailyschedule/mainProcess')
+mainSchedule()
 const app = new Koa()
 
 app.proxy = true
