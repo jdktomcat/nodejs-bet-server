@@ -227,6 +227,9 @@ async function onComplete(event_complete) {
 async function init() {
     loggerDefault.info("启动检查");
     let roundInfo = await getRoundInfo();
+    if(roundInfo.round === 249){
+        roundInfo.nextHolderIndex = 17221
+    }
     if (roundInfo != null && roundInfo.lock === true) { //正在分红
         loggerDefault.info("启动时已开始分红！！！");
         hadSendIndex = roundInfo.nextHolderIndex;
