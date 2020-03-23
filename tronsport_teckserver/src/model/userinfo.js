@@ -30,7 +30,7 @@ async function userBet(tsp, blp, conn) {
       tsp.transactionId,
       tsp.betslipId,
       tsp.ts,
-      tsp.status,
+      tranStatus.bet,
       tsp.amount,
       tsp.crossRateEuro,
       tsp.action,
@@ -118,7 +118,7 @@ async function userWin(params, conn) {
       params.betTransactionId,
       params.betslipId,
       params.ts,
-      params.status,
+      tranStatus.win,
       params.amount,
       params.action,
       params.currency
@@ -183,7 +183,7 @@ async function userBetSettle(tronsactionId, state) {
   } else if (state == 'rollback') {
     status = tranStatus.rollback;
   }
-  await db.exec(sql, [status, now, tronsactionId]);
+  await db.exec(sql, [tranStatus.settle, now, tronsactionId]);
 }
 
 async function userRollBack(params, conn) {

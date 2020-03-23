@@ -188,7 +188,7 @@ async function betMake(ctx) {
       transactionId: datas.transaction.id,
       betslipId: datas.transaction.betslip_id,
       ts: Math.floor(datas.transaction.timestamp * 1000),
-      status: datas.transaction.status,
+      status: 0,
       amount: fromCpAmount(datas.currency, datas.amount * 1e4),
       crossRateEuro: datas.transaction.cross_rate_euro,
       action: datas.transaction.operation,
@@ -349,7 +349,7 @@ async function betRefund(ctx) {
       betTransactionId: datas.bet_transaction_id,
       betslipId: datas.transaction.betslip_id,
       ts: Math.floor(datas.transaction.timestamp * 1000),
-      status: datas.transaction.status,
+      status: 10,
       amount: fromCpAmount(datas.transaction.currency, datas.transaction.amount * 1e4),
       action: datas.transaction.operation,
       currency: datas.transaction.currency
@@ -430,7 +430,7 @@ async function betWin(ctx) {
       betTransactionId: datas.bet_transaction_id,
       betslipId: datas.transaction.betslip_id,
       ts: Math.floor(datas.transaction.timestamp * 1000),
-      status: datas.transaction.status,
+      status: 50,
       amount: fromCpAmount(datas.transaction.currency, datas.amount * 1e4),
       action: datas.transaction.operation,
       currency: datas.transaction.currency
@@ -539,7 +539,7 @@ async function betCancel(ctx) {
       betslipId: datas.transaction.betslip_id,
       ts: Math.floor(datas.transaction.timestamp * 1000),
       reason: datas.reason,
-      status: datas.transaction.status,
+      status: 20,
       amount: fromCpAmount(datas.transaction.currency, datas.transaction.amount * 1e4),
       action: datas.transaction.operation,
       currency: datas.transaction.currency
@@ -694,7 +694,7 @@ async function betRollback(ctx) {
       betslipId: datas.transaction.betslip_id,
       ts: Math.floor(datas.transaction.timestamp * 1000),
       reason: datas.reason || '',
-      status: datas.transaction.status,
+      status: 40,
       amount: fromCpAmount(datas.transaction.currency, datas.transaction.amount * 1e4),
       action: datas.transaction.operation,
       currency: datas.transaction.currency
