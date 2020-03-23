@@ -65,7 +65,8 @@ async function getRoundInfo() {
     } else {
         // if(roundInfo.round === 11)
         // console.log(roundInfo);
-        if (isBusy === false && roundInfo.tmCompleted > 0 && roundInfo.nextHolderIndex >= 999999999999999) { //已完成
+        // 249 有几笔0trx 被revert掉，现在卡死，先放行
+        if (roundInfo.round === 249 || isBusy === false && roundInfo.tmCompleted > 0 && roundInfo.nextHolderIndex >= 999999999999999) { //已完成
             // loggerDefault.info("roundInfo", roundInfo);
             let nextDeadline = roundInfo.tmStart + duration;
             if (roundInfo.tmStart < init_ts) { //若之前分红时间小于配置的初始分红时间，则修正下次分红时间为初始分红时间
