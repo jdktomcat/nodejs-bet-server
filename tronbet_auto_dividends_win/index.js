@@ -104,7 +104,7 @@ async function getRoundInfo() {
     //        // 249 有几笔0trx 被revert掉，现在卡死，先放行
     console.log("roundInfo.round === 249  ",roundInfo.round === 249)
     if(roundInfo.round === 249){
-        roundInfo.nextHolderIndex = 17220;
+        roundInfo.nextHolderIndex = 17221;
     }
 
     return roundInfo;
