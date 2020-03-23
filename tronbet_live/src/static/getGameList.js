@@ -58,6 +58,7 @@ async function getNameSortArray() {
 async function getPlatiusList(){
     // platiusList add in 2020-03-20
     platiusList.forEach(e=>e.type = 'platius')
+    platiusList.forEach(e=>e.thumbnail = e.png)
     const platiusSlot = platiusList.filter(e=>e.category === 'slots')
     const platiusTable = platiusList.filter(e=>e.category === 'table')
     return [platiusSlot,platiusTable]
