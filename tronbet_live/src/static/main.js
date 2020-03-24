@@ -57,9 +57,8 @@ const getGameData = async function () {
     const newTables = platiusTable.concat(poker)
     //
     const onlineGames = await getOnlineGames()
-    console.log("debug--->newSlot ",newSlot)
-    console.log("debug--->newTables ",newTables)
-    console.log("debug--->onlineGames ",onlineGames)
+    console.log("debug--->hub88slot ",hub88slot.slice(0,3))
+    console.log("debug--->newSlot ",newSlot.slice(newSlot.length-5,-1))
     /**
      * begin to filter
      */
