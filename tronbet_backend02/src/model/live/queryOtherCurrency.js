@@ -53,15 +53,20 @@ const getEM = async function (currency, startDate, endDate) {
     return rs1
 }
 
+
 const getHub88 = async function (currency, startDate, endDate) {
+    let unit = 1000000000
+    if(currency === 'USDT'){
+        unit = 1000000
+    }
     const sql = `
         SELECT
             from_unixtime(ts / 1000,'%Y-%m-%d') as day,
             count(distinct email)  as dau,
             count(1) as count,
-            sum(amount) / 1000000 as all_amount,
-            sum(win) / 1000000  as all_win,
-            (sum(amount) - sum(win)) / 1000000  as balance
+            sum(amount) / ${unit} as all_amount,
+            sum(win) / ${unit}  as all_win,
+            (sum(amount) - sum(win)) / ${unit}  as balance
         FROM
             tron_live.swagger_transaction_log
         WHERE
@@ -81,14 +86,18 @@ const getHub88 = async function (currency, startDate, endDate) {
 }
 
 const getSport = async function (currency, startDate, endDate) {
+    let unit = 1000000000
+    if(currency === 'USDT'){
+        unit = 1000000
+    }
     const sql = `
         SELECT
             from_unixtime(ts / 1000,'%Y-%m-%d') as day,
             count(distinct addr)  as dau,
             count(1) as count,
-            sum(amount) / 1000000 as all_amount,
-            sum(win) / 1000000  as all_win,
-            (sum(amount) - sum(win)) / 1000000  as balance
+            sum(amount) /  ${unit}  as all_amount,
+            sum(win) /  ${unit}   as all_win,
+            (sum(amount) - sum(win)) /  ${unit}   as balance
         FROM
             tron_live.sports_transaction_log
         WHERE
