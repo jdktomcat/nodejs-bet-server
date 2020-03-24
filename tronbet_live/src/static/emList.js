@@ -5,6 +5,15 @@ if (NODE_ENV === 'test') {
     config = require('../configs/config_test');
 }
 
+
+// production
+let jsonFeedsUrl = 'https://casino.everymatrix.com/jsonFeeds/mix/tronbet?types=';
+// development
+if (NODE_ENV == 'test') {
+    jsonFeedsUrl = 'https://casino2.stage.everymatrix.com/jsonFeeds/mix/tronbet?types=';
+}
+
+
 async function getAllGamesFromEM() {
     let result = '';
     try {
