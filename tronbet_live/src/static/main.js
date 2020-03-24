@@ -13,13 +13,24 @@ const filterGames = function (onlineGames, rawGames) {
     let newGames = []
     for (let onlineGame of onlineGames) {
         const game_id = String(onlineGame.game_id).trim()
+        const game_name = String(onlineGame.game_name).trim()
         const is_new = onlineGame.is_new
+        const vendor = onlineGame.vendor
         const game = rawGames.find(e => String(e.id).trim() === game_id)
         if (game) {
             if (is_new === '1') {
                 game.newFlag = true
             }
             newGames.push(game)
+        }else {
+            //hub88独立处理
+            if(vendor === 'HUB'){
+                const game2 = rawGames.find(e => String(e.game_name).trim() === game_name)
+                if (is_new === '1') {
+                    game2.newFlag = true
+                }
+                newGames.push(game2)
+            }
         }
     }
     return newGames
