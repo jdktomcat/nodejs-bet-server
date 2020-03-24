@@ -24,12 +24,14 @@ const filterGames = function (onlineGames, rawGames) {
             newGames.push(game)
         }else {
             //hub88独立处理
-            if(vendor === 'HUB'){
-                const game2 = rawGames.find(e => String(e.game_name).trim() === game_name)
+            if(vendor === 'hub88'){
+                const game2 = rawGames.find(e => String(e.gameName).includes(game_name))
                 if (is_new === '1') {
                     game2.newFlag = true
                 }
-                newGames.push(game2)
+                if(game2){
+                    newGames.push(game2)
+                }
             }
         }
     }
