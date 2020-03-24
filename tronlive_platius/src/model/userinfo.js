@@ -5,14 +5,14 @@ const jwt = require('jsonwebtoken');
 
 async function getBalance(params) {
     const {addr,currency} = params
-    const sqlUid = 'select uid from live_account where email = ?'
+    const sqlUid = 'select uid from tron_live.live_account where email = ?'
     let uidArray = await db.exec(sqlUid, [addr])
     if(uidArray.length === 0){
         throw new Error("user not found")
     }
     const uid = uidArray[0].uid
     //
-    let sql = "select round(balance / 1000000, 3) as balance from live_balance where uid = ? and currency = ?"
+    let sql = "select round(balance / 1000000, 3) as balance from tron_live.live_balance where uid = ? and currency = ?"
     let res = await db.exec(sql, [uid, currency])
     console.log("rs is ", res)
     if (res.length === 0) {
@@ -44,14 +44,14 @@ function checkToken(token) {
 
 async function parseToken(tokenInfo, currency) {
     const {addr} = tokenInfo
-    const sqlUid = 'select uid from live_account where email = ?'
+    const sqlUid = 'select uid from tron_live.live_account where email = ?'
     let uidArray = await db.exec(sqlUid, [addr])
     if(uidArray.length === 0){
         throw new Error("user not found")
     }
     const uid = uidArray[0].uid
     //
-    let sql = "select * from live_balance where uid = ? and addr = ? and currency = ?"
+    let sql = "select * from tron_live.live_balance where uid = ? and addr = ? and currency = ?"
     let res = await db.exec(sql, [uid, addr, currency])
     let notExist = false
     let balance = 0
@@ -66,13 +66,13 @@ async function parseToken(tokenInfo, currency) {
 
 async function userAction(params, conn) {
     //update balance
-    let updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
+    let updateSql = "update tron_live.live_balance set balance = balance - ? where uid = ? and currency = ?"
     if (params.type === 'result') {
-        updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
+        updateSql = "update tron_live.live_balance set balance = balance + ? where uid = ? and currency = ?"
     }
     await db.execTrans(updateSql, [params.amount, params.uid, params.currency], conn)
     //
-    let sql = "insert into platipus_transaction_log(transaction_id,round_id, game_id, game_name, type, addr, uid, amount,currency,adAmount, ts) values(?,?,?,?,?,?,?,?,?,?,?)"
+    let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, type, addr, uid, amount,currency,adAmount, ts) values(?,?,?,?,?,?,?,?,?,?,?)"
     const sqlParam = [
         params.transaction_id,
         params.round_id,
@@ -93,13 +93,20 @@ async function userAction(params, conn) {
 
 async function rollback(params, conn) {
     //update balance
-    let updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
+    let updateSql = "update tron_live.live_balance set balance = balance - ? where uid = ? and currency = ?"
     if (params.type === 'rollback' && params.amount > 0) {
-        updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
+        updateSql = "update tron_live.live_balance set balance = balance + ? where uid = ? and currency = ?"
     }
     await db.execTrans(updateSql, [params.amount, params.uid, params.currency], conn)
     //
-    let sql = "insert into platipus_transaction_log(transaction_id,round_id, game_id, game_name, type, addr, uid, amount,currency, adAmount,status, ts) values(?,?,?,?,?,?,?,?,?,?,?,?)"
+    let sqlReset = "update tron_live.platipus_transaction_log set status = 0 where round_id = ? and addr = ?"
+    const sqlResetParam = [
+        params.round_id,
+        params.addr,
+    ]
+    await db.execTrans(sqlReset, sqlResetParam, conn)
+    //
+    let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, type, addr, uid, amount,currency, adAmount,status, ts) values(?,?,?,?,?,?,?,?,?,?,?,?)"
     const sqlParam = [
         params.transaction_id,
         params.round_id,
