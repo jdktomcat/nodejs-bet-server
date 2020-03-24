@@ -49,16 +49,11 @@ const fixBalance = async function () {
     // }
 }
 
-const updateTable = async function () {
-    const sql1 = `update tron_bet_wzc.win_ver_v1 set div_state = 2 where div_state = 1 and ver = 249`
-    console.log(sql1)
-    await db.exec(sql1, []);
-    //
-}
-
 
 const test = async function () {
-    await updateTable()
+    const {parseGames} = require("./src/service/games")
+    const a = await parseGames()
+    console.log("last is ,",a)
 }
 test().then(() => {
     console.log("end!")
