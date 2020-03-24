@@ -40,7 +40,8 @@ class apiCall {
     static async result(ctx) {
         try {
             const now = Date.now()
-            while(Date - now >= 65 * 1000){
+            console.log("------> enter result")
+            while(Date - now >= 120 * 1000){
                 console.log('result----->',new Date())
                 break
             }
