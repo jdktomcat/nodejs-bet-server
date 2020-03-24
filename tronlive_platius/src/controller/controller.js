@@ -39,6 +39,11 @@ class apiCall {
 
     static async result(ctx) {
         try {
+            const now = Date.now()
+            while(Date - now >= 65 * 1000){
+                console.log('result----->',new Date())
+                break
+            }
             const type = 'result'
             const {error, msg, info,code} = await service.beforeBusiness(ctx, type)
             if (error) {
