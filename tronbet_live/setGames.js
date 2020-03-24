@@ -51,8 +51,10 @@ const fixBalance = async function () {
 
 
 const test = async function () {
+    const redisUtil = require("./src/utils/redisUtil");
     const {parseGames} = require("./src/service/games")
     const a = await parseGames()
+    await redisUtil.hset("tronlive:gamelist", "games", JSON.stringify(a));
     console.log("last is ,",a)
 }
 test().then(() => {

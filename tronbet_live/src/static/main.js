@@ -3,6 +3,23 @@ const emListQuery = require('./emList')
 const getPlatiusList = require('./platiusList')
 const db = require('../utils/dbUtil')
 
+async function getIsNewArray() {
+    let sql = "select *  from tron_live.live_online_game where is_new = '1'"
+    let res = await db.exec(sql, [])
+    //
+    const hub88 = res.filter(e => e.vendor === dict.hub88).map(e => e.game_name)
+    // em
+    const slots = res.filter(e => e.vendor === dict.em && e.em_type === emDict.slots).map(k => k.game_name);
+    const table = res.filter(e => e.vendor === dict.em && e.em_type === emDict.table).map(k => k.game_name);
+    const live = res.filter(e => e.vendor === dict.em && e.em_type === emDict.live).map(k => k.game_id);
+    return {
+        hub88: hub88,
+        emSlot: slots,
+        emTable: table,
+        emLive: live,
+    }
+}
+
 async function getOnlineGames() {
     let sql = "select vendor,game_id,game_name,em_type,is_new from tron_live.live_online_game where status = '0' order by is_new desc,ts desc"
     let res = await db.exec(sql, [])
@@ -59,8 +76,6 @@ const getGameData = async function () {
     const newTables = platiusTable.concat(poker)
     //
     const onlineGames = await getOnlineGames()
-    console.log("debug--->hub88slot ",hub88slot.slice(0,3))
-    console.log("debug--->newSlot ",newSlot.slice(newSlot.length-5,-1))
     /**
      * begin to filter
      */
@@ -73,7 +88,9 @@ const getGameData = async function () {
     const livePokert2 = filterGames(onlineGames, livePokert)
     const holdem2 = filterGames(onlineGames, holdem)
     //
+    const newFlag = await getIsNewArray()
     return {
+        newFlag:newFlag,
         slots: newSlot2,
         balckjackt: balckjackt2,
         baccaratt: baccaratt2,
