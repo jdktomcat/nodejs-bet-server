@@ -1,4 +1,4 @@
-module.exports = [
+const platiusList  = [
     {
         "launchUrl": "https://wbg.platipusgaming.com/wink/piratesmap/launch",
         "gameName": "Pirates Map",
@@ -329,3 +329,14 @@ module.exports = [
         "category": "table"
     }
 ]
+
+const getPlatiusList = function(){
+    platiusList.forEach(e=>e.id = e.game_id)
+    platiusList.forEach(e=>e.type = 'platius')
+    platiusList.forEach(e=>e.thumbnail = e.png)
+    const platiusSlot = platiusList.filter(e=>e.category === 'slots')
+    const platiusTable = platiusList.filter(e=>e.category === 'table')
+    return [platiusSlot,platiusTable]
+}
+
+module.exports = getPlatiusList

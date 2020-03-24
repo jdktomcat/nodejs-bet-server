@@ -16,6 +16,7 @@ const privateKey = swaghub.privetKey;
 const hmCrypto = HmCrypto(digestType, privateKey, publicKey);
 //
 const {getGameList, getIsNewArray, getNameSortArray,getPlatiusList} = require("../static/getGameList")
+const getGameData = require("../static/main")
 //
 let swaggerGames = []
 let GameSWhilte = []
@@ -224,7 +225,7 @@ async function initData() {
     liveGames = rs.liveGames
 }
 
-async function parseGames() {
+async function parseGamesBack() {
     //init data
     await initData();
     const newGameFlag = await getIsNewArray()
@@ -401,6 +402,11 @@ async function parseGames() {
         roulette: [],
         poker : newTables
     };
+}
+
+async function parseGames() {
+    const data = await getGameData()
+    return data
 }
 
 module.exports = {
