@@ -4,6 +4,16 @@ const getPlatiusList = require('./platiusList')
 const db = require('../utils/dbUtil')
 
 async function getIsNewArray() {
+    const dict = {
+        "hub88": "hub88",
+        "em": "em",
+    }
+    const emDict = {
+        "slots": "slots",
+        "table": "table",
+        "live": "live",
+    }
+
     let sql = "select *  from tron_live.live_online_game where is_new = '1'"
     let res = await db.exec(sql, [])
     //
