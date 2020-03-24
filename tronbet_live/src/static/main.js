@@ -29,7 +29,7 @@ const filterGames = function (onlineGames,rawGames) {
 
 const getGameData = async function () {
     const [platiusSlot, platiusTable] = getPlatiusList()
-    const [hub88slot,hub88Gameshow] = hub88ListQuery()
+    const [hub88slot,hub88Gameshow] = await hub88ListQuery()
     const {
         slots,
         balckjackt,
@@ -47,7 +47,6 @@ const getGameData = async function () {
     const newSlot = platiusSlot.concat(slots).concat(hub88slot)
     const newTables = platiusTable.concat(poker)
     //
-    const newFlag = await getIsNewArray()
     const onlineGames = await getOnlineGames()
     /**
      * begin to filter
