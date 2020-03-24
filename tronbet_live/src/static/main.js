@@ -4,24 +4,22 @@ const getPlatiusList = require('./platiusList')
 const db = require('../utils/dbUtil')
 
 async function getOnlineGames() {
-    let sql = "select game_id,game_name,em_type,is_new from tron_live.live_online_game where status = '0' order by is_new desc,ts desc"
+    let sql = "select vendor,game_id,game_name,em_type,is_new from tron_live.live_online_game where status = '0' order by is_new desc,ts desc"
     let res = await db.exec(sql, [])
     return res
 }
 
-const filterGames = function (onlineGames,rawGames) {
+const filterGames = function (onlineGames, rawGames) {
     let newGames = []
-    for(let rawGame of rawGames){
-        const type = rawGame.type
-        const cpTypes = ['HUB','EM','platius']
-        if(cpTypes.includes(type)){
-            const game = onlineGames.find(e=>e.game_id === rawGame.id)
-            if(game){
-                if(game.is_new === '1'){
-                    rawGame.newFlag = true
-                }
-                newGames.push(rawGame)
+    for (let onlineGame of onlineGames) {
+        const game_id = String(onlineGame.game_id).trim()
+        const is_new = onlineGame.is_new
+        const game = rawGames.find(e => String(e.id).trim() === game_id)
+        if (game) {
+            if (is_new === '1') {
+                onlineGame.newFlag = true
             }
+            newGames.push(onlineGame)
         }
     }
     return newGames
@@ -29,7 +27,7 @@ const filterGames = function (onlineGames,rawGames) {
 
 const getGameData = async function () {
     const [platiusSlot, platiusTable] = getPlatiusList()
-    const [hub88slot,hub88Gameshow] = await hub88ListQuery()
+    const [hub88slot, hub88Gameshow] = await hub88ListQuery()
     const {
         slots,
         balckjackt,
@@ -51,14 +49,14 @@ const getGameData = async function () {
     /**
      * begin to filter
      */
-    const newSlot2 = filterGames(onlineGames,newSlot)
-    const newTables2 = filterGames(onlineGames,newTables)
-    const balckjackt2 = filterGames(onlineGames,balckjackt)
-    const baccaratt2 = filterGames(onlineGames,baccaratt)
-    const roulettet2 = filterGames(onlineGames,roulettet)
-    const lotteryt2 = filterGames(onlineGames,lotteryt)
-    const livePokert2 = filterGames(onlineGames,livePokert)
-    const holdem2 = filterGames(onlineGames,holdem)
+    const newSlot2 = filterGames(onlineGames, newSlot)
+    const newTables2 = filterGames(onlineGames, newTables)
+    const balckjackt2 = filterGames(onlineGames, balckjackt)
+    const baccaratt2 = filterGames(onlineGames, baccaratt)
+    const roulettet2 = filterGames(onlineGames, roulettet)
+    const lotteryt2 = filterGames(onlineGames, lotteryt)
+    const livePokert2 = filterGames(onlineGames, livePokert)
+    const holdem2 = filterGames(onlineGames, holdem)
     //
     return {
         slots: newSlot2,
