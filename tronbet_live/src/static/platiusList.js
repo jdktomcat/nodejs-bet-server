@@ -325,7 +325,7 @@ const platiusList  = [
         "launchUrl": "https://wbg.platipusgaming.com/wink/blackjackvip/launch",
         "gameName": "Blackjack Vip",
         "gameID": "487",
-        "png": "//platipusgaming.com/img/games/black_jack_vip.jpg",
+        "png": "//platipusgaming.com/img/games/blackjack_vip.jpg",
         "category": "table"
     }
 ]
