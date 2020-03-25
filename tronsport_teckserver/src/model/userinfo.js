@@ -133,7 +133,7 @@ async function userDiscard(params, conn) {
 
   let updateTransactionSql =
     'update sports_transaction_log set status = ?, win = ? where transactionId = ? and addr = ?';
-  await db.execTrans(updateTransactionSql, [tranStatus.discard, params.amount, params.betTransactionId, params.addr], conn);
+  await db.execTrans(updateTransactionSql, [53, params.amount, params.betTransactionId, params.addr], conn);
 }
 
 async function userCancel(params, conn) {
@@ -169,21 +169,21 @@ async function userCancel(params, conn) {
 }
 
 async function userBetSettle(tronsactionId, state) {
-    let status = -1;
-    if (state == 'win') {
-        status = tranStatus.win;
-    } else if (state == 'lost') {
-        status = tranStatus.lost;
-    } else if (state == 'refund') {
-        status = tranStatus.refund;
-    } else if (state == 'cancel') {
-        status = tranStatus.cancel;
-    } else if (state == 'rollback') {
-        status = tranStatus.rollback;
-    }
-    let now = new Date().getTime();
-    let sql = 'update sports_transaction_log set status = ?, ts = ? where transactionId = ?';
-    await db.exec(sql, [status, now, tronsactionId]);
+  let now = new Date().getTime();
+  let sql = 'update sports_transaction_log set status = ?, ts = ? where transactionId = ?';
+  let status = -1;
+  if (state == 'win') {
+    status = tranStatus.win;
+  } else if (state == 'lost') {
+    status = tranStatus.lost;
+  } else if (state == 'refund') {
+    status = tranStatus.refund;
+  } else if (state == 'cancel') {
+    status = tranStatus.cancel;
+  } else if (state == 'rollback') {
+    status = tranStatus.rollback;
+  }
+  await db.exec(sql, [status, now, tronsactionId]);
 }
 
 async function userRollBack(params, conn) {

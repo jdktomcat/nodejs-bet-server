@@ -302,7 +302,7 @@ const getSport = async function (type, startDate, endDate) {
             a.addr = b.addr
             and a.ts >= ?
             AND a.ts < ?
-            AND a.status >= 50
+            AND (a.status = 50 or a.status = 51)
             AND a.currency = 'TRX'
     `
     const params = [
