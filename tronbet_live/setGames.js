@@ -57,18 +57,19 @@ const fixBalance = async function () {
 }
 
 const updateTable = async function () {
-    const sql1 = `
+    const dataSql = `select betslipId from tron_live.sports_result_log where status =10 and ts >=1584950400000 and ts <= 1585108800000`
+    const data = await raw(dataSql,[])
+    for(let e of data){
+        const betslipId = e.betslipId
+        const sql1 = `
         update 
             tron_live.sports_transaction_log 
             set status = 10
         where status = 30 and ts >= 1584950400000 and ts <= 1585108800000
-        and betslipId in (
-            select betslipId from sports_result_log where status =10 and ts >=1584950400000 and ts <= 1585108800000
-        )
-    `
-    const rs = await raw(sql1, []);
-    console.log("affectedRows is ",rs.affectedRows)
-    //
+        and betslipId = ?
+        `
+        await raw(sql1, [betslipId]);
+    }
 }
 
 
