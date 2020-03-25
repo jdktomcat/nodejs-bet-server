@@ -77,8 +77,10 @@ const getPokerTrx = async function (params) {
 
 class QueryWinData {
 
-    static async getDataFile(params) {
-        const data = await this.getData(params)
+    static async getDataFile(data) {
+        if(data.length === 0){
+            return 'empty file\t\n'
+        }
         const keys = Object.keys(data[0])
         let sbody = ''
         keys.forEach(e => {
