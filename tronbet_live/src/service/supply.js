@@ -54,7 +54,7 @@ async function addGames(ctx) {
     console.log("addGames params is", body)
     const {vendor, game_id, game_name, em_type, rate} = body
     //
-    if (!["hub88", "em"].includes(vendor)) {
+    if (!["hub88", "em","platius"].includes(vendor)) {
         return ctx.body = {code: 500, message: "param vendor is error"}
     }
     const arr = ['slots', 'table', 'live']
