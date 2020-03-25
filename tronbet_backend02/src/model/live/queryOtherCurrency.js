@@ -103,7 +103,7 @@ const getSport = async function (currency, startDate, endDate) {
         WHERE
             ts >= ?
             AND ts < ?
-            AND status >= 50
+            AND (status = 50 or status = 51)
             AND currency = ?
             group by from_unixtime(ts / 1000,'%Y-%m-%d')
     `

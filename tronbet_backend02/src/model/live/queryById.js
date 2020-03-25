@@ -101,7 +101,7 @@ const getDataOfSport = async function (startDateTmp, endDateTmp, gameId) {
             a.transactionId = b.transactionId
             and a.ts >= ?
             AND a.ts < ?
-            AND a.status >= 50
+            AND (a.status = 50 or a.status = 51)
             AND a.currency = 'TRX'
             group by from_unixtime(a.ts / 1000,'%Y-%m-%d')
     `

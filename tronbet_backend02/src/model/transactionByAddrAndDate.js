@@ -176,7 +176,7 @@ const getSport = async function (addr,start,end) {
             a.addr = ?
             and ts >= ${start}
             and ts < ${end}
-            AND a.status >= 50
+            AND (a.status = 50 or a.status = 51)
             AND a.currency = ?
     `
     const currency = ['TRX', 'USDT', 'BNB']
