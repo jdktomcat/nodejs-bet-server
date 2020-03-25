@@ -1,5 +1,12 @@
 const db = require("./src/utils/dbUtil");
 
+const raw = async function (sql, params) {
+    console.log(sql)
+    console.log(params)
+    const data = await db.exec(sql, params)
+    return data
+}
+
 const queryBalance = async function (array) {
     const sql = `select a.uid,a.currency,a.addr,a.balance / 1000000000 as balance,b.email from tron_live.live_balance as a left join tron_live.live_account b on a.uid = b.uid where a.uid = b.uid and a.uid = ? and a.currency = ? and a.addr = ? and b.email = ?`
     const a1 = array.length
@@ -50,19 +57,19 @@ const fixBalance = async function () {
 }
 
 const updateTable = async function () {
-    const sql1 = `
+    const dataSql = `select betslipId from tron_live.sports_result_log where status =10 and ts >=1584950400000 and ts <= 1585108800000`
+    const data = await raw(dataSql,[])
+    for(let e of data){
+        const betslipId = e.betslipId
+        const sql1 = `
         update 
             tron_live.sports_transaction_log 
             set status = 10
         where status = 30 and ts >= 1584950400000 and ts <= 1585108800000
-        and betslipId in (
-            select betslipId from sports_result_log where status =10 and ts >=1584950400000 and ts <= 1585108800000
-        )
-    `
-    console.log(sql1)
-    const rs = await db.exec(sql1, []);
-    console.log("affectedRows is ",rs.affectedRows)
-    //
+        and betslipId = ?
+        `
+        await raw(sql1, [betslipId]);
+    }
 }
 
 
