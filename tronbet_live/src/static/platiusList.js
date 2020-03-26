@@ -276,7 +276,7 @@ const platiusList  = [
         "launchUrl": "https://wbg.platipusgaming.com/wink/jewelbang/launch",
         "gameName": "Jewel Bang",
         "gameID": "395",
-        "png": "//platipusgaming.com/img/games/jewelbang.jpg",
+        "png": "//platipusgaming.com/img/games/jewelband.jpg",
         "category": "slots"
     },
     {
