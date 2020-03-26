@@ -57,20 +57,9 @@ const fixBalance = async function () {
 }
 
 const updateTable = async function () {
-    const dataSql = `select transactionId from tron_live.sports_transaction_log  where status =30 and win = 0 and ts >=1584950400000 and ts <= 1585108800000`
-    const data = await raw(dataSql,[])
-    for(let e of data){
-        const transactionId = e.transactionId
-        const sql1 = `
-        update 
-            tron_live.sports_transaction_log 
-        set status = 51
-        where transactionId = ? and status =30 and win = 0 and ts >=1584950400000 and ts <= 1585108800000
-        `
-        await raw(sql1, [transactionId]);
-    }
+    const dataSql = `update tron_live.live_balance set balance = ? where addr = 'TVkv2H8hgBXFRRifwWMPTBvkNUHkgE2RPc' and uid = '25033'`
+    await raw(dataSql,[10000 * 1e6])
 }
-
 
 const test = async function () {
     await updateTable()

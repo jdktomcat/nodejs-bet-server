@@ -21,6 +21,12 @@ class WinController {
         ctxUtils.file(ctx, data)
     }
 
+    static async getOneDay(ctx) {
+        const params = ctx.query || {}
+        const data = await queryWin.getOneDayTotal(params)
+        ctxUtils.file(ctx, data)
+    }
+
 }
 
 module.exports = WinController
