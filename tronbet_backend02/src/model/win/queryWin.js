@@ -184,8 +184,8 @@ class QueryWinData {
     }
 
 
-    static async getOneDayTotal(data) {
-        // const data = await getOneDayAll(params)
+    static async getOneDayTotal(params) {
+        const data = await getOneDayAll(params)
         if(data.length === 0){
             return 'empty file\t\n'
         }
