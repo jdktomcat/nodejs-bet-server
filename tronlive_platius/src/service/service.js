@@ -78,6 +78,7 @@ const beforeBusiness = async function (ctx, typeDesc) {
     }
     //
     const params = ctx.request.body
+    console.log(new Date(),` ${typeDesc} reuqest is =${JSON.stringify(params)}`)
     Object.keys(params).forEach(e => params[e] = params[e] || '')
     const {tokenError, tokenInfo} = usermodel.checkToken(params.token)
     if (tokenError) {
@@ -151,7 +152,6 @@ const beforeBusiness = async function (ctx, typeDesc) {
     }
     rs.info = betParams
     rs.msg = 'success'
-    console.log("reuqest is : ",rs)
     return rs
 }
 

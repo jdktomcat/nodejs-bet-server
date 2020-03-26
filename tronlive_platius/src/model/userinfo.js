@@ -96,7 +96,6 @@ async function userAction(params, conn) {
             params.addr,
         ]
        const rs = await db.execTrans(sql, sqlParam, conn)
-       console.log("insert rs is ",rs)
     }
 }
 
