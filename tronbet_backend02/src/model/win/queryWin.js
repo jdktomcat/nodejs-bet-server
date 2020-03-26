@@ -189,7 +189,6 @@ class QueryWinData {
         if(data.length === 0){
             return 'empty file\t\n'
         }
-        console.log(data)
         const sum = data.reduce((a, b) => {
             a = a + b.trx
             return a
