@@ -72,22 +72,34 @@ async function userAction(params, conn) {
     }
     await db.execTrans(updateSql, [params.amount, params.uid, params.currency], conn)
     //
-    let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, type, addr, uid, amount,currency,adAmount, ts) values(?,?,?,?,?,?,?,?,?,?,?)"
-    const sqlParam = [
-        params.transaction_id,
-        params.round_id,
-        params.game_id,
-        params.game_name,
-        params.type,
-        params.addr,
-        params.uid,
-        params.amount,
-        params.currency,
-        params.adAmount,
-        Date.now()
-    ]
-    let res = await db.execTrans(sql, sqlParam, conn)
-    return res
+    //
+    if(params === 'bet'){
+        let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, type, addr, uid, amount,currency,adAmount, ts) values(?,?,?,?,?,?,?,?,?,?,?)"
+        const sqlParam = [
+            params.transaction_id,
+            params.round_id,
+            params.game_id,
+            params.game_name,
+            params.type,
+            params.addr,
+            params.uid,
+            params.amount,
+            params.currency,
+            params.adAmount,
+            Date.now()
+        ]
+        await db.execTrans(sql, sqlParam, conn)
+    }else if(params.type === 'result'){
+        let sql = "update tron_live.platipus_transaction_log set resultId = ? where round_id = ? and addr = ? and currency = ? and game_id = ? "
+        const sqlParam = [
+            params.transaction_id,
+            params.round_id,
+            params.addr,
+            params.currency,
+            params.game_id,
+        ]
+       await db.execTrans(sql, sqlParam, conn)
+    }
 }
 
 
@@ -105,24 +117,6 @@ async function rollback(params, conn) {
         params.addr,
     ]
     await db.execTrans(sqlReset, sqlResetParam, conn)
-    //
-    let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, type, addr, uid, amount,currency, adAmount,status, ts) values(?,?,?,?,?,?,?,?,?,?,?,?)"
-    const sqlParam = [
-        params.transaction_id,
-        params.round_id,
-        params.game_id,
-        params.game_name,
-        params.type,
-        params.addr,
-        params.uid,
-        params.amount,
-        params.currency,
-        params.adAmount,
-        "0",
-        Date.now()
-    ]
-    let res = await db.execTrans(sql, sqlParam, conn)
-    return res
 }
 
 
