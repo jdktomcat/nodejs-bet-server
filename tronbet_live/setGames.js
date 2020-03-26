@@ -57,8 +57,8 @@ const fixBalance = async function () {
 }
 
 const updateTable = async function () {
-    const dataSql = `update tron_live.live_balance set balance = ? where addr = 'TVkv2H8hgBXFRRifwWMPTBvkNUHkgE2RPc' and uid = '25033'`
-    await raw(dataSql,[10000 * 1e6])
+    const dataSql = `delete from live_fix_log where log_id = 3`
+    await raw(dataSql,[])
 }
 
 const test = async function () {
