@@ -88,7 +88,7 @@ async function userAction(params, conn) {
         ]
         await db.execTrans(sql, sqlParam, conn)
     }else if(params.type === 'result'){
-        let sql = "update tron_live.platipus_transaction_log set resultId = ? and win = ? where round_id = ? and addr = ?"
+        let sql = "update tron_live.platipus_transaction_log set resultId = ? , win = ? where round_id = ? and addr = ?"
         const sqlParam = [
             params.transaction_id,
             params.amount,
