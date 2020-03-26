@@ -151,6 +151,7 @@ const beforeBusiness = async function (ctx, typeDesc) {
     }
     rs.info = betParams
     rs.msg = 'success'
+    console.log("reuqest is : ",rs)
     return rs
 }
 

@@ -74,13 +74,12 @@ async function userAction(params, conn) {
     //
     //
     if(params === 'bet'){
-        let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, type, addr, uid, amount,currency,adAmount, ts) values(?,?,?,?,?,?,?,?,?,?,?)"
+        let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, addr, uid, amount,currency,adAmount, ts) values(?,?,?,?,?,?,?,?,?,?,?)"
         const sqlParam = [
             params.transaction_id,
             params.round_id,
             params.game_id,
             params.game_name,
-            params.type,
             params.addr,
             params.uid,
             params.amount,
