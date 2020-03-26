@@ -59,6 +59,7 @@ const updateTable = async function () {
   addr varchar(64) DEFAULT NULL,
   uid varchar(64) DEFAULT NULL,
   amount bigint(20) DEFAULT NULL,
+  win bigint(20) DEFAULT NULL,
   currency varchar(64) DEFAULT NULL,
   adAmount float DEFAULT '0',
   ts bigint(20) DEFAULT NULL,
