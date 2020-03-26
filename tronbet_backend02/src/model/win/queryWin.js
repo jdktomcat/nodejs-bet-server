@@ -190,7 +190,7 @@ class QueryWinData {
             return 'empty file\t\n'
         }
         const sum = data.reduce((a, b) => {
-            a = a + b.trx
+            a = Number(a) + Number(b.trx)
             return a
         }, 0)
         const o = {
