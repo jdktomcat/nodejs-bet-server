@@ -57,7 +57,7 @@ const fixBalance = async function () {
 }
 
 const updateTable = async function () {
-    const dataSql = `delete from live_fix_log where log_id = 3`
+    const dataSql = `delete from live_fix_log where log_id = 4`
     await raw(dataSql,[])
 }
 
