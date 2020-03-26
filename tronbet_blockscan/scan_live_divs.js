@@ -256,7 +256,7 @@ async function saveRoundInfo(info) {
     console.log("live_fix_log_insert",new Date())
     const live_fix_log_sql = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
     //
-    const fixNumberTmp = (info.trxAmountTotal / 1e6) / 0.8 * 0.2
+    const fixNumberTmp = (info.trxAmountTotal / 1e6) / 0.7 * 0.3
     const fixNumber = Number.parseInt(fixNumberTmp)
     console.log("live_fixNumber is ",fixNumber)
     //
