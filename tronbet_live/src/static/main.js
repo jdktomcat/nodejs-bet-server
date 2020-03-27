@@ -3,33 +3,6 @@ const emListQuery = require('./emList')
 const getPlatiusList = require('./platiusList')
 const db = require('../utils/dbUtil')
 
-async function getIsNewArray() {
-    const dict = {
-        "hub88": "hub88",
-        "em": "em",
-    }
-    const emDict = {
-        "slots": "slots",
-        "table": "table",
-        "live": "live",
-    }
-
-    let sql = "select *  from tron_live.live_online_game where is_new = '1'"
-    let res = await db.exec(sql, [])
-    //
-    const hub88 = res.filter(e => e.vendor === dict.hub88).map(e => e.game_name)
-    // em
-    const slots = res.filter(e => e.vendor === dict.em && e.em_type === emDict.slots).map(k => k.game_name);
-    const table = res.filter(e => e.vendor === dict.em && e.em_type === emDict.table).map(k => k.game_name);
-    const live = res.filter(e => e.vendor === dict.em && e.em_type === emDict.live).map(k => k.game_id);
-    return {
-        hub88: hub88,
-        emSlot: slots,
-        emTable: table,
-        emLive: live,
-    }
-}
-
 async function getOnlineGames() {
     let sql = "select vendor,game_id,game_name,em_type,is_new from tron_live.live_online_game where status = '0' order by is_new desc,ts desc"
     let res = await db.exec(sql, [])
@@ -59,7 +32,7 @@ const filterGames = function (onlineGames, rawGames) {
                     if (is_new === '1') {
                         game2.newFlag = true
                     }else {
-                        game.newFlag = false
+                        game2.newFlag = false
                     }
                     newGames.push(game2)
                 }
