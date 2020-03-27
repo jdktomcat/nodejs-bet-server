@@ -44,7 +44,7 @@ const filterGames = function (onlineGames, rawGames) {
         const is_new = String(onlineGame.is_new).trim()
         const vendor = onlineGame.vendor
         const game = rawGames.find(e => String(e.id).trim() === game_id)
-        if (game) {
+        if (game !== undefined) {
             if (is_new === '1') {
                 game.newFlag = true
             }else {
@@ -55,12 +55,12 @@ const filterGames = function (onlineGames, rawGames) {
             //hub88独立处理
             if(vendor === 'hub88'){
                 const game2 = rawGames.find(e => String(e.gameName).includes(game_name))
-                if (is_new === '1') {
-                    game2.newFlag = true
-                }else {
-                    game.newFlag = false
-                }
                 if(game2){
+                    if (is_new === '1') {
+                        game2.newFlag = true
+                    }else {
+                        game.newFlag = false
+                    }
                     newGames.push(game2)
                 }
             }
