@@ -28,6 +28,7 @@ const filterGames = function (onlineGames, rawGames) {
             //hub88独立处理
             if(vendor === 'hub88'){
                 const game2 = rawGames.find(e => String(e.gameName).includes(game_name))
+                console.log(is_new,"-----",onlineGame)
                 if(game2){
                     if (is_new === '1') {
                         game2.newFlag = true
