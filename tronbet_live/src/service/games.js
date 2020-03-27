@@ -15,7 +15,8 @@ const privateKey = swaghub.privetKey;
 // init with default keypair and digest type
 const hmCrypto = HmCrypto(digestType, privateKey, publicKey);
 //
-const {getGameList, getIsNewArray, getNameSortArray} = require("../static/getGameList")
+const {getGameList, getIsNewArray, getNameSortArray,getPlatiusList} = require("../static/getGameList")
+const getGameData = require("../static/main")
 //
 let swaggerGames = []
 let GameSWhilte = []
@@ -224,7 +225,7 @@ async function initData() {
     liveGames = rs.liveGames
 }
 
-async function parseGames() {
+async function parseGamesBack() {
     //init data
     await initData();
     const newGameFlag = await getIsNewArray()
@@ -367,6 +368,8 @@ async function parseGames() {
     roulette.sort(sortbyLiveGames);
     lottery.sort(sortbyLiveGames);
     livePoker.sort(sortbyLiveGames);
+    // add new cp 20200320
+    const [platiusSlot,platiusTable] = await getPlatiusList()
 
     let swaggerGame = await getSwaggerGames();
     swaggerGame['Video Slots'].sort(sortbySwaggerGames);
@@ -380,10 +383,13 @@ async function parseGames() {
             newSlot.push(gNames)
         }
     })
-
+    Array.prototype.push.apply(platiusSlot,newSlot)
+    // newSlot = newSlot.concat(platiusSlot)
+    //
+    const newTables = platiusTable.concat(poker)
     return {
         newFlag: newGameFlag,
-        slots: newSlot,
+        slots: platiusSlot,
         balckjackt: balckjack,
         baccaratt: baccarat,
         roulettet: roulette,
@@ -394,8 +400,14 @@ async function parseGames() {
         balckjack: [],
         baccarat: [],
         roulette: [],
-        poker
+        poker : newTables
     };
+}
+
+async function parseGames() {
+    const data = await getGameData()
+    console.log('debug-game-data-->',data)
+    return data
 }
 
 module.exports = {

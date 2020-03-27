@@ -7,6 +7,8 @@ const {insertGameSchedule, getScheduleList, deleteGameSchedule} = require('../da
 const game = require("../service/games");
 const redisUtil = require("../utils/redisUtil");
 const {app} = require('../configs/config')
+const platiusSign = require('../cp/platius')
+const redisUtils = require('../utils/redisUtil')
 
 //
 async function updateOnlineGameList() {
@@ -52,7 +54,7 @@ async function addGames(ctx) {
     console.log("addGames params is", body)
     const {vendor, game_id, game_name, em_type, rate} = body
     //
-    if (!["hub88", "em"].includes(vendor)) {
+    if (!["hub88", "em","platius"].includes(vendor)) {
         return ctx.body = {code: 500, message: "param vendor is error"}
     }
     const arr = ['slots', 'table', 'live']
@@ -294,6 +296,44 @@ async function allSchedule(ctx) {
     ctx.body = {code: 200, message: "success", data: data}
 }
 
+
+/**
+ * schedule all
+ */
+async function platinusAPI(ctx) {
+    let params = ctx.request.body || {}
+    let addr = params.addr || ''
+    //
+    if(addr === ''){
+        return ctx.body = {code: 500, message: "error"}
+    }
+    const tokenRedisKey = "platinusToken_" + addr
+    let val = await redisUtils.get(tokenRedisKey)
+    console.log("platinusAPI_addr: ",addr)
+    console.log("platinusAPI_token: ",val)
+    if(val === null){
+        const token = platiusSign(addr)
+        await redisUtils.set(tokenRedisKey, token)
+        await redisUtils.expire(tokenRedisKey, 604800) // 设置过期时间为7天
+        val = await redisUtils.get(tokenRedisKey)
+    }
+    ctx.body = {code: 200, message: "success", data: val}
+}
+
+
+async function getPlatinusToken(ctx) {
+    let params = ctx.request.query || {}
+    let token = params.token || ''
+    //
+    if(token === ''){
+        return ctx.body = {code: 500, message: "error"}
+    }
+    const secretKey = 'df1d0fa3-0634-48b4-a34c-555fc82a1fd6'
+    const jwt = require('jsonwebtoken');
+    const data = jwt.verify(token, secretKey)
+    ctx.body = {code: 200, message: "success", data: data}
+}
+
 module.exports = {
     queryDeposit: queryDepositTmp,
     getReissueRecord: getReissueRecord,
@@ -307,4 +347,6 @@ module.exports = {
     insertSchedule: insertSchedule,
     deleteSchedule: deleteSchedule,
     allSchedule: allSchedule,
+    platinusAPI : platinusAPI,
+    getPlatinusToken : getPlatinusToken,
 }

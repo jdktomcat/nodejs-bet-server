@@ -78,6 +78,7 @@ const beforeBusiness = async function (ctx, typeDesc) {
     }
     //
     const params = ctx.request.body
+    console.log(new Date(),` ${typeDesc} reuqest is =${JSON.stringify(params)}`)
     Object.keys(params).forEach(e => params[e] = params[e] || '')
     const {tokenError, tokenInfo} = usermodel.checkToken(params.token)
     if (tokenError) {
@@ -155,11 +156,9 @@ const beforeBusiness = async function (ctx, typeDesc) {
 }
 
 const getRs = async function (info) {
-    // need to query balance again
-    const balanceNow = await usermodel.getBalance(info.tokenInfo, info.currency)
-    // need to query balance again
+    const balanceNow = await usermodel.getBalance(info)
     let result = {
-        uid: info.uid,
+        token: info.token,
         currency: info.currency,
         balance: balanceNow,
         type: info.type,
@@ -184,7 +183,12 @@ const checkBalance = async function (params) {
         msg.error = "currency is error!"
     }
     console.log("tokenInfo is ", tokenInfo)
-    const o = Object.assign({tokenInfo: tokenInfo}, params, {uid: tokenInfo.uid, type: 'query_balance'})
+    const o = {
+        currency : params.currency,
+        type: 'query_balance',
+        token : params.token,
+        addr : tokenInfo.addr,
+    }
     console.log("o  is ", o)
     const data = await getRs(o)
     msg.data = data

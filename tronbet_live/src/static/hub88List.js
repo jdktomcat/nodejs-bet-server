@@ -1,56 +1,88 @@
-let swaggerGamesRaw = [
-    'operation diamond hunt',
-    'Wild Craft',
-    'midas treasure',
-    'Desert Gem',
-    'hong bao',
-    'ruby hunter',
-    'Atlantis Thunder',
-    'Monkey God',
-    'Starburst',
-    'Dead or Alive',
-    'Dead or Alive 2',
-    'Conan',
-    'Imperial Riches',
-    // 'Twin Happiness',
-    'Golden Grimoire',
-    'Vikings Video SLot',
-    // 'Football: Champions Cup',
-    'Finn and the Swirly Spin',
-    'Monopoly Live',
-    "Jammin' Jars",
+const axios = require('axios');
+const NODE_ENV = process.env.NODE_ENV;
+let config = require('../configs/config');
+if (NODE_ENV == 'test') {
+    config = require('../configs/config_test');
+}
+const swaghub = config.swaghub;
+const HmCrypto = require('hm-crypto-nodejs');
 
-    // 20191205 上新游戏 gameId
-    "Jingle spin",// 1323
-    "Jack and the beanstalk",//1314
-    "Gonzo\'s Quest",//1300
-    "Aloha! Cluster Pays",//1164
-    "Dazzle me",//1248
-    "Pyramid: Quest for Immortality",  //1355
-    "Steam tower", //1381
+const digestType = 'RSA-SHA256';
+const publicKey = swaghub.publicKey;
+const privateKey = swaghub.privetKey;
+// init with default keypair and digest type
+const hmCrypto = HmCrypto(digestType, privateKey, publicKey);
 
-    //20191213 add new games
-    'Torch of Fire',    //game_id: 619
-    'Hidden Kingdom',    //game_id: 620
-    'Magic Forest',    //game_id: 621
-    'Heroes Empire',     //game_id: 622
-    'China Charms',     //game_id: 623
-    'Lucky Express',    //game_id: 624
-    'Lost Saga',    //game_id: 625
-    'Basketball Pro',    //game_id: 626
-    'Football Pro',    //game_id: 627
-    'Enchanted Cash',    //game_id: 639
+//
+async function getSwaggerGames() {
+    let paramas = {
+        operator_id: swaghub.operator_id
+    };
+    let computedSignature = hmCrypto.sign(JSON.stringify(paramas));
 
-    //20191216 add new games
-    // "Hungry Chef",      //game_id: 640
-    // "Fright Night",     //game_id: 641
-    // "Crazy Lab",        //game_id: 643
-    // "Dragon Rising",    //game_id: 644
-    // "Pirates of Fortune",//game_id: 645
-    // "Gold Fever",       //game_id: 646
-    // "Frozen Fluffies",  //game_id: 647
-    // "Cutey Cats",       //game_id: 1891
-    // "Wild Fruit",       //game_id: 2070
-];
+    const isTrue = hmCrypto.isValid(JSON.stringify(paramas), computedSignature);
 
-module.exports = swaggerGamesRaw
+    console.log(`'${JSON.stringify(paramas)}' signature is '${computedSignature}'" => ${isTrue}`);
+
+
+    try {
+        let {data} = await axios({
+            url: swaghub.host + '/operator/generic/v2/game/list',
+            // url: 'http://api.server1.ih.testenv.io/operator/generic/v2/game/list',
+            method: 'post',
+            data: paramas,
+            headers: {'content-type': 'application/json', 'X-Hub88-Signature': computedSignature}
+        });
+        let result = [];
+        // console.log(`===============start=================data`, data);
+        for (let one of data) {
+            // console.log(one,"    test123456789")
+            // if (isGameInList(one.name)) {
+            let tmp = {
+                thumbnail: one.url_thumb,
+                background: one.url_background,
+                id: one.game_id,
+                gameName: one.name,
+                product: one.product,
+                category: one.category,
+                type: 'HUB',
+                isSupportBTC: true
+            };
+            let category = one.category;
+            if (category != 'Video Slots') {
+                category = 'Live Games';
+            }
+            if (!result[category]) {
+                result[category] = [tmp];
+            } else {
+                result[category].push(tmp);
+            }
+            // }
+        }
+        // console.log("==========end==========")
+        // console.log(result);
+        return result;
+    } catch (error) {
+        console.log("hub88 request body is: \n", JSON.stringify({
+            url: swaghub.host + '/operator/generic/v2/game/list',
+            // url: 'http://api.server1.ih.testenv.io/operator/generic/v2/game/list',
+            method: 'post',
+            data: paramas,
+            headers: {'content-type': 'application/json', 'X-Hub88-Signature': computedSignature}
+        }))
+        console.log('hub88 request error: ', error);
+        return null;
+    }
+}
+
+
+const getHub88FDetail = async function(){
+    const swaggerGame = await getSwaggerGames()
+    //
+    const hub88slot = swaggerGame['Video Slots']
+    const hub88Gameshow = swaggerGame['Live Games']
+    //
+    return [hub88slot,hub88Gameshow]
+}
+
+module.exports = getHub88FDetail
