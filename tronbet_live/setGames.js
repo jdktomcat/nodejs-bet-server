@@ -49,34 +49,13 @@ const fixBalance = async function () {
     // }
 }
 
-const updateTable = async function () {
-    const sql1 = `CREATE TABLE tron_live.platipus_transaction_log (
-  log_id bigint(20) NOT NULL AUTO_INCREMENT,
-  transaction_id varchar(64) DEFAULT NULL,
-  round_id varchar(64) DEFAULT NULL,
-  game_id varchar(64) DEFAULT NULL,
-  game_name varchar(64) DEFAULT NULL,
-  addr varchar(64) DEFAULT NULL,
-  uid varchar(64) DEFAULT NULL,
-  amount bigint(20) DEFAULT NULL,
-  win bigint(20) DEFAULT NULL,
-  currency varchar(64) DEFAULT NULL,
-  adAmount float DEFAULT '0',
-  ts bigint(20) DEFAULT NULL,
-  resultId varchar(64) DEFAULT NULL,
-  status smallint(5) unsigned DEFAULT '1',
-  PRIMARY KEY (log_id),
-  UNIQUE KEY TransactionId_unikey (transaction_id),
-  KEY platipus_transaction_log_addr_idx (addr),
-  KEY platipus_transaction_log_ts_index (ts)
-)`
-    await db.exec(sql1, []);
-    //
-}
-
 
 const test = async function () {
-    await updateTable()
+    const redisUtil = require("./src/utils/redisUtil");
+    const {parseGames} = require("./src/service/games")
+    const a = await parseGames()
+    await redisUtil.hset("tronlive:gamelist", "games", JSON.stringify(a));
+    console.log("last is ,",a)
 }
 test().then(() => {
     console.log("end!")
