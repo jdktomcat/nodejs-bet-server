@@ -41,12 +41,14 @@ const filterGames = function (onlineGames, rawGames) {
     for (let onlineGame of onlineGames) {
         const game_id = String(onlineGame.game_id).trim()
         const game_name = String(onlineGame.game_name).trim()
-        const is_new = onlineGame.is_new
+        const is_new = String(onlineGame.is_new).trim()
         const vendor = onlineGame.vendor
         const game = rawGames.find(e => String(e.id).trim() === game_id)
         if (game) {
             if (is_new === '1') {
                 game.newFlag = true
+            }else {
+                game.newFlag = false
             }
             newGames.push(game)
         }else {
@@ -55,6 +57,8 @@ const filterGames = function (onlineGames, rawGames) {
                 const game2 = rawGames.find(e => String(e.gameName).includes(game_name))
                 if (is_new === '1') {
                     game2.newFlag = true
+                }else {
+                    game.newFlag = false
                 }
                 if(game2){
                     newGames.push(game2)
@@ -98,9 +102,9 @@ const getGameData = async function () {
     const livePokert2 = filterGames(onlineGames, livePokert)
     const holdem2 = filterGames(onlineGames, holdem)
     //
-    const newFlag = await getIsNewArray()
+    // const newFlag = await getIsNewArray()
     return {
-        newFlag:newFlag,
+        // newFlag:newFlag,
         slots: newSlot2,
         balckjackt: balckjackt2,
         baccaratt: baccaratt2,
