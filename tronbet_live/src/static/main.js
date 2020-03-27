@@ -12,7 +12,6 @@ async function getOnlineGames() {
 const filterGames = function (onlineGames, rawGames) {
     let newGames = []
     for (let onlineGame of onlineGames) {
-        console.log(onlineGame)
         const game_id = String(onlineGame.game_id).trim()
         const game_name = String(onlineGame.game_name).trim()
         const is_new = String(onlineGame.is_new).trim()
@@ -33,7 +32,7 @@ const filterGames = function (onlineGames, rawGames) {
                     if (is_new === '1') {
                         game2.newFlag = true
                     }else {
-                        game.newFlag = false
+                        game2.newFlag = false
                     }
                     newGames.push(game2)
                 }
