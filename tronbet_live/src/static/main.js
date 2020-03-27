@@ -75,6 +75,7 @@ const getGameData = async function () {
     const lotteryt2 = filterGames(onlineGames, lotteryt)
     const livePokert2 = filterGames(onlineGames, livePokert)
     const holdem2 = filterGames(onlineGames, holdem)
+    const gameshow2 = filterGames(onlineGames, hub88Gameshow)
     //
     // const newFlag = await getIsNewArray()
     return {
@@ -86,7 +87,7 @@ const getGameData = async function () {
         lotteryt: lotteryt2,
         livePokert: livePokert2,
         holdem: holdem2,
-        gameshow: hub88Gameshow,
+        gameshow: gameshow2,
         balckjack: [],
         baccarat: [],
         roulette: [],
