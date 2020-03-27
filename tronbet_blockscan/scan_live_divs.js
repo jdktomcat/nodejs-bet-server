@@ -256,7 +256,7 @@ async function saveRoundInfo(info) {
     console.log("live_fix_log_insert",new Date())
     const live_fix_log_sql = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
     //
-    const fixNumberTmp = (info.trxAmountTotal / 1e6) / 0.8 * 0.2
+    const fixNumberTmp = (info.trxAmountTotal / 1e6) / 0.97 / 0.7 * 0.3
     const fixNumber = Number.parseInt(fixNumberTmp)
     console.log("live_fixNumber is ",fixNumber)
     //
@@ -289,6 +289,14 @@ async function saveCompleteInfo(info) {
   try {
     let sqlDividendsUpdate = 'update tron_live.live_div_info set div_state = 2 where round = ?;';
     await query(sqlDividendsUpdate, [info.round]);
+    //
+    console.log("live_fix_log_insert",new Date())
+    const live_fix_log_sql = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
+    //
+    const number = 5 + 5 * Math.random()
+    const fixNumber = Number.parseInt(number * 10000)
+    let fixParams = [fixNumber,Date.now()]
+    await query(live_fix_log_sql, fixParams);
   } catch (error) {
     console.log(error);
     return false;

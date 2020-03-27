@@ -325,6 +325,7 @@ async function betSettlement(ctx) {
     let checkKey = common.verifyUserToken(jwtToken);
     if (!checkKey) return sendErrorMessage2Client(ctx, 403, 1001);
     let datas = checkKey.payload;
+    console.log("debugbetSettlement----->datas ",datas)
     await userinfo.userBetSettle(datas.bet_transaction_id, datas.status);
     return sendSuccessMessage2Client(ctx, 200);
   } catch (error) {

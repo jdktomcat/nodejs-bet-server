@@ -53,7 +53,7 @@ const getTopLossOfSport = async function (startDateTmp, endDateTmp) {
             a.transactionId = b.transactionId
             and a.ts >= ?
             AND a.ts < ?
-            AND a.status >= 50
+            AND (a.status = 50 or a.status = 51)
             AND a.currency = ?
     `
     const dict = getSportDict()

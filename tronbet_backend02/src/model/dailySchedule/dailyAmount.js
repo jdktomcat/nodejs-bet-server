@@ -226,7 +226,7 @@ const getSport = async function (startDate, endDate) {
         WHERE
             ts >= ?
             AND ts < ?
-            AND status >= 50
+            AND (status = 50 or status = 51)
     `
     const params = [
         newUtcTime(startDate).getTime(),

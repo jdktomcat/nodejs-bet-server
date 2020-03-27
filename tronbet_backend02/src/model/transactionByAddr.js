@@ -265,7 +265,7 @@ const getSport = async function (addr) {
             tron_live.sports_transaction_log as a
         WHERE
             a.addr = ?
-            AND a.status >= 50
+            AND (a.status = 50 or a.status = 51)
             AND a.currency = ?
     `
     const currency = ['TRX', 'USDT', 'BNB']
