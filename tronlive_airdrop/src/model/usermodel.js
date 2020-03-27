@@ -2,12 +2,21 @@ const db = require('../utils/dbUtil');
 const _ = require('lodash')._;
 
 async function getLiveAirdropData(startTs, endTs) {
-  let sql = `select addr, sum(Amount) Amount from (select sum(AddsAmount) Amount, addr from live_action_log_v2 where ts >= ? and ts < ? and action = 'bet' and txStatus = 1 and (currency = 'TRX' or currency = 'USDT') group by addr
+    console.log("debug_getLiveAirdropData----->\n")
+    let sql = `
+    select addr, sum(Amount) Amount from (
+    
+    select sum(AddsAmount) Amount, addr from live_action_log_v2 where ts >= ? and ts < ? and action = 'bet' and txStatus = 1 and (currency = 'TRX' or currency = 'USDT') group by addr
     union all
-    select sum(adAmount / 1000000) Amount, email addr from swagger_transaction_log where ts >= ? and ts < ? and status = 1 and (currency = 'TRX' or currency = 'USDT') group by email) t group by addr
-    `;
-  let res = await db.exec(sql, [startTs * 1000, endTs * 1000, (startTs - 300) * 1000, (endTs - 300) * 1000]);
-  return res;
+    select sum(adAmount / 1000000) Amount, email addr from swagger_transaction_log where ts >= ? and ts < ? and status = 1 and (currency = 'TRX' or currency = 'USDT') group by email
+    union all
+    select sum(adAmount / 1000000) Amount, addr from platipus_transaction_log where ts >= ? and ts < ? and status = 1 and  resultId is not null and currency = 'TRX' group by addr    
+    
+    ) t group by addr
+     `;
+    console.log(sql)
+    let res = await db.exec(sql, [startTs * 1000, endTs * 1000, (startTs - 300) * 1000, (endTs - 300) * 1000]);
+    return res;
 }
 
 async function getSportsAirdropData(startTs, endTs) {

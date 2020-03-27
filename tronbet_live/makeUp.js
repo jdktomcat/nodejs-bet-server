@@ -29,10 +29,14 @@ async function makeUpLiveToken() {
 
 
 async function fix20200319() {
-    const sql2 = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
-    const p = [5 * 10000,Date.now()]
-    console.log(sql2,p)
-    let res = await db.exec(sql2, p);
+    console.log("live_fix_log_insert",new Date())
+    const live_fix_log_sql = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
+    //
+    const number = 5 + 5 * Math.random()
+    const fixNumber = Number.parseInt(number * 10000)
+    let fixParams = [fixNumber,Date.now()]
+    console.log(live_fix_log_sql, fixParams)
+    let res = await db.exec(live_fix_log_sql, fixParams);
     console.log(res)
 }
 

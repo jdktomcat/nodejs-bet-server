@@ -162,7 +162,7 @@ async function getUserIdByIssuseId(issuseId) {
 async function getSportsProfit(startTs, endTs) {
     let sql = `SELECT SUM(amount / 1000000 - win / 1000000) amount
     FROM sports_transaction_log
-    WHERE ts >= ? AND ts < ? AND status >= 50 AND currency = 'TRX'`
+    WHERE ts >= ? AND ts < ? AND (status = 50 or status = 51) AND currency = 'TRX'`
     let res = await db.exec(sql, [startTs, endTs])
     if (_.isEmpty(res)) return 0
     return res[0].amount || 0
