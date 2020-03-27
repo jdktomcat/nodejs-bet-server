@@ -25,9 +25,14 @@ async function getLiveAirdropData(startTs, endTs) {
     (endTs - 300) * 1000,
   ]
   console.log("getLiveAirdropData----->")
-  let res = await db.exec(sql, param);
-  console.log("AirdropData------>",res[0])
-  return res;
+  try {
+    console.log("test1dropData2")
+    let res = await db.exec(sql, param);
+    console.log("test1dropData------>",res[0])
+    return res;
+  }catch (e) {
+    console.log("AirdropError: ",e.toString())
+  }
 }
 
 async function getSportsAirdropData(startTs, endTs) {
