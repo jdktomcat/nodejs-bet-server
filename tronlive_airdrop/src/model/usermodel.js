@@ -2,6 +2,7 @@ const db = require('../utils/dbUtil');
 const _ = require('lodash')._;
 
 async function getLiveAirdropData(startTs, endTs) {
+  console.log("debug_getLiveAirdropData----->\n")
   let sql = `
     select addr, sum(Amount) Amount from (
     
