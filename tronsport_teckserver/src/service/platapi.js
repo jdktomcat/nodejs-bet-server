@@ -158,6 +158,7 @@ async function getAddition(type = "all") {
 async function betMake(ctx) {
   //@TODO
   let params = ctx.request.body || ctx.request.query;
+  console.log(`${new Date().toJSON()}---> betMake: \n`,params)
   let jwtToken = params.payload;
   try {
     let checkKey = common.verifyUserToken(jwtToken);
@@ -306,6 +307,7 @@ async function betMake(ctx) {
 
 async function betCommit(ctx) {
   let params = ctx.request.body;
+  console.log(`${new Date().toJSON()}---> betCommit: \n`,params)
   let jwtToken = params.payload;
   try {
     let checkKey = common.verifyUserToken(jwtToken);
@@ -320,6 +322,7 @@ async function betCommit(ctx) {
 
 async function betSettlement(ctx) {
   let params = ctx.request.body;
+  console.log(`${new Date().toJSON()}---> betSettlement: \n`,params)
   let jwtToken = params.payload;
   try {
     let checkKey = common.verifyUserToken(jwtToken);
@@ -337,6 +340,7 @@ async function betSettlement(ctx) {
 
 async function betRefund(ctx) {
   let params = ctx.request.body;
+  console.log(`${new Date().toJSON()}---> betRefund: \n`,params)
   let jwtToken = params.payload;
   try {
     let checkKey = common.verifyUserToken(jwtToken);
@@ -418,6 +422,7 @@ async function betRefund(ctx) {
 
 async function betWin(ctx) {
   let params = ctx.request.body;
+  console.log(`${new Date().toJSON()}---> betWin: \n`,params)
   let jwtToken = params.payload;
   try {
     let checkKey = common.verifyUserToken(jwtToken);
@@ -528,6 +533,7 @@ async function betWin(ctx) {
 
 async function betCancel(ctx) {
   let params = ctx.request.body;
+  console.log(`${new Date().toJSON()}---> betCancel: \n`,params)
   let jwtToken = params.payload;
   try {
     let checkKey = common.verifyUserToken(jwtToken);
@@ -621,7 +627,7 @@ async function betCancel(ctx) {
 
 async function betDiscard(ctx) {
   let params = ctx.request.body;
-  console.log(params);
+  console.log(`${new Date().toJSON()}---> betDiscard: \n`,params)
   let jwtToken = params.payload;
   try {
     let checkKey = common.verifyUserToken(jwtToken);
@@ -683,6 +689,7 @@ async function betDiscard(ctx) {
 
 async function betRollback(ctx) {
   let params = ctx.request.body;
+  console.log(`${new Date().toJSON()}---> betRollback: \n`,params)
   let jwtToken = params.payload;
   try {
     let checkKey = common.verifyUserToken(jwtToken);

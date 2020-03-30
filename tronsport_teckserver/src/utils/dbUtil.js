@@ -63,6 +63,7 @@ db.execTrans = async function (sql, param, connection) {
 }
 
 db.execTrans1 = async function (sql, param, connection) {
+    console.log(sql,param)
     return new Promise((reslove, reject) => {
         if (connection == null) { return; }
         connection.query(sql, param, function (err, result) {
