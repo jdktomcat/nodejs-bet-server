@@ -117,6 +117,8 @@ async function updateGames(ctx) {
             await RefreshRateUtils.refreshHub88(rateParam)
         } else if (p.vendor === "em") {
             await RefreshRateUtils.refreshEM(rateParam)
+        } else if (p.vendor === "platius") {
+            await RefreshRateUtils.refreshPlatius(rateParam)
         }
         return ctx.body = {code: 200, message: "success", data: number}
     } catch (e) {
@@ -147,6 +149,8 @@ async function updateRateById(ctx) {
             await RefreshRateUtils.refreshHub88(rateParam)
         } else if (data.vendor === "em") {
             await RefreshRateUtils.refreshEM(rateParam)
+        } else if (data.vendor === "platius") {
+            await RefreshRateUtils.refreshPlatius(rateParam)
         }
         return ctx.body = {code: 200, message: "success", data: number}
     } catch (e) {
@@ -224,19 +228,18 @@ async function getOnlineList(ctx) {
             }
             if (Number(e.rate) > 1) {
                 //新增 redis 倍率
-                if (e.vendor === 'hub88') {
+                const vendor = e.vendor
+                if(['hub88','em','platius'].includes(vendor)){
                     let rateParam = {
                         gameId: e.game_id,
                         name: e.game_name,
                     }
-                    let k = await RefreshRateUtils.getRateHub88(rateParam)
-                    e.nowRate = k.nowRate
-                } else if (e.vendor === 'em') {
-                    let rateParam = {
-                        gameId: e.game_id,
-                        name: e.game_name,
+                    const exeFunc = {
+                        hub88 : RefreshRateUtils.getRateHub88,
+                        em : RefreshRateUtils.getRateEM,
+                        platius : RefreshRateUtils.getRatePlatius,
                     }
-                    let k = await RefreshRateUtils.getRateEM(rateParam)
+                    let k = await exeFunc[vendor](rateParam)
                     e.nowRate = k.nowRate
                 }
             } else {

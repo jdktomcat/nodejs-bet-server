@@ -61,6 +61,20 @@ class RefreshRateUtils {
         return data
     }
 
+
+    static async refreshPlatius(gameItem) {
+        const redisKey = "tronlive:platius:addition"
+        const data = await RedisRate.setAndGetRate(redisKey, gameItem);
+        return data
+    }
+
+    //
+    static async getRatePlatius(gameItem) {
+        const redisKey = "tronlive:platius:addition"
+        const data = await new RedisRate(redisKey).getRate(gameItem);
+        return data
+    }
+
 }
 
 module.exports = RefreshRateUtils
