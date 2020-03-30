@@ -165,6 +165,7 @@ async function betMake(ctx) {
     if (!checkKey) return sendErrorMessage2Client(ctx, 403, 1001);
 
     let datas = checkKey.payload;
+    console.log("betMake data is ",datas)
     let currency = datas.currency;
     let addr = datas.player_id;
     let amount = datas.amount / 100;
@@ -311,7 +312,7 @@ async function betCommit(ctx) {
   let jwtToken = params.payload;
   try {
     let checkKey = common.verifyUserToken(jwtToken);
-    console.log(checkKey);
+    console.log("betCommit checkKey is ",checkKey);
     if (!checkKey) return sendErrorMessage2Client(ctx, 403, 1001);
   } catch (error) {
     return sendErrorMessage2Client(ctx, 403, 1001);
@@ -328,7 +329,7 @@ async function betSettlement(ctx) {
     let checkKey = common.verifyUserToken(jwtToken);
     if (!checkKey) return sendErrorMessage2Client(ctx, 403, 1001);
     let datas = checkKey.payload;
-    console.log("debugbetSettlement----->datas ",datas)
+    console.log("betSettlement datas is: ",datas)
     await userinfo.userBetSettle(datas.bet_transaction_id, datas.status);
     return sendSuccessMessage2Client(ctx, 200);
   } catch (error) {
@@ -347,7 +348,7 @@ async function betRefund(ctx) {
     if (!checkKey) return sendErrorMessage2Client(ctx, 403, 1001);
 
     let datas = checkKey.payload;
-
+    console.log("betRefund datas is: ",datas)
     let transactionParams = {
       addr: datas.transaction.ext_player_id,
       transactionId: datas.transaction.id,
@@ -429,7 +430,7 @@ async function betWin(ctx) {
     if (!checkKey) return sendErrorMessage2Client(ctx, 403, 1001);
 
     let datas = checkKey.payload;
-
+    console.log("betWin datas is: ",datas)
     let transactionParams = {
       addr: datas.transaction.ext_player_id,
       transactionId: datas.transaction.id,
@@ -539,6 +540,7 @@ async function betCancel(ctx) {
     let checkKey = common.verifyUserToken(jwtToken);
     if (!checkKey) return sendErrorMessage2Client(ctx, 403, 1001);
     let datas = checkKey.payload;
+    console.log("betCancel datas is: ",datas)
     let transactionParams = {
       addr: datas.transaction.ext_player_id,
       transactionId: datas.transaction.id,
@@ -631,9 +633,9 @@ async function betDiscard(ctx) {
   let jwtToken = params.payload;
   try {
     let checkKey = common.verifyUserToken(jwtToken);
-    console.log(checkKey);
     if (!checkKey) return sendErrorMessage2Client(ctx, 403, 1001);
     let datas = checkKey.payload;
+    console.log("betDiscard datas is: ",datas)
     let addr = datas.ext_player_id;
     let transaction_id = datas.transaction_id;
     let transaction = await userinfo.getTransactionByIdAndStatus(transaction_id, tranStatus.bet);
@@ -695,6 +697,7 @@ async function betRollback(ctx) {
     let checkKey = common.verifyUserToken(jwtToken);
     if (!checkKey) return sendErrorMessage2Client(ctx, 403, 1001);
     let datas = checkKey.payload;
+    console.log("betRollback datas is: ",datas)
     let transactionParams = {
       addr: datas.transaction.ext_player_id,
       transactionId: datas.transaction.id,
