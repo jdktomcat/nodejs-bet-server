@@ -54,9 +54,6 @@ async function addGames(ctx) {
     console.log("addGames params is", body)
     const {vendor, game_id, game_name, em_type, rate} = body
     //
-    if (!["hub88", "em","platius"].includes(vendor)) {
-        return ctx.body = {code: 500, message: "param vendor is error"}
-    }
     const arr = ['slots', 'table', 'live']
     if (vendor === "em" && !arr.includes(em_type)) {
         return ctx.body = {code: 500, message: "param em type is error"}
@@ -98,9 +95,6 @@ async function updateGames(ctx) {
     args.forEach(e => p[e] = body[e] || '')
     p.is_new = p.is_new || '0'
     //
-    if (!["hub88", "em"].includes(p.vendor)) {
-        return ctx.body = {code: 500, message: "param vendor is error"}
-    }
     if (isNaN(Number(p.rate))) {
         return ctx.body = {code: 500, message: "param rate is error"}
     }
@@ -200,9 +194,6 @@ async function getOnlineList(ctx) {
     let em_type = body.em_type || ''
     let game_id = body.game_id || ''
     let game_name = body.game_name || ''
-    if (!["hub88", "em", "all"].includes(vendor)) {
-        ctx.body = {code: 500, message: "params type error"}
-    }
     //
     try {
         let data = await getLiveRaw()
@@ -240,7 +231,6 @@ async function getOnlineList(ctx) {
                         platius : RefreshRateUtils.getRatePlatius,
                     }
                     let k = await exeFunc[vendor](rateParam)
-                    console.log(vendor,k.nowRate)
                     e.nowRate = k.nowRate
                 }
             } else {
