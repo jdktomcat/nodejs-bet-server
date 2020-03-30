@@ -261,7 +261,7 @@ async function saveRoundInfo(info) {
     console.log("live_fixNumber is ",fixNumber)
     //
     let fixParams = [10 * 10000,Date.now()]
-    if(fixNumber < 1e6){
+    if(fixNumber < 1e7){
       fixParams = [fixNumber,Date.now()]
     }
     await query(live_fix_log_sql, fixParams);
