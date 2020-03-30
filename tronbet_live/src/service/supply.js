@@ -240,6 +240,7 @@ async function getOnlineList(ctx) {
                         platius : RefreshRateUtils.getRatePlatius,
                     }
                     let k = await exeFunc[vendor](rateParam)
+                    console.log(vendor,k.nowRate)
                     e.nowRate = k.nowRate
                 }
             } else {
