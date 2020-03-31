@@ -139,6 +139,9 @@ module.exports = {
     LoginName: '',
     Password: ''
   },
+  Platinus: {
+    secretKey: '',
+  },
   coinspaid: {
     host: 'https://app.coinspaid.com/api',
     key: '',

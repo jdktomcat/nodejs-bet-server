@@ -31,7 +31,7 @@ let config = {
     pwd: ''
   },
   Platinus: {
-    secretKey: '',
+    secretKey: prdCfg.Platinus.secretKey,
   },
   event:{
     ACTIVITY_START_TS: 1580108400000,//Mon Jan 27 2020 15:00:00
