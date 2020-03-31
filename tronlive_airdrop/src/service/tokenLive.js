@@ -121,7 +121,7 @@ async function airdrop() {
         }
     }
 
-    logger.info('===================data.length==================', datas.length)
+    console.log("---->data,length ",datas.length)
 
     // return
     //计算当前挖了多少
@@ -228,6 +228,7 @@ tokenEnvent.on('sendToken', (addr, amount, startTs, endTs) => {
                 { type: 'uint128', value: endTs },
                 { type: 'uint256', value: '0x' + startTs + '' + endTs },
             ])
+            console.log("debug--->sendRes ",sendRes)
             if (sendRes.result == 'REVERT') {
                 console.error('xxxxxxxxxxxxxxREVERTxxxxxxxxxxxxxxxxxxx')
             } else if (sendRes.result != true) {
