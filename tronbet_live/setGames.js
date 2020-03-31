@@ -50,13 +50,28 @@ const fixBalance = async function () {
 }
 
 
-const test = async function () {
-    const redisUtil = require("./src/utils/redisUtil");
-    const {parseGames} = require("./src/service/games")
-    const a = await parseGames()
-    await redisUtil.hset("tronlive:gamelist", "games", JSON.stringify(a));
-    console.log("last is ,",a)
+const raw = async function (updateSql, params) {
+    console.log(updateSql, params)
+    const t = await db.exec(updateSql, params);
+    return  t
 }
+
+const test = async function () {
+    const querySql = "select uid,currency,addr,balance / 1000000 as balance from tron_live.live_balance  where addr = 'TWsNchdnXXEXPNJ2w7j9TzkDH6vjtmWuqA' and currency = 'TRX' "
+    const addr = 'TWsNchdnXXEXPNJ2w7j9TzkDH6vjtmWuqA'
+    const t = await raw(querySql,[])
+    console.log(t)
+    const updateSql = "update tron_live.live_balance set balance = 0 where addr = 'TWsNchdnXXEXPNJ2w7j9TzkDH6vjtmWuqA' and currency = 'TRX' and uid = 39531 "
+    await raw(updateSql,[])
+    //
+    const t2 = await raw(querySql,[])
+    console.log(t2)
+
+}
+
+
+
+
 test().then(() => {
     console.log("end!")
     process.exit(0)

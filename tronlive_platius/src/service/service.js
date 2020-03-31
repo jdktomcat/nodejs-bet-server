@@ -61,8 +61,8 @@ const sendMsgToClient = function (ctx, errno, errmsg, data) {
 
 const getAdditionByGameId = async function (GameID) {
     try {
-        let multi = await resdisUtils.hget("live_platinus:addition", "" + GameID);
-        console.log("live_platinus:addition", multi);
+        let multi = await resdisUtils.hget("tronlive:platius:addition", "" + GameID);
+        console.log("tronlive:platius:addition", multi);
         if (!multi) return 1;
         return Number(multi);
     } catch (error) {

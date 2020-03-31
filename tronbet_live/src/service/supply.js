@@ -54,9 +54,6 @@ async function addGames(ctx) {
     console.log("addGames params is", body)
     const {vendor, game_id, game_name, em_type, rate} = body
     //
-    if (!["hub88", "em","platius"].includes(vendor)) {
-        return ctx.body = {code: 500, message: "param vendor is error"}
-    }
     const arr = ['slots', 'table', 'live']
     if (vendor === "em" && !arr.includes(em_type)) {
         return ctx.body = {code: 500, message: "param em type is error"}
@@ -98,9 +95,6 @@ async function updateGames(ctx) {
     args.forEach(e => p[e] = body[e] || '')
     p.is_new = p.is_new || '0'
     //
-    if (!["hub88", "em"].includes(p.vendor)) {
-        return ctx.body = {code: 500, message: "param vendor is error"}
-    }
     if (isNaN(Number(p.rate))) {
         return ctx.body = {code: 500, message: "param rate is error"}
     }
@@ -117,6 +111,8 @@ async function updateGames(ctx) {
             await RefreshRateUtils.refreshHub88(rateParam)
         } else if (p.vendor === "em") {
             await RefreshRateUtils.refreshEM(rateParam)
+        } else if (p.vendor === "platius") {
+            await RefreshRateUtils.refreshPlatius(rateParam)
         }
         return ctx.body = {code: 200, message: "success", data: number}
     } catch (e) {
@@ -147,6 +143,8 @@ async function updateRateById(ctx) {
             await RefreshRateUtils.refreshHub88(rateParam)
         } else if (data.vendor === "em") {
             await RefreshRateUtils.refreshEM(rateParam)
+        } else if (data.vendor === "platius") {
+            await RefreshRateUtils.refreshPlatius(rateParam)
         }
         return ctx.body = {code: 200, message: "success", data: number}
     } catch (e) {
@@ -196,9 +194,6 @@ async function getOnlineList(ctx) {
     let em_type = body.em_type || ''
     let game_id = body.game_id || ''
     let game_name = body.game_name || ''
-    if (!["hub88", "em", "all"].includes(vendor)) {
-        ctx.body = {code: 500, message: "params type error"}
-    }
     //
     try {
         let data = await getLiveRaw()
@@ -224,19 +219,18 @@ async function getOnlineList(ctx) {
             }
             if (Number(e.rate) > 1) {
                 //新增 redis 倍率
-                if (e.vendor === 'hub88') {
+                const vendor = e.vendor
+                if(['hub88','em','platius'].includes(vendor)){
                     let rateParam = {
                         gameId: e.game_id,
                         name: e.game_name,
                     }
-                    let k = await RefreshRateUtils.getRateHub88(rateParam)
-                    e.nowRate = k.nowRate
-                } else if (e.vendor === 'em') {
-                    let rateParam = {
-                        gameId: e.game_id,
-                        name: e.game_name,
+                    const exeFunc = {
+                        hub88 : RefreshRateUtils.getRateHub88,
+                        em : RefreshRateUtils.getRateEM,
+                        platius : RefreshRateUtils.getRatePlatius,
                     }
-                    let k = await RefreshRateUtils.getRateEM(rateParam)
+                    let k = await exeFunc[vendor](rateParam)
                     e.nowRate = k.nowRate
                 }
             } else {
