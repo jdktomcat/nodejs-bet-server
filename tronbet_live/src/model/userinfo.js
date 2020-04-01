@@ -177,6 +177,16 @@ async function getSwaggerProfit(startTs, endTs) {
     return res[0].amount || 0
 }
 
+
+async function getPlatiusProfit(startTs, endTs) {
+    let sql = `SELECT SUM(amount / 1000000 - win / 1000000) amount
+    FROM platipus_transaction_log
+    WHERE ts >= ? AND ts < ? AND status = 1 AND currency = 'TRX' and resultId is not null`
+    let res = await db.exec(sql, [startTs - 2 * 60 * 1000, endTs - 2 * 60 * 1000])
+    if (_.isEmpty(res)) return 0
+    return res[0].amount || 0
+}
+
 async function getLiveFix(){
     const sql2 = `select sum(amount) as sum from tron_live.live_fix_log`
     const rs = await db.exec(sql2, []);
@@ -196,8 +206,9 @@ async function getRealTimeProfitAmount(ts) {
     // let swaggerRealProfit = await getSwaggerProfit(startTs, endTs * 10)
 
     let swaggerRealProfit = await getSwaggerProfit(startTs, endTs)
+    let platiusProfit = await getPlatiusProfit(startTs, endTs)
     //
-    console.log("hub88 start is ", new Date(startTs),', ', new Date(endTs));
+    console.log("hub88，Platius start is ", new Date(startTs),', ', new Date(endTs));
     console.log("em start is ", new Date(startTs),', ', new Date(endTs * 10));
     console.log("sport start is ", new Date(startTs),', ', new Date(endTs * 10));
     //
@@ -224,9 +235,10 @@ async function getRealTimeProfitAmount(ts) {
 
             let sportsProfitAmount = await getSportsProfit(startTs - 86400000, startTs)
             let swaggerProfitAmount = await getSwaggerProfit(startTs - 86400000, startTs)
+            let platiusProfitAmount = await getPlatiusProfit(startTs - 86400000, startTs)
 
-            console.log('=====startTs,lastBetAmount,lastResultAmount, sportsProfitAmount, swaggerProfitAmount=====', startTs, lastBetAmount, lastResultAmount, sportsProfitAmount, swaggerProfitAmount)
-            await insertLastDay(lastDay, Number(lastBetAmount) + Math.floor(Number(swaggerProfitAmount)) + Math.floor(Number(sportsProfitAmount)) - Number(lastResultAmount))
+            console.log('=====startTs,lastBetAmount,lastResultAmount, sportsProfitAmount, swaggerProfitAmount,platiusProfitAmount=====', startTs, lastBetAmount, lastResultAmount, sportsProfitAmount, swaggerProfitAmount,platiusProfitAmount)
+            await insertLastDay(lastDay, Number(lastBetAmount) + Math.floor(Number(swaggerProfitAmount)) + Math.floor(Number(platiusProfitAmount)) + Math.floor(Number(sportsProfitAmount)) - Number(lastResultAmount))
         }
     }
 
@@ -246,9 +258,10 @@ async function getRealTimeProfitAmount(ts) {
 
     // console.log('lastTotalProfit,totalDividends ++++>', lastTotalProfit,totalDividends)
     let totalDividends = await getDividendsAmount()
-    console.log('now: lastTotalProfit - totalDividends + betAmount - resultAmount, soportsRealTimeProfit, swaggerRealProfit ====>', now, Number(lastTotalProfit), totalDividends, betAmount, resultAmount, soportsRealTimeProfit, swaggerRealProfit)
+    console.log('now: lastTotalProfit - totalDividends + betAmount - resultAmount, soportsRealTimeProfit, swaggerRealProfit,platiusProfit ====>', now, Number(lastTotalProfit), totalDividends, betAmount, resultAmount, soportsRealTimeProfit, swaggerRealProfit,platiusProfit)
 
-    return Number(lastTotalProfit) - Number(totalDividends) + Number(betAmount) - Number(resultAmount) + Number(soportsRealTimeProfit) + Number(swaggerRealProfit)
+    const last = Number(lastTotalProfit) - Number(totalDividends) + Number(betAmount) - Number(resultAmount) + Number(soportsRealTimeProfit) + Number(swaggerRealProfit) + Number(platiusProfit)
+    return last
 }
 async function insertLastDay(day, amount) {
     let sql = "insert into live_profit_log(days, profit) values(?,?)"

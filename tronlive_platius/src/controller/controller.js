@@ -21,6 +21,8 @@ class apiCall {
     static async bet(ctx) {
         try {
             const type = 'bet'
+            const params = ctx.request.body || {}
+            console.log("debug bet----->param", params)
             const {error, msg, info,code} = await service.beforeBusiness(ctx, type)
             if (error) {
                 return await service.sendMsgToClient(ctx, code, msg);
@@ -40,6 +42,8 @@ class apiCall {
     static async result(ctx) {
         try {
             const type = 'result'
+            const params = ctx.request.body || {}
+            console.log("debug result----->param", params)
             const {error, msg, info,code} = await service.beforeBusiness(ctx, type)
             if (error) {
                 return await service.sendMsgToClient(ctx, code, msg);
@@ -58,6 +62,8 @@ class apiCall {
     static async rollback(ctx) {
         try {
             const type = 'rollback'
+            const params = ctx.request.body || {}
+            console.log("debug rollback----->param", params)
             const {error, msg, info,code} = await service.beforeBusiness(ctx, type)
             if (error) {
                 return await service.sendMsgToClient(ctx, code, msg);

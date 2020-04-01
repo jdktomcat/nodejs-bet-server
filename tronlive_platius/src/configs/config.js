@@ -7,6 +7,7 @@ try {
 } catch (error) {
   console.log('using app config');
 }
+console.log("debug init config[prdCfg.Platinus.secretKey]is ",prdCfg.Platinus.secretKey)
 let config = {
   env: 'production',
   debug: false,
