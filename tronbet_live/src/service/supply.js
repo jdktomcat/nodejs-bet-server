@@ -306,13 +306,10 @@ async function platinusAPI(ctx) {
     console.log("platinusAPI_addr: ",addr)
     console.log("platinusAPI_token: ",val)
     if(val === null){
-        const token = platiusSign.sign(addr)
+        const token = platiusSign(addr)
         await redisUtils.set(tokenRedisKey, token)
         await redisUtils.expire(tokenRedisKey, 604800) // 设置过期时间为7天
         val = await redisUtils.get(tokenRedisKey)
-    }else{
-        const info = await platiusSign.getInfo(val)
-        console.log('debug0-----',info)
     }
     ctx.body = {code: 200, message: "success", data: val}
 }
