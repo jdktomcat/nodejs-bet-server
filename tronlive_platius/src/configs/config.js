@@ -4,13 +4,14 @@ let Platinus = {
   secretKey : ''
 }
 let prdCfg = {};
-prdCfg.Platinus = Platinus
 try {
   prdCfg = require('/data/tronbet_config/config');
 } catch (error) {
   console.log('using app config');
 }
-
+if(prdCfg.Platinus){
+  prdCfg.Platinus = Platinus
+}
 let config = {
   env: 'production',
   debug: false,
