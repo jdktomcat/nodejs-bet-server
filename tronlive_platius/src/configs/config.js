@@ -12,7 +12,6 @@ try {
 if(prdCfg.Platinus === undefined){
   prdCfg.Platinus = Platinus
 }
-console.log("debug----->",prdCfg)
 let config = {
   env: 'production',
   debug: false,
@@ -57,5 +56,5 @@ if (process.env.NODE_ENV === 'production' && fs.existsSync(__dirname + '/config.
 } else {
   config = Object.assign(config, require('./config_dev.js'));
 }
-
+console.log("debug----<config  ",config)
 module.exports = config;
