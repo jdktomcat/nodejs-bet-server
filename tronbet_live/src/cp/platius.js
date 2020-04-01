@@ -21,6 +21,8 @@ const getInfo = function (token) {
     const jwt = require('jsonwebtoken');
     const config = require("./../configs/config")
     const secretKey = config.Platinus.secretKey
+    console.log("key is ",key)
+    console.log("token is ",token)
     const payload = jwt.verify(token, secretKey)
     return payload
 }
@@ -36,6 +38,5 @@ class Platius {
         return t
     }
 }
-
 
 module.exports = Platius

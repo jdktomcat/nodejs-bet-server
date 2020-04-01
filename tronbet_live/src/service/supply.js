@@ -311,7 +311,7 @@ async function platinusAPI(ctx) {
         await redisUtils.expire(tokenRedisKey, 604800) // 设置过期时间为7天
         val = await redisUtils.get(tokenRedisKey)
     }else{
-        const info = platiusSign.getInfo(addr)
+        const info = await platiusSign.getInfo(val)
         console.log('debug0-----',info)
     }
     ctx.body = {code: 200, message: "success", data: val}
