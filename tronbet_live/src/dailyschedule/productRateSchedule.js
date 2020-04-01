@@ -99,6 +99,8 @@ const takeAction = async function (data) {
                     //todo add model change
                 } else if (e.vendor === 'hub88') {
                     await refreshRate.refreshHub88(rateParam)
+                } else if (e.vendor === 'platius') {
+                    await refreshRate.refreshPlatius(rateParam)
                 }
                 await updateRateByGameId(rate, game, e.vendor)
             }

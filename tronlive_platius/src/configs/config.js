@@ -1,13 +1,17 @@
 const fs = require('fs');
 const path = require('path');
-
+let Platinus = {
+  secretKey : ''
+}
 let prdCfg = {};
 try {
   prdCfg = require('/data/tronbet_config/config');
 } catch (error) {
   console.log('using app config');
 }
-console.log("debug init config[prdCfg.Platinus.secretKey]is ",prdCfg.Platinus.secretKey)
+if(prdCfg.Platinus === undefined){
+  prdCfg.Platinus = Platinus
+}
 let config = {
   env: 'production',
   debug: false,
@@ -52,5 +56,4 @@ if (process.env.NODE_ENV === 'production' && fs.existsSync(__dirname + '/config.
 } else {
   config = Object.assign(config, require('./config_dev.js'));
 }
-
 module.exports = config;

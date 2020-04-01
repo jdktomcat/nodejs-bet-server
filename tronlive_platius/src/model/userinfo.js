@@ -27,7 +27,10 @@ function checkToken(token) {
         const secretKey = config.Platinus.secretKey
         console.log("config.Platinus.secretKey is: ", secretKey)
         if(secretKey === undefined){
-            throw new Error("secretKey is empty!")
+            return {
+                tokenError: true,
+                tokenInfo: {}
+            }
         }
         const payload = jwt.verify(token, secretKey)
         // console.log("payload: ", payload)
