@@ -9,7 +9,7 @@ try {
 } catch (error) {
   console.log('using app config');
 }
-if(prdCfg.Platinus){
+if(prdCfg.Platinus === undefined){
   prdCfg.Platinus = Platinus
 }
 console.log("debug----->",prdCfg)
