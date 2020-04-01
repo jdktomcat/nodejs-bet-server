@@ -251,9 +251,6 @@ async function insertSchedule(ctx) {
     let params = ctx.request.body || {}
     //
     let vendor = params.vendor || ''
-    if (vendor !== "hub88" && vendor !== "em") {
-        return ctx.body = {code: 500, message: "params vendor error"}
-    }
     const trigger_time = new Date(params.trigger_time)
     trigger_time.setUTCHours(trigger_time.getUTCHours() - 8)
     params.trigger_time = trigger_time.getTime()
