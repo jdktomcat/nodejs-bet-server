@@ -3,28 +3,6 @@ const config = require('../configs/config');
 const salt = config.Platinus.secretKey
 const key = CryptoJS.enc.Utf8.parse(salt);
 
-function encrypt(message) {
-    var encrypted = CryptoJS.DES.encrypt(message, key, {
-        mode: CryptoJS.mode.ECB,
-        padding: CryptoJS.pad.Pkcs7
-    });
-    return encrypted.toString();
-}
-
-function decrypt(message) {
-    try {
-        var plaintext = CryptoJS.DES.decrypt(message, key, {
-            mode: CryptoJS.mode.ECB,
-            padding: CryptoJS.pad.Pkcs7
-        })
-        return plaintext.toString(CryptoJS.enc.Utf8)
-    } catch (e) {
-        // console.log(e);
-        return ""
-    }
-}
-
-
 const sign = function (addr) {
     const jwt = require('jsonwebtoken');
     const config = require("./../configs/config")
@@ -34,9 +12,30 @@ const sign = function (addr) {
     }
     const token = jwt.sign(obj, secretKey, {
         algorithm: 'HS256',
-        expiresIn: '10 days'
+        expiresIn: '7 days'
     })
     return token
 }
 
-module.exports = sign
+const getInfo = function (token) {
+    const jwt = require('jsonwebtoken');
+    const config = require("./../configs/config")
+    const secretKey = config.Platinus.secretKey
+    const payload = jwt.verify(token, secretKey)
+    return payload
+}
+
+class Platius {
+    static async sign(addr){
+        const t = await sign(addr)
+        return t
+    }
+
+    static async getInfo(addr){
+        const t = await getInfo(addr)
+        return t
+    }
+}
+
+
+module.exports = Platius
