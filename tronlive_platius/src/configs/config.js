@@ -1,13 +1,16 @@
 const fs = require('fs');
 const path = require('path');
-
+let Platinus = {
+  secretKey : ''
+}
 let prdCfg = {};
+prdCfg.Platinus = Platinus
 try {
   prdCfg = require('/data/tronbet_config/config');
 } catch (error) {
   console.log('using app config');
 }
-console.log("debug init config[prdCfg.Platinus.secretKey]is ",prdCfg.Platinus.secretKey)
+
 let config = {
   env: 'production',
   debug: false,
