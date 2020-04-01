@@ -12,6 +12,7 @@ try {
 if(prdCfg.Platinus){
   prdCfg.Platinus = Platinus
 }
+console.log("debug----->",prdCfg)
 let config = {
   env: 'production',
   debug: false,
