@@ -333,11 +333,12 @@ const platiusList  = [
 const getPlatiusList = function(){
     platiusList.forEach(e=>{
         e.id = e.gameID
-        e.type = 'platius'
         e.thumbnail = e.png
         //
         e.gameName = e.name
         e.category = e.type
+        delete e.type
+        e.type = 'platius'
     })
     const platiusSlot = platiusList.filter(e=>e.category === 'slots')
     const platiusTable = platiusList.filter(e=>e.category === 'table')
