@@ -179,6 +179,33 @@ const getSport = async function (startDate, endDate) {
     return data
 }
 
+const getPlatius = async function (startDate, endDate) {
+    const sql = `
+        SELECT
+            from_unixtime(ts / 1000,'%Y-%m-%d') as day,
+            count(distinct addr)  as dau,
+            count(1) as count,
+            sum(amount) / 1000000 as all_amount,
+            sum(win) / 1000000  as all_win,
+            (sum(amount) - sum(win)) / 1000000  as balance
+        FROM
+            tron_live.platipus_transaction_log
+        WHERE
+            ts >= ?
+            AND ts < ?
+            AND status = 1
+            And resultId is not null
+            AND currency = 'TRX'
+            group by from_unixtime(ts / 1000,'%Y-%m-%d')
+    `
+    const params = [
+        newUtcTime(startDate).getTime(),
+        newUtcTime(endDate).getTime()
+    ]
+    const data = await raw(sql, params)
+    return data
+}
+
 const getPoker = async function (startDate, endDate) {
     const sql = `
         select
@@ -215,6 +242,7 @@ class DailyTransaction{
             "duel": getDuel,
             "em": getEM,
             "hub88": getHub88,
+            "platius": getPlatius,
             "sport": getSport,
             "poker": getPoker,
         }
