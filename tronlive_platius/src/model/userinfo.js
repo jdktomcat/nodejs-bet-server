@@ -12,8 +12,8 @@ async function getBalance(params) {
     }
     const uid = uidArray[0].uid
     //
-    let sql = "select round(balance / 1000000, 3) as balance from tron_live.live_balance where uid = ? and currency = ?"
-    let res = await db.exec(sql, [uid, currency])
+    let sql = "select round(balance / 1000000, 3) as balance from tron_live.live_balance where uid = ? and currency = ? and addr = ?"
+    let res = await db.exec(sql, [uid, currency,addr])
     console.log("rs is ", res)
     if (res.length === 0) {
         throw new Error("user not found")
@@ -25,7 +25,6 @@ async function getBalance(params) {
 function checkToken(token) {
     try {
         const secretKey = config.Platinus.secretKey
-        console.log("config.Platinus.secretKey is: ", secretKey)
         if(secretKey === undefined){
             return {
                 tokenError: true,
