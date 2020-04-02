@@ -406,7 +406,6 @@ async function parseGamesBack() {
 
 async function parseGames() {
     const data = await getGameData()
-    console.log('debug-game-data-->',data)
     return data
 }
 

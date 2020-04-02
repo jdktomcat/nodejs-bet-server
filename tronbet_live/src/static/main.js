@@ -12,14 +12,19 @@ async function getOnlineGames() {
 const filterGames = function (onlineGames, rawGames) {
     let newGames = []
     for (let onlineGame of onlineGames) {
+
+        // debug-onlineGame- BinaryRow {
+        //     vendor: 'platius',
+        //         game_id: '448',
+        //         game_name: 'Aztec Temple',
+        //         em_type: 'slots',
+        //         is_new: '0' }
+
         const game_id = String(onlineGame.game_id).trim()
         const game_name = String(onlineGame.game_name).trim()
         const is_new = String(onlineGame.is_new).trim()
         const vendor = onlineGame.vendor
         const game = rawGames.find(e => String(e.id).trim() === game_id)
-        console.log("debug-onlineGame-",onlineGame)
-        console.log("debug-game-",game)
-        console.log("end\n")
         if (game !== undefined) {
             if (is_new === '1') {
                 game.newFlag = true
@@ -47,6 +52,7 @@ const filterGames = function (onlineGames, rawGames) {
 
 const getGameData = async function () {
     const [platiusSlot, platiusTable] = getPlatiusList()
+    console.log("debug---platiusSlot is ",platiusSlot)
     const [hub88slot, hub88Gameshow] = await hub88ListQuery()
     const {
         slots,
