@@ -1,4 +1,4 @@
-const {raw} = require("./../utils/dbutils")
+const {raw,newUtcTime} = require("./../utils/dbutils")
 
 const queryAirList = async function (params) {
     let {startDate, endDate, addr,page,pageNum} = params
