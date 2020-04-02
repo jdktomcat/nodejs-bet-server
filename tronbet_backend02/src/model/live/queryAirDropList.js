@@ -10,7 +10,7 @@ const queryAirList = async function (params) {
             SELECT
             addr,
             betAmount,
-            adAmount,
+            adAmount / 1000000 as adAmount,
             from_unixtime(startTs, '%Y-%m-%d %H:%i:%S') as startTs,
             from_unixtime(endTs, '%Y-%m-%d %H:%i:%S') as endTs,
             txId,
