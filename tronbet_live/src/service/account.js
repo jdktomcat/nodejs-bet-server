@@ -19,7 +19,6 @@ const digestType = 'RSA-SHA256';
 const publicKey  = conf.swaghub.swagPublick
 const privateKey = conf.swaghub.privetKey
 const geoip = require('geoip-lite')
-const platinusSign = require("./../cp/platius")
 
 // init with default keypair and digest type
 const hmCrypto = HmCrypto(digestType, privateKey, publicKey);
@@ -196,11 +195,7 @@ async function userLogin(ctx) {
         lv = 1
     }
 
-    //新增platius token 2020-03-20
-    const accessToken = platinusSign(uid[0].email)
-
     return await common.sendMsgToClient(ctx, 0,'', {
-        accessToken : accessToken,
         authToken : authToken,
         email : uid[0].email,
         lv: lv,
