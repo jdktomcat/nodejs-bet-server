@@ -300,8 +300,8 @@ async function platinusAPI(ctx) {
     }
     const tokenRedisKey = "platinusToken_" + addr
     let val = await redisUtils.get(tokenRedisKey)
-    // console.log("platinusAPI_addr: ",addr)
-    // console.log("platinusAPI_token: ",val)
+    console.log("platinusAPI_addr: ",addr)
+    console.log("platinusAPI_token: ",val)
 
     if(val === null){
         try {
