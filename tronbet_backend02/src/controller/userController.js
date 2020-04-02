@@ -29,7 +29,8 @@ function getRole(username) {
         "/liveHub88List":"Hub88流水查询",
         "/liveSportList":"Sport流水查询",
         "/liveDeposit": "Live充值流水",
-        "/liveWithDraw": "Live提现流水"
+        "/liveWithDraw": "Live提现流水",
+        "/AirDropList": "live空投查询"
     }
     //
     if(username === 'admin'){

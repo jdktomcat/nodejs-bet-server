@@ -18,8 +18,8 @@ const queryAirList = async function (params) {
         FROM
             tron_live.live_airdrop_log
         WHERE
-            ts >= ?
-            AND ts < ?
+            startTs >= ?
+            AND startTs < ?
             And addr = ?
             order by startTs desc
     `
