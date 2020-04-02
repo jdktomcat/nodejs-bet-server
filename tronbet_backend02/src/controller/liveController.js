@@ -8,6 +8,7 @@ const queryDeposit = require("../model/live/queryDeposit")
 const queryWithDraw = require("../model/live/queryWithDraw")
 const QueryDrop = require("../model/live/queryAirDrop")
 const queryOtherCurrency = require("../model/live/queryOtherCurrency")
+const queryAirData = require("../model/live/queryAirDropList")
 
 class LiveController {
     /**
@@ -106,6 +107,13 @@ class LiveController {
         const params = ctx.query || {}
         const data = await queryOtherCurrency.getDataFile(params)
         ctxUtils.file(ctx, data)
+    }
+
+
+    static async queryAirDropData(ctx) {
+        const params = ctx.query || {}
+        const data = await queryAirData.getData(params)
+        ctx.body = ctxUtils.success(data)
     }
 
 }
