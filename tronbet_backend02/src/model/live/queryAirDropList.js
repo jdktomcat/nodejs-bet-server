@@ -34,9 +34,18 @@ const queryAirList = async function (params) {
         count: count,
         rows: rsData
     }
-    console.log("last is ",rs)
     return rs
 }
 
 
-module.exports = queryAirList
+class queryAirData {
+
+    static async getData(p) {
+        const data = await queryAirList(p)
+        return data
+    }
+
+}
+
+module.exports = queryAirData
+
