@@ -25,7 +25,6 @@ async function getBalance(params) {
 function checkToken(token) {
     try {
         const secretKey = config.Platinus.secretKey
-        console.log("config.Platinus.secretKey is: ", secretKey)
         if(secretKey === undefined){
             return {
                 tokenError: true,
