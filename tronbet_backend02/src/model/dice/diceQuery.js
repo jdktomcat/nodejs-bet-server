@@ -15,9 +15,9 @@ const queryDice = async function (params) {
           SELECT
                     from_unixtime( dice_user_order.ts / 1000,'%Y-%m-%d') as day,
                     dice_user_order.addr,
-                    dice_user_order.direction,
-                    dice_user_order.number,
-                    dice_user_order.roll,
+                    tron_bet_wzc.dice_events_v3.direction,
+                    tron_bet_wzc.dice_events_v3.number,
+                    tron_bet_wzc.dice_events_v3.roll,
                     tron_bet_wzc.dice_events_v3.amount_sun as amount ,
                     tron_bet_wzc.dice_events_v3.payout_sun as win,
                     dice_user_order.tx_id
