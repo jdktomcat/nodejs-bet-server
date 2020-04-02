@@ -335,6 +335,9 @@ const getPlatiusList = function(){
         e.id = e.gameID
         e.type = 'platius'
         e.thumbnail = e.png
+        //
+        e.gameName = e.name
+        e.category = e.type
     })
     const platiusSlot = platiusList.filter(e=>e.category === 'slots')
     const platiusTable = platiusList.filter(e=>e.category === 'table')
