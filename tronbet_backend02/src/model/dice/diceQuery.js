@@ -112,7 +112,6 @@ const queryRing = async function (params) {
             AND ts < ?
             And addr = ?
             group by from_unixtime(ts / 1000,'%Y-%m-%d') desc
-            limit ?,?
     `
     let sqlC = `select count(1) as count from (${sql}) as g`
     const crs = await raw(sqlC, [start,end,addr])
