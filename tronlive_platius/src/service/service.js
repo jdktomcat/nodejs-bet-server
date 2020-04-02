@@ -177,10 +177,12 @@ const checkBalance = async function (params) {
     if (tokenError) {
         msg.code = 1001
         msg.error = "Token are wrong or expired"
+        return msg
     }
     if (!['TRX', 'USDT'].includes(params.currency)) {
         msg.code = 1005
         msg.error = "currency is error!"
+        return msg
     }
     console.log("tokenInfo is ", tokenInfo)
     const o = {
