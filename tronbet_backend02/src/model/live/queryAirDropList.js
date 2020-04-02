@@ -2,8 +2,8 @@ const {raw,newUtcTime} = require("./../utils/dbutils")
 
 const queryAirList = async function (params) {
     let {startDate, endDate, addr,page,pageNum} = params
-    const start= newUtcTime(startDate).getTime()
-    const end= newUtcTime(endDate).getTime()
+    const start= newUtcTime(startDate).getTime() / 1000
+    const end= newUtcTime(endDate).getTime() / 1000
     const limit = Number(pageNum)
     const offset = (Number(page) - 1) * limit
     let sql = `
@@ -34,7 +34,9 @@ const queryAirList = async function (params) {
         count: count,
         rows: rsData
     }
+    console.log("last is ",rs)
     return rs
 }
+
 
 module.exports = queryAirList
