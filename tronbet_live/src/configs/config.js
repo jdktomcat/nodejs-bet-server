@@ -1,14 +1,18 @@
 const fs = require('fs');
 const path = require('path');
 const blacklist = require('./blacklist');
-
+let Platinus = {
+  secretKey : ''
+}
 let prdCfg = {};
 try {
   prdCfg = require('/data/tronbet_config/config');
 } catch (error) {
   console.log('using app config');
 }
-
+if(prdCfg.Platinus === undefined){
+  prdCfg.Platinus = Platinus
+}
 let config = {
   env: 'production',
   debug: false,
@@ -89,7 +93,7 @@ let config = {
     privetKey: prdCfg.swaghub.privetKey
   },
   Platinus: {
-    secretKey: "",
+    secretKey: prdCfg.Platinus.secretKey,
   },
   currency: ['BTC', 'LTC', 'BCH', 'ETH', 'BNB'],
   withdrawMaxConf: {
