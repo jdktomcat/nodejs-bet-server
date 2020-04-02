@@ -18,6 +18,7 @@ const filterGames = function (onlineGames, rawGames) {
         const vendor = onlineGame.vendor
         const game = rawGames.find(e => String(e.id).trim() === game_id)
         if (game !== undefined) {
+            console.log(game)
             if (is_new === '1') {
                 game.newFlag = true
             }else {
