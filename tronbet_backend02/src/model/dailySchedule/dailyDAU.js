@@ -231,6 +231,17 @@ const getAll = async function (startDate, endDate) {
         SELECT
             distinct addr as addr
         FROM
+            tron_live.platipus_transaction_log
+        WHERE
+            ts >= ?
+            AND ts < ?
+            AND status = 1    
+            
+        union all
+        
+        SELECT
+            distinct addr as addr
+        FROM
             tron_live.sports_transaction_log
         WHERE
             ts >= ?

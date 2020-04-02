@@ -243,6 +243,37 @@ const getSport = async function (startDate, endDate) {
     return ccc1
 }
 
+const getPlatius = async function (startDate, endDate) {
+    const sql = `
+        SELECT
+            count(1) as count,
+            sum(amount) / 1000000 as all_amount,
+            sum(win) / 1000000  as all_win,
+            (sum(amount) - sum(win)) / 1000000  as balance
+        FROM
+            tron_live.platipus_transaction_log
+        WHERE
+            ts >= ?
+            AND ts < ?
+            AND status = 1
+            And resultId is not null
+            AND currency = 'TRX'
+    `
+    const params = [
+        newUtcTime(startDate).getTime(),
+        newUtcTime(endDate).getTime()
+    ]
+    const data = await raw(sql, params)
+    const rs2 = data[0] || {}
+    let ccc1 = {
+        count: rs2.count || 0,
+        all_amount: rs2.all_amount || 0,
+        all_win: rs2.all_win || 0,
+        balance: rs2.balance || 0,
+    }
+    return ccc1
+}
+
 const getPoker = async function (startDate, endDate) {
     // const sql = `
     //     select
@@ -282,6 +313,7 @@ class DailyAmount {
             "ring": getRing,
             "em": getEM,
             "hub88": getHub88,
+            "platius": getPlatius,
             "sport": getSport,
         }
         const keys = Object.keys(typeDict)
