@@ -32,8 +32,8 @@ const sign = function (addr) {
     const obj = {
         addr: addr,
     }
-    console.log("debug----->obj is ",obj)
-    console.log("debug----->secretKey is ",secretKey)
+    // console.log("debug----->obj is ",obj)
+    // console.log("debug----->secretKey is ",secretKey)
     const token = jwt.sign(obj, secretKey, {
         algorithm: 'HS256',
         expiresIn: '10 days'
