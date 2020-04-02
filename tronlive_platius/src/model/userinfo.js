@@ -69,13 +69,13 @@ async function parseToken(tokenInfo, currency) {
     return o
 }
 
-async function userAction(params, conn) {
+async function userAction(params) {
     //update balance
     let updateSql = "update tron_live.live_balance set balance = balance - ? where uid = ? and currency = ?"
     if (params.type === 'result') {
         updateSql = "update tron_live.live_balance set balance = balance + ? where uid = ? and currency = ?"
     }
-    await db.execTrans(updateSql, [params.amount, params.uid, params.currency], conn)
+    await db.exec(updateSql, [params.amount, params.uid, params.currency])
     //
     if(params.type === 'bet'){
         let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, addr, uid, amount,currency,adAmount, ts) values(?,?,?,?,?,?,?,?,?,?)"
@@ -91,7 +91,7 @@ async function userAction(params, conn) {
             params.adAmount,
             Date.now()
         ]
-        await db.execTrans(sql, sqlParam, conn)
+        await db.exec(sql, sqlParam)
     }else if(params.type === 'result'){
         let sql = "update tron_live.platipus_transaction_log set resultId = ? , win = ? where round_id = ? and addr = ?"
         const sqlParam = [
@@ -100,59 +100,41 @@ async function userAction(params, conn) {
             params.round_id,
             params.addr,
         ]
-       const rs = await db.execTrans(sql, sqlParam, conn)
+       const rs = await db.exec(sql, sqlParam)
     }
 }
 
 
-async function rollback(params, conn) {
+async function rollback(params) {
     //update balance
     let updateSql = "update tron_live.live_balance set balance = balance - ? where uid = ? and currency = ?"
     if (params.type === 'rollback' && params.amount > 0) {
         updateSql = "update tron_live.live_balance set balance = balance + ? where uid = ? and currency = ?"
     }
-    await db.execTrans(updateSql, [params.amount, params.uid, params.currency], conn)
+    await db.exec(updateSql, [params.amount, params.uid, params.currency])
     //
     let sqlReset = "update tron_live.platipus_transaction_log set status = 0 where round_id = ? and addr = ?"
     const sqlResetParam = [
         params.round_id,
         params.addr,
     ]
-    await db.execTrans(sqlReset, sqlResetParam, conn)
+    await db.exec(sqlReset, sqlResetParam)
 }
 
 
 const execBet = async function (params) {
-    let conn = null;
     try {
-        conn = await db.getConnection();
-        if (conn == null) {
-            throw new Error("unknown failed")
-        }
-        conn.beginTransaction();
-        await userAction(params, conn);
-        conn.commit();
+        await userAction(params);
     } catch (error) {
         throw error
-    } finally {
-        if (conn) conn.release();
     }
 }
 
 const execRollBack = async function (params) {
-    let conn = null;
     try {
-        conn = await db.getConnection();
-        if (conn == null) {
-            throw new Error("unknown failed")
-        }
-        conn.beginTransaction();
-        await rollback(params, conn);
-        conn.commit();
+        await rollback(params);
     } catch (error) {
         throw error
-    } finally {
-        if (conn) conn.release();
     }
 }
 
