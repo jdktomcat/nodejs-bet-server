@@ -1,7 +1,7 @@
 const {raw, getdayList, newUtcTime, getLastDayUtcTime, getNextDayUtcTime} = require("../utils/dbutils")
 const db = require("../../utils/readDbUtil")
 const schedule = require('node-schedule');
-const {processAllData, processAllAddr} = require("./../dailySchedule/dailyTotal")
+const {processAllData} = require("./../dailySchedule/dailyTotal")
 
 const readDB = async function (sql, params) {
     console.log(String(sql))
@@ -121,8 +121,9 @@ const sleep = function (time) {
 }
 
 const parseDice = async function () {
-    // const j = schedule.scheduleJob('*/1 * * * *', async function () {
-    const j = schedule.scheduleJob('0 1 * * *', async function () {
+    //for test
+    const j = schedule.scheduleJob('*/30 * * * *', async function () {
+        // const j = schedule.scheduleJob('0 1 * * *', async function () {
         // console.log('The answer to life, the universe, and everything!');
         //
         const rs = await getStartEnd()
@@ -141,17 +142,16 @@ const parseDice = async function () {
             const {startDateStr, endDateStr} = rs.all
             console.log(`schedule_all start is ${startDateStr}, end is ${endDateStr}`)
             await processAllData(startDateStr, endDateStr)
-            await processAllAddr(startDateStr, endDateStr)
         }
     });
 }
 
 
 const getStartEnd = async function () {
-    const dbLastDay = await queryDiceDay()
+    const dbDiceDay = await queryDiceDay()
     const dbAllDay = await queryAllDay()
-    const lastDay = getLastDayUtcTime(new Date())
-    const days = [dbLastDay, dbAllDay, lastDay].map(e => getTimeStr(newUtcTime(e)))
+    const yesterdayRaw = getLastDayUtcTime(new Date())
+    const days = [dbDiceDay, dbAllDay, yesterdayRaw].map(e => getTimeStr(newUtcTime(e)))
     const [diceDay, allDay, yesterday] = days
     let rs = {
         dice: {
@@ -167,12 +167,14 @@ const getStartEnd = async function () {
         const endDate = newUtcTime(Date.now())
         const endDateStr = getTimeStr(endDate)
         //
-        const startDate = getNextDayUtcTime(new Date(dbLastDay))
+        const startDate = getNextDayUtcTime(new Date(diceDay))
         const startDateStr = getTimeStr(startDate)
-        rs.dice = {
-            bool: true,
-            startDateStr: startDateStr,
-            endDateStr: endDateStr,
+        if(startDate.getTime() < endDate.getTime()){
+            rs.dice = {
+                bool: true,
+                startDateStr: startDateStr,
+                endDateStr: endDateStr,
+            }
         }
     }
     // deal with all
@@ -188,13 +190,17 @@ const getStartEnd = async function () {
         } else {
             const endDate = newUtcTime(Date.now())
             const endDateStr = getTimeStr(endDate)
-            //
-            const startDate = getNextDayUtcTime(new Date(dbLastDay))
+            /**
+             * start is 2020-04-03, end is 2020-04-03
+             */
+            const startDate = getNextDayUtcTime(new Date(allDay))
             const startDateStr = getTimeStr(startDate)
-            rs.all = {
-                bool: true,
-                startDateStr: startDateStr,
-                endDateStr: endDateStr,
+            if(startDate.getTime() < endDate.getTime()){
+                rs.all = {
+                    bool: true,
+                    startDateStr: startDateStr,
+                    endDateStr: endDateStr,
+                }
             }
         }
     }

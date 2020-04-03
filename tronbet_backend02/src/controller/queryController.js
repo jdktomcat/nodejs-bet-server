@@ -154,15 +154,6 @@ class QueryController {
         ctxUtils.file(ctx, data)
     }
 
-    /**
-     * 根据用户获取交易
-     */
-    static async getDAU(ctx) {
-        const day = ctx.query.day
-        const data = await dailyDAU.getDailyData(day)
-        ctx.body = ctxUtils.success(data)
-    }
-
 }
 
 module.exports = QueryController
