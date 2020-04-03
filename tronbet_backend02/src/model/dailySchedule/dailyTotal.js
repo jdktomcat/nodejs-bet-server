@@ -15,8 +15,8 @@ const processAllData = async function (startDate, endDate) {
         // console.log(getTimeFormat(start),getTimeFormat(end))
         const dau = await dailyDAU.getData(start, end)
         //数据过大，生产暂时无法计算
-        // const totalAddr = await dailyDAU.getData('2019-01-01',now)
-        const totalAddr = 0
+        // const totalUsers = await dailyDAU.getData('2019-01-01',now)
+        const totalAddr = await dailyDAU.getTotalAddr(end)
         const amount = await dailyAmount.getData(start, end)
         const o = {
             day: start,
@@ -31,17 +31,6 @@ const processAllData = async function (startDate, endDate) {
         await addAllData(day_str, data_str, ts);
     }
 }
-
-
-const processAllAddr = async function (startDate, endDate) {
-    const c = getdayList(startDate, endDate)
-    for (let i = 0; i < c.length - 1; i++) {
-        let start = getTimeFormat(c[i])
-        let end = getTimeFormat(c[i + 1])
-        await dailyDAU.generateDailyData(start, end)
-    }
-}
-
 
 const queryAllData = async function (startDate, endDate) {
     const sql = `select * from tron_bet_admin.sum_dice_data where type = 'all' and ts >= ? and ts < ? order by ts desc`
@@ -83,7 +72,6 @@ const queryAllDataFile = async function (startDate, endDate) {
 
 module.exports = {
     processAllData,
-    processAllAddr,
     queryAllData,
     queryAllDataFile,
 }

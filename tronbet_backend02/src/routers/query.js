@@ -39,8 +39,3 @@ module.exports = router.get('/getAddrTransaction', controller.getAddrTransaction
 module.exports = router.get('/getAddrDateList', controller.getAddrDateList)
 module.exports = router.get('/getAddrDate', controller.getAddrDate)
 
-/**
- * 玩家交易
- */
-module.exports = router.get('/getDAU', controller.getDAU)
-

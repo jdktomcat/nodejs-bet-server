@@ -1,7 +1,7 @@
 const {raw, getdayList, newUtcTime, getLastDayUtcTime, getNextDayUtcTime} = require("../utils/dbutils")
 const db = require("../../utils/readDbUtil")
 const schedule = require('node-schedule');
-const {processAllData, processAllAddr} = require("./../dailySchedule/dailyTotal")
+const {processAllData} = require("./../dailySchedule/dailyTotal")
 
 const readDB = async function (sql, params) {
     console.log(String(sql))
@@ -121,8 +121,9 @@ const sleep = function (time) {
 }
 
 const parseDice = async function () {
-    // const j = schedule.scheduleJob('*/1 * * * *', async function () {
-    const j = schedule.scheduleJob('0 1 * * *', async function () {
+    //for test
+    const j = schedule.scheduleJob('*/15 * * * *', async function () {
+    // const j = schedule.scheduleJob('0 1 * * *', async function () {
         // console.log('The answer to life, the universe, and everything!');
         //
         const rs = await getStartEnd()
@@ -141,7 +142,6 @@ const parseDice = async function () {
             const {startDateStr, endDateStr} = rs.all
             console.log(`schedule_all start is ${startDateStr}, end is ${endDateStr}`)
             await processAllData(startDateStr, endDateStr)
-            await processAllAddr(startDateStr, endDateStr)
         }
     });
 }
