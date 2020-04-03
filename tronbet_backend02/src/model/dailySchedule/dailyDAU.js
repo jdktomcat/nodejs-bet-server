@@ -99,7 +99,7 @@ const getAll = async function (startDate, endDate) {
 class DailyDAU {
 
     static async getTotalAddr(endDate) {
-        const sql = `select count(distinct addr) as sum from tron_bet_admin.sum_addr_detail where ts > ? and  and ts < ? `
+        const sql = `select count(distinct addr) as sum from tron_bet_admin.sum_addr_detail where ts > ? and  ts < ? `
         const start = newUtcTime("2019-01-01").getTime()
         const end = newUtcTime(endDate).getTime()
         const params = [start, end,]
