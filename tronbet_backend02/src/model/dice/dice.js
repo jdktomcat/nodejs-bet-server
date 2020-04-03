@@ -122,7 +122,7 @@ const sleep = function (time) {
 
 const parseDice = async function () {
     //for test
-    const j = schedule.scheduleJob('*/15 * * * *', async function () {
+    const j = schedule.scheduleJob('*/1 * * * *', async function () {
     // const j = schedule.scheduleJob('0 1 * * *', async function () {
         // console.log('The answer to life, the universe, and everything!');
         //
@@ -141,7 +141,7 @@ const parseDice = async function () {
         if (rs.all.bool) {
             const {startDateStr, endDateStr} = rs.all
             console.log(`schedule_all start is ${startDateStr}, end is ${endDateStr}`)
-            await processAllData(startDateStr, endDateStr)
+            // await processAllData(startDateStr, endDateStr)
         }
     });
 }
