@@ -114,14 +114,15 @@ class DailyDAU {
 
     static async getData(startDate, endDate) {
         const data = await getAll(startDate, endDate)
-        for (let addr of data) {
+        for (let d of data) {
+            const addr = d.addr
             const k = {
                 'day': startDate,
                 'addr': addr,
                 'ts': newUtcTime(startDate).getTime()
             }
             const sql0 = 'select * from tron_bet_admin.sum_addr_detail where addr = ?'
-            const data0 = await raw(sql0, [k.addr])
+            const data0 = await raw(sql0, [addr])
             if (data0.length === 0) {
                 const sql = `insert into tron_bet_admin.sum_addr_detail(day,addr,ts) values (?,?,?)`
                 await raw(sql, [k.day, k.addr, k.ts])
