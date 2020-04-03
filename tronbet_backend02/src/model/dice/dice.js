@@ -122,7 +122,7 @@ const sleep = function (time) {
 
 const parseDice = async function () {
     //for test
-    const j = schedule.scheduleJob('*/1 * * * *', async function () {
+    const j = schedule.scheduleJob('*/30 * * * *', async function () {
         // const j = schedule.scheduleJob('0 1 * * *', async function () {
         // console.log('The answer to life, the universe, and everything!');
         //
