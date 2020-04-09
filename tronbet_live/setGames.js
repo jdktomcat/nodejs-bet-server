@@ -57,7 +57,7 @@ const raw = async function (updateSql, params) {
 }
 
 const test = async function () {
-    const querySql = "delete from live_fix_log where log_id = 4 or log_id = 5"
+    const querySql = "delete from live_fix_log where log_id = 6"
     const t2 = await raw(querySql,[])
     console.log(t2)
 }
