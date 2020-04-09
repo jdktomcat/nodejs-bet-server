@@ -98,6 +98,7 @@ const queryRing = async function (params) {
     const offset = (Number(page) - 1) * limit
     let sql = `
             SELECT
+            round,
             from_unixtime(ts / 1000,'%Y-%m-%d %H:%i:%S') as day,
             addr,
             amount / 1000000 as amount,
@@ -128,8 +129,28 @@ const queryRing = async function (params) {
 }
 
 
+const queryRingResult = async function (params) {
+    let {round} = params
+    let sql = `
+            SELECT
+            round,
+            from_unixtime(ts / 1000,'%Y-%m-%d %H:%i:%S') as day,
+            tx_id,
+            number
+        FROM
+            tron_bet_admin.wheel_round_info
+        WHERE
+            round = ?
+    `
+    const p = [round]
+    let rsData = await raw(sql, p)
+    return rsData
+}
+
+
 module.exports = {
     queryDice,
     queryMoon,
     queryRing,
+    queryRingResult,
 }
