@@ -12,7 +12,7 @@ const queryDice = async function (params) {
 //direction | number | roll
     let sql = `
           SELECT
-                    from_unixtime( dice_user_order.ts / 1000,'%Y-%m-%d') as day,
+                    from_unixtime( dice_user_order.ts / 1000,'%Y-%m-%d %H:%i:%S') as day,
                     tron_bet_admin.dice_user_order.addr,
                     tron_bet_wzc.dice_events_v3.order_id,
                     tron_bet_wzc.dice_events_v3.direction,
