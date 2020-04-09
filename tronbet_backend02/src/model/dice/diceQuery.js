@@ -70,7 +70,7 @@ const queryMoon = async function (params) {
             b.crashAt as round_crashAt
         FROM
             tron_bet_admin.moon_user_order  as a
-            left join moon_round_info as b
+            left join tron_bet_admin.moon_round_info as b
             on a.round = b.round
         WHERE
             a.ts >= ?
@@ -136,10 +136,10 @@ const queryRing = async function (params) {
             left join tron_bet_admin.wheel_round_info as b
             on a.round = b.round
         WHERE
-            ts >= ?
-            AND ts < ?
-            And addr = ?
-            order by ts desc `
+            a.ts >= ?
+            AND a.ts < ?
+            And a.addr = ?
+            order by a.ts desc `
         let sqlC = `select count(1) as count from (${sql}) as g`
         const crs = await raw(sqlC, [start, end, addr])
         const count = crs[0].count || 0
