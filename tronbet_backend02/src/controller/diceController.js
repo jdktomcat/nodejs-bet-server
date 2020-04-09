@@ -17,6 +17,12 @@ class LiveController {
         const data = await diceQuery.queryRing(ctx.query)
         ctx.body = ctxUtils.success(data)
     }
+
+
+    static async queryRingResult(ctx) {
+        const data = await diceQuery.queryRingResult(ctx.query)
+        ctx.body = ctxUtils.success(data)
+    }
 }
 
 module.exports = LiveController
