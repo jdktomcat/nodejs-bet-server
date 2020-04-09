@@ -57,15 +57,9 @@ const raw = async function (updateSql, params) {
 }
 
 const test = async function () {
-    const querySql = "select uid,currency,addr,balance / 1000000 as balance from tron_live.live_balance  where addr = 'TYeK8jWZUpKtKc1EW8FTUjnpdcdLetG4km' and currency = 'TRX' "
-    const t = await raw(querySql,[])
-    console.log(t)
-    const updateSql = "update tron_live.live_balance set balance = balance + ? where addr = ? and currency = 'TRX' and uid = 28327"
-    await raw(updateSql,[5476 * 1e6,"TYeK8jWZUpKtKc1EW8FTUjnpdcdLetG4km"])
-    //
+    const querySql = "delete from live_fix_log where log_id = 4 or log_id = 5"
     const t2 = await raw(querySql,[])
     console.log(t2)
-
 }
 
 
