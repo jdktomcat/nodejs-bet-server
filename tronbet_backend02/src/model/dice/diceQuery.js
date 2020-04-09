@@ -18,8 +18,8 @@ const queryDice = async function (params) {
                     tron_bet_wzc.dice_events_v3.direction,
                     tron_bet_wzc.dice_events_v3.number,
                     tron_bet_wzc.dice_events_v3.roll,
-                    tron_bet_wzc.dice_events_v3.amount_sun as amount ,
-                    tron_bet_wzc.dice_events_v3.payout_sun as win,
+                    tron_bet_wzc.dice_events_v3.amount_sun / 1000000 as amount ,
+                    tron_bet_wzc.dice_events_v3.payout_sun / 1000000 as win,
                     dice_user_order.tx_id
                   FROM
                     tron_bet_admin.dice_user_order
