@@ -105,7 +105,8 @@ const queryRing = async function (params) {
             win / 1000000  as win,
             roll as real_number,
             number as user_number,
-            tx_id
+            tx_id,
+            result_hash
         FROM
             tron_bet_admin.wheel_user_order
         WHERE
