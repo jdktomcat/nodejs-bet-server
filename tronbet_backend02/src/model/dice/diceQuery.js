@@ -70,7 +70,7 @@ const queryMoon = async function (params) {
             b.crashAt as round_crashAt
         FROM
             tron_bet_admin.moon_user_order  as a
-            left join moon_round_info as b
+            left join tron_bet_admin.moon_round_info as b
             on a.round = b.round
         WHERE
             a.ts >= ?
