@@ -71,7 +71,7 @@ const queryMoon = async function (params) {
             ts >= ?
             AND ts < ?
             And addr = ?
-            group by from_unixtime(ts / 1000,'%Y-%m-%d') desc
+            order by ts desc
     `
     let sqlC = `select count(1) as count from (${sql}) as g`
     const crs = await raw(sqlC, [start,end,addr])
@@ -91,7 +91,7 @@ const queryMoon = async function (params) {
 
 
 const queryRing = async function (params) {
-    let {startDate, endDate, addr,page,pageNum} = params
+    let {startDate, endDate, addr,page,pageNum,result_hash} = params
     const start= newUtcTime(startDate).getTime()
     const end= newUtcTime(endDate).getTime()
     const limit = Number(pageNum)
@@ -109,11 +109,17 @@ const queryRing = async function (params) {
         FROM
             tron_bet_admin.wheel_user_order
         WHERE
-            ts >= ?
+    `
+    if(result_hash !== undefined && result_hash !== ''){
+        sql += ' result_hash = ? '
+        const rs = await raw(sql,[result_hash])
+        return rs
+    }else {
+        sql += ` ts >= ?
             AND ts < ?
             And addr = ?
-            group by from_unixtime(ts / 1000,'%Y-%m-%d') desc
-    `
+                order by ts desc`
+    }
     let sqlC = `select count(1) as count from (${sql}) as g`
     const crs = await raw(sqlC, [start,end,addr])
     const count = crs[0].count || 0
