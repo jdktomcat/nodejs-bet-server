@@ -1,74 +1,38 @@
-const db = require("./src/utils/dbUtil");
-
-const queryBalance = async function (array) {
-    const sql = `select a.uid,a.currency,a.addr,a.balance / 1000000000 as balance,b.email from tron_live.live_balance as a left join tron_live.live_account b on a.uid = b.uid where a.uid = b.uid and a.uid = ? and a.currency = ? and a.addr = ? and b.email = ?`
-    const a1 = array.length
-    let a2 = 0
-    for (let e of array) {
-        const p = [e.uid, e.currency, e.addr, e.email]
-        const a = await db.exec(sql, p)
-        if (a.length > 0) {
-            a2 += 1
-        }
-        console.log(sql, JSON.stringify(p), ' and result is', a)
-    }
-    return a2 === a1
+let prdCfg = {};
+try {
+    prdCfg = require('/data/tronbet_config/config');
+    // prdCfg = require("/data/tronbet_config/config_test");
+} catch (error) {
+    console.log("using app config");
 }
 
+const TronWeb = require("tronweb");
+const HttpProvider = TronWeb.providers.HttpProvider;
+const fullNode = new HttpProvider(prdCfg.master_full);
+const solidityNode = new HttpProvider(prdCfg.master_solidity);
+const eventServer = prdCfg.master_event;
+const privateKey = prdCfg.operatorDice_pk;
 
-const updateAddBalance = async function (array) {
-    for (let e of array) {
-        const updateSql = "update tron_live.live_balance set balance = balance + ? where uid = ? and currency = ? "
-        const params = [e.fix, e.uid, e.currency]
-        console.log(updateSql, params)
-        await db.exec(updateSql, params);
-    }
+let tronWeb = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
+
+const contract_address = prdCfg.contract.TronBetPool20; //合约地址
+
+//获取合约
+async function getContractInstance() {
+    let contractInstance = await tronWeb.contract().at(contract_address);
+    return contractInstance;
 }
 
-const fixBalance = async function () {
-    // const array = [
-    //     {
-    //         uid: '42869',
-    //         addr: "bnb1vheud6fefdfhds3u5qwh6dvt8rdkw0ktxafrr2",
-    //         email: 'gfbrown1411@gmail.com',
-    //         fix: 16.02 * 1e9,
-    //         currency: "BNB"
-    //     },
-    // ]
-    // const ifUpdate = await queryBalance(array)
-    // //
-    // console.log("ifUpdate: ", ifUpdate)
-    // if (ifUpdate) {
-    //     console.log("begin ____> update")
-    //     await updateAddBalance(array)
-    //     //
-    //     console.log("------>after is")
-    //     await queryBalance(array)
-    // } else {
-    //     console.log("please check your params")
-    // }
+async function burn() {
+    let contractInstance = await getContractInstance();
+    const transactionID = await contractInstance
+        .burnWin()
+        .send()
+        .catch(error => {
+            console.log(error);
+        });
+    console.log(transactionID);
+    return transactionID;
 }
 
-
-const raw = async function (updateSql, params) {
-    console.log(updateSql, params)
-    const t = await db.exec(updateSql, params);
-    return  t
-}
-
-const test = async function () {
-    const querySql = "delete from live_fix_log where log_id = 7"
-    const t2 = await raw(querySql,[])
-    console.log(t2)
-}
-
-
-
-
-test().then(() => {
-    console.log("end!")
-    process.exit(0)
-}).catch(e => {
-    console.log('error is : ', e)
-    process.exit(1)
-})
+burn();
