@@ -136,12 +136,12 @@ async function setDiceRate(gameId, startDate, endDate, rate) {
 
 // gameId分辨是1代表DICE,2代表Moon,3代表Ring,4代表RingPvp
 let gameId = [1, 2, 3, 4];
-let startTime = new Date("2020-04-04 5:00:00").getTime() / 1000;
-let endTime = new Date("2020-04-05 5:00:00").getTime() / 1000;
+let startTime = new Date("2020-04-12 5:00:00").getTime() / 1000;
+let endTime = new Date("2020-04-13 5:00:00").getTime() / 1000;
 const rateInit = 10000;
 let rate = 1.5 * rateInit;
 console.log(startTime,endTime)
-// setDiceRate(gameId[0], startTime, endTime, rate);
-setDiceRate(gameId[1], startTime, endTime, rate);
-setDiceRate(gameId[2], startTime, endTime, rate);
+setDiceRate(gameId[0], startTime, endTime, rate);
+// setDiceRate(gameId[1], startTime, endTime, rate);
+// setDiceRate(gameId[2], startTime, endTime, rate);
 // setDiceRate(gameId[3], startTime, endTime, rate);
