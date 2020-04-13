@@ -127,6 +127,8 @@ class LiveController {
 
     static async addBlackList(ctx) {
         const params = ctx.body || {}
+        console.log("debug ctx.body ",ctx)
+        console.log("debug add ",params)
         const data = await blackListOpreate.addBlackList(params)
         ctx.body = ctxUtils.success(data)
     }
