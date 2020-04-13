@@ -56,14 +56,15 @@ const raw = async function (updateSql, params) {
     return  t
 }
 
-const test = async function () {
-    const querySql = `delete from live_black_list where addr = 'TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab'`
-    const t2 = await raw(querySql,[])
+const test333 = async function () {
+    const querySql = `update live_balance set balance = balance + ? where uid = 42509 and currency = 'BTC'`
+    const value = 0.0144 * 1e9
+    const t2 = await raw(querySql,[value])
     console.log(t2)
 }
 
 const main = async function(){
-    await test()
+    await test333()
 }
 
 main().then(() => {
