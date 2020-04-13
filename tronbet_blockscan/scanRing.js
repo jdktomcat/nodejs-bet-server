@@ -136,7 +136,7 @@ async function alysisTxs(tx) {
             let hexTopics = _log.topics;
             let hexData = _log.data;
             let eventCode = hexTopics[0];
-            console.log(_log);
+            // console.log(_log);
             if (eventCode === RingPvpNew) {
               let log = {
                 _roomId: hexStringToBigNumber(hexTopics[2].substr(0, 64)).toNumber(),
@@ -148,7 +148,7 @@ async function alysisTxs(tx) {
                 _tx: txID,
                 _ts: timestamp
               };
-              console.log(log);
+              // console.log(log);
               let result = await saveJoinRoomInfo(log);
               if (!result) {
                 return false;
@@ -165,7 +165,7 @@ async function alysisTxs(tx) {
                 _tx: txID,
                 _ts: timestamp
               };
-              console.log(log);
+              // console.log(log);
               let result = await saveJoinRoomInfo(log);
               if (!result) {
                 return false;
@@ -189,7 +189,7 @@ async function alysisTxs(tx) {
             let hexTopics = _log.topics;
             let hexData = _log.data;
             let eventCode = hexTopics[0];
-            console.log(_log);
+            // console.log(_log);
             if (eventCode === RingPvpResult) {
               let log = {
                 _roomId: hexStringToBigNumber(hexTopics[1].substr(0, 64)).toNumber(),
@@ -201,7 +201,7 @@ async function alysisTxs(tx) {
                 _status: 3,
                 _ts: timestamp
               };
-              console.log(log);
+              // console.log(log);
               let result = await saveRoomResultInfo(log);
               if (!result) {
                 return false;
@@ -217,7 +217,7 @@ async function alysisTxs(tx) {
               if (!result) {
                 return false;
               }
-              console.log(log);
+              // console.log(log);
             }
           }
         }
@@ -235,7 +235,7 @@ async function saveJoinRoomInfo(info) {
   let player = 'player' + (info._seatIndex + 1);
   let tx = player + 'Tx';
   let sql = 'insert into tron_bet_admin.wheel_solo_order(room_id, seat_id, createTs,playerCnt, amount,' + player + ', ' + tx + ') values(?,?,?,?,?,?,?) on duplicate key update ' + player + '= ?,' + tx + ' = ?';
-  console.log(sql);
+  // console.log(sql);
   let conn = null;
   try {
     conn = await getConnection();
@@ -261,7 +261,7 @@ async function saveRoomCancelInfo(info) {
   let player = 'player' + (info._seatIndex + 1);
   let tx = player + 'Tx';
   let sql = 'update tron_bet_admin.wheel_solo_order set status = ?, settleTx = ?,endTs = ? where room_id = ? ';
-  console.log(sql);
+  // console.log(sql);
   let conn = null;
   try {
     conn = await getConnection();
@@ -299,7 +299,7 @@ async function saveRoomResultInfo(info) {
     conn.beginTransaction();
     await execTrans(sql, [info._winAmount, info._winIndex, info._playerAddr, info._status, info._tx, info._ts, info._roomId], conn);
     let result = await query('select player1, player2, player3, player4, amount from tron_bet_admin.wheel_solo_order where room_id = ?', [info._roomId]);
-    console.log(result[0]);
+    // console.log(result[0]);
     if (result[0]) {
       if (result[0].player1) {
         let wheelUpdate = await execTrans(totalUpdateSql, [result[0].player1, 0, 0, 0, info._playerAddr == result[0].player1 ? 1 : 0, '', 0, now, now, result[0].amount || 0, info._playerAddr == result[0].player1 ? info._winAmount : 0, result[0].amount || 0, info._playerAddr == result[0].player1 ? info._winAmount : 0, now, info._playerAddr == result[0].player1 ? 1 : 0], conn);
