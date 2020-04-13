@@ -249,7 +249,7 @@ async function alysisTxs(tx){
                                 // _index: hexStringToBigNumber(hexData.substr(1024, 256)).toNumber(),
                             }
                             // loggerDefault.info(log);
-                            console.log(log)
+                            // console.log(log)
                             let result = await saveWheelRoundInfo(log)
                             if (!result) {
                                 return false
@@ -301,7 +301,7 @@ async function alysisTxs(tx){
                             resultInfo.players.push(log)
                         }
                     }
-                    console.log(resultInfo)
+                    // console.log(resultInfo)
                     let result = await saveWheelRoundDetailInfo(resultInfo)
                     if (!result) {
                         return false
