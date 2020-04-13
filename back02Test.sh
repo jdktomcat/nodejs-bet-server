@@ -41,6 +41,8 @@ cd tronswagger_hub && pm2 start npm --name tronswagger_hub -- run test && cd ..
 
 # cd coin_exchange && pm2 start npm --name coin_exchange -- run test && cd ..
 
-cd tronbet_event02 && pm2 start npm --name tronbet_event02 -- run test && cd ..
+#cd tronbet_event02 && pm2 start npm --name tronbet_event02 -- run test && cd ..
 
-cd tronbet_live && npm run test:game
+#cd tronbet_live && npm run test:game
+
+cd tronlive_platius && pm2 start npm --name tronlive_platius -- run test && cd ..

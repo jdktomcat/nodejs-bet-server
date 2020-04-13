@@ -9,6 +9,7 @@ const queryWithDraw = require("../model/live/queryWithDraw")
 const QueryDrop = require("../model/live/queryAirDrop")
 const queryOtherCurrency = require("../model/live/queryOtherCurrency")
 const queryAirData = require("../model/live/queryAirDropList")
+const blackListOpreate = require("../model/live/queryBlackList")
 
 class LiveController {
     /**
@@ -113,6 +114,22 @@ class LiveController {
     static async queryAirDropData(ctx) {
         const params = ctx.query || {}
         const data = await queryAirData.getData(params)
+        ctx.body = ctxUtils.success(data)
+    }
+
+
+    static async queryBlackList(ctx) {
+        const params = ctx.query || {}
+        const data = await blackListOpreate.queryBlackList(params)
+        ctx.body = ctxUtils.success(data)
+    }
+
+
+    static async addBlackList(ctx) {
+        const params = ctx.request.body || {}
+        // console.log("debug ctx.body ",ctx)
+        // console.log("debug add ",params)
+        const data = await blackListOpreate.addBlackList(params)
         ctx.body = ctxUtils.success(data)
     }
 

@@ -681,6 +681,16 @@ async function getWithdraw5minLimit(addr) {
     return res[0].ts || 0
 }
 
+async function isInLiveBlackList(addr) {
+    let sql = "select * from tron_live.live_black_list where addr = ?"
+    let res = await db.exec(sql, [addr])
+    if (res.length === 0){
+        return false
+    }else {
+        return true
+    }
+}
+
 module.exports = {
     getUserBalance,
     userRegister,
@@ -747,4 +757,5 @@ module.exports = {
     findTodayTotalWithdrawAmount,
     getWithdraw5minLimit,
     getLiveFix,
+    isInLiveBlackList,
 }

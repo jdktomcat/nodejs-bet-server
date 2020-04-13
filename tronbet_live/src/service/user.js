@@ -210,7 +210,10 @@ async function withdraw(ctx) {
     return await common.sendMsgToClient(ctx, 1010, 'atron address error!!!');
   }
 
-  if (app.blacklist[addr]) {
+  const isInBlackListSign = await usermodel.isInLiveBlackList(addr)
+  // if (app.blacklist[addr]) {
+  console.log("debug isInBlackListSign is ",isInBlackListSign)
+  if (isInBlackListSign) {
     await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }
