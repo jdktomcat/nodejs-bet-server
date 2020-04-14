@@ -659,6 +659,7 @@ appEvent.on('player_in', (addr, bet, auto_out) => {
 })
 
 appEvent.on('player_out', (addr, _auto_out) => {
+    console.log("enter player_out and _auto_out is ",_auto_out, _auto_out != null)
     if (crash_info.state !== GAME_STATE.RUNNING) return loggerDefault.warn("×××", "Game is not running", addr);
     let player_info = crash_info.players[addr];
     if (player_info == null) return loggerDefault.warn("×××", "addr is not exists", addr);
@@ -673,12 +674,14 @@ appEvent.on('player_out', (addr, _auto_out) => {
         loggerDefault.info("√√√", "auto out <<< [" + addr + "] @" + _auto_out + "X;");
         cashed_out = _auto_out;
     } else {
+        console.log("enter getCashedoutByDuration start and end",crash_info.begin_ts,_now)
         cashed_out = getCashedoutByDuration(hold_ts / 1000);
     }
     if (cashed_out <= 1) {
         cashed_out = 1.01;
     }
     if (cashed_out > crash_info.result) {
+        console.log("enter crash_info.result is: ", JSON.stringify(crash_info))
         cashed_out = crash_info.result;
     }
     if (cashed_out > MAX_RATE) {
