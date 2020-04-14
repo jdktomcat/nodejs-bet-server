@@ -1,76 +1,45 @@
 const db = require("./src/utils/dbUtil");
 
-const queryBalance = async function (array) {
-    const sql = `select a.uid,a.currency,a.addr,a.balance / 1000000000 as balance,b.email from tron_live.live_balance as a left join tron_live.live_account b on a.uid = b.uid where a.uid = b.uid and a.uid = ? and a.currency = ? and a.addr = ? and b.email = ?`
-    const a1 = array.length
-    let a2 = 0
-    for (let e of array) {
-        const p = [e.uid, e.currency, e.addr, e.email]
-        const a = await db.exec(sql, p)
-        if (a.length > 0) {
-            a2 += 1
-        }
-        console.log(sql, JSON.stringify(p), ' and result is', a)
+async function insertDB(info) {
+    let sql =
+        "insert into tron_bet_admin.ante_burnt_log(types, call_addr, amount, ts, tx_id) values (?, ?, ?, ?, ?) ON DUPLICATE KEY update tx_id = ?";
+
+    let res = await db.exec(sql, [
+        info.type,
+        info.addr,
+        info.amount,
+        info.ts,
+        info.tx,
+        info.tx
+    ]);
+    console.log("insertDB res", res);
+}
+
+async function main() {
+    let info = [];
+    let obj1 = {};
+    //奖池燃烧
+    obj1.type = 2;
+    obj1.addr = "THtbMw6byXuiFhsRv1o1BQRtzvube9X1jx";
+    obj1.amount = 45648927218100;
+    obj1.ts = 1586512608000;
+    obj1.tx = "3402628bb5cabb373a2b93388afc6ba78c05dfa586be41b0f623cd7906b299f6";
+    info.push(obj1);
+
+    let obj3 = {};
+    //回购燃烧
+    obj3.type = 1;
+    obj3.addr = "THNpF5h4isLgXe7rtw6833nSgTqhfuVJLN";
+    obj3.amount = 376007484281000;
+    obj3.ts = 1586846238000;
+    obj3.tx = "6894c11fd6c6424a04991f06565941028f68b1a5fd3a971a17987867e96967fe";
+    info.push(obj3);
+
+    for (let item of info) {
+        await insertDB(item);
     }
-    return a2 === a1
+
+    process.exit(0);
 }
 
-
-const updateAddBalance = async function (array) {
-    for (let e of array) {
-        const updateSql = "update tron_live.live_balance set balance = balance + ? where uid = ? and currency = ? "
-        const params = [e.fix, e.uid, e.currency]
-        console.log(updateSql, params)
-        await db.exec(updateSql, params);
-    }
-}
-
-const fixBalance = async function () {
-    // const array = [
-    //     {
-    //         uid: '42869',
-    //         addr: "bnb1vheud6fefdfhds3u5qwh6dvt8rdkw0ktxafrr2",
-    //         email: 'gfbrown1411@gmail.com',
-    //         fix: 16.02 * 1e9,
-    //         currency: "BNB"
-    //     },
-    // ]
-    // const ifUpdate = await queryBalance(array)
-    // //
-    // console.log("ifUpdate: ", ifUpdate)
-    // if (ifUpdate) {
-    //     console.log("begin ____> update")
-    //     await updateAddBalance(array)
-    //     //
-    //     console.log("------>after is")
-    //     await queryBalance(array)
-    // } else {
-    //     console.log("please check your params")
-    // }
-}
-
-
-const raw = async function (updateSql, params) {
-    console.log(updateSql, params)
-    const t = await db.exec(updateSql, params);
-    return  t
-}
-
-const test333 = async function () {
-    const querySql = `update live_balance set balance = balance + ? where uid = 42509 and currency = 'BTC'`
-    const value = 0.0144 * 1e9
-    const t2 = await raw(querySql,[value])
-    console.log(t2)
-}
-
-const main = async function(){
-    await test333()
-}
-
-main().then(() => {
-    console.log("end!")
-    process.exit(0)
-}).catch(e => {
-    console.log('error is : ', e)
-    process.exit(1)
-})
+main();

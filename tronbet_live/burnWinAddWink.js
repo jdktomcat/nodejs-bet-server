@@ -18,19 +18,21 @@ async function insertDB(info) {
 async function main() {
   let info = [];
   let obj1 = {};
+  //奖池燃烧
   obj1.type = 2;
   obj1.addr = "THtbMw6byXuiFhsRv1o1BQRtzvube9X1jx";
-  obj1.amount = 87648144528800;
-  obj1.ts = 1580563764000;
-  obj1.tx = "59c33bd4138ebccaee01a7c4f9ff7fa80290f73f45c58e98d2eb914cf1075e23";
+  obj1.amount = 45648927218100;
+  obj1.ts = 1586512608000;
+  obj1.tx = "3402628bb5cabb373a2b93388afc6ba78c05dfa586be41b0f623cd7906b299f6";
   info.push(obj1);
 
   let obj3 = {};
+  //回购燃烧
   obj3.type = 1;
-  obj3.addr = "TGu15y1eQk5yxax985VVNAikLca8usBtyp";
-  obj3.amount = 226665923000000;
-  obj3.ts = 1580715984000;
-  obj3.tx = "1cbacf205517f0a6ffd7b985ac276efa5f46555fab7065792a9b9ccabb8d10c8";
+  obj3.addr = "THNpF5h4isLgXe7rtw6833nSgTqhfuVJLN";
+  obj3.amount = 376007484281000;
+  obj3.ts = 1586846238000;
+  obj3.tx = "6894c11fd6c6424a04991f06565941028f68b1a5fd3a971a17987867e96967fe";
   info.push(obj3);
 
   for (let item of info) {
