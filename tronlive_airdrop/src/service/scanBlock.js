@@ -1,7 +1,9 @@
 const conf = require('../configs/config')
 const moment = require('moment')
 const _ = require('lodash')._
-const logger = require('../configs/log4js.config')
+const log4js = require('log4js');
+const logger = log4js.getLogger();
+logger.level = 'debug';
 const sha3 = require('js-sha3')
 const evnets = require('events')
 const fs = require("fs")

@@ -4,7 +4,9 @@
 
 const usermodel = require('../model/usermodel')
 const _ = require('lodash')._
-const logger = require('../configs/log4js.config')
+const log4js = require('log4js');
+const logger = log4js.getLogger();
+logger.level = 'debug';
 const evnets = require('events')
 const common = require('../utils/common')
 const ss = require('../utils/tronUtil')
