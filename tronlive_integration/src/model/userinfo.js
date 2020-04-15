@@ -19,9 +19,9 @@ const expirationTypeDict = {
 }
 
 async function getAllBalance(params) {
-    const {addr, currency} = params
+    const {addr} = params
     let sql = "select addr as user,round(balance / 1000000, 3) as balance,currency from tron_live.live_balance where  addr = ?"
-    let res = await raw(sql, [currency, addr])
+    let res = await raw(sql, [addr])
     if (res.length === 0) {
         return Promise.reject(new Error("user not found"))
     }else {
