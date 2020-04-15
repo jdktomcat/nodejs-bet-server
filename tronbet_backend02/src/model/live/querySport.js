@@ -85,6 +85,7 @@ class QuerySport {
 
     static async getData(params) {
         const data = await getData(params)
+        console.log("sport data is ",data)
         return data
     }
 
