@@ -55,7 +55,8 @@ const getData = async function (params) {
     let rs = {}
     if(roundId !== ''){
         const o = await raw(sql, sqlParams)
-        formatData(o)
+        console.log("sport data is ",o)
+        // formatData(o)
         rs = {
             count : 1,
             rows : o
@@ -85,7 +86,6 @@ class QuerySport {
 
     static async getData(params) {
         const data = await getData(params)
-        console.log("sport data is ",data)
         return data
     }
 
