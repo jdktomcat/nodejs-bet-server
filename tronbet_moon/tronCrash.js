@@ -102,6 +102,7 @@ async function LandOnMoon(crash_info) {
     ];
 
     if (config.debug === true) loggerDefault.info(params);
+    console.log(`LandOnMoon${crash_info.round} is`, params)
 
     let ret = await tronExec(orcAddr, "LandOnMoon(uint256,uint256,uint32[])", 50000000, 0, params, null);
     // console.log("ret for LandOnMoon",ret);
