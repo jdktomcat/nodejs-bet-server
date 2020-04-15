@@ -18,6 +18,17 @@ const expirationTypeDict = {
     2: 'binary',
 }
 
+async function getAllBalance(params) {
+    const {addr, currency} = params
+    let sql = "select addr as user,round(balance / 1000000, 3) as balance,currency from tron_live.live_balance where  addr = ?"
+    let res = await raw(sql, [currency, addr])
+    if (res.length === 0) {
+        return Promise.reject(new Error("user not found"))
+    }else {
+        return res
+    }
+}
+
 async function getBalance(params) {
     const {addr, currency} = params
     let sql = "select addr as user,round(balance / 1000000, 3) as balance,currency from tron_live.live_balance where currency = ? and addr = ?"
@@ -115,6 +126,7 @@ update tron_live.integration_transaction_log set win = 0 , status = ? where tran
 
 module.exports = {
     getBalance,
+    getAllBalance,
     checkToken,
     buy,
     close,

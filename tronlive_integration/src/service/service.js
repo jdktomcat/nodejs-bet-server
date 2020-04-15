@@ -89,7 +89,7 @@ class Service {
                 addr: tokenInfo.user,
                 currency: tokenInfo.currency,
             }
-            const balanceInfo = await usermodel.getBalance(p)
+            const balanceInfo = await usermodel.getAllBalance(p)
             return this.success(balanceInfo)
         }
     }
