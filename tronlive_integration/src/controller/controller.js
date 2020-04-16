@@ -4,23 +4,47 @@ class apiCall {
 
     static async identify(ctx) {
         const params = ctx.query || {}
-        ctx.body = await service.identify(params)
+        const t  = await service.identify(params)
+        if(t.code === '2'){
+            ctx.status = 400;
+            ctx.body = t
+        }else {
+            ctx.body = t
+        }
     }
 
     static async buy(ctx) {
         const params = ctx.request.body || {}
-        ctx.body = await service.buy(params)
+        const t  = await service.buy(params)
+        if(t.code === '2'){
+            ctx.status = 400;
+            ctx.body = t
+        }else {
+            ctx.body = t
+        }
     }
 
 
     static async close(ctx) {
         const params = ctx.request.body || {}
-        ctx.body = await service.close(params)
+        const t  = await service.close(params)
+        if(t.code === '2'){
+            ctx.status = 400;
+            ctx.body = t
+        }else {
+            ctx.body = t
+        }
     }
 
     static async refund(ctx) {
         const params = ctx.request.body || {}
-        ctx.body = await service.refund(params)
+        const t = await service.refund(params)
+        if(t.code === '2'){
+            ctx.status = 400;
+            ctx.body = t
+        }else {
+            ctx.body = t
+        }
     }
 }
 
