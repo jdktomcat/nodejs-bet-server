@@ -19,7 +19,7 @@ class apiCall {
         console.log("debug buy is ",t)
         if(t.code === '2'){
             console.log("debug-------->",ctx)
-            ctx.status = 400;
+            ctx.status = 500;
             ctx.body = t
         }else {
             ctx.body = t
