@@ -17,9 +17,9 @@ class apiCall {
         const params = ctx.request.body || {}
         const t  = await service.buy(params)
         console.log("debug buy is ",t)
-        if(t.code === '2'){
+        if(t.code === 2){
             console.log("debug-------->",ctx)
-            ctx.status = 500;
+            ctx.status = 400;
             ctx.body = t
         }else {
             ctx.body = t
