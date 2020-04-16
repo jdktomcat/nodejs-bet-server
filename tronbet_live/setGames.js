@@ -88,8 +88,21 @@ CREATE TABLE tron_live.integration_transaction_log (
     console.log(t2)
 }
 
+
+
+const test20200416 = async function () {
+    const sql1 = `alter  table tron_live.sports_transaction_log change betslipId betslipId varchar(64);`
+    const sql2 = `alter  table tron_live.sports_transaction_log change transactionId transactionId varchar(64);`
+    const t1 = await raw(sql1,[])
+    const t2 = await raw(sql1,[])
+    console.log(t1)
+    console.log(t2)
+    console.log('end -----  .')
+}
+
 const main = async function(){
-    await test333()
+    // await test333()
+    await test20200416()
 }
 
 main().then(() => {
