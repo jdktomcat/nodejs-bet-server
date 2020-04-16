@@ -660,7 +660,8 @@ async function betDiscard(ctx) {
       addr: addr,
       betTransactionId: transaction_id,
       amount: transaction[0].amount,
-      uid: user[0].uid
+      uid: user[0].uid,
+      currency : transaction[0].currency,
     };
     let conn = null;
     try {
