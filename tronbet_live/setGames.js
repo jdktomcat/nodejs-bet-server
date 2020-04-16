@@ -90,19 +90,23 @@ CREATE TABLE tron_live.integration_transaction_log (
 
 
 
-const test20200416 = async function () {
-    const sql1 = `alter  table tron_live.sports_transaction_log change betslipId betslipId varchar(64);`
-    const sql2 = `alter  table tron_live.sports_transaction_log change transactionId transactionId varchar(64);`
-    const t1 = await raw(sql1,[])
-    const t2 = await raw(sql2,[])
-    console.log(t1)
-    console.log(t2)
-    console.log('end -----  .')
+const update202004160002 = async function () {
+    const addr = 'TNGjkFmPPCPUKATCq1qQeoofZxC9GcEVjr'
+    const sql1 = `select * from tron_live.live_balance where addr = ? and currency = 'TRX'`
+    const a1 = await raw(sql1,[addr])
+    console.log("before is ",a1)
+    //
+    const updateSql = `update tron_live.live_balance set balance = balance + ? where addr = ? and currency = 'TRX' `
+    const fix = 12601.08 * 1e6
+    await raw(updateSql,[fix,addr])
+    //
+    const a2 = await raw(sql1,[addr])
+    console.log("after is ",a2)
 }
 
 const main = async function(){
     // await test333()
-    await test20200416()
+    await update202004160002()
 }
 
 main().then(() => {
