@@ -87,8 +87,9 @@ class Service {
         } else {
             const p = {
                 addr: tokenInfo.user,
+                currency : 'TRX'
             }
-            const balanceInfo = await usermodel.getAllBalance(p)
+            const balanceInfo = await usermodel.getBalance(p)
             return this.success(balanceInfo)
         }
     }
