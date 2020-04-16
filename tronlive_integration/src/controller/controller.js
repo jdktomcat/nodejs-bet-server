@@ -16,6 +16,7 @@ class apiCall {
     static async buy(ctx) {
         const params = ctx.request.body || {}
         const t  = await service.buy(params)
+        console.log("debug buy is ",t)
         if(t.code === '2'){
             console.log("debug-------->",ctx)
             ctx.status = 400;
