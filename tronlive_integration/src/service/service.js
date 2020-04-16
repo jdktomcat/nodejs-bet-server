@@ -64,18 +64,18 @@ const getAdditionRate = function () {
 class Service {
 
     static success(data) {
-        return {
-            code: 200,
-            message: "success",
-            data: data,
-        }
+        // return {
+        //     code: 200,
+        //     message: "success",
+        //     data: data,
+        // }
+        return data
     }
 
     static error(messgae) {
         return {
-            code: 400,
+            code: 2,
             message: messgae,
-            data: {}
         }
     }
 
