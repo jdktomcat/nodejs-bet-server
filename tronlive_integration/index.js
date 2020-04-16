@@ -25,8 +25,10 @@ app.use(async (ctx, next) => {
     try {
         await next()
     } catch (e) {
+        console.log("error--->",e.toString())
         ctx.status = 500;
         ctx.body = {
+            code : 500,
             message: e.toString()
         }
     }
