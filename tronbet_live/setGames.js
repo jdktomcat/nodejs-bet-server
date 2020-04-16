@@ -94,7 +94,7 @@ const test20200416 = async function () {
     const sql1 = `alter  table tron_live.sports_transaction_log change betslipId betslipId varchar(64);`
     const sql2 = `alter  table tron_live.sports_transaction_log change transactionId transactionId varchar(64);`
     const t1 = await raw(sql1,[])
-    const t2 = await raw(sql1,[])
+    const t2 = await raw(sql2,[])
     console.log(t1)
     console.log(t2)
     console.log('end -----  .')
