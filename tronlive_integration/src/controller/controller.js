@@ -6,6 +6,7 @@ class apiCall {
         const params = ctx.query || {}
         const t  = await service.identify(params)
         if(t.code === '2'){
+            console.log("debug-------->",ctx)
             ctx.status = 400;
             ctx.body = t
         }else {
