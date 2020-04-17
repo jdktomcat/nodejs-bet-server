@@ -85,8 +85,9 @@ class Service {
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
         } else {
+            const addr = tokenInfo.user || tokenInfo.addr || ''
             const p = {
-                addr: tokenInfo.user,
+                addr: addr,
                 currency: 'TRX'
             }
             const balanceInfo = await usermodel.getBalance(p)
