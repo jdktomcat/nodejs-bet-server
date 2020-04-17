@@ -5,15 +5,14 @@ const {depositData, reissueRecord} = require('../model/deposit')
 const RefreshRateUtils = require('../model/refreshRate')
 const {insertGameSchedule, getScheduleList, deleteGameSchedule} = require('../dailyschedule/productRateSchedule')
 const game = require("../service/games");
-const redisUtil = require("../utils/redisUtil");
 const {app} = require('../configs/config')
-const platiusSign = require('../cp/platius')
+const {cpConfigKey,getCpToken} = require('../cp/cpTokenUtils')
 const redisUtils = require('../utils/redisUtil')
 
 //
 async function updateOnlineGameList() {
     let games = await game.parseGames();
-    await redisUtil.hset("tronlive:gamelist", "games", JSON.stringify(games));
+    await redisUtils.hset("tronlive:gamelist", "games", JSON.stringify(games));
     console.log(games);
 }
 
@@ -305,7 +304,7 @@ async function platinusAPI(ctx) {
 
     if(val === null){
         try {
-            const token = platiusSign(addr)
+            const token = getCpToken(addr,cpConfigKey.Platinus)
             await redisUtils.set(tokenRedisKey, token)
             await redisUtils.expire(tokenRedisKey, 60) // 设置过期时间为7天
             val = await redisUtils.get(tokenRedisKey)
@@ -317,18 +316,31 @@ async function platinusAPI(ctx) {
 }
 
 
-async function getPlatinusToken(ctx) {
-    let params = ctx.request.query || {}
-    let token = params.token || ''
+async function getBinaryToken(ctx) {
+    let params = ctx.request.body || {}
+    let addr = params.addr || ''
     //
-    if(token === ''){
+    if(addr === ''){
         return ctx.body = {code: 500, message: "error"}
     }
-    const secretKey = 'df1d0fa3-0634-48b4-a34c-555fc82a1fd6'
-    const jwt = require('jsonwebtoken');
-    const data = jwt.verify(token, secretKey)
-    ctx.body = {code: 200, message: "success", data: data}
+    const tokenRedisKey = "BinaryToken_" + addr
+    let val = await redisUtils.get(tokenRedisKey)
+    console.log("BinaryToken_addr: ",addr)
+    console.log("BinaryToken_token: ",val)
+
+    if(val === null){
+        try {
+            const token = getCpToken(addr,cpConfigKey.Binary)
+            await redisUtils.set(tokenRedisKey, token)
+            await redisUtils.expire(tokenRedisKey, 60) // 设置过期时间为7天
+            val = await redisUtils.get(tokenRedisKey)
+        }catch (e) {
+            return ctx.body = {code: 500, message: "fail", error: e.toString()}
+        }
+    }
+    ctx.body = {code: 200, message: "success", data: val}
 }
+
 
 module.exports = {
     queryDeposit: queryDepositTmp,
@@ -344,5 +356,5 @@ module.exports = {
     deleteSchedule: deleteSchedule,
     allSchedule: allSchedule,
     platinusAPI : platinusAPI,
-    getPlatinusToken : getPlatinusToken,
+    getBinaryToken : getBinaryToken,
 }

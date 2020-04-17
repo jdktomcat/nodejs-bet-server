@@ -93,6 +93,9 @@ let config = {
   Platinus: {
     secretKey: "df1d0fa3-0634-48b4-a34c-555fc82a1fd6",
   },
+  Binary: {
+    secretKey: "1d1622455b6cb36ef2211b76facc3079cbe9a738",
+  },
   currency: ['BTC', 'LTC', 'BCH', 'ETH', 'BNB'],
   withdrawMaxConf: {
     BTC: 2,
