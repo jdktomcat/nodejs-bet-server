@@ -90,17 +90,18 @@ class Service {
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
         } else {
-            const addr = tokenInfo.user || tokenInfo.addr || ''
-            console.log("debug ----> ",tokenInfo.user)
-            console.log("debug ----> ",tokenInfo.addr)
-            console.log("debug ----> ",addr)
-            console.log("debug ----> ",tokenInfo)
-            const p = {
-                addr: addr,
-                currency: 'TRX'
+            const o = usermodel.checkToken(params.payload)
+            if(o.tokenError){
+                return this.error("token parse error , please check with your token!")
+            }else {
+                const addr = o.user || o.addr || ''
+                const p = {
+                    addr: addr,
+                    currency: 'TRX'
+                }
+                const balanceInfo = await usermodel.getBalance(p)
+                return this.success(balanceInfo)
             }
-            const balanceInfo = await usermodel.getBalance(p)
-            return this.success(balanceInfo)
         }
     }
 
