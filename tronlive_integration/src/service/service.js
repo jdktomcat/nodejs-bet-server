@@ -91,6 +91,9 @@ class Service {
             return this.error("token parse error , please check with your token!")
         } else {
             const addr = tokenInfo.user || tokenInfo.addr || ''
+            console.log("debug ----> ",tokenInfo.user)
+            console.log("debug ----> ",tokenInfo.addr)
+            console.log("debug ----> ",user)
             const p = {
                 addr: addr,
                 currency: 'TRX'
