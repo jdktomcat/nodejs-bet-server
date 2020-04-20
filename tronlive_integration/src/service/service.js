@@ -90,7 +90,7 @@ class Service {
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
         } else {
-            const o = usermodel.checkToken(params.payload)
+            const o = usermodel.checkToken(tokenInfo.token)
             if(o.tokenError){
                 return this.error("token parse error , please check with your token!")
             }else {
