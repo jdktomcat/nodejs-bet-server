@@ -64,18 +64,18 @@ const getAdditionRate = function () {
 class Service {
 
     static success(data) {
-        return {
-            code: 200,
-            message: "success",
-            data: data,
-        }
+        // return {
+        //     code: 200,
+        //     message: "success",
+        //     data: data,
+        // }
+        return data
     }
 
     static error(messgae) {
         return {
-            code: 400,
+            code: 2,
             message: messgae,
-            data: {}
         }
     }
 
@@ -85,97 +85,88 @@ class Service {
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
         } else {
+            const addr = tokenInfo.user || tokenInfo.addr || ''
             const p = {
-                addr: tokenInfo.user,
+                addr: addr,
+                currency: 'TRX'
             }
-            const balanceInfo = await usermodel.getAllBalance(p)
+            const balanceInfo = await usermodel.getBalance(p)
             return this.success(balanceInfo)
         }
     }
 
     static async buy(params) {
         console.log("buy params is ", params)
-        try {
-            if (!['TRX', 'USDT'].includes(params.currency)) {
-                return this.error("currency value is error !")
-            }
-            //
-            const dictFields = [params.kind, params.status, params.expirationType]
-            const dictFieldsSign = dictFields.every(e => [1, 2].includes(Number(e)))
-            console.log(dictFields)
-            if (!dictFieldsSign) {
-                return this.error("kind/status/expiration_type value is invaild !")
-            }
-            const beforebalance = await usermodel.getBalance({addr: params.user, currency: params.currency})
-            if (Number(params.sum) > Number(beforebalance.balance)) {
-                return this.error("balance not enough!")
-            }
-            let amount = Number(params.sum) * 1e6
-            const rate = getAdditionRate()
-            console.log("debug ----> ", rate)
-            const adAmount = rate * amount
-            const sqlParam = {
-                'transaction_id': params.id,
-                'addr': params.user,
-                'asset': params.asset,
-                'kind': Number(params.kind),
-                'amount': amount,
-                'win': 0,
-                'adAmount': adAmount,
-                'currency': params.currency,
-                'quote_open': Number(params.quoteOpen),
-                'quote_close': Number(params.quoteClose),
-                'created_at': Number(params.createdAt),
-                'profitability': Number(params.profitability),
-                'expiration_date': Number(params.expirationDate),
-                'expiration_type': Number(params.expirationType)
-            }
-            await usermodel.buy(sqlParam)
-            const balanceInfo = await usermodel.getBalance(sqlParam)
-            sendGameMsg(sqlParam.addr, Date.now(), sqlParam.amount, sqlParam.currency);
-            return this.success(balanceInfo)
-        } catch (e) {
-            return this.error(e.toString())
+        //
+        if (!['TRX', 'USDT'].includes(params.currency)) {
+            return this.error("currency value is error !")
         }
+        //
+        const dictFields = [params.kind, params.status, params.expirationType]
+        const dictFieldsSign = dictFields.every(e => [1, 2].includes(Number(e)))
+        console.log(dictFields)
+        if (!dictFieldsSign) {
+            return this.error("kind/status/expiration_type value is invaild !")
+        }
+        const beforebalance = await usermodel.getBalance({addr: params.user, currency: params.currency})
+        if (Number(params.sum) > Number(beforebalance.balance)) {
+            return this.error("balance not enough!")
+        }
+        let amount = Number(params.sum) * 1e6
+        const rate = getAdditionRate()
+        console.log("debug ----> ", rate)
+        const adAmount = rate * amount
+        const sqlParam = {
+            'transaction_id': params.id,
+            'addr': params.user,
+            'asset': params.asset,
+            'kind': Number(params.kind),
+            'amount': amount,
+            'win': 0,
+            'adAmount': adAmount,
+            'currency': params.currency,
+            'quote_open': Number(params.quoteOpen),
+            'quote_close': Number(params.quoteClose),
+            'created_at': Number(params.createdAt),
+            'profitability': Number(params.profitability),
+            'expiration_date': Number(params.expirationDate),
+            'expiration_type': Number(params.expirationType)
+        }
+        await usermodel.buy(sqlParam)
+        const balanceInfo = await usermodel.getBalance(sqlParam)
+        sendGameMsg(sqlParam.addr, Date.now(), sqlParam.amount, sqlParam.currency);
+        return this.success(balanceInfo)
     }
 
     static async close(params) {
         console.log("close params is ", params)
-        try {
-            if (!['TRX', 'USDT'].includes(params.currency)) {
-                return this.error("currency value is error !")
-            }
-            const p = {
-                win: Number(params.income) * 1e6,
-                transaction_id: params.id,
-                addr: params.user,
-                currency: params.currency
-            }
-            await usermodel.close(p)
-            const balanceInfo = await usermodel.getBalance(p)
-            return this.success(balanceInfo)
-        } catch (e) {
-            return this.error(e.toString())
+        if (!['TRX', 'USDT'].includes(params.currency)) {
+            return this.error("currency value is error !")
         }
+        const p = {
+            win: Number(params.income) * 1e6,
+            transaction_id: params.id,
+            addr: params.user,
+            currency: params.currency
+        }
+        await usermodel.close(p)
+        const balanceInfo = await usermodel.getBalance(p)
+        return this.success(balanceInfo)
     }
 
     static async refund(params) {
-        try {
-            if (!['TRX', 'USDT'].includes(params.currency)) {
-                return this.error("currency value is error !")
-            }
-            const p = {
-                amount: Number(params.sum),
-                transaction_id: params.id,
-                addr: params.user,
-                currency: params.currency
-            }
-            await usermodel.refund(p)
-            const balanceInfo = await usermodel.getBalance(p)
-            return this.success(balanceInfo)
-        } catch (e) {
-            return this.error(e.toString())
+        if (!['TRX', 'USDT'].includes(params.currency)) {
+            return this.error("currency value is error !")
         }
+        const p = {
+            amount: Number(params.sum),
+            transaction_id: params.id,
+            addr: params.user,
+            currency: params.currency
+        }
+        await usermodel.refund(p)
+        const balanceInfo = await usermodel.getBalance(p)
+        return this.success(balanceInfo)
     }
 
 }

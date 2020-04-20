@@ -24,4 +24,4 @@ module.exports = router.get('/deleteSchedule', action.deleteSchedule)
 module.exports = router.get('/allSchedule', action.allSchedule)
 //
 module.exports = router.post('/platinusToken', action.platinusAPI)
-module.exports = router.get('/getPlatinusToken', action.getPlatinusToken)
+module.exports = router.post('/getBinaryToken', action.getBinaryToken)
