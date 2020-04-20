@@ -93,10 +93,10 @@ class Service {
         } else {
             const info = tokenInfo
             console.log("token info is ",tokenInfo)
-            const addr = info.addr || info.user || ''
+            const rawToken = tokenInfo.token
             let tron_address = ''
             try{
-                tron_address = decrypt(addr)
+                tron_address = decrypt(rawToken)
             }catch (e) {
                 console.log(e)
                 return this.error("addr is error, please check with your token!")
