@@ -81,7 +81,7 @@ class Service {
 
     static async identify(params) {
         console.log("identify params is ", params)
-        const {tokenError, tokenInfo} = usermodel.checkToken(params.token)
+        const {tokenError, tokenInfo} = usermodel.checkToken(params.payload)
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
         } else {
