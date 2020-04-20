@@ -94,7 +94,8 @@ class Service {
             if(o.tokenError){
                 return this.error("token parse error , please check with your token!")
             }else {
-                const addr = o.user || o.addr || ''
+                const info = o.tokenInfo
+                const addr = info.addr || info.user || ''
                 const p = {
                     addr: addr,
                     currency: 'TRX'
