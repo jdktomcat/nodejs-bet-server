@@ -1,6 +1,7 @@
 const _ = require('lodash')._
 const usermodel = require("../model/userinfo");
 const resdisUtils = require("../utils/redisUtil");
+const {decrypt} = require("../utils/common");
 const config = require("../configs/config");
 let _GAME_TYPE = "live";
 let ACTIVITY_START_TS = config.event.ACTIVITY_START_TS || 0;
@@ -90,19 +91,22 @@ class Service {
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
         } else {
-            const o = usermodel.checkToken(tokenInfo.token)
-            if(o.tokenError){
-                return this.error("token parse error , please check with your token!")
-            }else {
-                const info = o.tokenInfo
-                const addr = info.addr || info.user || ''
-                const p = {
-                    addr: addr,
-                    currency: 'TRX'
-                }
-                const balanceInfo = await usermodel.getBalance(p)
-                return this.success(balanceInfo)
+            const info = tokenInfo
+            console.log("token info is ",tokenInfo)
+            const addr = info.addr || info.user || ''
+            let tron_address = ''
+            try{
+                tron_address = decrypt(addr)
+            }catch (e) {
+                console.log(e)
+                return this.error("addr is error, please check with your token!")
             }
+            const p = {
+                addr: tron_address,
+                currency: 'TRX'
+            }
+            const balanceInfo = await usermodel.getBalance(p)
+            return this.success(balanceInfo)
         }
     }
 
