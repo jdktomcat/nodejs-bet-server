@@ -79,6 +79,11 @@ class Service {
         }
     }
 
+    static async getToken(params){
+        const t = await usermodel.checkToken(params.payload)
+        return t
+    }
+
     static async identify(params) {
         console.log("identify params is ", params)
         const {tokenError, tokenInfo} = usermodel.checkToken(params.payload)

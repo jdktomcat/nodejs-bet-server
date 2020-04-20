@@ -14,13 +14,13 @@ class apiCall {
     }
 
     static async buy(ctx) {
-        const params = ctx.request.body || {}
-        const t1  = await service.identify(params)
-        if(t1.code === 2){
+        const body = ctx.request.body || {}
+        const {tokenError, tokenInfo}  = await service.getToken(body)
+        if (tokenError) {
             ctx.status = 400;
-            return ctx.body = t1
+            return ctx.body = 'check with token!'
         }
-        const t  = await service.buy(params)
+        const t  = await service.buy(tokenInfo)
         console.log("debug buy is ",t)
         if(t.code === 2){
             ctx.status = 400;
@@ -32,13 +32,13 @@ class apiCall {
 
 
     static async close(ctx) {
-        const params = ctx.request.body || {}
-        const t1  = await service.identify(params)
-        if(t1.code === 2){
+        const body = ctx.request.body || {}
+        const {tokenError, tokenInfo}  = await service.getToken(body)
+        if (tokenError) {
             ctx.status = 400;
-            return ctx.body = t1
+            return ctx.body = 'check with token!'
         }
-        const t  = await service.close(params)
+        const t  = await service.close(tokenInfo)
         if(t.code === 2){
             ctx.status = 400;
             ctx.body = t
@@ -48,13 +48,13 @@ class apiCall {
     }
 
     static async refund(ctx) {
-        const params = ctx.request.body || {}
-        const t1  = await service.identify(params)
-        if(t1.code === 2){
+        const body = ctx.request.body || {}
+        const {tokenError, tokenInfo}  = await service.getToken(body)
+        if (tokenError) {
             ctx.status = 400;
-            return ctx.body = t1
+            return ctx.body = 'check with token!'
         }
-        const t = await service.refund(params)
+        const t = await service.refund(tokenInfo)
         if(t.code === 2){
             ctx.status = 400;
             ctx.body = t
