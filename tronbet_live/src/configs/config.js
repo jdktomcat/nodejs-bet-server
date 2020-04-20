@@ -109,7 +109,7 @@ if (process.env.NODE_ENV === 'production' && fs.existsSync(__dirname + '/config.
   //生产环境
   console.log('>>>Use production config!');
   // add cp key
-  config.Binary.secretKey = prdCfg.Binary.secretKey
+  // config.Binary.secretKey = prdCfg.Binary.secretKey
   //
 } else if (process.env.NODE_ENV === 'test' && fs.existsSync(__dirname + '/config_test.js')) {
   //测试环境
