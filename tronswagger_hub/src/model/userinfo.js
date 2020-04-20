@@ -5,7 +5,7 @@ const dividendsDuration = 86400
 const daystart = 18005
 
 async function getUserBalance(addr) {
-    let sql = "select round(trx / 1000000, 3) as trx from live_user where addr = ?"
+    let sql = "select round as trx from live_user where addr = ?"
     let res = await db.exec(sql, [addr])
     if (!_.isEmpty(res)) {
         return res[0].trx
