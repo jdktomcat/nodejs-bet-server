@@ -93,7 +93,8 @@ class Service {
             const addr = tokenInfo.user || tokenInfo.addr || ''
             console.log("debug ----> ",tokenInfo.user)
             console.log("debug ----> ",tokenInfo.addr)
-            console.log("debug ----> ",user)
+            console.log("debug ----> ",addr)
+            console.log("debug ----> ",tokenInfo)
             const p = {
                 addr: addr,
                 currency: 'TRX'
