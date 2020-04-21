@@ -98,9 +98,10 @@ class Service {
             try{
                 let iToken = decrypt(rawToken)
                 let [dayTime,addr,currencyTmp] = iToken.split("-")
-                console.log("decrypt iToken is ",iToken)
+                console.log("decrypt iToken is ",dayTime,addr,currencyTmp)
+                console.log("decrypt time is ",Date.now() - Number(dayTime))
                 const time = Date.now() - Number(dayTime)
-                if(time >= 5 * 24 * 60 * 60){
+                if(time >= 5 * 24 * 60 * 60 * 1000){
                     return this.error("token is expire, please check with your token!")
                 }
                 tron_address = addr
