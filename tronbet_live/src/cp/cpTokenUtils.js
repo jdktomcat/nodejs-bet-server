@@ -47,7 +47,8 @@ const getCpToken = function (addr, secretKey,currency = null) {
         //
         const obj = Date.now() + "-" + addr + '-' + currency
         const s = encrypt(obj)
-        return s
+        const s2 = encodeURIComponent(s)
+        return s2
     }
 }
 
