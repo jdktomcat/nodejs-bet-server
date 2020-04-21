@@ -91,19 +91,27 @@ class Service {
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
         } else {
-            const info = tokenInfo
             console.log("token info is ",tokenInfo)
             const rawToken = tokenInfo.token
             let tron_address = ''
+            let currency = ''
             try{
-                tron_address = decrypt(rawToken)
+                let iToken = decrypt(rawToken)
+                let [dayTime,addr,currencyTmp] = iToken.split("-")
+                console.log("decrypt iToken is ",iToken)
+                const time = Date.now() - Number(dayTime)
+                if(time >= 5 * 24 * 60 * 60){
+                    return this.error("token is expire, please check with your token!")
+                }
+                tron_address = addr
+                currency = currencyTmp
             }catch (e) {
                 console.log(e)
                 return this.error("addr is error, please check with your token!")
             }
             const p = {
                 addr: tron_address,
-                currency: 'TRX'
+                currency: currency
             }
             const balanceInfo = await usermodel.getBalance(p)
             return this.success(balanceInfo)

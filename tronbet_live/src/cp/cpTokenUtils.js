@@ -30,7 +30,7 @@ const cpConfigKey = {
 
 
 
-const getCpToken = function (addr, secretKey) {
+const getCpToken = function (addr, secretKey,currency = null) {
     const jwt = require('jsonwebtoken');
     const obj = {
         addr: addr,
@@ -40,11 +40,13 @@ const getCpToken = function (addr, secretKey) {
     if(secretKey === cpConfigKey.Platinus){
         const token = jwt.sign(obj, secretKey, {
             algorithm: 'HS256',
-            expiresIn: '10 days'
+            expiresIn: '5 days'
         })
         return token
     }else if(secretKey === cpConfigKey.Binary){
-        const s = encrypt(addr)
+        //
+        const obj = Date.now() + "-" + addr + '-' + currency
+        const s = encrypt(obj)
         return s
     }
 }

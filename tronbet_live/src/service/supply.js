@@ -6,7 +6,7 @@ const RefreshRateUtils = require('../model/refreshRate')
 const {insertGameSchedule, getScheduleList, deleteGameSchedule} = require('../dailyschedule/productRateSchedule')
 const game = require("../service/games");
 const {app} = require('../configs/config')
-const {cpConfigKey,getCpToken} = require('../cp/cpTokenUtils')
+const {cpConfigKey, getCpToken} = require('../cp/cpTokenUtils')
 const redisUtils = require('../utils/redisUtil')
 
 //
@@ -89,7 +89,7 @@ async function editGame(ctx) {
 
 async function updateGames(ctx) {
     let body = ctx.request.body || {}
-    const args = ['vendor', 'game_id', 'game_name', 'em_type', 'status', 'rate', 'id','is_new']
+    const args = ['vendor', 'game_id', 'game_name', 'em_type', 'status', 'rate', 'id', 'is_new']
     let p = {}
     args.forEach(e => p[e] = body[e] || '')
     p.is_new = p.is_new || '0'
@@ -219,15 +219,15 @@ async function getOnlineList(ctx) {
             if (Number(e.rate) > 1) {
                 //新增 redis 倍率
                 const vendor = e.vendor
-                if(['hub88','em','platius'].includes(vendor)){
+                if (['hub88', 'em', 'platius'].includes(vendor)) {
                     let rateParam = {
                         gameId: e.game_id,
                         name: e.game_name,
                     }
                     const exeFunc = {
-                        hub88 : RefreshRateUtils.getRateHub88,
-                        em : RefreshRateUtils.getRateEM,
-                        platius : RefreshRateUtils.getRatePlatius,
+                        hub88: RefreshRateUtils.getRateHub88,
+                        em: RefreshRateUtils.getRateEM,
+                        platius: RefreshRateUtils.getRatePlatius,
                     }
                     let k = await exeFunc[vendor](rateParam)
                     e.nowRate = k.nowRate
@@ -282,7 +282,7 @@ async function allSchedule(ctx) {
     let params = ctx.request.query || {}
     let offset = params.offset || 1
     let limit = params.limit || 20000
-    const data = await getScheduleList(offset,limit)
+    const data = await getScheduleList(offset, limit)
     ctx.body = {code: 200, message: "success", data: data}
 }
 
@@ -294,21 +294,21 @@ async function platinusAPI(ctx) {
     let params = ctx.request.body || {}
     let addr = params.addr || ''
     //
-    if(addr === ''){
+    if (addr === '') {
         return ctx.body = {code: 500, message: "error"}
     }
     const tokenRedisKey = "platinusToken_" + addr
     let val = await redisUtils.get(tokenRedisKey)
-    console.log("platinusAPI_addr: ",addr)
-    console.log("platinusAPI_token: ",val)
+    console.log("platinusAPI_addr: ", addr)
+    console.log("platinusAPI_token: ", val)
 
-    if(val === null){
+    if (val === null) {
         try {
-            const token = getCpToken(addr,cpConfigKey.Platinus)
+            const token = getCpToken(addr, cpConfigKey.Platinus)
             await redisUtils.set(tokenRedisKey, token)
-            await redisUtils.expire(tokenRedisKey, 60) // 设置过期时间为7天
+            await redisUtils.expire(tokenRedisKey, 3 * 24 * 3600) // 设置过期时间为3天
             val = await redisUtils.get(tokenRedisKey)
-        }catch (e) {
+        } catch (e) {
             return ctx.body = {code: 500, message: "fail", error: e.toString()}
         }
     }
@@ -319,22 +319,23 @@ async function platinusAPI(ctx) {
 async function getBinaryToken(ctx) {
     let params = ctx.request.body || {}
     let addr = params.addr || ''
+    let currency = params.currency || ''
     //
-    if(addr === ''){
+    if (addr === '') {
         return ctx.body = {code: 500, message: "error"}
     }
     const tokenRedisKey = "BinaryToken_" + addr
     let val = await redisUtils.get(tokenRedisKey)
-    console.log("BinaryToken_addr: ",addr)
-    console.log("BinaryToken_token: ",val)
+    console.log("BinaryToken_addr: ", addr)
+    console.log("BinaryToken_token: ", val)
 
-    if(val === null){
+    if (val === null) {
         try {
-            const token = getCpToken(addr,cpConfigKey.Binary)
+            const token = getCpToken(addr, cpConfigKey.Binary, currency)
             await redisUtils.set(tokenRedisKey, token)
-            await redisUtils.expire(tokenRedisKey, 60) // 设置过期时间为7天
+            await redisUtils.expire(tokenRedisKey, 3 * 24 * 3600) // 设置过期时间为3天
             val = await redisUtils.get(tokenRedisKey)
-        }catch (e) {
+        } catch (e) {
             return ctx.body = {code: 500, message: "fail", error: e.toString()}
         }
     }
@@ -355,6 +356,6 @@ module.exports = {
     insertSchedule: insertSchedule,
     deleteSchedule: deleteSchedule,
     allSchedule: allSchedule,
-    platinusAPI : platinusAPI,
-    getBinaryToken : getBinaryToken,
+    platinusAPI: platinusAPI,
+    getBinaryToken: getBinaryToken,
 }
