@@ -117,7 +117,7 @@ class Service {
             return this.error("currency value is error !")
         }
         //
-        const dictFields = [params.kind, params.status, params.expirationType]
+        const dictFields = [params.kind, params.status, params.expiration.type]
         const dictFieldsSign = dictFields.every(e => [1, 2].includes(Number(e)))
         console.log(dictFields)
         if (!dictFieldsSign) {
@@ -127,7 +127,7 @@ class Service {
         if (Number(params.sum) > Number(beforebalance.balance)) {
             return this.error("balance not enough!")
         }
-        let amount = Number(params.sum) * 1e6
+        let amount = Number(params.sum)
         const rate = getAdditionRate()
         console.log("debug ----> ", rate)
         const adAmount = rate * amount
@@ -141,11 +141,11 @@ class Service {
             'adAmount': adAmount,
             'currency': params.currency,
             'quote_open': Number(params.quoteOpen),
-            'quote_close': Number(params.quoteClose),
-            'created_at': Number(params.createdAt),
+            'quote_close': 0,
+            'created_at': new Date(params.createdAt).getTime(),
             'profitability': Number(params.profitability),
-            'expiration_date': Number(params.expirationDate),
-            'expiration_type': Number(params.expirationType)
+            'expiration_date': new Date(params.expiration.date).getTime(),
+            'expiration_type': Number(params.expiration.type)
         }
         await usermodel.buy(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
@@ -159,10 +159,11 @@ class Service {
             return this.error("currency value is error !")
         }
         const p = {
-            win: Number(params.income) * 1e6,
+            win: Number(params.income),
             transaction_id: params.id,
             addr: params.user,
-            currency: params.currency
+            currency: params.currency,
+            quote_close : params.quoteClose,
         }
         await usermodel.close(p)
         const balanceInfo = await usermodel.getBalance(p)

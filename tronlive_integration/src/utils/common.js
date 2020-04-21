@@ -22,6 +22,7 @@ function decrypt(message) {
     }
 }
 
+
 module.exports = {
     encrypt,
     decrypt,
