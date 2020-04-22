@@ -23,7 +23,7 @@ async function getTRXPrice(currency) {
     if (currency === 'TRX') return 1;
     if (currency === 'USDT') {
         let sql = `SELECT count FROM tron_price.TRX_USD ORDER BY last_updated DESC LIMIT 1`;
-        let res = await raw(sql);
+        let res = await raw(sql,[]);
         if (!_.isEmpty(res)) {
             return res[0].count;
         }

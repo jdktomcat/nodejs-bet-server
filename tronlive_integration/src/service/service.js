@@ -140,8 +140,9 @@ class Service {
         //
         const price_now = await usermodel.getTRXPrice(params.currency)
         const rate = getAdditionRate()
-        console.log("debug ----> price_now , rate ",price_now, rate)
+        console.log("debug ----> price_now , rate, amount ",price_now, rate, amount)
         const adAmount = Number(price_now) * rate * amount
+        console.log("debug adAmount is ----> ",adAmount)
         const sqlParam = {
             'transaction_id': params.id,
             'addr': params.user,
