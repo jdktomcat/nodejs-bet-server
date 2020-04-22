@@ -659,7 +659,6 @@ appEvent.on('player_in', (addr, bet, auto_out) => {
 })
 
 appEvent.on('player_out', (addr, _auto_out) => {
-    console.log("enter player_out and _auto_out is ",_auto_out, _auto_out != null)
     if (crash_info.state !== GAME_STATE.RUNNING) return loggerDefault.warn("×××", "Game is not running", addr);
     let player_info = crash_info.players[addr];
     if (player_info == null) return loggerDefault.warn("×××", "addr is not exists", addr);
@@ -668,6 +667,8 @@ appEvent.on('player_out', (addr, _auto_out) => {
     let _now = Date.now();
     let hold_ts = _now - crash_info.begin_ts;
     let cashed_out = 0;
+
+    console.log("enter _auto_out and player_info is ",_auto_out, JSON.stringify(player_info))
 
 
     if (_auto_out != null) {

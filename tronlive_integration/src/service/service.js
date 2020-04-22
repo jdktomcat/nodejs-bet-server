@@ -1,6 +1,7 @@
 const _ = require('lodash')._
 const usermodel = require("../model/userinfo");
 const resdisUtils = require("../utils/redisUtil");
+const {decrypt} = require("../utils/common");
 const config = require("../configs/config");
 let _GAME_TYPE = "live";
 let ACTIVITY_START_TS = config.event.ACTIVITY_START_TS || 0;
@@ -49,8 +50,8 @@ const getAdditionRate = function () {
         const start = config.addition.START_TS
         const end = config.addition.END_TS
         const rate = config.addition.RATE
-        console.log(start, end, now)
-        console.log(rate)
+        console.log(new Date(start))
+        console.log(new Date(end))
         if (now >= start && now <= end) {
             return Number(rate)
         } else {
@@ -79,16 +80,39 @@ class Service {
         }
     }
 
+    static async getToken(params){
+        const t = await usermodel.checkToken(params.payload)
+        return t
+    }
+
     static async identify(params) {
         console.log("identify params is ", params)
-        const {tokenError, tokenInfo} = usermodel.checkToken(params.token)
+        const {tokenError, tokenInfo} = usermodel.checkToken(params.payload)
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
         } else {
-            const addr = tokenInfo.user || tokenInfo.addr || ''
+            console.log("token info is ",tokenInfo)
+            const rawToken = tokenInfo.token
+            let tron_address = ''
+            let currency = ''
+            try{
+                let iToken = decrypt(rawToken)
+                let [dayTime,addr,currencyTmp] = iToken.split("-")
+                console.log("decrypt iToken is ",dayTime,addr,currencyTmp)
+                console.log("decrypt time is ",Date.now() - Number(dayTime))
+                const time = Date.now() - Number(dayTime)
+                if(time >= 5 * 24 * 60 * 60 * 1000){
+                    return this.error("token is expire, please check with your token!")
+                }
+                tron_address = addr
+                currency = currencyTmp
+            }catch (e) {
+                console.log(e)
+                return this.error("addr is error, please check with your token!")
+            }
             const p = {
-                addr: addr,
-                currency: 'TRX'
+                addr: tron_address,
+                currency: currency
             }
             const balanceInfo = await usermodel.getBalance(p)
             return this.success(balanceInfo)
@@ -102,7 +126,7 @@ class Service {
             return this.error("currency value is error !")
         }
         //
-        const dictFields = [params.kind, params.status, params.expirationType]
+        const dictFields = [params.kind, params.status, params.expiration.type]
         const dictFieldsSign = dictFields.every(e => [1, 2].includes(Number(e)))
         console.log(dictFields)
         if (!dictFieldsSign) {
@@ -112,10 +136,13 @@ class Service {
         if (Number(params.sum) > Number(beforebalance.balance)) {
             return this.error("balance not enough!")
         }
-        let amount = Number(params.sum) * 1e6
+        let amount = Number(params.sum)
+        //
+        const price_now = await usermodel.getTRXPrice(params.currency)
         const rate = getAdditionRate()
-        console.log("debug ----> ", rate)
-        const adAmount = rate * amount
+        console.log("debug ----> price_now , rate, amount ",price_now, rate, amount)
+        const adAmount = Number(price_now) * rate * amount
+        console.log("debug adAmount is ----> ",adAmount)
         const sqlParam = {
             'transaction_id': params.id,
             'addr': params.user,
@@ -126,11 +153,11 @@ class Service {
             'adAmount': adAmount,
             'currency': params.currency,
             'quote_open': Number(params.quoteOpen),
-            'quote_close': Number(params.quoteClose),
-            'created_at': Number(params.createdAt),
+            'quote_close': 0,
+            'created_at': new Date(params.createdAt).getTime(),
             'profitability': Number(params.profitability),
-            'expiration_date': Number(params.expirationDate),
-            'expiration_type': Number(params.expirationType)
+            'expiration_date': new Date(params.expiration.date).getTime(),
+            'expiration_type': Number(params.expiration.type)
         }
         await usermodel.buy(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
@@ -144,10 +171,11 @@ class Service {
             return this.error("currency value is error !")
         }
         const p = {
-            win: Number(params.income) * 1e6,
+            win: Number(params.income),
             transaction_id: params.id,
             addr: params.user,
-            currency: params.currency
+            currency: params.currency,
+            quote_close : params.quoteClose,
         }
         await usermodel.close(p)
         const balanceInfo = await usermodel.getBalance(p)

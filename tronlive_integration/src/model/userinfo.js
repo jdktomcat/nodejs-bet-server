@@ -18,20 +18,23 @@ const expirationTypeDict = {
     2: 'binary',
 }
 
-async function getAllBalance(params) {
-    const {addr} = params
-    let sql = "select addr as user,round(balance / 1000000, 3) as balance,currency from tron_live.live_balance where  addr = ?"
-    let res = await raw(sql, [addr])
-    if (res.length === 0) {
-        return Promise.reject(new Error("user not found"))
-    }else {
-        return res
+
+async function getTRXPrice(currency) {
+    if (currency === 'TRX') return 1;
+    if (currency === 'USDT') {
+        let sql = `SELECT count FROM tron_price.TRX_USD ORDER BY last_updated DESC LIMIT 1`;
+        let res = await raw(sql,[]);
+        if (!_.isEmpty(res)) {
+            return res[0].count;
+        }
     }
+    return 1;
 }
+
 
 async function getBalance(params) {
     const {addr, currency} = params
-    let sql = "select addr as user,round(balance / 1000000, 3) as balance,currency from tron_live.live_balance where currency = ? and addr = ?"
+    let sql = "select addr as user,balance,currency from tron_live.live_balance where currency = ? and addr = ?"
     let res = await raw(sql, [currency, addr])
     if (res.length === 0) {
         return Promise.reject(new Error("user not found"))
@@ -94,11 +97,12 @@ async function close(params) {
     await raw(updateSql, [params.win, params.addr, params.currency])
     //
     let sql = `
-update tron_live.integration_transaction_log set win = ? , status = ? where transaction_id = ? and addr = ? and currency = ?
+update tron_live.integration_transaction_log set win = ? , status = ? ,quote_close = ? where transaction_id = ? and addr = ? and currency = ?
         `
     const sqlParam = [
         params.win,
         statusDict.close,
+        params.quote_close,
         params.transaction_id,
         params.addr,
         params.currency,
@@ -126,7 +130,7 @@ update tron_live.integration_transaction_log set win = 0 , status = ? where tran
 
 module.exports = {
     getBalance,
-    getAllBalance,
+    getTRXPrice,
     checkToken,
     buy,
     close,
