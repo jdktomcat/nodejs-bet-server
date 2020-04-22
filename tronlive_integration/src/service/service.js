@@ -50,8 +50,8 @@ const getAdditionRate = function () {
         const start = config.addition.START_TS
         const end = config.addition.END_TS
         const rate = config.addition.RATE
-        console.log(start, end, now)
-        console.log(rate)
+        console.log(new Date(start))
+        console.log(new Date(end))
         if (now >= start && now <= end) {
             return Number(rate)
         } else {
@@ -137,9 +137,11 @@ class Service {
             return this.error("balance not enough!")
         }
         let amount = Number(params.sum)
+        //
+        const price_now = await usermodel.getTRXPrice(params.currency)
         const rate = getAdditionRate()
-        console.log("debug ----> ", rate)
-        const adAmount = rate * amount
+        console.log("debug ----> price_now , rate ",price_now, rate)
+        const adAmount = Number(price_now) * rate * amount
         const sqlParam = {
             'transaction_id': params.id,
             'addr': params.user,

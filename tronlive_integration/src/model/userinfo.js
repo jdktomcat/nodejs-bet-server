@@ -18,16 +18,19 @@ const expirationTypeDict = {
     2: 'binary',
 }
 
-async function getAllBalance(params) {
-    const {addr} = params
-    let sql = "select addr as user,balance,currency from tron_live.live_balance where  addr = ?"
-    let res = await raw(sql, [addr])
-    if (res.length === 0) {
-        return Promise.reject(new Error("user not found"))
-    }else {
-        return res
+
+async function getTRXPrice(currency) {
+    if (currency === 'TRX') return 1;
+    if (currency === 'USDT') {
+        let sql = `SELECT count FROM tron_price.TRX_USD ORDER BY last_updated DESC LIMIT 1`;
+        let res = await raw(sql);
+        if (!_.isEmpty(res)) {
+            return res[0].count;
+        }
     }
+    return 1;
 }
+
 
 async function getBalance(params) {
     const {addr, currency} = params
@@ -127,7 +130,7 @@ update tron_live.integration_transaction_log set win = 0 , status = ? where tran
 
 module.exports = {
     getBalance,
-    getAllBalance,
+    getTRXPrice,
     checkToken,
     buy,
     close,
