@@ -44,6 +44,8 @@ const filterGames = function (onlineGames, rawGames) {
 
 const getGameData = async function () {
     const [platiusSlot, platiusTable] = getPlatiusList()
+    console.log(platiusSlot)
+    console.log('\n\n')
     const [hub88slot, hub88Gameshow] = await hub88ListQuery()
     const {
         slots,

@@ -90,32 +90,18 @@ CREATE TABLE tron_live.integration_transaction_log (
 
 
 
-const update202004160002 = async function () {
-    const addr = [
-            'TSLoYumY8Xhzm8VKhqMutbqKzrhRzqq9dJ',
-            'TLREfKzPZygVPAMzYCycBk9Wm9hJ77NDUi'
-        ]
-    for(let e of addr){
-        const sql1 = `select uid,currency,addr,balance / 1000000 as balance  from tron_live.live_balance where addr = ? and currency = 'TRX'`
-        const a1 = await raw(sql1,[e])
-        console.log("before is ",a1)
-        //
-        const updateSql = `update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX' `
-        await raw(updateSql,[e])
-    }
-    //
-    console.log("\n\n===>\n")
-    for(let e of addr){
-        const sql1 = `select  uid,currency,addr,balance / 1000000 as balance   from tron_live.live_balance where addr = ? and currency = 'TRX'`
-        const a1 = await raw(sql1,[e])
-        console.log("after is ",a1)
-    }
+const updateGames = async function () {
+    const redisUtil = require("./src/utils/redisUtil");
+    const {parseGames} = require("./src/service/games")
+    const a = await parseGames()
+    await redisUtil.hset("tronlive:gamelist", "games", JSON.stringify(a));
+    console.log("last is ,",a)
+
 
 }
 
 const main = async function(){
-    // await test333()
-    await update202004160002()
+    await updateGames()
 }
 
 main().then(() => {
