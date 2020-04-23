@@ -668,15 +668,16 @@ appEvent.on('player_out', (addr, _auto_out) => {
     let hold_ts = _now - crash_info.begin_ts;
     let cashed_out = 0;
 
-    console.log("enter _auto_out and player_info is ",_auto_out, JSON.stringify(player_info))
+    console.log("ts is ",crash_info.begin_ts,_now)
+    console.log(`Whether user manually stops: ${_auto_out === undefined} ,addr@${player_info.addr}bet@${player_info.bet}auto_out@${player_info.auto_out}`)
 
 
     if (_auto_out != null) {
         loggerDefault.info("√√√", "auto out <<< [" + addr + "] @" + _auto_out + "X;");
         cashed_out = _auto_out;
     } else {
-        console.log("enter getCashedoutByDuration start and end",crash_info.begin_ts,_now)
         cashed_out = getCashedoutByDuration(hold_ts / 1000);
+        console.log("user manually stop at: ",cashed_out)
     }
     if (cashed_out <= 1) {
         cashed_out = 1.01;
