@@ -92,7 +92,7 @@ class Service {
             return this.error("token parse error , please check with your token!")
         } else {
             console.log("token info is ",tokenInfo)
-            const rawToken = tokenInfo.token
+            const rawToken = decodeURIComponent(tokenInfo.token)
             let tron_address = ''
             let currency = ''
             try{
