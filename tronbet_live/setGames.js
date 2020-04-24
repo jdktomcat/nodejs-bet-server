@@ -58,7 +58,7 @@ const raw = async function (updateSql, params) {
 
 const test333 = async function () {
     const querySql = `
-CREATE TABLE tron_live.integration_transaction_log (
+CREATE TABLE tron_live.binary_transaction_log (
     log_id bigint(20) NOT NULL AUTO_INCREMENT,
     transaction_id varchar(64) DEFAULT NULL,
     addr varchar(64) DEFAULT NULL,
@@ -76,11 +76,11 @@ CREATE TABLE tron_live.integration_transaction_log (
     expiration_date  bigint(20) DEFAULT NULL,
     expiration_type  varchar(20) DEFAULT NULL,
   PRIMARY KEY (log_id),
-  KEY integration_addr_index (addr),
-  KEY integration_transaction_index (transaction_id),
-  KEY integration_status_index (status),
-  KEY integration_created_at_index (created_at),
-  KEY integration_expiration_date_index (expiration_date)
+  KEY binary_integration_addr_index (addr),
+  KEY binary_integration_transaction_index (transaction_id),
+  KEY binary_integration_status_index (status),
+  KEY binary_integration_created_at_index (created_at),
+  KEY binary_integration_expiration_date_index (expiration_date)
 )
     `
     // const value = 0.0144 * 1e9
@@ -101,7 +101,7 @@ const updateGames = async function () {
 }
 
 const main = async function(){
-    await updateGames()
+    await test333()
 }
 
 main().then(() => {

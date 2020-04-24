@@ -18,7 +18,7 @@ cd tronlive_emserver && pm2 start npm --name tronlive_emserver -- run test && cd
 # need mongo
 cd tronbet_poker && pm2 start npm --name tronbet_poker -- run test && cd ..
 cd tronpoker_jackpot && pm2 start npm --name tronpoker_jackpot -- run test && cd ..
-# end
+
 cd tronpoker_airdrop && pm2 start npm --name tronpoker_airdrop -- run test && cd ..
 
 # same server
@@ -46,4 +46,4 @@ cd tronswagger_hub && pm2 start npm --name tronswagger_hub -- run test && cd ..
 #cd tronbet_live && npm run test:game
 
 cd tronlive_platius && pm2 start npm --name tronlive_platius -- run test && cd ..
-cd tronlive_integration && pm2 start npm --name tronlive_integration -- run test && cd ..
+cd tronlive_binary && pm2 start npm --name tronlive_binary -- run test && cd ..

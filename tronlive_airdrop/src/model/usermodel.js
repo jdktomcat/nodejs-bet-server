@@ -13,7 +13,10 @@ async function getLiveAirdropData(startTs, endTs) {
     union all
     
     select sum(adAmount / 1000000) Amount, addr from platipus_transaction_log where ts >= ? and ts < ? and status = 1 and  resultId is not null and currency = 'TRX' group by addr  
-        
+ 
+    union all 
+ 
+    select sum(adAmount / 1000000) Amount, addr from binary_transaction_log where expiration_date >= ? and expiration_date < ? and status = 'close' and (currency = 'TRX' or currency = 'USDT') group by addr         
     ) t group by addr
     `;
   const param = [
@@ -23,12 +26,12 @@ async function getLiveAirdropData(startTs, endTs) {
     (endTs - 300) * 1000,
     (startTs - 300) * 1000,
     (endTs - 300) * 1000,
+    (startTs - 300) * 1000,
+    (endTs - 300) * 1000,
   ]
-  console.log("getLiveAirdropData----->")
   try {
-    console.log("test1dropData2")
     let res = await db.exec(sql, param);
-    console.log("test1dropData------>",res[0])
+    console.log("resLength length---->",res.length)
     return res;
   }catch (e) {
     console.log("AirdropError: ",e.toString())

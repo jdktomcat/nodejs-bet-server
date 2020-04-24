@@ -30,7 +30,7 @@ let config = {
     db: 1,
     pwd: ''
   },
-  Integration: {
+  Binary: {
     secretKey: "1d1622455b6cb36ef2211b76facc3079cbe9a738",
   },
   event:{

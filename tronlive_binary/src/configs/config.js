@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-let Integration = {
+let Binary = {
   secretKey : ''
 }
 let prdCfg = {};
@@ -9,8 +9,8 @@ try {
 } catch (error) {
   console.log('using app config');
 }
-if(prdCfg.Integration === undefined){
-  prdCfg.Integration = Integration
+if(prdCfg.Binary === undefined){
+  prdCfg.Binary = Binary
 }
 let config = {
   env: 'production',
@@ -35,8 +35,8 @@ let config = {
     db: 1,
     pwd: ''
   },
-  Integration: {
-    secretKey: prdCfg.Integration.secretKey,
+  Binary: {
+    secretKey: prdCfg.Binary.secretKey,
   },
   event:{
     ACTIVITY_START_TS: 1580108400000,//Mon Jan 27 2020 15:00:00
