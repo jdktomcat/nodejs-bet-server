@@ -30,9 +30,8 @@ async function getLiveAirdropData(startTs, endTs) {
     (endTs - 300) * 1000,
   ]
   try {
-    console.log("getLiveAirdropDataSql--->",sql,param)
     let res = await db.exec(sql, param);
-    console.log("resData1",res[0])
+    console.log("resLength length---->",res.length)
     return res;
   }catch (e) {
     console.log("AirdropError: ",e.toString())
