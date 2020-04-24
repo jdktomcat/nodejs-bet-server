@@ -76,11 +76,11 @@ CREATE TABLE tron_live.binary_transaction_log (
     expiration_date  bigint(20) DEFAULT NULL,
     expiration_type  varchar(20) DEFAULT NULL,
   PRIMARY KEY (log_id),
-  KEY integration_addr_index (addr),
-  KEY integration_transaction_index (transaction_id),
-  KEY integration_status_index (status),
-  KEY integration_created_at_index (created_at),
-  KEY integration_expiration_date_index (expiration_date)
+  KEY binary_integration_addr_index (addr),
+  KEY binary_integration_transaction_index (transaction_id),
+  KEY binary_integration_status_index (status),
+  KEY binary_integration_created_at_index (created_at),
+  KEY binary_integration_expiration_date_index (expiration_date)
 )
     `
     // const value = 0.0144 * 1e9
