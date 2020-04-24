@@ -58,7 +58,7 @@ const raw = async function (updateSql, params) {
 
 const test333 = async function () {
     const querySql = `
-CREATE TABLE tron_live.integration_transaction_log (
+CREATE TABLE tron_live.binary_transaction_log (
     log_id bigint(20) NOT NULL AUTO_INCREMENT,
     transaction_id varchar(64) DEFAULT NULL,
     addr varchar(64) DEFAULT NULL,
@@ -101,7 +101,7 @@ const updateGames = async function () {
 }
 
 const main = async function(){
-    await updateGames()
+    await test333()
 }
 
 main().then(() => {

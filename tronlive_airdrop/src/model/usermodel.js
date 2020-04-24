@@ -13,7 +13,10 @@ async function getLiveAirdropData(startTs, endTs) {
     union all
     
     select sum(adAmount / 1000000) Amount, addr from platipus_transaction_log where ts >= ? and ts < ? and status = 1 and  resultId is not null and currency = 'TRX' group by addr  
-        
+ 
+    union all 
+ 
+    select sum(adAmount / 1000000) Amount, addr from binary_transaction_log where expiration_date >= ? and expiration_date < ? and status = 'close' and (currency = 'TRX' or currency = 'USDT') group by addr         
     ) t group by addr
     `;
   const param = [

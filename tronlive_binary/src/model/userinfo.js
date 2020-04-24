@@ -45,7 +45,7 @@ async function getBalance(params) {
 }
 
 function checkToken(token) {
-    const secretKey = config.Integration.secretKey
+    const secretKey = config.Binary.secretKey
     if (secretKey === undefined) {
         return {
             tokenError: true,
@@ -68,7 +68,7 @@ async function buy(params) {
     await raw(updateSql, [params.amount, params.addr, params.currency])
     //
     let sql = `
-INSERT INTO tron_live.integration_transaction_log
+INSERT INTO tron_live.binary_transaction_log
 (transaction_id, addr, asset, kind, amount, win, adAmount, currency, status, quote_open, quote_close, created_at, profitability, expiration_date, expiration_type)
 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `
@@ -98,7 +98,7 @@ async function close(params) {
     await raw(updateSql, [params.win, params.addr, params.currency])
     //
     let sql = `
-update tron_live.integration_transaction_log set win = ? , status = ? ,quote_close = ? where transaction_id = ? and addr = ? and currency = ?
+update tron_live.binary_transaction_log set win = ? , status = ? ,quote_close = ? where transaction_id = ? and addr = ? and currency = ?
         `
     const sqlParam = [
         params.win,
@@ -117,7 +117,7 @@ async function refund(params) {
     await raw(updateSql, [params.amount, params.addr, params.currency])
     //
     let sql = `
-update tron_live.integration_transaction_log set win = 0 , status = ? where transaction_id = ? and addr = ? and currency = ?
+update tron_live.binary_transaction_log set win = 0 , status = ? where transaction_id = ? and addr = ? and currency = ?
         `
     const sqlParam = [
         statusDict.refund,
