@@ -53,9 +53,9 @@ function checkToken(token) {
         }
     }
     console.log("secretKey: ", secretKey)
-    console.log("payload: ", payload)
     const tmp = decodeURIComponent(token)
     const payload = jwt.verify(tmp, secretKey)
+    console.log("payload: ", payload)
     return {
         tokenError: false,
         tokenInfo: payload
