@@ -89,10 +89,36 @@ CREATE TABLE tron_live.binary_transaction_log (
 }
 
 
+const update222 = async function () {
+    const sql1 = `select uid,currency,addr,balance / 1000000 as balance  from tron_live.live_balance where addr = 'TYEFKVP237XpPENzuskiS6wQXJpUUmQw7y' and currency = 'USDT'`
+    const a1 = await raw(sql1,[])
+    console.log("before is ",a1)
+    //
+    const updateSql = `update tron_live.live_balance set balance = 0 where addr = 'TYEFKVP237XpPENzuskiS6wQXJpUUmQw7y' and currency = 'USDT' `
+    await raw(updateSql,[])
+    //
+    const a2 = await raw(sql1,[])
+    console.log("after is ",a2)
+}
+
+
+const update333 = async function () {
+    const sql1 = `select uid,currency,addr,balance / 1000000 as balance  from tron_live.live_balance where addr = ? and currency = 'TRX'`
+    const a1 = await raw(sql1,['TKJCAqz2fJ9Jhkvfyrj8avwnnyjQvB1mCv'])
+    console.log("before is ",a1)
+    //
+    const updateSql = `update tron_live.live_balance set balance = balance + ? where addr = ? and currency = 'TRX' `
+    const bb = 2 * 79.9128 * 1e6
+    await raw(updateSql,[bb,'TKJCAqz2fJ9Jhkvfyrj8avwnnyjQvB1mCv'])
+    //
+    const a2 = await raw(sql1,['TKJCAqz2fJ9Jhkvfyrj8avwnnyjQvB1mCv'])
+    console.log("after is ",a2)
+}
+
 
 const updateGames = async function () {
     const addr = [
-        'TVsecB8QffHDmBWnpwa6VkLWJtxiBn6s17',
+        'TVv3RTMCeX2tLwK8zgax2nxoGe8KUpuqWB','TYEFKVP237XpPENzuskiS6wQXJpUUmQw7y'
     ]
     for(let e of addr){
         const sql1 = `select uid,currency,addr,balance / 1000000 as balance  from tron_live.live_balance where addr = ? and currency = 'TRX'`
@@ -115,6 +141,10 @@ const updateGames = async function () {
 
 const main = async function(){
     await updateGames()
+    console.log("\n--------2-------\n")
+    await update222()
+    console.log("\n--------3-------\n")
+    await update333()
 }
 
 main().then(() => {
