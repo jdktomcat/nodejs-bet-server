@@ -105,6 +105,7 @@ module.exports = {
     tronbet_poker: 18070,
     tronpoker_jackpot: 18071,
     tronlive_platinus: 18072,
+    tronlive_binary: 18073,
   },
   // 远程接口
   // back01
@@ -140,6 +141,9 @@ module.exports = {
     Password: ''
   },
   Platinus: {
+    secretKey: '',
+  },
+  Binary: {
     secretKey: '',
   },
   coinspaid: {
