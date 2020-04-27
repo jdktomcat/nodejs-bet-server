@@ -16,7 +16,7 @@ let config = {
   env: 'production',
   debug: false,
   app: {
-    http_port: prdCfg.port.tronlive_platinus,
+    http_port: prdCfg.port.tronlive_binary,
     logPath: path.resolve(__dirname, '../../logs'),
     log: true, //开启日志,
     randomSalt: 'hi!can-you-hear-me?'

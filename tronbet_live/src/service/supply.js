@@ -336,7 +336,8 @@ async function getBinaryToken(ctx) {
         try {
             const token = getCpToken(addr, cpConfigKey.Binary, currency)
             await redisUtils.set(tokenRedisKey, token)
-            await redisUtils.expire(tokenRedisKey, 3 * 24 * 3600) // 设置过期时间为3天
+            await redisUtils.expire(tokenRedisKey, 24 * 3600) // 设置过期时间为3天
+            // await redisUtils.expire(tokenRedisKey, 3 * 24 * 3600) // 设置过期时间为3天
             val = await redisUtils.get(tokenRedisKey)
         } catch (e) {
             return ctx.body = {code: 500, message: "fail", error: e.toString()}
