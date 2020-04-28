@@ -169,6 +169,9 @@ async function withdraw(ctx) {
       return await common.sendMsgToClient(ctx, 1010, '5 min can not create a new withdraw');
     }
   }
+  // 解除限制
+  await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
+  //
   console.log("enter_withDraw_"+addr)
   // 并发限制
   let withdrawLimit = await redisUtils.hget(redisUserKeyPrefix + addr, 'withdrawLimit');
