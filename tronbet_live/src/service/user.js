@@ -169,12 +169,13 @@ async function withdraw(ctx) {
       return await common.sendMsgToClient(ctx, 1010, '5 min can not create a new withdraw');
     }
   }
-
+  console.log("enter_withDraw_"+addr)
   // 并发限制
   let withdrawLimit = await redisUtils.hget(redisUserKeyPrefix + addr, 'withdrawLimit');
   console.log(redisUserKeyPrefix + addr, "withdrawLimit", withdrawLimit)
   if(withdrawLimit === "true"){
     // 不能提现
+    console.log("debug---->withdrawLimit is ",withdrawLimit)
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }else{
     // 可以提现 加限制
@@ -200,7 +201,7 @@ async function withdraw(ctx) {
   }
   
   if (!profit || profit < profitMin) {
-    console.log("profit",profit, profitMin)
+    console.log("profit,profitMin",profit, profitMin)
     await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }
@@ -241,6 +242,7 @@ async function withdraw(ctx) {
 
   // 每次提现最大额度
   if (amount > withdrawMaxAmount) {
+    console.log(`debug--->max amount is ${withdrawMaxAmount},amount is ${amount}`)
     await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }
@@ -248,6 +250,7 @@ async function withdraw(ctx) {
   //限制提现金额每天玩家额度50w trx
   let todayAmount = await usermodel.findTodayWithdrawAmount(addr, currency);
   if (Number(todayAmount) + amount > withdrawMaxAmount) {
+    console.log(`debug--->everyuser : ${todayAmount},amount: ${amount} , withdrawMaxAmount: ${withdrawMaxAmount}`)
     await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }
@@ -256,6 +259,7 @@ async function withdraw(ctx) {
 
   //限制提现金额每天总额度250w trx
   if (Number(totalAmount) + amount >= withdrawMaxAmountDaily){
+    console.log(`debug--->everyDay_totalAmount : ${totalAmount},amount: ${amount} , withdrawMaxAmountDaily: ${withdrawMaxAmountDaily}`)
     await redisUtils.hset(redisUserKeyPrefix + addr, 'withdrawLimit', "false");
     return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
   }
