@@ -187,6 +187,16 @@ async function getPlatiusProfit(startTs, endTs) {
     return res[0].amount || 0
 }
 
+
+async function getBinaryProfit(startTs, endTs) {
+    let sql = `SELECT SUM(amount / 1000000 - win / 1000000) amount
+    FROM binary_transaction_log
+    WHERE expiration_date >= ? AND expiration_date < ? AND status = 'close' AND currency = 'TRX'`
+    let res = await db.exec(sql, [startTs, endTs])
+    if (_.isEmpty(res)) return 0
+    return res[0].amount || 0
+}
+
 async function getLiveFix(){
     const sql2 = `select sum(amount) as sum from tron_live.live_fix_log`
     const rs = await db.exec(sql2, []);
@@ -207,12 +217,14 @@ async function getRealTimeProfitAmount(ts) {
 
     let swaggerRealProfit = await getSwaggerProfit(startTs, endTs)
     let platiusProfit = await getPlatiusProfit(startTs, endTs)
+    // add in 2020-04-28
+    let binaryProfit = await getBinaryProfit(startTs,endTs)
     //
-    console.log("hub88，Platius start is ", new Date(startTs),', ', new Date(endTs));
+    console.log("hub88，Platius,binaryProfit start is ", new Date(startTs),', ', new Date(endTs));
     console.log("em start is ", new Date(startTs),', ', new Date(endTs * 10));
     console.log("sport start is ", new Date(startTs),', ', new Date(endTs * 10));
     //
-    console.log("swaggerRealProfit====>bug", swaggerRealProfit);
+    // console.log("swaggerRealProfit====>bug", swaggerRealProfit);
     let lastDay = Math.floor(ts / dividendsDuration) - 1
     if (lastDay >= 0) {
         let hasYestodayProfit = await hasLastDayProfit(lastDay)
@@ -232,13 +244,32 @@ async function getRealTimeProfitAmount(ts) {
             } else {
                 lastResultAmount = lastResultAmount[0].amount || 0
             }
-
+            const emProfitAmount = Number(lastBetAmount) - Number(lastResultAmount)
             let sportsProfitAmount = await getSportsProfit(startTs - 86400000, startTs)
             let swaggerProfitAmount = await getSwaggerProfit(startTs - 86400000, startTs)
             let platiusProfitAmount = await getPlatiusProfit(startTs - 86400000, startTs)
-
-            console.log('=====startTs,lastBetAmount,lastResultAmount, sportsProfitAmount, swaggerProfitAmount,platiusProfitAmount=====', startTs, lastBetAmount, lastResultAmount, sportsProfitAmount, swaggerProfitAmount,platiusProfitAmount)
-            await insertLastDay(lastDay, Number(lastBetAmount) + Math.floor(Number(swaggerProfitAmount)) + Math.floor(Number(platiusProfitAmount)) + Math.floor(Number(sportsProfitAmount)) - Number(lastResultAmount))
+            let binaryProfitAmount = await getBinaryProfit(startTs - 86400000, startTs)
+            //
+            console.log("lastday startTs is",startTs)
+            console.log(`
+            lastDay emProfitAmount: ${Number(lastBetAmount)} - ${Number(lastResultAmount)} = ${emProfitAmount}
+            lastDay sportsProfitAmount: ${Number(sportsProfitAmount)}
+            lastDay swaggerProfitAmount: ${Number(swaggerProfitAmount)}
+            lastDay platiusProfitAmount: ${Number(platiusProfitAmount)}
+            lastDay binaryProfitAmount: ${Number(binaryProfitAmount)}
+            `
+            )
+            const lastDayAmountSumTmp = [
+                emProfitAmount,
+                sportsProfitAmount,
+                swaggerProfitAmount,
+                platiusProfitAmount,
+                binaryProfitAmount,
+            ]
+            const lastDayAmountSumTmp2 = lastDayAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
+            const lastDayAmountSum = Math.floor(Number(lastDayAmountSumTmp2))
+            console.log("lastDayAmountSum is ",lastDayAmountSum)
+            await insertLastDay(lastDay, lastDayAmountSum)
         }
     }
 
@@ -258,9 +289,17 @@ async function getRealTimeProfitAmount(ts) {
 
     // console.log('lastTotalProfit,totalDividends ++++>', lastTotalProfit,totalDividends)
     let totalDividends = await getDividendsAmount()
-    console.log('now: lastTotalProfit - totalDividends + betAmount - resultAmount, soportsRealTimeProfit, swaggerRealProfit,platiusProfit ====>', now, Number(lastTotalProfit), totalDividends, betAmount, resultAmount, soportsRealTimeProfit, swaggerRealProfit,platiusProfit)
+    console.log(`
+        lastTotalProfit : ${lastTotalProfit},
+        totalDividends: ${totalDividends},
+        betAmount - resultAmount : ${betAmount} - ${resultAmount} = ${Number(betAmount)- Number(resultAmount)},
+        sportsRealTimeProfit : ${soportsRealTimeProfit},
+        swaggerRealProfit : ${swaggerRealProfit},
+        platiusProfit : ${platiusProfit},
+        binaryProfit  : ${binaryProfit}`
+    )
 
-    const last = Number(lastTotalProfit) - Number(totalDividends) + Number(betAmount) - Number(resultAmount) + Number(soportsRealTimeProfit) + Number(swaggerRealProfit) + Number(platiusProfit)
+    const last = Number(lastTotalProfit) - Number(totalDividends) + Number(betAmount) - Number(resultAmount) + Number(soportsRealTimeProfit) + Number(swaggerRealProfit) + Number(platiusProfit) + Number(binaryProfit)
     return last
 }
 async function insertLastDay(day, amount) {

@@ -140,11 +140,11 @@ const updateGames = async function () {
 }
 
 const main = async function(){
-    await updateGames()
-    console.log("\n--------2-------\n")
-    await update222()
-    console.log("\n--------3-------\n")
-    await update333()
+    // await updateGames()
+    // console.log("\n--------2-------\n")
+    // await update222()
+    // console.log("\n--------3-------\n")
+    // await update333()
 }
 
 main().then(() => {
