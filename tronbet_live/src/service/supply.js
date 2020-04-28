@@ -327,7 +327,7 @@ async function getBinaryToken(ctx) {
     if (!['TRX','USDT'].includes(currency)) {
         return ctx.body = {code: 500, message: "currency error"}
     }
-    const tokenRedisKey = "BinaryToken_" + addr
+    const tokenRedisKey = currency + "_BinaryToken_" + addr
     let val = await redisUtils.get(tokenRedisKey)
     console.log("BinaryToken_addr: ", addr)
     console.log("BinaryToken_token: ", val)
