@@ -192,6 +192,7 @@ async function getBinaryProfit(startTs, endTs) {
     let sql = `SELECT SUM(amount / 1000000 - win / 1000000) amount
     FROM binary_transaction_log
     WHERE expiration_date >= ? AND expiration_date < ? AND status = 'close' AND currency = 'TRX'`
+    console.log(sql,[startTs, endTs])
     let res = await db.exec(sql, [startTs, endTs])
     if (_.isEmpty(res)) return 0
     return res[0].amount || 0
@@ -299,8 +300,16 @@ async function getRealTimeProfitAmount(ts) {
         binaryProfit  : ${binaryProfit}
         `
     )
-
-    const last = Number(lastTotalProfit) - Number(totalDividends) + Number(betAmount) - Number(resultAmount) + Number(soportsRealTimeProfit) + Number(swaggerRealProfit) + Number(platiusProfit) + Number(binaryProfit)
+    const realTimeAmountSumTmp = [
+        Number(lastTotalProfit) - Number(totalDividends),
+        Number(betAmount) - Number(resultAmount),
+        soportsRealTimeProfit,
+        swaggerRealProfit,
+        platiusProfit,
+        binaryProfit
+    ]
+    const realTimeAmountSumTmp2 = realTimeAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
+    const last = Math.floor(Number(realTimeAmountSumTmp2))
     console.log("trx last is ------>",last)
     return last
 }
@@ -340,6 +349,16 @@ async function getSportsTRC20Profit(startTs, endTs, currency) {
     return res[0].amount || 0;
   }
 
+async function getBinaryTRC20Profit(startTs, endTs, currency) {
+    let sql = `SELECT SUM(amount / 1000000 - win / 1000000) amount
+    FROM binary_transaction_log
+    WHERE expiration_date >= ? AND expiration_date < ? AND status = 'close' AND currency = '${currency}'`
+    console.log(sql,[startTs, endTs])
+    let res = await db.exec(sql, [startTs, endTs])
+    if (_.isEmpty(res)) return 0
+    return res[0].amount || 0
+}
+
   async function getRealTimeUSDProfitAmount(ts) {
     let startTs = Math.floor(ts / dividendsDuration) * dividendsDuration * 1000;
     let endTs = ts * 1000;
@@ -348,27 +367,48 @@ async function getSportsTRC20Profit(startTs, endTs, currency) {
       //
     let currency = 'USDT';
     let sportsRealTimeProfit = await getSportsTRC20Profit(startTs, endTs * 10, currency);
+    let binaryRealTimeProfit = await getBinaryTRC20Profit(startTs, endTs * 10, currency)
     let lastDay = Math.floor(ts / dividendsDuration) - 1;
     if (lastDay >= 0) {
       let hasYestodayProfit = await hasLastDayTRC20Profit(lastDay, currency);
       if (!hasYestodayProfit) {
         let sportsProfitAmount = await getSportsTRC20Profit(startTs - 86400000, startTs, currency);
-        console.log('=====startTs, sportsProfitAmount=====', startTs, sportsProfitAmount);
-        await insertTRC20LastDay(lastDay, Math.floor(Number(sportsProfitAmount)), currency);
+        let binaryProfitAmount = await getBinaryTRC20Profit(startTs - 86400000, startTs, currency);
+        console.log(`
+        lastday ts is : ${startTs} , ${new Date(startTs)}
+        sportsProfitAmount : ${sportsProfitAmount},
+        binaryProfitAmount : ${binaryProfitAmount},
+        `);
+        const lastDayAmountSumTmp = [
+            sportsProfitAmount,
+            binaryProfitAmount,
+        ]
+        const lastDayAmountSumTmp2 = lastDayAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
+        const lastDayAmountSum = Math.floor(Number(lastDayAmountSumTmp2))
+        console.log("lastDayAmountSum is ",lastDayAmountSum)
+        await insertTRC20LastDay(lastDay, lastDayAmountSum, currency);
       }
     }
 
     let lastTotalProfit = await getHistDaysTRC20Profit(currency);
 
     let totalDividends = await getDividendsTRC20Amount(currency);
-    console.log(
-      'lastTotalProfit - totalDividends + sportsRealTimeProfit ====>',
-      Number(lastTotalProfit),
-      totalDividends,
-      sportsRealTimeProfit
-    );
-
-    return Number(lastTotalProfit) - Number(totalDividends) + Number(sportsRealTimeProfit);
+    console.log(`
+        lastTotalProfit : ${lastTotalProfit},
+        totalDividends: ${totalDividends},
+        sportsRealTimeProfit: ${sportsRealTimeProfit},
+        binaryRealTimeProfit: ${binaryRealTimeProfit},
+        `
+    )
+    const realTimeAmountSumTmp = [
+        Number(lastTotalProfit) - Number(totalDividends),
+        sportsRealTimeProfit,
+        binaryRealTimeProfit,
+    ]
+    const realTimeAmountSumTmp2 = realTimeAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
+    const last = Math.floor(Number(realTimeAmountSumTmp2))
+    console.log("usdt last is ------>",last)
+    return last
   }
 
   async function insertTRC20LastDay(day, amount, currency) {
