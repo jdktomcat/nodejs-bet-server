@@ -296,10 +296,12 @@ async function getRealTimeProfitAmount(ts) {
         sportsRealTimeProfit : ${soportsRealTimeProfit},
         swaggerRealProfit : ${swaggerRealProfit},
         platiusProfit : ${platiusProfit},
-        binaryProfit  : ${binaryProfit}`
+        binaryProfit  : ${binaryProfit}
+        `
     )
 
     const last = Number(lastTotalProfit) - Number(totalDividends) + Number(betAmount) - Number(resultAmount) + Number(soportsRealTimeProfit) + Number(swaggerRealProfit) + Number(platiusProfit) + Number(binaryProfit)
+    console.log("trx last is ------>",last)
     return last
 }
 async function insertLastDay(day, amount) {
