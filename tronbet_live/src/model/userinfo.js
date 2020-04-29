@@ -291,8 +291,7 @@ async function getRealTimeProfitAmount(ts) {
     // console.log('lastTotalProfit,totalDividends ++++>', lastTotalProfit,totalDividends)
     let totalDividends = await getDividendsAmount()
     console.log(`
-        lastTotalProfit : ${lastTotalProfit},
-        totalDividends: ${totalDividends},
+        lastTotalProfit - totalDividends: ${lastTotalProfit} - ${totalDividends} = ${Number(lastTotalProfit)- Number(totalDividends)},
         betAmount - resultAmount : ${betAmount} - ${resultAmount} = ${Number(betAmount)- Number(resultAmount)},
         sportsRealTimeProfit : ${soportsRealTimeProfit},
         swaggerRealProfit : ${swaggerRealProfit},
@@ -394,8 +393,7 @@ async function getBinaryTRC20Profit(startTs, endTs, currency) {
 
     let totalDividends = await getDividendsTRC20Amount(currency);
     console.log(`
-        lastTotalProfit : ${lastTotalProfit},
-        totalDividends: ${totalDividends},
+        lastTotalProfit - totalDividends : ${lastTotalProfit} - ${totalDividends} = ${Number(lastTotalProfit)- Number(totalDividends)},
         sportsRealTimeProfit: ${sportsRealTimeProfit},
         binaryRealTimeProfit: ${binaryRealTimeProfit},
         `
