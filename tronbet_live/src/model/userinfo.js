@@ -192,7 +192,7 @@ async function getBinaryProfit(startTs, endTs) {
     let sql = `SELECT SUM(amount / 1000000 - win / 1000000) amount
     FROM binary_transaction_log
     WHERE expiration_date >= ? AND expiration_date < ? AND status = 'close' AND currency = 'TRX'`
-    console.log(sql,[startTs, endTs])
+    // console.log(sql,[startTs, endTs])
     let res = await db.exec(sql, [startTs, endTs])
     if (_.isEmpty(res)) return 0
     return res[0].amount || 0
@@ -353,7 +353,7 @@ async function getBinaryTRC20Profit(startTs, endTs, currency) {
     let sql = `SELECT SUM(amount / 1000000 - win / 1000000) amount
     FROM binary_transaction_log
     WHERE expiration_date >= ? AND expiration_date < ? AND status = 'close' AND currency = '${currency}'`
-    console.log(sql,[startTs, endTs])
+    // console.log(sql,[startTs, endTs])
     let res = await db.exec(sql, [startTs, endTs])
     if (_.isEmpty(res)) return 0
     return res[0].amount || 0
