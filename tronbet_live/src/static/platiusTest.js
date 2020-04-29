@@ -1,5 +1,12 @@
 module.exports  = [
     {
+        "launchUrl": "https://wbg.platipusgaming.com/wink/caishensgifts/launch",
+        "name": "Caishen's Gifts",
+        "gameID": "534",
+        "png": "//platipusgaming.com/img/games/caishensgifts.jpg",
+        "category": "slots"
+    },
+    {
         "launchUrl": "https://wbg.platipusgaming.com/wink/piratesmap/launch",
         "name": "Pirates Map",
         "gameID": "532",
