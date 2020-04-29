@@ -72,13 +72,13 @@ const getAdditionByGameId = async function (GameID) {
 
 const beforeBusiness = async function (ctx, typeDesc) {
     let rs = {
-        code : 0,
+        code: 0,
         error: false,
         info: {}
     }
     //
     const params = ctx.request.body
-    console.log(new Date(),` ${typeDesc} reuqest is =${JSON.stringify(params)}`)
+    console.log(new Date(), ` ${typeDesc} reuqest is =${JSON.stringify(params)}`)
     Object.keys(params).forEach(e => params[e] = params[e] || '')
     const {tokenError, tokenInfo} = usermodel.checkToken(params.token)
     if (tokenError) {
@@ -103,11 +103,13 @@ const beforeBusiness = async function (ctx, typeDesc) {
         rs.msg = "amount is error"
         return rs
     }
-    if (balance === 0 || balance < Number(amount)) {
-        rs.code = 1002
-        rs.error = true
-        rs.msg = "Not enough funds"
-        return rs
+    if (typeDesc === 'bet') {
+        if (balance === 0 || balance < Number(amount)) {
+            rs.code = 1002
+            rs.error = true
+            rs.msg = "Not enough funds"
+            return rs
+        }
     }
     if (emptyCheck === false) {
         rs.code = 1008
@@ -170,9 +172,9 @@ const getRs = async function (info) {
 const checkBalance = async function (params) {
     const {tokenInfo, tokenError} = await usermodel.checkToken(params.token)
     let msg = {
-        code : 0,
-        error : 'success',
-        data : {}
+        code: 0,
+        error: 'success',
+        data: {}
     }
     if (tokenError) {
         msg.code = 1001
@@ -186,10 +188,10 @@ const checkBalance = async function (params) {
     }
     console.log("tokenInfo is ", tokenInfo)
     const o = {
-        currency : params.currency,
+        currency: params.currency,
         type: 'query_balance',
-        token : params.token,
-        addr : tokenInfo.addr,
+        token: params.token,
+        addr: tokenInfo.addr,
     }
     console.log("o  is ", o)
     const data = await getRs(o)

@@ -206,6 +206,33 @@ const getPlatius = async function (startDate, endDate) {
     return data
 }
 
+
+const getBinary = async function (startDate, endDate) {
+    const sql = `
+        SELECT
+            from_unixtime(expiration_date / 1000,'%Y-%m-%d') as day,
+            count(distinct addr)  as dau,
+            count(1) as count,
+            sum(amount) / 1000000 as all_amount,
+            sum(win) / 1000000  as all_win,
+            (sum(amount) - sum(win)) / 1000000  as balance
+        FROM
+            tron_live.binary_transaction_log
+        WHERE
+            expiration_date >= ?
+            AND expiration_date < ?
+            AND status = 'close'
+            AND currency = 'TRX'
+            group by from_unixtime(expiration_date / 1000,'%Y-%m-%d')
+    `
+    const params = [
+        newUtcTime(startDate).getTime(),
+        newUtcTime(endDate).getTime()
+    ]
+    const data = await raw(sql, params)
+    return data
+}
+
 const getPoker = async function (startDate, endDate) {
     const sql = `
         select
@@ -243,6 +270,7 @@ class DailyTransaction{
             "em": getEM,
             "hub88": getHub88,
             "platius": getPlatius,
+            "binary": getBinary,
             "sport": getSport,
             "poker": getPoker,
         }
