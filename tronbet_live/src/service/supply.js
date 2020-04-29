@@ -329,6 +329,7 @@ async function getBinaryToken(ctx) {
     }
     const tokenRedisKey = currency + "_BinaryToken_" + addr
     let val = await redisUtils.get(tokenRedisKey)
+    console.log("tokenRedisKey: ", tokenRedisKey)
     console.log("BinaryToken_addr: ", addr)
     console.log("BinaryToken_token: ", val)
 
