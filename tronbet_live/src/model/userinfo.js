@@ -310,7 +310,7 @@ async function getRealTimeProfitAmount(ts) {
     ]
     const realTimeAmountSumTmp2 = realTimeAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
     const last = Math.floor(Number(realTimeAmountSumTmp2))
-    console.log("trx last is ------>",last)
+    console.log(`trx last is ------> ${last} \n`)
     return last
 }
 async function insertLastDay(day, amount) {
@@ -407,7 +407,7 @@ async function getBinaryTRC20Profit(startTs, endTs, currency) {
     ]
     const realTimeAmountSumTmp2 = realTimeAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
     const last = Math.floor(Number(realTimeAmountSumTmp2))
-    console.log("usdt last is ------>",last)
+    console.log(`usdt last is ------> ${last} \n`)
     return last
   }
 
