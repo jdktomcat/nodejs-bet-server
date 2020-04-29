@@ -103,10 +103,10 @@ function tronExec(contractAddr, fun_code, fee = 1, callVal = 0, params = [], nod
         .then((transaction) => {
             return tronWeb.trx.sign(transaction.transaction);
         }).then((signData) => {
-            // console.log("signData", signData);
+            console.log("signData is: ", signData);
             return tronWeb.trx.sendRawTransaction(signData);
         }).then((result) => {
-            // console.log(result);
+            console.log("broadcast data is: ",result);
             if (result != null) {
                 return _callback(null, result);
             } else {
