@@ -99,6 +99,7 @@ async function isTxClose(params){
     if(rs.length === 0){
         return false
     }else {
+        console.log("isTxClose is ",isTxClose)
         const tmp = rs[0] || {}
         const count = tmp.count || 0
         if(count > 0){

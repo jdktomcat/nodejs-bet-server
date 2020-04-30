@@ -56,45 +56,34 @@ const raw = async function (updateSql, params) {
     return t
 }
 
-const updateGames1 = async function () {
-    const sql1 = `CREATE TABLE tron_live.back_live_profit_log (
-        days int(11) NOT NULL,
-        profit bigint(20) NOT NULL,
-        PRIMARY KEY (days)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8`
-    const a1 = await raw(sql1, [])
-    console.log("\nlast====>\n", a1)
-}
-
 const updateGames2 = async function () {
-    const sql1 =`
-        CREATE TABLE tron_live.back_live_div_info (
-        round  int(10) unsigned NOT NULL DEFAULT '0' COMMENT '分红期数',
-        total_token  bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '累计已冻结trx数(单位sun)',
-        total_trx  bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '本期分红TRX(单位sun)',
-        mark_ts  bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '统计分红数据时间戳',
-        send_ts  bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '发送分红时间戳',
-        div_state  tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '分红状态 0:等待统计 1:等待分红 2:分红完毕',
-        rank_trx  bigint(20) unsigned NOT NULL DEFAULT '0',
-        PRIMARY KEY (round)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='live token分红总揽'
+    const sql1 = `
+        CREATE TABLE tron_live.back_live_fix_log (
+        log_id bigint(20) NOT NULL AUTO_INCREMENT,
+        amount bigint(20) DEFAULT NULL,
+        ts bigint(20) DEFAULT NULL,
+        PRIMARY KEY (log_id),
+        KEY back_live_fix_log_ts_index (ts)
+) ENGINE=InnoDB AUTO_INCREMENT=354 DEFAULT CHARSET=utf8
 `
     const a1 = await raw(sql1, [])
+    //
+    const sql2 = `insert into tron_live.back_live_fix_log select * from tron_live.live_fix_log`
+    const a2 = await raw(sql2, [])
     console.log("\nlast====>\n", a1)
+    console.log("\nlast====>\n", a2)
 }
 
 
 const updateGames3 = async function () {
-    const sql1 = `update tron_live.live_profit_log set profit = 0 where 1=1`
-    const sql2 = `update tron_live.live_div_info set total_token = 0,total_trx = 0,rank_trx = 0 where 1=1`
+    const sql1 = `update tron_live.live_balance set balance = balance * 0.01 where addr = 'TUegyE57yFmju8WQoQDsn9gAef68Mh4bPs' and currency = 'TRX'`
     const a1 = await raw(sql1, [])
-    const a2 = await raw(sql2, [])
     console.log(a1)
-    console.log(a2)
 }
 
 const main = async function () {
-    await updateGames3()
+    await updateGames2()
+    // await updateGames3()
 }
 
 main().then(() => {
