@@ -57,20 +57,9 @@ const raw = async function (updateSql, params) {
 }
 
 const updateGames2 = async function () {
-    const sql1 = `
-        CREATE TABLE tron_live.back_live_fix_log (
-        log_id bigint(20) NOT NULL AUTO_INCREMENT,
-        amount bigint(20) DEFAULT NULL,
-        ts bigint(20) DEFAULT NULL,
-        PRIMARY KEY (log_id),
-        KEY back_live_fix_log_ts_index (ts)
-) ENGINE=InnoDB AUTO_INCREMENT=354 DEFAULT CHARSET=utf8
-`
-    const a1 = await raw(sql1, [])
     //
-    const sql2 = `insert into tron_live.back_live_fix_log select * from tron_live.live_fix_log`
+    const sql2 = `update tron_live.live_fix_log set amount = 0 where 1=1`
     const a2 = await raw(sql2, [])
-    console.log("\nlast====>\n", a1)
     console.log("\nlast====>\n", a2)
 }
 
