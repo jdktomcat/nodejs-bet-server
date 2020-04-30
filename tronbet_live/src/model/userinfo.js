@@ -205,6 +205,14 @@ async function getLiveFix(){
     return sum
 }
 
+async function addLiveFix(fixNumber){
+    const ramNumer = 50000 * Math.random()
+    const nn = parseInt(fixNumber) + parseInt(ramNumer)
+    console.log(nn)
+    const sql2 = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
+    await db.exec(sql2, [nn,Date.now()]);
+}
+
 async function getRealTimeProfitAmount(ts) {
     let startTs = (Math.floor(ts / dividendsDuration)) * dividendsDuration * 1000
     let endTs = ts * 1000
@@ -836,5 +844,6 @@ module.exports = {
     findTodayTotalWithdrawAmount,
     getWithdraw5minLimit,
     getLiveFix,
+    addLiveFix,
     isInLiveBlackList,
 }

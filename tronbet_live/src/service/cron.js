@@ -20,7 +20,7 @@ let timer = setInterval(async () => {
     console.log("time error,jump this time",new Date(now),startTs,endTs)
     console.log("跳过这次设置")
   }else{
-    let profit = await usermodel.getRealTimeProfitAmount(now);
+    let profitRaw = await usermodel.getRealTimeProfitAmount(now);
     let usdt = await usermodel.getRealTimeUSDProfitAmount(now);
   
     // 抽回部分底池 累计有效分红100次 每次抽10万 第500轮开始
@@ -32,26 +32,29 @@ let timer = setInterval(async () => {
     // 抽回部分底池 累计有效分红100次 每次抽10% 第507轮开始
     // profit = profit * 0.9;
     console.log("profit normal",new Date(now * 1000),startTs,endTs)
-    console.log("this time trx profit is",profit)
+    console.log("this time trx profit0 is",profitRaw)
     //130137.62050057614
     //抽回部分回归底池,现底池过低
     const fixSum = await usermodel.getLiveFix();
     //
-
-    profit = profit - fixSum
-    console.log("this time trx fixSum is",fixSum)
-    console.log("after time trx profit is",profit)
+    let profit = profitRaw - fixSum
+    console.log("after time trx fixSum is",fixSum)
+    console.log("after time trx profit1 is",profit)
+    // 大于500w,动态回收
+    if(profit > 5000000){
+      const tmpFix = profit - 5000000
+      await usermodel.addLiveFix(tmpFix)
+      //重新更新profit
+      const fixSum2 = await usermodel.getLiveFix();
+      profit = profitRaw - fixSum2
+    }
+    console.log("after time trx profit2 is",profit)
     profit = profit * 0.5
     console.log("after time trx last is",profit)
-
-
     //先写死固定值
     profit = 1373098 - 10000 * Math.random()
     console.log("this fix last is ",profit)
-    // 盈利暂时放开 50%
-    // if( profit > 0 ){
-    //   profit = profit * 0.5
-    // }
+    //
     await redisUtil.hset('tronlive:realtime', 'profit', profit);
     await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
   }
