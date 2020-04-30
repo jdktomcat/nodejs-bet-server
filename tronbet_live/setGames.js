@@ -56,14 +56,47 @@ const raw = async function (updateSql, params) {
     return t
 }
 
-const updateGames = async function () {
-    const sql1 = `update tron_live.platipus_transaction_log set status = 2 where ts <=1588245513189 and status = 1`
+const updateGames1 = async function () {
+    const sql1 = `CREATE TABLE tron_live.back_live_profit_log (
+        days int(11) NOT NULL,
+        profit bigint(20) NOT NULL,
+        PRIMARY KEY (days)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8`
     const a1 = await raw(sql1, [])
     console.log("\nlast====>\n", a1)
 }
 
+const updateGames2 = async function () {
+    const sql1 =`
+        CREATE TABLE tron_live.back_live_div_info (
+        round  int(10) unsigned NOT NULL DEFAULT '0' COMMENT '分红期数',
+        total_token  bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '累计已冻结trx数(单位sun)',
+        total_trx  bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '本期分红TRX(单位sun)',
+        mark_ts  bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '统计分红数据时间戳',
+        send_ts  bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '发送分红时间戳',
+        div_state  tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '分红状态 0:等待统计 1:等待分红 2:分红完毕',
+        rank_trx  bigint(20) unsigned NOT NULL DEFAULT '0',
+        PRIMARY KEY (round)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='live token分红总揽'
+`
+    const a1 = await raw(sql1, [])
+    console.log("\nlast====>\n", a1)
+}
+
+
+const updateGames3 = async function () {
+    const sql1 = `insert into tron_live.back_live_div_info select * from tron_live.live_div_info`
+    const sql2 = `insert into tron_live.back_live_profit_log select * from tron_live.live_profit_log`
+    const a1 = await raw(sql1, [])
+    const a2 = await raw(sql2, [])
+    console.log(a1)
+    console.log(a2)
+}
+
 const main = async function () {
-    await updateGames()
+    await updateGames1()
+    await updateGames2()
+    await updateGames3()
 }
 
 main().then(() => {
