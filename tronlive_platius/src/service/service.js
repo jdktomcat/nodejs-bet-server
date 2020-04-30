@@ -166,6 +166,7 @@ const getRs = async function (info) {
         type: info.type,
         success: true
     };
+    console.log("reponse data is:",result)
     return result
 }
 

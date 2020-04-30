@@ -31,7 +31,6 @@ class apiCall {
             // 触发活动
             service.sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
             const result = await service.getRs(info)
-            console.log("bet is ",result)
             return await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {
             console.log(new Date(), ' platinus bet error : ', e)
