@@ -21,7 +21,6 @@ class apiCall {
             return ctx.body = 'check with token!'
         }
         const t  = await service.buy(tokenInfo)
-        console.log("debug buy is ",t)
         if(t.code === 2){
             ctx.status = 400;
             ctx.body = t

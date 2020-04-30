@@ -50,8 +50,6 @@ const getAdditionRate = function () {
         const start = config.addition.START_TS
         const end = config.addition.END_TS
         const rate = config.addition.RATE
-        console.log(new Date(start))
-        console.log(new Date(end))
         if (now >= start && now <= end) {
             return Number(rate)
         } else {
@@ -70,43 +68,46 @@ class Service {
         //     message: "success",
         //     data: data,
         // }
+        console.log(data)
         return data
     }
 
     static error(messgae) {
-        return {
+        const t = {
             code: 2,
             message: messgae,
         }
+        console.log(t)
+        return t
     }
 
-    static async getToken(params){
+    static async getToken(params) {
         const t = await usermodel.checkToken(params.payload)
         return t
     }
 
     static async identify(params) {
-        console.log("identify params is ", params)
+        console.log(new Date(), "_identify params is ", params)
         const {tokenError, tokenInfo} = usermodel.checkToken(params.payload)
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
         } else {
-            console.log("token info is ",tokenInfo)
+            console.log("token info is ", tokenInfo)
             const rawToken = decodeURIComponent(tokenInfo.token)
             let tron_address = ''
             let currency = ''
-            try{
+            try {
                 let iToken = decrypt(rawToken)
-                let [dayTime,addr,currencyTmp] = iToken.split("-")
-                console.log("decrypt iToken is ",dayTime,addr,currencyTmp)
-                console.log("decrypt time is ",Date.now() - Number(dayTime))
+                let [dayTime, addr, currencyTmp] = iToken.split("-")
+                console.log("decrypt iToken is ", dayTime, addr, currencyTmp)
+                console.log("decrypt time is ", Date.now() - Number(dayTime))
                 const time = Date.now() - Number(dayTime)
-                if(time >= 2 * 24 * 60 * 60 * 1000){
+                if (time >= 2 * 24 * 60 * 60 * 1000) {
                     return this.error("token is expire, please check with your token!")
                 }
                 tron_address = addr
                 currency = currencyTmp
-            }catch (e) {
+            } catch (e) {
                 console.log(e)
                 return this.error("addr is error, please check with your token!")
             }
@@ -120,7 +121,7 @@ class Service {
     }
 
     static async buy(params) {
-        console.log("buy params is ", params)
+        console.log(new Date(), "_buy params is ", params)
         //
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
@@ -128,7 +129,6 @@ class Service {
         //
         const dictFields = [params.kind, params.status, params.expiration.type]
         const dictFieldsSign = dictFields.every(e => [1, 2].includes(Number(e)))
-        console.log(dictFields)
         if (!dictFieldsSign) {
             return this.error("kind/status/expiration_type value is invaild !")
         }
@@ -140,9 +140,7 @@ class Service {
         //
         const price_now = await usermodel.getTRXPrice(params.currency)
         const rate = getAdditionRate()
-        console.log("debug ----> price_now , rate, amount ",price_now, rate, amount)
         const adAmount = Number(price_now) * rate * amount
-        console.log("debug adAmount is ----> ",adAmount)
         const sqlParam = {
             'transaction_id': params.id,
             'addr': params.user,
@@ -150,7 +148,7 @@ class Service {
             'kind': Number(params.kind),
             'amount': amount,
             'win': 0,
-            'adAmount': adAmount,
+            'adAmount': 0,
             'currency': params.currency,
             'quote_open': Number(params.quoteOpen),
             'quote_close': 0,
@@ -159,41 +157,45 @@ class Service {
             'expiration_date': new Date(params.expiration.date).getTime(),
             'expiration_type': Number(params.expiration.type)
         }
+        console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@buy${sqlParam.amount / 1e6}TRX`)
         await usermodel.buy(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
-        sendGameMsg(sqlParam.addr, Date.now(), sqlParam.amount, sqlParam.currency);
+        // sendGameMsg(sqlParam.addr, Date.now(), sqlParam.amount, sqlParam.currency);
         return this.success(balanceInfo)
     }
 
     static async close(params) {
-        console.log("close params is ", params)
+        console.log(new Date(), "_close params is ", params)
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
-        const p = {
+        const sqlParam = {
             win: Number(params.income),
             transaction_id: params.id,
             addr: params.user,
             currency: params.currency,
-            quote_close : params.quoteClose,
+            quote_close: params.quoteClose,
         }
-        await usermodel.close(p)
-        const balanceInfo = await usermodel.getBalance(p)
+        console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.win / 1e6}TRX`)
+        await usermodel.close(sqlParam)
+        const balanceInfo = await usermodel.getBalance(sqlParam)
         return this.success(balanceInfo)
     }
 
     static async refund(params) {
+        console.log(new Date(), "_refund params is ", params)
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
-        const p = {
+        const sqlParam = {
             amount: Number(params.sum),
             transaction_id: params.id,
             addr: params.user,
             currency: params.currency
         }
-        await usermodel.refund(p)
-        const balanceInfo = await usermodel.getBalance(p)
+        console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.amount / 1e6}TRX`)
+        await usermodel.refund(sqlParam)
+        const balanceInfo = await usermodel.getBalance(sqlParam)
         return this.success(balanceInfo)
     }
 
