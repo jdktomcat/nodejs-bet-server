@@ -85,8 +85,8 @@ const updateGames2 = async function () {
 
 
 const updateGames3 = async function () {
-    const sql1 = `insert into tron_live.back_live_div_info select * from tron_live.live_div_info`
-    const sql2 = `insert into tron_live.back_live_profit_log select * from tron_live.live_profit_log`
+    const sql1 = `update tron_live.live_profit_log set profit = 0 where 1=1`
+    const sql2 = `update tron_live.live_div_info set total_token = 0,total_trx = 0,rank_trx = 0 where 1=1`
     const a1 = await raw(sql1, [])
     const a2 = await raw(sql2, [])
     console.log(a1)
@@ -94,8 +94,6 @@ const updateGames3 = async function () {
 }
 
 const main = async function () {
-    await updateGames1()
-    await updateGames2()
     await updateGames3()
 }
 
