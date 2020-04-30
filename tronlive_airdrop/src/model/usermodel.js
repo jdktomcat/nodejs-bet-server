@@ -12,7 +12,7 @@ async function getLiveAirdropData(startTs, endTs) {
     
     union all
     
-    select sum(adAmount / 1000000) Amount, addr from platipus_transaction_log where ts >= ? and ts < ? and status = 1 and  resultId is not null and currency = 'TRX' group by addr  
+    select sum(adAmount / 1000000) Amount, addr from platipus_transaction_log where ts >= ? and ts < ? and status = 2 and  resultId is not null and currency = 'TRX' group by addr  
  
     union all 
  

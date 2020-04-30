@@ -28,8 +28,6 @@ class apiCall {
                 return await service.sendMsgToClient(ctx, code, msg);
             }
             await service.execBet(info)
-            // 触发活动
-            service.sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
             const result = await service.getRs(info)
             return await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {
@@ -48,7 +46,12 @@ class apiCall {
             if (error) {
                 return await service.sendMsgToClient(ctx, code, msg);
             }
-            await service.execBet(info)
+            const ifExist = await service.queryTxIfExist(info)
+            if(ifExist){
+                await service.execBet(info)
+            }else {
+                console.log("this tx_id is over: ",info.transaction_id)
+            }
             // 触发活动
             service.sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
             const result = await service.getRs(info)
@@ -69,9 +72,12 @@ class apiCall {
             if (error) {
                 return await service.sendMsgToClient(ctx, code, msg);
             }
-            await service.execRollBack(info)
-            // 触发活动
-            service.sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
+            const ifExist = await service.queryTxIfExist(info)
+            if(ifExist){
+                await service.execRollBack(info)
+            }else {
+                console.log("this tx_id is over: ",info.transaction_id)
+            }
             const result = await service.getRs(info)
             await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {

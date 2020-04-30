@@ -93,14 +93,14 @@ async function userAction(params) {
         ]
         await db.exec(sql, sqlParam)
     }else if(params.type === 'result'){
-        let sql = "update tron_live.platipus_transaction_log set resultId = ? , win = ? where round_id = ? and addr = ?"
+        let sql = "update tron_live.platipus_transaction_log set resultId = ? , win = ?, status = 2 where round_id = ? and addr = ?"
         const sqlParam = [
             params.transaction_id,
             params.amount,
             params.round_id,
             params.addr,
         ]
-       const rs = await db.exec(sql, sqlParam)
+        await db.exec(sql, sqlParam)
     }
 }
 
@@ -119,6 +119,23 @@ async function rollback(params) {
         params.addr,
     ]
     await db.exec(sqlReset, sqlResetParam)
+}
+
+
+async function queryTxIfExist(params) {
+    let sql = "select count(1) as count from tron_live.platipus_transaction_log where transaction_id = ? and status = 1"
+    const sqlResetParam = [
+        params.transaction_id,
+    ]
+    const rs = await db.exec(sql, sqlResetParam)
+    if(rs.length > 0){
+        const tmp = rs[0] || {}
+        const num = tmp.count || 0
+        if(num === 1){
+            return true
+        }
+    }
+    return false
 }
 
 
@@ -144,4 +161,5 @@ module.exports = {
     execRollBack,
     checkToken,
     parseToken,
+    queryTxIfExist,
 }

@@ -4,6 +4,7 @@ const resdisUtils = require("../utils/redisUtil");
 const config = require("../configs/config");
 const execBet = usermodel.execBet
 const execRollBack = usermodel.execRollBack
+const queryTxIfExist = usermodel.queryTxIfExist
 
 let _GAME_TYPE = "live";
 let ACTIVITY_START_TS = config.event.ACTIVITY_START_TS || 0;
