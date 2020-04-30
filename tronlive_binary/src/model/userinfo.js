@@ -99,6 +99,7 @@ async function isTxClose(params){
     if(rs.length > 0){
         const tmp = rs[0] || {}
         const status = tmp.status || '-1'
+        console.log("--->status--->",status)
         if(status === statusDict.refund || status === statusDict.close){
             return true
         }else {

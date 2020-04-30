@@ -133,6 +133,7 @@ async function queryTxIfExist(params) {
         const tmp = rs[0] || {}
         const statusTmp = tmp.status || '-1'
         const status = Number(statusTmp)
+        console.log("--->status--->",status)
         if(status === 2 || status === 0){
             return false
         }else {
