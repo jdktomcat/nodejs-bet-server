@@ -65,14 +65,13 @@ const updateGames2 = async function () {
 
 
 const updateGames3 = async function () {
-    const sql1 = `update tron_live.live_balance set balance = balance * 0.01 where addr = 'TUegyE57yFmju8WQoQDsn9gAef68Mh4bPs' and currency = 'TRX'`
+    const sql1 = `update tron_live.live_balance set balance = 0 where addr = 'TUegyE57yFmju8WQoQDsn9gAef68Mh4bPs' and currency = 'TRX'`
     const a1 = await raw(sql1, [])
     console.log(a1)
 }
 
 const main = async function () {
-    await updateGames2()
-    // await updateGames3()
+    await updateGames3()
 }
 
 main().then(() => {
