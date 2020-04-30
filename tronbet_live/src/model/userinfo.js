@@ -181,7 +181,7 @@ async function getSwaggerProfit(startTs, endTs) {
 async function getPlatiusProfit(startTs, endTs) {
     let sql = `SELECT SUM(amount / 1000000 - win / 1000000) amount
     FROM platipus_transaction_log
-    WHERE ts >= ? AND ts < ? AND status = 1 AND currency = 'TRX' and resultId is not null`
+    WHERE ts >= ? AND ts < ? AND status = 2 AND currency = 'TRX' and resultId is not null`
     let res = await db.exec(sql, [startTs - 2 * 60 * 1000, endTs - 2 * 60 * 1000])
     if (_.isEmpty(res)) return 0
     return res[0].amount || 0
