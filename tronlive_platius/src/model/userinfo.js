@@ -123,9 +123,10 @@ async function rollback(params) {
 
 
 async function queryTxIfExist(params) {
-    let sql = "select count(1) as count from tron_live.platipus_transaction_log where transaction_id = ? and status = 1"
+    let sql = "select count(1) as count from tron_live.platipus_transaction_log where round_id = ? and addr = ? and status = 1"
     const sqlResetParam = [
-        params.transaction_id,
+        params.round_id,
+        params.addr,
     ]
     const rs = await db.exec(sql, sqlResetParam)
     if(rs.length > 0){
