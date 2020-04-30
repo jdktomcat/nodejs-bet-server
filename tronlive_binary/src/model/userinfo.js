@@ -52,7 +52,7 @@ function checkToken(token) {
             tokenInfo: {}
         }
     }
-    console.log("secretKey: ", secretKey)
+    console.log("rawToken is: ", token)
     const tmp = decodeURIComponent(token)
     const payload = jwt.verify(tmp, secretKey)
     console.log("payload: ", payload)
@@ -93,7 +93,28 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     return 1
 }
 
+async function isTxClose(params){
+    let updateSql = "select count(1) as count from tron_live.binary_transaction_log where transaction_id = ? and status = 'close'"
+    const rs = await raw(updateSql, [params.transaction_id])
+    if(rs.length === 0){
+        return false
+    }else {
+        const tmp = rs[0] || {}
+        const count = tmp.count || 0
+        if(count > 0){
+            return true
+        }else {
+            return false
+        }
+    }
+}
+
 async function close(params) {
+    const isClose = await isTxClose(params)
+    if(isClose){
+        console.log("this tx is over ",params.transaction_id)
+        return []
+    }
     let updateSql = "update tron_live.live_balance set balance = balance + ? where addr = ? and currency = ?"
     await raw(updateSql, [params.win, params.addr, params.currency])
     //
@@ -113,6 +134,11 @@ update tron_live.binary_transaction_log set win = ? , status = ? ,quote_close = 
 
 
 async function refund(params) {
+    const isClose = await isTxClose(params)
+    if(isClose){
+        console.log("this tx is over ",params.transaction_id)
+        return []
+    }
     let updateSql = "update tron_live.live_balance set balance = balance + ? where addr = ? and currency = ?"
     await raw(updateSql, [params.amount, params.addr, params.currency])
     //
