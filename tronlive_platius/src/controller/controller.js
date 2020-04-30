@@ -50,7 +50,7 @@ class apiCall {
             if(ifExist){
                 await service.execBet(info)
             }else {
-                console.log("this tx_id is over: ",info.transaction_id)
+                console.log("this tx_id is over--------> ",info.transaction_id)
             }
             // 触发活动
             service.sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
