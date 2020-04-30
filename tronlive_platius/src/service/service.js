@@ -210,4 +210,5 @@ module.exports = {
     checkBalance,
     execBet,
     execRollBack,
+    queryTxIfExist,
 }
