@@ -43,6 +43,11 @@ let timer = setInterval(async () => {
     console.log("after time trx profit is",profit)
     profit = profit * 0.4
     console.log("after time trx last is",profit)
+
+
+    //先写死固定值
+    profit = 1373098 - 10000 * Math.random()
+
     // 盈利暂时放开 50%
     // if( profit > 0 ){
     //   profit = profit * 0.5
