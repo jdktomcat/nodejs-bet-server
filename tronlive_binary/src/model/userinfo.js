@@ -94,20 +94,18 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 }
 
 async function isTxClose(params){
-    let updateSql = "select count(1) as count from tron_live.binary_transaction_log where transaction_id = ? and status in ('close','refund')"
+    let updateSql = "select status from tron_live.binary_transaction_log where transaction_id = ? and status in ('close','refund')"
     const rs = await raw(updateSql, [params.transaction_id])
-    if(rs.length === 0){
-        return false
-    }else {
-        console.log("isTxClose is ",isTxClose)
+    if(rs.length > 0){
         const tmp = rs[0] || {}
-        const count = tmp.count || 0
-        if(count > 0){
+        const status = tmp.status || '-1'
+        if(status === statusDict.refund || status === statusDict.close){
             return true
         }else {
             return false
         }
     }
+    return false
 }
 
 async function close(params) {

@@ -51,6 +51,9 @@ let timer = setInterval(async () => {
     console.log("after time trx profit2 is",profit)
     profit = profit * 0.5
     console.log("after time trx last is",profit)
+    //先写死固定值
+    profit = 1373098 - 10000 * Math.random()
+    console.log("this fix last is ",profit)
     //
     await redisUtil.hset('tronlive:realtime', 'profit', profit);
     await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
