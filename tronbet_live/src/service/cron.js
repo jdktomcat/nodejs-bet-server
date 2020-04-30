@@ -47,7 +47,7 @@ let timer = setInterval(async () => {
 
     //先写死固定值
     profit = 1373098 - 10000 * Math.random()
-
+    console.log("this fix last is ",profit)
     // 盈利暂时放开 50%
     // if( profit > 0 ){
     //   profit = profit * 0.5
