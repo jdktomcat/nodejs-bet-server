@@ -4,6 +4,7 @@ const resdisUtils = require("../utils/redisUtil");
 const config = require("../configs/config");
 const execBet = usermodel.execBet
 const execRollBack = usermodel.execRollBack
+const queryTxIfExist = usermodel.queryTxIfExist
 
 let _GAME_TYPE = "live";
 let ACTIVITY_START_TS = config.event.ACTIVITY_START_TS || 0;
@@ -166,6 +167,7 @@ const getRs = async function (info) {
         type: info.type,
         success: true
     };
+    console.log("reponse data is:",result)
     return result
 }
 
@@ -208,4 +210,5 @@ module.exports = {
     checkBalance,
     execBet,
     execRollBack,
+    queryTxIfExist,
 }

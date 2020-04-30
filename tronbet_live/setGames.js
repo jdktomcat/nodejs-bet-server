@@ -53,34 +53,42 @@ const fixBalance = async function () {
 const raw = async function (updateSql, params) {
     console.log(updateSql, params)
     const t = await db.exec(updateSql, params);
-    return  t
+    return t
 }
 
+const getAddrs = async function () {
+    const sql = `select addr from binary_transaction_log where win>0 and currency = 'TRX' group by addr order by sum(win) desc`
+    const a1 = await raw(sql, [])
+    const a2 = a1.map(e => e.addr)
+    return a2
+}
 
 const updateGames = async function () {
-    const addr = [
-        'TUpZbBqWFDe3pvkcVH9ugdPcqCjzC6edGa'
-    ]
-    for(let e of addr){
+    const addrs = await getAddrs()
+    let o = {}
+    for (let e of addrs) {
         const sql1 = `select uid,currency,addr,balance / 1000000 as balance  from tron_live.live_balance where addr = ? and currency = 'TRX'`
-        const a1 = await raw(sql1,[e])
-        console.log("before is ",a1)
+        const a1 = await raw(sql1, [e])
+        console.log("before is ", a1)
+        o[e] = a1[0].balance
         //
         const updateSql = `update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX' `
-        await raw(updateSql,[e])
+        await raw(updateSql, [e])
     }
     //
-    console.log("\n\n===>\n")
-    for(let e of addr){
+    console.log("\n===>")
+    for (let e of addrs) {
         const sql1 = `select  uid,currency,addr,balance / 1000000 as balance   from tron_live.live_balance where addr = ? and currency = 'TRX'`
-        const a1 = await raw(sql1,[e])
-        console.log("after is ",a1)
+        const a1 = await raw(sql1, [e])
+        console.log("after is ", a1)
     }
+
+    console.log("\nlast====>\n", o)
 
 
 }
 
-const main = async function(){
+const main = async function () {
     await updateGames()
 }
 
