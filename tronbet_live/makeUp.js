@@ -32,7 +32,7 @@ async function fix20200319() {
     console.log("live_fix_log_insert",new Date())
     const live_fix_log_sql = `insert into tron_live.live_fix_log (amount,ts) values (?,?)`
     //
-    const number = 20 + 5 * Math.random()
+    const number = 10 + 5 * Math.random()
     const fixNumber = Number.parseInt(number * 10000)
     let fixParams = [fixNumber,Date.now()]
     console.log(live_fix_log_sql, fixParams)

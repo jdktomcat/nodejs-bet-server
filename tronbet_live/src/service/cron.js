@@ -41,7 +41,7 @@ let timer = setInterval(async () => {
     profit = profit - fixSum
     console.log("this time trx fixSum is",fixSum)
     console.log("after time trx profit is",profit)
-    profit = profit * 0.4
+    profit = profit * 0.5
     console.log("after time trx last is",profit)
 
 
