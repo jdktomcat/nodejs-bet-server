@@ -193,7 +193,7 @@ const getPlatius = async function (startDate, endDate) {
         WHERE
             ts >= ?
             AND ts < ?
-            AND status = 1
+            AND status = 2
             And resultId is not null
             AND currency = 'TRX'
             group by from_unixtime(ts / 1000,'%Y-%m-%d')
