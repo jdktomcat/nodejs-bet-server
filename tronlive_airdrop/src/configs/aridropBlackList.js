@@ -25,6 +25,4 @@ module.exports = [
     'TYWARzmK8UmMHjyZowd9J3eUCd1sPXWSpQ',
     'TFa8h1BALTZzNw9BwqkMY2ynjpPfs6i3E2',
     'TJaeXdEHijyzW6Lzt8M8KZREKKEnFinwcw',
-    //for test
-    'TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab'
 ]
