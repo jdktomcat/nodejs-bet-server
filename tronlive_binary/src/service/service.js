@@ -160,7 +160,7 @@ class Service {
         console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@buy${sqlParam.amount / 1e6}TRX`)
         await usermodel.buy(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
-        // sendGameMsg(sqlParam.addr, Date.now(), sqlParam.amount, sqlParam.currency);
+        //
         return this.success(balanceInfo)
     }
 
@@ -177,8 +177,14 @@ class Service {
             quote_close: params.quoteClose,
         }
         console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.win / 1e6}TRX`)
+        const isClose = usermodel.isTxClose(sqlParam)
+        if(isClose){
+            return this.error("this tx is over!")
+        }
         await usermodel.close(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
+        // activity
+        sendGameMsg(sqlParam.addr, Date.now(), sqlParam.amount, sqlParam.currency);
         return this.success(balanceInfo)
     }
 
@@ -194,8 +200,14 @@ class Service {
             currency: params.currency
         }
         console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.amount / 1e6}TRX`)
+        const isClose = usermodel.isTxClose(sqlParam)
+        if(isClose){
+            return this.error("this tx is over!")
+        }
         await usermodel.refund(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
+        // activity
+        sendGameMsg(sqlParam.addr, Date.now(), sqlParam.amount, sqlParam.currency);
         return this.success(balanceInfo)
     }
 

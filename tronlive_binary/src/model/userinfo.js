@@ -159,6 +159,7 @@ module.exports = {
     getBalance,
     getTRXPrice,
     checkToken,
+    isTxClose,
     buy,
     close,
     refund,
