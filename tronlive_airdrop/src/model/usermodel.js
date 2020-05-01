@@ -28,6 +28,7 @@ const airBlackList = [
   'TYWARzmK8UmMHjyZowd9J3eUCd1sPXWSpQ',
   'TFa8h1BALTZzNw9BwqkMY2ynjpPfs6i3E2',
   'TJaeXdEHijyzW6Lzt8M8KZREKKEnFinwcw',
+    // add test addr todo
 ]
 
 async function getLiveAirdropData(startTs, endTs) {
@@ -61,7 +62,7 @@ async function getLiveAirdropData(startTs, endTs) {
   try {
     let res = await db.exec(sql, param);
     // add black filer
-    let data = res.filter(e=>airBlackList.includes(String(e.addr).trim()))
+    let data = res.filter(e=>!airBlackList.includes(String(e.addr).trim()))
     console.log("data length---->",data.length)
     return data;
   }catch (e) {
@@ -73,7 +74,7 @@ async function getSportsAirdropData(startTs, endTs) {
   let sql =
     "select sum(adAmount / 1000000) Amount, addr from sports_transaction_log where ts >= ? and ts < ? and (status = 0 or status = 50 or status = 51) and (currency = 'TRX' or currency = 'USDT') group by addr";
   let res = await db.exec(sql, [(startTs - 300) * 1000, (endTs - 300) * 1000]);
-  let data = res.filter(e=>airBlackList.includes(String(e.addr).trim()))
+  let data = res.filter(e=>!airBlackList.includes(String(e.addr).trim()))
   return data;
 }
 
