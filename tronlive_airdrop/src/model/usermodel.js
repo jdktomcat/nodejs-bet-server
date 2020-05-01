@@ -63,7 +63,7 @@ async function getLiveAirdropData(startTs, endTs) {
     let res = await db.exec(sql, param);
     // add black filer
     let data = res.filter(e=>!airBlackList.includes(String(e.addr).trim()))
-    console.log("data length---->",data.length)
+    console.log("addata_length---->",data.length)
     return data;
   }catch (e) {
     console.log("AirdropError: ",e.toString())
