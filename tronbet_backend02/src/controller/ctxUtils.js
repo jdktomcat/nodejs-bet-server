@@ -36,7 +36,7 @@ class CtxUtils {
         const type = params.type || ''
         params.startDate = params.startDate || ''
         params.endDate = params.endDate || ''
-        const typeArray = ["dice", "moon", "ring", "duel", "em", "hub88", "sport", "poker", "platius"]
+        const typeArray = ["dice", "moon", "ring", "duel", "em", "hub88", "sport", "poker", "platius","binary"]
         if (!typeArray.includes(type)) {
             ctx.body = {code: 500, message: "type error!"}
             return false
