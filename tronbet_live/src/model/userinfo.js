@@ -273,7 +273,7 @@ async function getRealTimeProfitAmount(ts) {
                 sportsProfitAmount,
                 swaggerProfitAmount,
                 platiusProfitAmount,
-                binaryProfitAmount,
+                // binaryProfitAmount,
             ]
             const lastDayAmountSumTmp2 = lastDayAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
             const lastDayAmountSum = Math.floor(Number(lastDayAmountSumTmp2))
@@ -313,7 +313,7 @@ async function getRealTimeProfitAmount(ts) {
         soportsRealTimeProfit,
         swaggerRealProfit,
         platiusProfit,
-        binaryProfit
+        // binaryProfit
     ]
     const realTimeAmountSumTmp2 = realTimeAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
     const last = Math.floor(Number(realTimeAmountSumTmp2))
@@ -388,7 +388,7 @@ async function getBinaryTRC20Profit(startTs, endTs, currency) {
         `);
         const lastDayAmountSumTmp = [
             sportsProfitAmount,
-            binaryProfitAmount,
+            // binaryProfitAmount,
         ]
         const lastDayAmountSumTmp2 = lastDayAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
         const lastDayAmountSum = Math.floor(Number(lastDayAmountSumTmp2))
@@ -409,7 +409,7 @@ async function getBinaryTRC20Profit(startTs, endTs, currency) {
     const realTimeAmountSumTmp = [
         Number(lastTotalProfit) - Number(totalDividends),
         sportsRealTimeProfit,
-        binaryRealTimeProfit,
+        // binaryRealTimeProfit,
     ]
     const realTimeAmountSumTmp2 = realTimeAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
     const last = Math.floor(Number(realTimeAmountSumTmp2))
