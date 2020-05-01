@@ -1,34 +1,6 @@
 const db = require('../utils/dbUtil');
 const _ = require('lodash')._;
-
-const airBlackList = [
-  'TJ7E7A7hhJU5w6nsDBFVL9zpUCoChnhQiw',
-  'TUegyE57yFmju8WQoQDsn9gAef68Mh4bPs',
-  'TUpZbBqWFDe3pvkcVH9ugdPcqCjzC6edGa',
-  'TSzbuy1vfKqgWwFSX3XZRNSBQ9gYbiGoxf',
-  'TYTMdWAsRqRw1vhSwbAbKMZAhR3Nx7TD3d',
-  'TQuSYAXY8xr6xcEKNxCnTPsx5VW6f89mWn',
-  'TSgL2AbnG1TVUabQFgFPZQy2jKUzJAysZb',
-  'TEU1LitnnG1gfxsQGW262wEF7ecaAF8cYi',
-  'TBxMsTDJxYnt27zNTeUAtJcAZCmV7dgq1x',
-  'TVegedWTbKYk4GGZVcEpmG3Js62CZFk8tE',
-  'TSypo8kFdzPE2NU57Aoz7TFYRgu62oLwwV',
-  'TBEAM7GPc8oouWeUjPkhY8ein9pw7mQjAb',
-  'THZc1k8eL8CRSXzykXZ8fjQocX1vZaQoxz',
-  'TXE39AXK1czhuDSsHoe4w6dfSiyAvNViGf',
-  'TAVExusD5UqP2cRiQ8NbKmTK42LXPmWqiX',
-  'TBwFEH1sgHdVShQuq3Lz7bexWY1SZG4NQo',
-  'TBAeSpwD5zWr2Zx8avZ2mBHnhLxmuYZUR5',
-  'TP1yemoGpWhXg56XbueU9AQiNwTMTYRjpD',
-  'TCjAUcVqNPBUsVgsmwYnGJUx4qksvdeSFy',
-  'TEjrbhv5MCobGKDsbddaHArbc1gode67DH',
-  'TEXAJi4N2Gho9xjkaoSxwma281dimnFkoH',
-  'TTKuhXoJppkRtgQijxeRsVQvTW4yWBK6nB',
-  'TQgoxGxxuzCCyN33WCqHqzhAdaESZKKHNP',
-  'TYWARzmK8UmMHjyZowd9J3eUCd1sPXWSpQ',
-  'TFa8h1BALTZzNw9BwqkMY2ynjpPfs6i3E2',
-  'TJaeXdEHijyzW6Lzt8M8KZREKKEnFinwcw',
-]
+const airBlackList = require("../configs/aridropBlackList")
 
 async function getLiveAirdropData(startTs, endTs) {
   let sql = `select addr, sum(Amount) Amount from (
@@ -79,6 +51,9 @@ async function getSportsAirdropData(startTs, endTs) {
 }
 
 async function liveAirdropLog(addr, startTs, endTs, betAmount, adAmount) {
+  if(airBlackList.includes(addr)){
+    return []
+  }
   let sql = 'insert into live_airdrop_log(addr, startTs, endTs, betAmount, adAmount) values (?,?,?,?,?);';
   let res = await db.exec(sql, [addr, startTs, endTs, betAmount, adAmount]);
   return res;
