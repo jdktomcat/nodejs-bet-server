@@ -56,18 +56,18 @@ const raw = async function (updateSql, params) {
     return t
 }
 
-const updateGames2 = async function () {
-    //
-    const sql2 = `update tron_live.live_fix_log set amount = 0 where 1=1`
-    const a2 = await raw(sql2, [])
-    console.log("\nlast====>\n", a2)
-}
 
 
 const updateGames3 = async function () {
-    const sql1 = `update tron_live.live_balance set balance = 0 where addr = 'TUegyE57yFmju8WQoQDsn9gAef68Mh4bPs' and currency = 'TRX'`
-    const a1 = await raw(sql1, [])
-    console.log(a1)
+    const addrs = [
+        'TSzbuy1vfKqgWwFSX3XZRNSBQ9gYbiGoxf',
+        'TUpZbBqWFDe3pvkcVH9ugdPcqCjzC6edGa',
+    ]
+    for(let  e of addrs){
+        const sql1 = `update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX'`
+        const a1 = await raw(sql1, [e])
+        console.log(a1)
+    }
 }
 
 const main = async function () {
