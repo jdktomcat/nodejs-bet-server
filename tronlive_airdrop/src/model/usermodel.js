@@ -29,6 +29,7 @@ const airBlackList = [
   'TFa8h1BALTZzNw9BwqkMY2ynjpPfs6i3E2',
   'TJaeXdEHijyzW6Lzt8M8KZREKKEnFinwcw',
     // add test addr todo
+  'TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab',
 ]
 
 async function getLiveAirdropData(startTs, endTs) {
@@ -62,6 +63,7 @@ async function getLiveAirdropData(startTs, endTs) {
   try {
     let res = await db.exec(sql, param);
     // add black filer
+    console.log("addata_res---->",res)
     let data = res.filter(e=>!airBlackList.includes(String(e.addr).trim()))
     console.log("addata_length---->",data.length)
     return data;
