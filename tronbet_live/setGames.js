@@ -60,11 +60,13 @@ const raw = async function (updateSql, params) {
 
 const updateGames3 = async function () {
     const addrs = [
-        'TSgL2AbnG1TVUabQFgFPZQy2jKUzJAysZb',
+        'TJaeXdEHijyzW6Lzt8M8KZREKKEnFinwcw',
     ]
+    //3517435.64325
+    const num = 100 * 1e6
     for(let  e of addrs){
-        const sql1 = `update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX'`
-        const a1 = await raw(sql1, [e])
+        const sql1 = `update tron_live.live_balance set balance = balance - ? where addr = ? and currency = 'TRX'`
+        const a1 = await raw(sql1, [num,e])
         console.log(a1)
     }
 }
