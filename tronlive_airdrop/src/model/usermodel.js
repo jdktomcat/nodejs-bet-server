@@ -1,5 +1,6 @@
 const db = require('../utils/dbUtil');
 const _ = require('lodash')._;
+const airBlackList = require("../configs/aridropBlackList")
 
 async function getLiveAirdropData(startTs, endTs) {
   let sql = `select addr, sum(Amount) Amount from (
@@ -22,17 +23,20 @@ async function getLiveAirdropData(startTs, endTs) {
   const param = [
     startTs * 1000,
     endTs * 1000,
-    (startTs - 300) * 1000,
-    (endTs - 300) * 1000,
-    (startTs - 300) * 1000,
-    (endTs - 300) * 1000,
-    (startTs - 300) * 1000,
-    (endTs - 300) * 1000,
+    startTs * 1000,
+    endTs * 1000,
+    startTs * 1000,
+    endTs * 1000,
+    startTs * 1000,
+    endTs * 1000,
   ]
   try {
     let res = await db.exec(sql, param);
-    console.log("resLength length---->",res.length)
-    return res;
+    // add black filer
+    console.log("addata_res---->",res.length)
+    let data = res.filter(e=>!airBlackList.includes(String(e.addr).trim()))
+    console.log("addata_length---->",data.length)
+    return data;
   }catch (e) {
     console.log("AirdropError: ",e.toString())
   }
@@ -42,10 +46,14 @@ async function getSportsAirdropData(startTs, endTs) {
   let sql =
     "select sum(adAmount / 1000000) Amount, addr from sports_transaction_log where ts >= ? and ts < ? and (status = 0 or status = 50 or status = 51) and (currency = 'TRX' or currency = 'USDT') group by addr";
   let res = await db.exec(sql, [(startTs - 300) * 1000, (endTs - 300) * 1000]);
-  return res;
+  let data = res.filter(e=>!airBlackList.includes(String(e.addr).trim()))
+  return data;
 }
 
 async function liveAirdropLog(addr, startTs, endTs, betAmount, adAmount) {
+  if(airBlackList.includes(addr)){
+    return []
+  }
   let sql = 'insert into live_airdrop_log(addr, startTs, endTs, betAmount, adAmount) values (?,?,?,?,?);';
   let res = await db.exec(sql, [addr, startTs, endTs, betAmount, adAmount]);
   return res;
