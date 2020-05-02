@@ -80,8 +80,6 @@ class apiCall {
                 return await service.sendMsgToClient(ctx, 1011, 'the tx_id is close!');
             }
             const result = await service.getRs(info)
-            // 触发活动
-            service.sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
             //
             await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {

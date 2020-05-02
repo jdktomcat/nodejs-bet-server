@@ -206,8 +206,6 @@ class Service {
         }
         await usermodel.refund(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
-        // activity
-        sendGameMsg(sqlParam.addr, Date.now(), sqlParam.amount, sqlParam.currency);
         return this.success(balanceInfo)
     }
 

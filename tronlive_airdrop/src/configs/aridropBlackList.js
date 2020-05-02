@@ -24,5 +24,4 @@ module.exports = [
     'TQgoxGxxuzCCyN33WCqHqzhAdaESZKKHNP',
     'TYWARzmK8UmMHjyZowd9J3eUCd1sPXWSpQ',
     'TFa8h1BALTZzNw9BwqkMY2ynjpPfs6i3E2',
-    'TJaeXdEHijyzW6Lzt8M8KZREKKEnFinwcw',
 ]
