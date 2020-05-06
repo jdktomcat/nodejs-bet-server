@@ -81,7 +81,7 @@ const updateGames22 = async function () {
 }
 
 const main = async function () {
-    await backUpLiveBlance()
+    // await backUpLiveBlance()
     await updateGames22()
 }
 
