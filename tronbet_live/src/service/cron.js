@@ -40,16 +40,16 @@ let timer = setInterval(async () => {
     let profit = profitRaw - fixSum
     console.log("after time trx fixSum is",fixSum)
     console.log("after time trx profit1 is",profit)
-    // 大于500w,动态回收
-    if(profit > 5000000){
-      const tmpFix = profit - 5000000
+    // 大于600w 动态回收
+    if(profit > 6000000){
+      const tmpFix = profit - 6000000
       await usermodel.addLiveFix(tmpFix)
       //重新更新profit
       const fixSum2 = await usermodel.getLiveFix();
       profit = profitRaw - fixSum2
     }
     console.log("after time trx profit2 is",profit)
-    profit = profit * 0.5
+    profit = profit * 0.6
     console.log("after time trx last is",profit)
     //先写死固定值
     console.log("this fix last is ",profit)
