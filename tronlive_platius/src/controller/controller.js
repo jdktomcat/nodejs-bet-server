@@ -4,6 +4,7 @@ class apiCall {
 
     static async balance(ctx) {
         try {
+            console.log("check balance headers : ",ctx.request.headers)
             const params = ctx.request.body || {}
             console.log("debug----->param", params)
             Object.keys(params).forEach(e => params[e] = params[e] || '')
