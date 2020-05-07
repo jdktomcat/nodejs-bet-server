@@ -1,10 +1,33 @@
 const service = require("../service/service");
 
+const inWhileList = function (headers) {
+    const cf_ip = headers['cf-connecting-ip'] || ''
+    //
+    const env = process.env.NODE_ENV
+    console.log("debug env ",env)
+    if(env === 'production'){
+        console.log("ip is ",cf_ip)
+        const whileList = ['92.42.104.130']
+        if(whileList.includes(cf_ip.trim())){
+            return false
+        }else {
+            return true
+        }
+    }
+    return false
+}
+
 class apiCall {
 
     static async balance(ctx) {
         try {
             console.log("check balance headers : ",ctx.request.headers)
+            //
+            const isBalck = inWhileList(ctx.request.headers)
+            if(isBalck){
+                console.log("debug---->Balack ",isBalck)
+            }
+            //
             const params = ctx.request.body || {}
             console.log("debug----->param", params)
             Object.keys(params).forEach(e => params[e] = params[e] || '')
