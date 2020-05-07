@@ -1,5 +1,6 @@
 const ctxUtils = require("./ctxUtils")
 const diceQuery = require("../model/dice/diceQuery")
+const queryPlayers = require("../model/dice/queryPlayers")
 
 class LiveController {
 
@@ -15,6 +16,12 @@ class LiveController {
 
     static async queryRing(ctx) {
         const data = await diceQuery.queryRing(ctx.query)
+        ctx.body = ctxUtils.success(data)
+    }
+
+
+    static async queryPlayer(ctx) {
+        const data = await queryPlayers.getInfo(ctx.query)
         ctx.body = ctxUtils.success(data)
     }
 
