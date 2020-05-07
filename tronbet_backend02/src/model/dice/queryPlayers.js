@@ -27,7 +27,7 @@ const getPlayerInfo = async function (params) {
 class QueryPlayer {
 
     static async getInfo(params) {
-        const d = getPlayerInfo(params)
+        const d = await getPlayerInfo(params)
         return d
     }
 }
