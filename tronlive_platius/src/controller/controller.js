@@ -2,9 +2,7 @@ const service = require("../service/service");
 
 const inWhileList = function (headers) {
     const cf_ip = headers['cf-connecting-ip'] || ''
-    //
     const env = process.env.NODE_ENV
-    console.log("debug env ",env)
     if(env === 'production'){
         console.log("ip is ",cf_ip)
         const whileList = ['92.42.104.130']
@@ -21,11 +19,12 @@ class apiCall {
 
     static async balance(ctx) {
         try {
-            console.log("check balance headers : ",ctx.request.headers)
             //
+            console.log("check balance headers : ",ctx.request.headers)
             const isBalck = inWhileList(ctx.request.headers)
             if(isBalck){
-                console.log("debug---->Balack ",isBalck)
+                console.log("debug---->Black ",isBalck)
+                return service.sendMsgToClient(ctx, 1011, '401 not forbidden!', {});
             }
             //
             const params = ctx.request.body || {}
@@ -44,6 +43,11 @@ class apiCall {
 
     static async bet(ctx) {
         try {
+            const isBalck = inWhileList(ctx.request.headers)
+            if(isBalck){
+                console.log("debug---->Black ",isBalck)
+                return service.sendMsgToClient(ctx, 1015, '401 not forbidden!', {});
+            }
             const type = 'bet'
             const params = ctx.request.body || {}
             console.log("debug bet----->param", params)
@@ -63,6 +67,11 @@ class apiCall {
 
     static async result(ctx) {
         try {
+            const isBalck = inWhileList(ctx.request.headers)
+            if(isBalck){
+                console.log("debug---->Black ",isBalck)
+                return service.sendMsgToClient(ctx, 1015, '401 not forbidden!', {});
+            }
             const type = 'result'
             const params = ctx.request.body || {}
             console.log("debug result----->param", params)
@@ -89,6 +98,11 @@ class apiCall {
 
     static async rollback(ctx) {
         try {
+            const isBalck = inWhileList(ctx.request.headers)
+            if(isBalck){
+                console.log("debug---->Black ",isBalck)
+                return service.sendMsgToClient(ctx, 1015, '401 not forbidden!', {});
+            }
             const type = 'rollback'
             const params = ctx.request.body || {}
             console.log("debug rollback----->param", params)
