@@ -4,7 +4,7 @@ const inWhileList = function (headers) {
     const cf_ip = headers['host'] || ''
     const env = process.env.NODE_ENV
     if(env === 'production'){
-        console.log("ip is ",cf_ip)
+        console.log("prd ip is ",cf_ip)
         const whileList = ['92.42.104.130']
         if(whileList.includes(cf_ip.trim())){
             return false
@@ -12,7 +12,7 @@ const inWhileList = function (headers) {
             return true
         }
     }else if(env === 'test'){
-        console.log("ip is ",cf_ip)
+        console.log("test ip is ",cf_ip)
         const whileList = ['10.132.0.7:9090']
         if(whileList.includes(cf_ip.trim())){
             return false
@@ -28,9 +28,10 @@ class apiCall {
     static async identify(ctx) {
         console.log("check balance headers : ",ctx.request.headers)
         const isBlack = inWhileList(ctx.request.headers)
+        console.log("isBlack ",isBlack)
         if(isBlack){
             ctx.status = 400;
-            ctx.body = "403 not found"
+            return ctx.body = "403 not found"
         }
         const params = ctx.request.body || {}
         const t  = await service.identify(params)
@@ -48,7 +49,7 @@ class apiCall {
         const isBlack = inWhileList(ctx.request.headers)
         if(isBlack){
             ctx.status = 400;
-            ctx.body = "403 not found"
+            return ctx.body = "403 not found"
         }
         const body = ctx.request.body || {}
         const {tokenError, tokenInfo}  = await service.getToken(body)
@@ -72,7 +73,7 @@ class apiCall {
         const isBlack = inWhileList(ctx.request.headers)
         if(isBlack){
             ctx.status = 400;
-            ctx.body = "403 not found"
+            return ctx.body = "403 not found"
         }
         const body = ctx.request.body || {}
         const {tokenError, tokenInfo}  = await service.getToken(body)
@@ -95,7 +96,7 @@ class apiCall {
         const isBlack = inWhileList(ctx.request.headers)
         if(isBlack){
             ctx.status = 400;
-            ctx.body = "403 not found"
+            return ctx.body = "403 not found"
         }
         const body = ctx.request.body || {}
         const {tokenError, tokenInfo}  = await service.getToken(body)
