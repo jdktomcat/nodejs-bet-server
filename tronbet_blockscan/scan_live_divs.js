@@ -131,6 +131,7 @@ async function alysisTxs(tx) {
     let value = _contract.parameter.value;
     let contract_address = value.contract_address; //触发合约时有效
     if (contract_address == null) continue;
+    console.log("debug contract_address is ",contract_address)
     if (contract_address === DIVIDEND_ADDR || contract_address === PAY_ADDR || contract_address === LIVE_POOL_ADDR) {
       //玩家下单之后事件通知
       let txInfo = await gettransactioninfobyid(txID);
@@ -147,7 +148,7 @@ async function alysisTxs(tx) {
           let hexTopics = _log.topics;
           let hexData = _log.data;
           let eventCode = hexTopics[0];
-          console.log(eventCode);
+          console.log("eventCode is ",eventCode);
           if (eventCode === EVENT_Divide) {
             console.log('-sssssssssssssssssssssssssssssssssssssssss');
             let log = {
