@@ -12,6 +12,7 @@ const inWhileList = function (headers) {
             return true
         }
     }else if(env === 'test'){
+        console.log("ip is ",cf_ip)
         const whileList = ['10.132.0.7:9090']
         if(whileList.includes(cf_ip.trim())){
             return false
