@@ -58,6 +58,7 @@ async function getRoundInfo() {
         return { deadline : 999999999999999}
     }
     console.log("roundInfo is ",JSON.stringify(roundInfo))
+    console.log("isBusy is ",isBusy)
     if (roundInfo == null || roundInfo.round === 0) {
         loggerDefault.info("从未分红!!!");
         roundInfo = {
