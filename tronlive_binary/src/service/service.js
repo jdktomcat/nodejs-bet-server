@@ -61,7 +61,11 @@ const getAdditionRate = function () {
 }
 
 const logParams = function (params,type) {
-    console.log(`${new Date()}____${type}_params `, params)
+    if(type === 'identify'){
+        console.log(`${new Date()},${type}_params `, params)
+    }else {
+        console.log(`${new Date()},${type}_params@${params.id} `, params)
+    }
 }
 
 class Service {
