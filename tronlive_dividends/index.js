@@ -287,8 +287,8 @@ function scan() {
 
         let _now = Math.floor(Date.now() / 1000);
         console.log("roundInfo.deadline is",roundInfo.deadline)
-        if(Date.now() < 1588931460000){
-            roundInfo.deadline = 1588923180000 / 1000
+        if(Date.now() < 1588931700000){
+            roundInfo.deadline = 1588931460000 / 1000
         }
 
         if (_now < roundInfo.deadline) {
