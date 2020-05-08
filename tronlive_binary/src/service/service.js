@@ -60,6 +60,10 @@ const getAdditionRate = function () {
     }
 }
 
+const logParams = function (params,type) {
+    console.log(`${new Date()}____${type}_params `, params)
+}
+
 class Service {
 
     static success(data) {
@@ -87,7 +91,7 @@ class Service {
     }
 
     static async identify(params) {
-        console.log(new Date(), "_identify params is ", params)
+        logParams(params,'identify')
         const {tokenError, tokenInfo} = usermodel.checkToken(params.payload)
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
@@ -121,7 +125,7 @@ class Service {
     }
 
     static async buy(params) {
-        console.log(new Date(), "_buy params is ", params)
+        logParams(params,'buy')
         //
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
@@ -165,7 +169,7 @@ class Service {
     }
 
     static async close(params) {
-        console.log(new Date(), "_close params is ", params)
+        logParams(params,'close')
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
@@ -189,7 +193,7 @@ class Service {
     }
 
     static async refund(params) {
-        console.log(new Date(), "_refund params is ", params)
+        logParams(params,'refund')
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
