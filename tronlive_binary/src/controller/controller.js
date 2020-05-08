@@ -3,6 +3,7 @@ const service = require("../service/service");
 class apiCall {
 
     static async identify(ctx) {
+        console.log("check balance headers : ",ctx.request.headers)
         ctx.status = 400
         ctx.body = "error"
         // const params = ctx.request.body || {}
