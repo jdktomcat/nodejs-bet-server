@@ -57,7 +57,7 @@ async function getRoundInfo() {
         console.log('==========get round info from block failed!!!!============')
         return { deadline : 999999999999999}
     }
-
+    console.log("roundInfo is ",JSON.stringify(roundInfo))
     if (roundInfo == null || roundInfo.round === 0) {
         loggerDefault.info("从未分红!!!");
         roundInfo = {

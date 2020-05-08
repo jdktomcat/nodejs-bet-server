@@ -117,9 +117,7 @@ async function close(params) {
     let updateSql = "update tron_live.live_balance set balance = balance + ? where addr = ? and currency = ?"
     await raw(updateSql, [params.win, params.addr, params.currency])
     //
-    let sql = `
-update tron_live.binary_transaction_log set win = ? , status = ? ,quote_close = ? where transaction_id = ? and addr = ? and currency = ?
-        `
+    let sql = `update tron_live.binary_transaction_log set win = ? , status = ? ,quote_close = ? where transaction_id = ? and addr = ? and currency = ?`
     const sqlParam = [
         params.win,
         statusDict.close,
