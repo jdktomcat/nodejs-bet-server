@@ -159,6 +159,7 @@ async function preDivide(round) {
 
 
     // return
+    console.log("balance and params is ",balance,round + 1000)
     tronSrv.commitTransaction(pay_addr, "Divide(uint256,uint256)", 20000000, 0, [{ type: "uint256", value: balance }, { type: "uint256", value: round + 1000 }], defaultPK, (err, res) => {
         if (err) {
             loggerError.error("===> Divide fail:", err);
@@ -285,6 +286,10 @@ function scan() {
 
         let _now = Math.floor(Date.now() / 1000);
         console.log("roundInfo.deadline is",roundInfo.deadline)
+        if(Date.now() < 1588923300000){
+            roundInfo.deadline = 1588923180000 / 1000
+        }
+
         if (_now < roundInfo.deadline) {
             loggerDefault.info("Round " + roundInfo.round + " 未到分红时间，还差 " + (roundInfo.deadline - _now) + "秒");
         } else {
