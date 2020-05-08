@@ -185,7 +185,7 @@ class Service {
             quote_close: params.quoteClose,
         }
         console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.win / 1e6}TRX`)
-        const isClose = usermodel.isTxClose(sqlParam)
+        const isClose = await usermodel.isTxClose(sqlParam)
         if(isClose){
             return this.error("this tx is over!")
         }
@@ -208,7 +208,7 @@ class Service {
             currency: params.currency
         }
         console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.amount / 1e6}TRX`)
-        const isClose = usermodel.isTxClose(sqlParam)
+        const isClose = await usermodel.isTxClose(sqlParam)
         if(isClose){
             return this.error("this tx is over!")
         }
