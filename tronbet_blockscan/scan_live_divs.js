@@ -88,13 +88,14 @@ async function alysisBlockData(blockData, blockNumber) {
   let result = true;
   if (transactions && !_.isEmpty(transactions) && _.isArray(transactions) && transactions.length > 0) {
     let txCount = transactions ? transactions.length : 0;
-    console.log('-----------------------------------------------------------------------------------------------------------------');
+    console.log('livedivscan-----------------------------------------------------------------------------------------------------------------');
     console.log('TRX区块:' + blockNumber + '; 出块时间:' + moment(ts).format('YYYY-MM-DD HH:mm:ss') + '; transactionnum:' + txCount +'; blockId:' + blockData.blockID);
     await Promise.all(
       transactions.map(async txInfo => {
         if (txInfo.ret[0].contractRet != 'SUCCESS') {
           return;
         }
+        console.log('livedivtxinfo is ',txInfo)
         let tmp = await alysisTxs(txInfo);
         if (!tmp) {
           console.log('-------------------blockNumber----------failed---', blockNumber);
