@@ -53,7 +53,6 @@ async function getRoundInfo() {
         console.log('error, can not get roundinfo====, error info =>', err)
         flag = true
     });
-
     if (flag) {
         console.log('==========get round info from block failed!!!!============')
         return { deadline : 999999999999999}
@@ -285,6 +284,7 @@ function scan() {
         }
 
         let _now = Math.floor(Date.now() / 1000);
+        console.log("roundInfo.deadline is",roundInfo.deadline)
         if (_now < roundInfo.deadline) {
             loggerDefault.info("Round " + roundInfo.round + " 未到分红时间，还差 " + (roundInfo.deadline - _now) + "秒");
         } else {

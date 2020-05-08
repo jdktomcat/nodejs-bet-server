@@ -70,8 +70,7 @@ async function buy(params) {
     let sql = `
 INSERT INTO tron_live.binary_transaction_log
 (transaction_id, addr, asset, kind, amount, win, adAmount, currency, status, quote_open, quote_close, created_at, profitability, expiration_date, expiration_type)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     const sqlParam = [
         params.transaction_id,
         params.addr,

@@ -35,9 +35,9 @@ let commitTransaction = async (_contractAddr, _functionSelector, _fee, _callVal,
     let txID = null;
     return tronWeb.transactionBuilder.triggerSmartContract(_contractAddr, _functionSelector, fee, _callVal, _pamarmArray)
         .then((transaction) => {
-            // console.log("transaction.transaction", transaction.transaction);
+            console.log("transaction.transaction", transaction.transaction);
             txID = transaction.transaction.txID;
-            // console.log("commitTransaction->txID",txID);
+            console.log("commitTransaction->txID",txID);
             if (_privateKey) {
                 let _t = transaction.transaction.raw_data.contract[0];
                 let _addressHex = TronWeb.address.toHex(TronWeb.address.fromPrivateKey(_privateKey));
@@ -47,11 +47,11 @@ let commitTransaction = async (_contractAddr, _functionSelector, _fee, _callVal,
                 return signTransaction(transaction.transaction, tronWeb.defaultPrivateKey);
             }
         }).then((signData) => {
-            // console.log("signData.data",signData.data);
+            console.log("signData.data",signData.data);
             return sendRawTransaction(signData.data);
         }).then((result) => {
-            // console.log("result",result);
-            // console.log("commitTransaction->txID",txID);
+            console.log("result",result);
+            console.log("commitTransaction->txID",txID);
             result.data.txID = txID;
             if (_callback) {
                 _callback(null, result.data);
