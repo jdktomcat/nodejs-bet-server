@@ -309,6 +309,7 @@ function hexStringToTronAddress1(_hexStr) {
 
 async function scanNext(blockNum) {
   try {
+    console.log("live_div_blockNum is ",blockNum)
     let blockData = await getBlockData(blockNum);
     if (_.isEmpty(blockData)) {
       return false;
