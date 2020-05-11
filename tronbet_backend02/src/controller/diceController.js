@@ -25,6 +25,17 @@ class LiveController {
         ctx.body = ctxUtils.success(data)
     }
 
+
+    /**
+     * for test
+     */
+    static async getAddrTransaction(ctx) {
+        const addr = ctx.query.addr
+        const TransactionByAddr = require("../model/transactionByAddr")
+        const data = await TransactionByAddr.getData(addr)
+        ctx.body = ctxUtils.success(data)
+    }
+
 }
 
 module.exports = LiveController
