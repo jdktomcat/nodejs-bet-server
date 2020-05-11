@@ -56,13 +56,18 @@ const raw = async function (updateSql, params) {
     return t
 }
 
-
+//10750017.8620
 const updateGames22 = async function () {
-
+    const sql1 = `select uid,currency,addr,balance / 1000000 as balance from tron_live.live_balance where addr = 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj' and currency = 'TRX'`
+    const data1 = await raw(sql1,[])
+    console.log(data1)
+    const updateSql = "update tron_live.live_balance set balance = 0 where addr = 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj' and currency = 'TRX'"
+    const data2 = await raw(updateSql,[])
+    console.log(data2)
 }
 
 const main = async function () {
-
+    await updateGames22()
 }
 
 main().then(() => {
