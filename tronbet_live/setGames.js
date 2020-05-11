@@ -68,10 +68,10 @@ const updateGames22 = async function () {
 }
 
 const updateGames33 = async function () {
-    const sql1 = `select uid,currency,addr,balance / 1000000 as balance from tron_live.live_balance where addr = 'TSgsDtT7DxQL5J3AJDs5tsEQPTjRTG3ZZ' and currency = 'TRX'`
+    const sql1 = `select uid,currency,addr,balance / 1000000 as balance from tron_live.live_balance where addr = 'TSgsDtT7DxQL5J3AJDs5tsEQPTjRTG3ZZL' and currency = 'TRX'`
     const data1 = await raw(sql1,[])
     console.log(data1)
-    const updateSql = "update tron_live.live_balance set balance = 0 where addr = 'TSgsDtT7DxQL5J3AJDs5tsEQPTjRTG3ZZ' and currency = 'TRX'"
+    const updateSql = "update tron_live.live_balance set balance = 0 where addr = 'TSgsDtT7DxQL5J3AJDs5tsEQPTjRTG3ZZL' and currency = 'TRX'"
     const data2 = await raw(updateSql,[])
     // console.log(data2)
 }
