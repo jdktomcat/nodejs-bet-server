@@ -62,7 +62,7 @@ async function makeUpTrx() {
     let users = [
     ];
     let addrs = [
-        { addr: "TFLYd2Bk7CtsfQFpLnm2fKp2CsSwTDGmx2", toPay: 10 * 1000000 },
+        { addr: "TFLYd2Bk7CtsfQFpLnm2fKp2CsSwTDGmx2", toPay: 7 * 1e6 * 1000000 },
     ];
     for (let item of addrs) {
         let obj = {};
