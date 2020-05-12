@@ -7,7 +7,7 @@ module.exports = [
     // 'TQuSYAXY8xr6xcEKNxCnTPsx5VW6f89mWn',
     // 'TSgL2AbnG1TVUabQFgFPZQy2jKUzJAysZb',
     // 'TEU1LitnnG1gfxsQGW262wEF7ecaAF8cYi',
-    // 'TBxMsTDJxYnt27zNTeUAtJcAZCmV7dgq1x',
+    'TBxMsTDJxYnt27zNTeUAtJcAZCmV7dgq1x',
     // 'TVegedWTbKYk4GGZVcEpmG3Js62CZFk8tE',
     'TSypo8kFdzPE2NU57Aoz7TFYRgu62oLwwV',
     // 'TBEAM7GPc8oouWeUjPkhY8ein9pw7mQjAb',
