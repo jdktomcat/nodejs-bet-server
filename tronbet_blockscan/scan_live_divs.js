@@ -139,6 +139,7 @@ async function alysisTxs(tx) {
     if (contract_address === DIVIDEND_ADDR || contract_address === PAY_ADDR || contract_address === LIVE_POOL_ADDR) {
       //玩家下单之后事件通知
       let txInfo = await gettransactioninfobyid(txID);
+      console.log("txInfo is ", JSON.stringify(txInfo))
       let logs = txInfo.log;
       if (txInfo.resMessage) {
         res.resMessage = hextoString(txInfo.resMessage);
