@@ -14,7 +14,7 @@ const getEM = async function (params) {
     `
     const rsData = await raw(sql, [addr,startDate,endDate])
     if (rsData.length > 0) {
-        return rsData[0].sum || 0
+        return Number(rsData[0].sum) || 0
     }
     return 0
 }
@@ -35,7 +35,7 @@ const getHub88 = async function (params) {
     `
     const rsData = await raw(sql, [addr,startDate,endDate])
     if (rsData.length > 0) {
-        return rsData[0].sum || 0
+        return Number(rsData[0].sum) || 0
     }
     return 0
 }
@@ -55,7 +55,7 @@ const getSport = async function (params) {
     `
     const rsData = await raw(sql, [addr,startDate,endDate])
     if (rsData.length > 0) {
-        return rsData[0].sum || 0
+        return Number(rsData[0].sum) || 0
     }
     return 0
 }
@@ -75,7 +75,7 @@ const getPlatius = async function (params) {
     `
     const rsData = await raw(sql, [addr,startDate,endDate])
     if (rsData.length > 0) {
-        return rsData[0].sum || 0
+        return Number(rsData[0].sum) || 0
     }
     return 0
 }
