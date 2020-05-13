@@ -91,6 +91,17 @@ class Service {
 
     static async getToken(params) {
         const t = await usermodel.checkToken(params.payload)
+        //
+        const {tokenError, tokenInfo} = t
+        if (tokenError) {
+            return t
+        }
+        const user = tokenInfo || {}
+        console.log("user is ",user)
+        const whiteList = ['TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP','TUMqj1BGbqTcp8j9gDLQWDWYV1cKXgCmf9']
+        if(whiteList.includes(user.trim())){
+            return this.error("user not allowed!")
+        }
         return t
     }
 
@@ -109,6 +120,7 @@ class Service {
                 let [dayTime, addr, currencyTmp] = iToken.split("-")
                 console.log("decrypt iToken is ", dayTime, addr, currencyTmp)
                 console.log("decrypt time is ", Date.now() - Number(dayTime))
+                //
                 const time = Date.now() - Number(dayTime)
                 if (time >= 2 * 24 * 60 * 60 * 1000) {
                     return this.error("token is expire, please check with your token!")

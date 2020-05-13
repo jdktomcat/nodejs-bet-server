@@ -5,20 +5,20 @@ const inWhileList = function (headers) {
     const env = process.env.NODE_ENV
     if(env === 'production'){
         console.log("prd ip is ",cf_ip)
-        const whileList = ['92.42.104.130']
-        if(whileList.includes(cf_ip.trim())){
-            return false
-        }else {
-            return true
-        }
+        // const whileList = ['92.42.104.130']
+        // if(whileList.includes(cf_ip.trim())){
+        //     return false
+        // }else {
+        //     return true
+        // }
     }else if(env === 'test'){
         console.log("test ip is ",cf_ip)
-        const whileList = ['10.132.0.7:9090']
-        if(whileList.includes(cf_ip.trim())){
-            return false
-        }else {
-            return true
-        }
+        // const whileList = ['10.132.0.7:9090']
+        // if(whileList.includes(cf_ip.trim())){
+        //     return false
+        // }else {
+        //     return true
+        // }
     }
     return false
 }
