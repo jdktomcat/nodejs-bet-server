@@ -60,6 +60,14 @@ const getAdditionRate = function () {
     }
 }
 
+const logParams = function (params,type) {
+    if(type === 'identify'){
+        console.log(`${new Date()},${type}_params `, params)
+    }else {
+        console.log(`${new Date()},${type}_params@${params.id} `, params)
+    }
+}
+
 class Service {
 
     static success(data) {
@@ -83,11 +91,27 @@ class Service {
 
     static async getToken(params) {
         const t = await usermodel.checkToken(params.payload)
-        return t
+        //
+        const {tokenError, tokenInfo} = t
+        if (tokenError) {
+            return t
+        }
+        const user = tokenInfo.user || ''
+        //TUMqj1BGbqTcp8j9gDLQWDWYV1cKXgCmf9
+        const whiteList = ['TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP','TUMqj1BGbqTcp8j9gDLQWDWYV1cKXgCmf9']
+        console.log("user is ",user,!whiteList.includes(user.trim()))
+        if(!whiteList.includes(user.trim())){
+            return {
+                tokenError : true,
+                tokenInfo : {},
+            }
+        }else {
+            return  t
+        }
     }
 
     static async identify(params) {
-        console.log(new Date(), "_identify params is ", params)
+        logParams(params,'identify')
         const {tokenError, tokenInfo} = usermodel.checkToken(params.payload)
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
@@ -101,6 +125,7 @@ class Service {
                 let [dayTime, addr, currencyTmp] = iToken.split("-")
                 console.log("decrypt iToken is ", dayTime, addr, currencyTmp)
                 console.log("decrypt time is ", Date.now() - Number(dayTime))
+                //
                 const time = Date.now() - Number(dayTime)
                 if (time >= 2 * 24 * 60 * 60 * 1000) {
                     return this.error("token is expire, please check with your token!")
@@ -121,7 +146,7 @@ class Service {
     }
 
     static async buy(params) {
-        console.log(new Date(), "_buy params is ", params)
+        logParams(params,'buy')
         //
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
@@ -165,7 +190,7 @@ class Service {
     }
 
     static async close(params) {
-        console.log(new Date(), "_close params is ", params)
+        logParams(params,'close')
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
@@ -177,7 +202,7 @@ class Service {
             quote_close: params.quoteClose,
         }
         console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.win / 1e6}TRX`)
-        const isClose = usermodel.isTxClose(sqlParam)
+        const isClose = await usermodel.isTxClose(sqlParam)
         if(isClose){
             return this.error("this tx is over!")
         }
@@ -189,7 +214,7 @@ class Service {
     }
 
     static async refund(params) {
-        console.log(new Date(), "_refund params is ", params)
+        logParams(params,'refund')
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
@@ -200,7 +225,7 @@ class Service {
             currency: params.currency
         }
         console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.amount / 1e6}TRX`)
-        const isClose = usermodel.isTxClose(sqlParam)
+        const isClose = await usermodel.isTxClose(sqlParam)
         if(isClose){
             return this.error("this tx is over!")
         }

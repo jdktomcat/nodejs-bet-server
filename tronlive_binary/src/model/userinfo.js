@@ -55,7 +55,7 @@ function checkToken(token) {
     console.log("rawToken is: ", token)
     const tmp = decodeURIComponent(token)
     const payload = jwt.verify(tmp, secretKey)
-    console.log("payload: ", payload)
+    console.log(`payload: ${JSON.stringify(payload)}`)
     return {
         tokenError: false,
         tokenInfo: payload
@@ -70,8 +70,7 @@ async function buy(params) {
     let sql = `
 INSERT INTO tron_live.binary_transaction_log
 (transaction_id, addr, asset, kind, amount, win, adAmount, currency, status, quote_open, quote_close, created_at, profitability, expiration_date, expiration_type)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     const sqlParam = [
         params.transaction_id,
         params.addr,
@@ -94,7 +93,7 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 }
 
 async function isTxClose(params){
-    let updateSql = "select status from tron_live.binary_transaction_log where transaction_id = ? and status in ('close','refund')"
+    let updateSql = "select status from tron_live.binary_transaction_log where transaction_id = ?"
     const rs = await raw(updateSql, [params.transaction_id])
     if(rs.length > 0){
         const tmp = rs[0] || {}
@@ -106,7 +105,7 @@ async function isTxClose(params){
             return false
         }
     }
-    return false
+    return true
 }
 
 async function close(params) {
@@ -118,9 +117,7 @@ async function close(params) {
     let updateSql = "update tron_live.live_balance set balance = balance + ? where addr = ? and currency = ?"
     await raw(updateSql, [params.win, params.addr, params.currency])
     //
-    let sql = `
-update tron_live.binary_transaction_log set win = ? , status = ? ,quote_close = ? where transaction_id = ? and addr = ? and currency = ?
-        `
+    let sql = `update tron_live.binary_transaction_log set win = ? , status = ? ,quote_close = ? where transaction_id = ? and addr = ? and currency = ?`
     const sqlParam = [
         params.win,
         statusDict.close,
