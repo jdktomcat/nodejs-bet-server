@@ -57,7 +57,17 @@ const raw = async function (updateSql, params) {
 }
 
 const main = async function () {
+    const sql = `select * from tron_bet_admin.wheel_user_order where round >= 638580 and addr = 'TJ7h4pWeGBi9EifXadnGv8gcdqS3dhXsJd' and win is null`
+    const data = await raw(sql, [])
+    for (let e of data) {
+        let {round, addr} = e
+        let roundSql = "select roll, hash, salt, luckyNum from tron_bet_wzc.wheel_info where round = ?"
+        const roundInfo = await raw(roundSql, [addr])
+        console.log(round, addr,"---->", JSON.stringify(roundInfo))
+        // let initWheelInfoSql = "update wheel_user_order set roll = ?, luckyNum = ?,result_hash = ?,salt = ?, mentor = '', win = 0, referralAmount = 0 where round = ?"
+        // await raw(initWheelInfoSql, [roundInfo[0].roll, roundInfo[0].luckyNum, roundInfo[0].hash, roundInfo[0].salt, infos.round])
 
+    }
 }
 
 main().then(() => {
