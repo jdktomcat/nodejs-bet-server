@@ -97,6 +97,7 @@ class Service {
             return t
         }
         const user = tokenInfo.user || ''
+        //TUMqj1BGbqTcp8j9gDLQWDWYV1cKXgCmf9
         const whiteList = ['TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP','TUMqj1BGbqTcp8j9gDLQWDWYV1cKXgCmf9']
         console.log("user is ",user,!whiteList.includes(user.trim()))
         if(!whiteList.includes(user.trim())){
@@ -104,6 +105,8 @@ class Service {
                 tokenError : true,
                 tokenInfo : {},
             }
+        }else {
+            return  t
         }
     }
 
