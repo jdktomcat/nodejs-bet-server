@@ -88,14 +88,13 @@ async function alysisBlockData(blockData, blockNumber) {
   let result = true;
   if (transactions && !_.isEmpty(transactions) && _.isArray(transactions) && transactions.length > 0) {
     let txCount = transactions ? transactions.length : 0;
-    console.log('livedivscan-----------------------------------------------------------------------------------------------------------------');
+    console.log('-----------------------------------------------------------------------------------------------------------------');
     console.log('TRX区块:' + blockNumber + '; 出块时间:' + moment(ts).format('YYYY-MM-DD HH:mm:ss') + '; transactionnum:' + txCount +'; blockId:' + blockData.blockID);
     await Promise.all(
       transactions.map(async txInfo => {
         if (txInfo.ret[0].contractRet != 'SUCCESS') {
           return;
         }
-        console.log('livedivtxinfo is ',JSON.stringify(txInfo,null,4))
         let tmp = await alysisTxs(txInfo);
         if (!tmp) {
           console.log('-------------------blockNumber----------failed---', blockNumber);
@@ -132,13 +131,9 @@ async function alysisTxs(tx) {
     let value = _contract.parameter.value;
     let contract_address = value.contract_address; //触发合约时有效
     if (contract_address == null) continue;
-    console.log("contract_address === DIVIDEND_ADDR ",contract_address === DIVIDEND_ADDR)
-    console.log("contract_address === PAY_ADDR ",contract_address === PAY_ADDR)
-    console.log("contract_address === LIVE_POOL_ADDR ",contract_address === LIVE_POOL_ADDR)
     if (contract_address === DIVIDEND_ADDR || contract_address === PAY_ADDR || contract_address === LIVE_POOL_ADDR) {
       //玩家下单之后事件通知
       let txInfo = await gettransactioninfobyid(txID);
-      console.log("txInfo is ", JSON.stringify(txInfo))
       let logs = txInfo.log;
       if (txInfo.resMessage) {
         res.resMessage = hextoString(txInfo.resMessage);
@@ -152,7 +147,7 @@ async function alysisTxs(tx) {
           let hexTopics = _log.topics;
           let hexData = _log.data;
           let eventCode = hexTopics[0];
-          console.log("eventCode is ",eventCode);
+          console.log(eventCode);
           if (eventCode === EVENT_Divide) {
             console.log('-sssssssssssssssssssssssssssssssssssssssss');
             let log = {
@@ -313,7 +308,6 @@ function hexStringToTronAddress1(_hexStr) {
 
 async function scanNext(blockNum) {
   try {
-    console.log("live_div_blockNum is ",blockNum)
     let blockData = await getBlockData(blockNum);
     if (_.isEmpty(blockData)) {
       return false;
