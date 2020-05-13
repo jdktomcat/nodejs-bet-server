@@ -132,6 +132,8 @@ async function balance(ctx) {
 async function win(ctx) {
     let params = ctx.request.body
     let headers = ctx.request.headers
+    console.log("debug_win, ",headers)
+    console.log("debug_body, ",params)
 
     const localSignature = hmCrypto.sign(JSON.stringify(params))
     const remoteSignature = headers['X-Hub88-Signature'] || headers['x-hub88-signature']
