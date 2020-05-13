@@ -132,7 +132,6 @@ async function alysisTxs(tx) {
     let value = _contract.parameter.value;
     let contract_address = value.contract_address; //触发合约时有效
     if (contract_address == null) continue;
-    console.log("debug contract_address is ",contract_address)
     console.log("contract_address === DIVIDEND_ADDR ",contract_address === DIVIDEND_ADDR)
     console.log("contract_address === PAY_ADDR ",contract_address === PAY_ADDR)
     console.log("contract_address === LIVE_POOL_ADDR ",contract_address === LIVE_POOL_ADDR)
