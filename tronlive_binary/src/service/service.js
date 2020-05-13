@@ -100,9 +100,11 @@ class Service {
         const whiteList = ['TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP','TUMqj1BGbqTcp8j9gDLQWDWYV1cKXgCmf9']
         console.log("user is ",user,!whiteList.includes(user.trim()))
         if(!whiteList.includes(user.trim())){
-            return this.error("user not allowed!")
+            return {
+                tokenError : true,
+                tokenInfo : {},
+            }
         }
-        return t
     }
 
     static async identify(params) {
