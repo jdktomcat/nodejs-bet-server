@@ -21,3 +21,4 @@ module.exports = router.get('/getOtherCurrencyFile', controller.getOtherCurrency
 module.exports = router.get('/getAirDropList', controller.queryAirDropData)
 module.exports = router.get('/queryBlackList', controller.queryBlackList)
 module.exports = router.post('/addBlackList', controller.addBlackList)
+module.exports = router.get('/getLiveAllData', controller.getLiveAllData)
