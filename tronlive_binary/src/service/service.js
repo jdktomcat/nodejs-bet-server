@@ -98,7 +98,7 @@ class Service {
         }
         const user = tokenInfo.user || ''
         //TUMqj1BGbqTcp8j9gDLQWDWYV1cKXgCmf9
-        const whiteList = ['TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP','TUMqj1BGbqTcp8j9gDLQWDWYV1cKXgCmf9']
+        const whiteList = ['TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP','TUMqj1BGbqTcp8j9gDLQWDWYV1cKXgCmf9','TBAeSpwD5zWr2Zx8avZ2mBHnhLxmuYZUR5']
         console.log("user is ",user,!whiteList.includes(user.trim()))
         if(!whiteList.includes(user.trim())){
             return {
