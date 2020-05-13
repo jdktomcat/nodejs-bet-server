@@ -62,7 +62,7 @@ const main = async function () {
     for (let e of data) {
         let {round, addr} = e
         let roundSql = "select roll, hash, salt, luckyNum from tron_bet_wzc.wheel_info where round = ?"
-        const roundInfo = await raw(roundSql, [addr])
+        const roundInfo = await raw(roundSql, [round])
         console.log(round, addr,"---->", JSON.stringify(roundInfo))
         // let initWheelInfoSql = "update wheel_user_order set roll = ?, luckyNum = ?,result_hash = ?,salt = ?, mentor = '', win = 0, referralAmount = 0 where round = ?"
         // await raw(initWheelInfoSql, [roundInfo[0].roll, roundInfo[0].luckyNum, roundInfo[0].hash, roundInfo[0].salt, infos.round])
