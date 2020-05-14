@@ -58,13 +58,15 @@ const raw = async function (updateSql, params) {
 }
 
 const main = async function () {
-    // await getGameData()
     const child_process = require("child_process");
-    //
     let cmd = `ls`
     const a = child_process.execSync(cmd).toString()
     console.log(a)
-
+    //
+    await getGameData()
+    //
+    const a1 = child_process.execSync(cmd).toString()
+    console.log(a1)
 }
 
 main().then(() => {
