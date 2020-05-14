@@ -202,6 +202,8 @@ class Service {
         const expiration = params.expiration || {}
         const expiration_date = expiration.date || ''
         const expiration_date_time = new Date(expiration_date).getTime()
+        console.log("expiration is ",expiration , expiration_date)
+        console.log("expiration is ",Date.now() - expiration_date_time - 5 * 60 * 1000)
         if(isNaN(expiration_date_time)){
             return this.error("this tx is expired")
         }
