@@ -202,13 +202,13 @@ class Service {
         const expiration = params.expiration || {}
         const expiration_date = expiration.date || ''
         const expiration_date_time = new Date(expiration_date).getTime()
-        console.log("expiration is ",expiration , expiration_date)
-        console.log("expiration is ",expiration_date_time < Date.now() + 5 * 60 * 1000)
+        console.log("expiration is ",expiration_date,new Date())
+        console.log("expiration is ",expiration_date_time < Date.now())
         if(isNaN(expiration_date_time)){
             return this.error("this tx is expired")
         }
-        const timeStr = expiration_date_time - Date.now() - 5 * 60 * 1000
-        if(timeStr < 0){
+        const timeStr = Date.now() - expiration_date_time - 5 * 60 * 1000
+        if(timeStr > 0){
             return this.error("this tx is expired!")
         }
         const sqlParam = {
@@ -238,13 +238,13 @@ class Service {
         const expiration = params.expiration || {}
         const expiration_date = expiration.date || ''
         const expiration_date_time = new Date(expiration_date).getTime()
-        console.log("expiration is ",expiration , expiration_date)
-        console.log("expiration is ",expiration_date_time < Date.now() + 5 * 60 * 1000)
+        console.log("expiration is ",expiration_date,new Date())
+        console.log("expiration is ",expiration_date_time < Date.now())
         if(isNaN(expiration_date_time)){
             return this.error("this tx is expired")
         }
-        const timeStr = expiration_date_time - Date.now() - 5 * 60 * 1000
-        if(timeStr < 0){
+        const timeStr = Date.now() - expiration_date_time - 5 * 60 * 1000
+        if(timeStr > 0){
             return this.error("this tx is expired!")
         }
         const sqlParam = {
