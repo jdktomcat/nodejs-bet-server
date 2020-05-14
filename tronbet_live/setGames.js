@@ -64,6 +64,10 @@ const main = async function () {
     console.log(a)
     //
     await getGameData()
+    //delete files
+    const fs = require("fs")
+    fs.unlinkSync('h.txt')
+    console.log("last-------->\n")
     //
     const a1 = child_process.execSync(cmd).toString()
     console.log(a1)
