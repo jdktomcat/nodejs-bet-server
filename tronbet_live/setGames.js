@@ -61,13 +61,16 @@ const main = async function () {
     const child_process = require("child_process");
     let cmd = `ls`
     const a = child_process.execSync(cmd).toString()
-    console.log(a)
+    // console.log(a)
     //
     await getGameData()
+    //
+    const a2 = child_process.execSync("cat h.txt").toString()
+    console.log(a2)
     //delete files
     const fs = require("fs")
     fs.unlinkSync('h.txt')
-    console.log("last-------->\n")
+    console.log("\n\n\n----->last")
     //
     const a1 = child_process.execSync(cmd).toString()
     console.log(a1)
