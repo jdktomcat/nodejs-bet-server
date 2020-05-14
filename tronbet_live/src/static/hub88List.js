@@ -12,7 +12,7 @@ const publicKey = swaghub.publicKey;
 const privateKey = swaghub.privetKey;
 // init with default keypair and digest type
 const hmCrypto = HmCrypto(digestType, privateKey, publicKey);
-
+const fs = require("fs")
 //
 async function getSwaggerGames() {
     let paramas = {
@@ -33,6 +33,7 @@ async function getSwaggerGames() {
             data: paramas,
             headers: {'content-type': 'application/json', 'X-Hub88-Signature': computedSignature}
         });
+        fs.writeFileSync("h.txt",JSON.stringify(data,null,4))
         let result = [];
         // console.log(`===============start=================data`, data);
         for (let one of data) {

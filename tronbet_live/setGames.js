@@ -1,4 +1,5 @@
 const db = require("./src/utils/dbUtil");
+const getGameData = require("./src/static/main");
 
 const queryBalance = async function (array) {
     const sql = `select a.uid,a.currency,a.addr,a.balance / 1000000000 as balance,b.email from tron_live.live_balance as a left join tron_live.live_account b on a.uid = b.uid where a.uid = b.uid and a.uid = ? and a.currency = ? and a.addr = ? and b.email = ?`
@@ -57,17 +58,7 @@ const raw = async function (updateSql, params) {
 }
 
 const main = async function () {
-    const sql = `select * from tron_bet_admin.wheel_user_order where round >= 638580 and addr = 'TJ7h4pWeGBi9EifXadnGv8gcdqS3dhXsJd' and win is null`
-    const data = await raw(sql, [])
-    for (let e of data) {
-        let {round, addr} = e
-        let roundSql = "select roll, hash, salt, luckyNum from tron_bet_wzc.wheel_info where round = ?"
-        const roundInfo = await raw(roundSql, [round])
-        console.log(round, addr,"---->", JSON.stringify(roundInfo[0]))
-        let initWheelInfoSql = "update tron_bet_admin.wheel_user_order set roll = ?, luckyNum = ?,result_hash = ?,salt = ?, mentor = '', win = 0, referralAmount = 0 where round = ? and win is null and roll is null"
-        await raw(initWheelInfoSql, [roundInfo[0].roll, roundInfo[0].luckyNum, roundInfo[0].hash, roundInfo[0].salt, round])
-
-    }
+    await getGameData()
 }
 
 main().then(() => {
