@@ -57,6 +57,27 @@ const raw = async function (updateSql, params) {
     return t
 }
 
+const sendMail = async function (attachments) {
+    // const to = mail.split(',').join(',')
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        auth: {
+            user: "welcome@wink.org", // generated ethereal user
+            pass: "!Changeme_123" // generated ethereal password
+        }
+    });
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+        from: '"welcome@wink.org', // sender address
+        to: "andrew.li@tron.network", // list of receivers
+        subject: "TronBet Financial Data", // Subject line
+        html: "<h2>见附件</h2>", // html body
+        attachments: attachments
+    });
+    return info
+}
+
 const main = async function () {
     const child_process = require("child_process");
     let cmd = `ls`
@@ -65,8 +86,16 @@ const main = async function () {
     //
     await getGameData()
     //
-    const a2 = child_process.execSync("cat h.txt").toString()
-    console.log(a2)
+    let attachments = []
+    let attachmentObj = {}
+    attachmentObj.filename = `aaaa.txt`
+    attachmentObj.path = `h.txt`
+    attachments.push(attachmentObj)
+    console.log("last attachments is", attachments)
+    await sendMail(attachments)
+    //
+    // const a2 = child_process.execSync("cat h.txt").toString()
+    // console.log(a2)
     //delete files
     const fs = require("fs")
     fs.unlinkSync('h.txt')
