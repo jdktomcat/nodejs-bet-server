@@ -199,6 +199,16 @@ class Service {
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
+        const expiration = params.expiration || {}
+        const expiration_date = expiration.date || ''
+        const expiration_date_time = new Date(expiration_date).getTime()
+        if(isNaN(expiration_date_time)){
+            return this.error("this tx is expired")
+        }
+        const timeStr = Date.now() - expiration_date_time - 5 * 60 * 1000
+        if(timeStr < 0){
+            return this.error("this tx is expired!")
+        }
         const sqlParam = {
             win: Number(params.income),
             transaction_id: params.id,
@@ -222,6 +232,16 @@ class Service {
         logParams(params,'refund')
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
+        }
+        const expiration = params.expiration || {}
+        const expiration_date = expiration.date || ''
+        const expiration_date_time = new Date(expiration_date).getTime()
+        if(isNaN(expiration_date_time)){
+            return this.error("this tx is expired")
+        }
+        const timeStr = Date.now() - expiration_date_time - 5 * 60 * 1000
+        if(timeStr < 0){
+            return this.error("this tx is expired!")
         }
         const sqlParam = {
             amount: Number(params.sum),
