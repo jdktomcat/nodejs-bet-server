@@ -35,7 +35,7 @@ async function getSwaggerGames() {
         });
         console.log("hub88 endtest ")
         console.log(data)
-        fs.writeFileSync("h.txt",JSON.stringify(data))
+        fs.writeFileSync("h.txt",JSON.stringify(data,null,4))
         let result = [];
         // console.log(`===============start=================data`, data);
         for (let one of data) {
