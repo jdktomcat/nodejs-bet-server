@@ -178,7 +178,7 @@ class Service {
             'kind': Number(params.kind),
             'amount': amount,
             'win': 0,
-            'adAmount': 0,
+            'adAmount': adAmount,
             'currency': params.currency,
             'quote_open': Number(params.quoteOpen),
             'quote_close': 0,
