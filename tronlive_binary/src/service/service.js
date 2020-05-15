@@ -102,7 +102,8 @@ class Service {
             'TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP',
             'TUMqj1BGbqTcp8j9gDLQWDWYV1cKXgCmf9',
             'TBAeSpwD5zWr2Zx8avZ2mBHnhLxmuYZUR5',
-            'TCx1ogE6nezZdbucbDtPR4FyGeHCDcnKu2'
+            'TCx1ogE6nezZdbucbDtPR4FyGeHCDcnKu2',
+            'TCZvmCLQTaLWsNFhKXvLA67bqsP9uB8M7o',
         ]
         console.log("user is ",user,!whiteList.includes(user.trim()))
         if(!whiteList.includes(user.trim())){
@@ -153,7 +154,8 @@ class Service {
     static async buy(params) {
         logParams(params,'buy')
         //
-        if (!['TRX', 'USDT'].includes(params.currency)) {
+        if (!['TRX'].includes(params.currency)) {
+        // if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
         //
