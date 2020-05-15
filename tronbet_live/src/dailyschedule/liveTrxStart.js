@@ -95,7 +95,9 @@ const compareDate = async function () {
 
 const divSchedule = function () {
     // 3点，即11点profit的时候
-    const a1 = schedule.scheduleJob('*/5 3-4 * * *', async function () {
+    // for test
+    const a1 = schedule.scheduleJob('*/5 5-6 * * *', async function () {
+    // const a1 = schedule.scheduleJob('*/5 3-4 * * *', async function () {
         await compareDate()
     })
     // 15点，即23点profit的时候
