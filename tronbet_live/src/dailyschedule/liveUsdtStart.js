@@ -26,32 +26,41 @@ const raw = async function (sql, params) {
     const data = await db.exec(sql, params)
     return data
 }
-
-const queryDiv = async function () {
-    let sql = 'select start from tron_live.live_trc20_div_info order by round desc limit 1';
-    const data = await raw(sql, [])
-    const a = data[0].start
-    const ts = a * 1000
-    return ts
-}
-
-const queryDivIsOver = async function () {
-    let sql = 'select state as div_state from tron_live.live_trc20_div_info order by round desc limit 1';
-    const data = await raw(sql, [])
-    const a = data[0].div_state || '1'
-    console.log('queryDivIsOver div_state', new Date(), '--->', a)
-    if (a === '1') {
-        return true
+//live_trc20_div_info
+//live_trc20_div_detail
+const queryDivInfo = async function () {
+    let start = new Date();
+    start.setUTCMinutes(0)
+    start.setUTCSeconds(0)
+    start.setUTCMilliseconds(0)
+    const now = start.getTime() / 1e3
+    //
+    let sql = 'select send_ts from tron_live.live_trc20_div_info where send_ts >= ?';
+    const data = await raw(sql, [now])
+    //
+    if (data.length > 0) {
+        //分红正常
+        console.log("queryDivInfo normal!", new Date().toUTCString())
     } else {
-        return false
+        //
+        console.log("queryDivInfo reStartLiveDiv!", new Date().toUTCString())
+        await reStartLiveDiv()
     }
 }
 
-const queryDivDetailNumber = async function () {
-    let sql = 'select round,div_state from tron_live.live_trc20_div_info order by round desc limit 1';
-    const data = await raw(sql, [])
-    const a = data[0].div_state || '1'
-    if (a === '1') {
+
+const queryDivIfComplete = async function (type) {
+    let start = new Date();
+    start.setUTCMinutes(0)
+    start.setUTCSeconds(0)
+    start.setUTCMilliseconds(0)
+    const now = start.getTime() / 1e3
+    //
+    let sql = 'select send_ts from tron_live.live_trc20_div_info where send_ts >= ? and div_state = ?';
+    const data = await raw(sql, [now, type])
+    //
+    if (data.length > 0) {
+        //分红正常
         const roundTmp = data[0].round
         const round = Number(roundTmp)
         if (!isNaN(round)) {
@@ -59,52 +68,32 @@ const queryDivDetailNumber = async function () {
             const countInfo = await raw(sql, [round])
             const count = countInfo[0].count || 0
             const min = new Date().getUTCMinutes()
-            console.log("live_div_detail count is: ", count, ', min is', min)
+            console.log("live_trc20_div_detail count is: ", count, ', min is', min)
             if (min > 6 && min <= 12 && count <= 2750) {
                 return true
             } else if (min > 12 && min < 18 && count <= 5000) {
                 return true
-            } else if (min >= 18 && min < 23 && count <= 9000) {
+            } else if (min >= 18 && min < 26 && count <= 9000) {
                 return true
             }
         }
-    }
-    return false
-}
-
-const isDivNormal = async function () {
-    const date1 = await queryDiv()
-    let start = new Date();
-    start.setUTCMinutes(0)
-    start.setUTCSeconds(0)
-    start.setUTCMilliseconds(0)
-    const now = start.getTime()
-    if (date1 < now) {
-        return false
     } else {
-        console.log("div normal ,now is ", new Date(date1), new Date(start))
-        return true
+        console.log(`queryDivIfComplete_${type} reStartLiveDiv!`, new Date().toUTCString())
+        await reStartLiveDiv()
     }
 }
 
 const compareDate = async function () {
+    // 5分钟检查一下12点后是否正常
+    await queryDivInfo()
+    //
     const min = new Date().getUTCMinutes()
-    if (min > 6 && min <= 16) {
-        const profit = await redisUtils.hget('tronlive:realtime', 'usdt');
-        if(profit > 0){
-            const normal = await isDivNormal()
-            if(!normal){
-                console.log('usdt div fail,and restart')
-                await reStartLiveDiv()
-            }
-        }
-    } else if (min >= 17 && min <= 33) {
+    if (min > 6 && min <= 27) {
+        //判断条数
+        await queryDivIfComplete('1')
+    } else if (min >= 27 && min <= 59) {
         //25分钟后判断是否完成，or restart
-        const isNotOver = await queryDivIsOver()
-        console.log("div isNotOver is", isNotOver)
-        if (isNotOver) {
-            await reStartLiveDiv()
-        }
+        await queryDivIfComplete('2')
     }
 }
 
