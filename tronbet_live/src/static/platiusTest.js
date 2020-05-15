@@ -334,5 +334,12 @@ module.exports  = [
         "gameID": "487",
         "png": "//platipusgaming.com/img/games/blackjack_vip.jpg",
         "category": "table"
+    },
+    {
+        "launchUrl": "https://wbg.platipusgaming.com/wink/dragonselement/launch",
+        "name": "Dragon's Element",
+        "gameID": "533",
+        "png": "//platipusgaming.com/img/games/dragonselement.jpg",
+        "category": "slots"
     }
 ]
