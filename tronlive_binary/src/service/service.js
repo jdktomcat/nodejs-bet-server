@@ -154,7 +154,8 @@ class Service {
     static async buy(params) {
         logParams(params,'buy')
         //
-        if (!['TRX', 'USDT'].includes(params.currency)) {
+        if (!['TRX'].includes(params.currency)) {
+        // if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
         //
