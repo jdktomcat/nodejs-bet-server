@@ -33,8 +33,6 @@ async function getSwaggerGames() {
             data: paramas,
             headers: {'content-type': 'application/json', 'X-Hub88-Signature': computedSignature}
         });
-        console.log("hub88 endtest ")
-        fs.writeFileSync("h.txt",JSON.stringify(data,null,4))
         let result = [];
         // console.log(`===============start=================data`, data);
         for (let one of data) {
