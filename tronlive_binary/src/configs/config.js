@@ -43,9 +43,9 @@ let config = {
     ACTIVITY_END_TS: 1580799600000,//Tue Feb 04 2020 15:00:00
   },
   addition:{
-    START_TS: 1586908800000,
-    END_TS: 1587340800000,
-    RATE: 1.5
+    START_TS: 1589859000000,
+    END_TS: 1590031800000,
+    RATE: 2
   }
 };
 
