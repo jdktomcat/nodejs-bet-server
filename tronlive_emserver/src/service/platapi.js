@@ -211,6 +211,7 @@ async function getAdditionByGameId(GameID) {
 
 async function Wager(ctx) {
   let params = ctx.request.body;
+  console.log("buy@params: ",params)
   let LoginName = params.LoginName;
   let Password = params.Password;
   let SessionId = params.SessionId;
@@ -366,6 +367,7 @@ async function Wager(ctx) {
 
 async function Result(ctx) {
   let params = ctx.request.body;
+  console.log("result@params: ",params)
   let LoginName = params.LoginName;
   let Password = params.Password;
   let SessionId = params.SessionId;
@@ -487,6 +489,7 @@ async function Result(ctx) {
 
 async function RollBack(ctx) {
   let params = ctx.request.body;
+  console.log("rollBack@params: ",params)
   let LoginName = params.LoginName;
   let Password = params.Password;
   let SessionId = params.SessionId;
