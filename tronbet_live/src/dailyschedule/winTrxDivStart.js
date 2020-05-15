@@ -23,57 +23,58 @@ const raw = async function (sql, params) {
     const data = await db.exec(sql, params)
     return data
 }
-
-const queryDiv = async function () {
-    let sql = 'select * from tron_bet_wzc.win_ver_v1 order by ver desc limit 1';
-    const data = await raw(sql, [])
-    const a = data[0].send_ts
-    const ts = a * 1000
-    return ts
-}
-
-const queryDivIsOver = async function () {
-    let sql = 'select * from tron_bet_wzc.win_ver_v1 order by ver desc limit 1';
-    const data = await raw(sql, [])
-    const a = data[0].div_state || '1'
-    console.log('queryDivIsOver div_state', new Date(), '--->', a)
-    if (a === '1') {
-        return true
-    } else {
-        return false
-    }
-}
-
-const isDivNormal = async function () {
-    const date1 = await queryDiv()
+//tron_bet_wzc.win_ver_v1
+const queryDivInfo = async function () {
     let start = new Date();
     start.setUTCMinutes(0)
     start.setUTCSeconds(0)
     start.setUTCMilliseconds(0)
-    const now = start.getTime()
-    if (date1 < now) {
-        return false
+    const now = start.getTime() / 1e3
+    //
+    let sql = 'select send_ts from tron_bet_wzc.win_ver_v1 where send_ts >= ?';
+    const data = await raw(sql, [now])
+    //
+    if (data.length > 0) {
+        //分红正常
+        console.log("queryDivInfo normal!", new Date().toUTCString())
     } else {
-        console.log("div normal ,now is ", new Date(date1), new Date(start))
-        return true
+        //
+        console.log("queryDivInfo reStartLiveDiv!", new Date().toUTCString())
+        await restartWinProcess()
+    }
+}
+
+
+const queryDivIfComplete = async function (type) {
+    let start = new Date();
+    start.setUTCMinutes(0)
+    start.setUTCSeconds(0)
+    start.setUTCMilliseconds(0)
+    const now = start.getTime() / 1e3
+    //
+    let sql = 'select send_ts from tron_live.live_div_info where send_ts >= ? and div_state = ?';
+    const data = await raw(sql, [now, type])
+    //
+    if (data.length > 0) {
+        //分红正常
+        console.log(`queryDivIfComplete_${type} normal!`, new Date().toUTCString())
+    } else {
+        console.log(`queryDivIfComplete_${type} reStartLiveDiv!`, new Date().toUTCString())
+        await restartWinProcess()
     }
 }
 
 const compareDate = async function () {
-    const isStart = isDivNormal()
-    if (isStart) {
-        const min = new Date().getUTCMinutes()
-        if (min >= 23 && min <= 59) {
-            //25分钟后判断是否完成，or restart
-            const isNotOver = await queryDivIsOver()
-            console.log("div isNotOver is", isNotOver)
-            if (isNotOver) {
-                await restartWinProcess()
-            }
-        }
-    } else {
-        //每5分钟检测一次
-        await restartWinProcess()
+    // 5分钟检查一下11点后是否正常
+    await queryDivInfo()
+    //
+    const min = new Date().getUTCMinutes()
+    if (min > 6 && min < 20) {
+        //判断条数
+        await queryDivIfComplete('1')
+    } else if (min >= 20 && min <= 59) {
+        //25分钟后判断是否完成，or restart
+        await queryDivIfComplete('2')
     }
 }
 
