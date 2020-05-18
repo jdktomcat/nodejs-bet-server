@@ -133,7 +133,8 @@ class Service {
                 console.log("decrypt time is ", Date.now() - Number(dayTime))
                 //
                 const time = Date.now() - Number(dayTime)
-                if (time >= 2 * 24 * 60 * 60 * 1000) {
+                //token有效期30hours
+                if (time >= 30 * 60 * 60 * 1000) {
                     return this.error("token is expire, please check with your token!")
                 }
                 tron_address = addr
