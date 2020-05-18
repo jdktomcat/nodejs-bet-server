@@ -89,6 +89,17 @@ class Service {
         return t
     }
 
+
+    static filter(messgae) {
+        const t = {
+            code: 3,
+            message: messgae,
+        }
+        console.log(t)
+        return t
+    }
+
+
     static async getToken(params) {
         const t = await usermodel.checkToken(params.payload)
         //
@@ -104,8 +115,14 @@ class Service {
             'TBAeSpwD5zWr2Zx8avZ2mBHnhLxmuYZUR5',
             'TCx1ogE6nezZdbucbDtPR4FyGeHCDcnKu2',
             'TCZvmCLQTaLWsNFhKXvLA67bqsP9uB8M7o',
+            'TUSBc3o2PvW2bPRiUiQfvm9FjERthtynN8',
+            'TDg1bjCjtLBrN1HyZSaMTsetwzacznhL9F',
         ]
         console.log("user is ",user,!whiteList.includes(user.trim()))
+        const env = process.env.NODE_ENV
+        if(env === 'test'){
+            return t
+        }
         if(!whiteList.includes(user.trim())){
             return {
                 tokenError : true,
@@ -207,12 +224,12 @@ class Service {
         const expiration_date_time = new Date(expiration_date).getTime()
         console.log("expiration is ",expiration_date,new Date())
         if(isNaN(expiration_date_time)){
-            return this.error("this tx is expired")
+            return this.filter("this tx is expired")
         }
         // 30 hours
         const timeStr = Date.now() - expiration_date_time - 30 * 60 * 60 * 1000
         if(timeStr > 0){
-            return this.error("this tx is expired!")
+            return this.filter("this tx is expired!")
         }
         const sqlParam = {
             win: Number(params.income),
@@ -224,7 +241,7 @@ class Service {
         console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.win / 1e6}TRX`)
         const isClose = await usermodel.isTxClose(sqlParam)
         if(isClose){
-            return this.error("this tx is over!")
+            return this.filter("this tx is over!")
         }
         await usermodel.close(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
@@ -243,12 +260,12 @@ class Service {
         const expiration_date_time = new Date(expiration_date).getTime()
         console.log("expiration is ",expiration_date,new Date())
         if(isNaN(expiration_date_time)){
-            return this.error("this tx is expired")
+            return this.filter("this tx is expired")
         }
         // 30 hours
         const timeStr = Date.now() - expiration_date_time - 30 * 60 * 60 * 1000
         if(timeStr > 0){
-            return this.error("this tx is expired!")
+            return this.filter("this tx is expired!")
         }
         const sqlParam = {
             amount: Number(params.sum),
@@ -259,7 +276,7 @@ class Service {
         console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.amount / 1e6}TRX`)
         const isClose = await usermodel.isTxClose(sqlParam)
         if(isClose){
-            return this.error("this tx is over!")
+            return this.filter("this tx is over!")
         }
         await usermodel.refund(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
