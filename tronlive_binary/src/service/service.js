@@ -187,6 +187,9 @@ class Service {
             return this.error("balance not enough!")
         }
         let amount = Number(params.sum)
+        if(amount > 1500 * 1e6){
+            return this.error("play amount too large!")
+        }
         //
         const price_now = await usermodel.getTRXPrice(params.currency)
         const rate = getAdditionRate()
