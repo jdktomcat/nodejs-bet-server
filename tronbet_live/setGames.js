@@ -1,33 +1,38 @@
-const db = require("./src/utils/dbUtil");
-
-const raw = async function (updateSql, params) {
-    console.log(updateSql, params)
-    const t = await db.exec(updateSql, params);
-    return t
+let prdCfg = {};
+try {
+  prdCfg = require('/data/tronbet_config/config');
+  // prdCfg = require("/data/tronbet_config/config_test");
+} catch (error) {
+  console.log("using app config");
 }
 
-const updateFix = async function () {
-    // const addrs = [
-    // ]
-    // for(let e of addrs){
-    //     const querySql = `select uid,currency,addr,balance / 1000000 as balance from tron_live.live_balance where addr = ? and currency = 'TRX'`
-    //     const data = await raw(querySql,[e])
-    //     console.log(data)
-    //     const updateSql = "update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX'"
-    //     await raw(updateSql,[e])
-    //     console.log("--------\n\n")
-    // }
+const TronWeb = require("tronweb");
+const HttpProvider = TronWeb.providers.HttpProvider;
+const fullNode = new HttpProvider(prdCfg.master_full);
+const solidityNode = new HttpProvider(prdCfg.master_solidity);
+const eventServer = prdCfg.master_event;
+const privateKey = prdCfg.operatorDice_pk;
+
+let tronWeb = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
+
+const contract_address = prdCfg.contract.TronBetPool20; //合约地址
+
+//获取合约
+async function getContractInstance() {
+  let contractInstance = await tronWeb.contract().at(contract_address);
+  return contractInstance;
 }
 
-const main = async function () {
-    await updateFix()
-
+async function burn() {
+  let contractInstance = await getContractInstance();
+  const transactionID = await contractInstance
+    .burnWin()
+    .send()
+    .catch(error => {
+      console.log(error);
+    });
+  console.log(transactionID);
+  return transactionID;
 }
 
-main().then(() => {
-    console.log("end!")
-    process.exit(0)
-}).catch(e => {
-    console.log('error is : ', e)
-    process.exit(1)
-})
+burn();
