@@ -53,6 +53,9 @@ class apiCall {
         if(t.code === 2){
             ctx.status = 400;
             ctx.body = t
+        }else if(t.code === 3){
+            ctx.status = 200;
+            ctx.body = t
         }else {
             ctx.body = t
         }
@@ -77,6 +80,9 @@ class apiCall {
         if(t.code === 2){
             ctx.status = 400;
             ctx.body = t
+        }else if(t.code === 3){
+            ctx.status = 200;
+            ctx.body = t
         }else {
             ctx.body = t
         }
@@ -99,6 +105,9 @@ class apiCall {
         const t = await service.refund(tokenInfo)
         if(t.code === 2){
             ctx.status = 400;
+            ctx.body = t
+        }else if(t.code === 3){
+            ctx.status = 200;
             ctx.body = t
         }else {
             ctx.body = t
