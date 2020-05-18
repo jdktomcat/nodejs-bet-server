@@ -55,7 +55,9 @@ class apiCall {
             ctx.body = t
         }else if(t.code === 3){
             ctx.status = 200;
-            ctx.body = t
+            ctx.body = {
+                message : t.message
+            }
         }else {
             ctx.body = t
         }
@@ -82,7 +84,9 @@ class apiCall {
             ctx.body = t
         }else if(t.code === 3){
             ctx.status = 200;
-            ctx.body = t
+            ctx.body = {
+                message : t.message
+            }
         }else {
             ctx.body = t
         }
@@ -108,7 +112,9 @@ class apiCall {
             ctx.body = t
         }else if(t.code === 3){
             ctx.status = 200;
-            ctx.body = t
+            ctx.body = {
+                message : t.message
+            }
         }else {
             ctx.body = t
         }
