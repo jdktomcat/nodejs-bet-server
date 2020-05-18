@@ -105,6 +105,7 @@ class Service {
             'TCx1ogE6nezZdbucbDtPR4FyGeHCDcnKu2',
             'TCZvmCLQTaLWsNFhKXvLA67bqsP9uB8M7o',
             'TUSBc3o2PvW2bPRiUiQfvm9FjERthtynN8',
+            'TDg1bjCjtLBrN1HyZSaMTsetwzacznhL9F',
         ]
         console.log("user is ",user,!whiteList.includes(user.trim()))
         if(!whiteList.includes(user.trim())){
