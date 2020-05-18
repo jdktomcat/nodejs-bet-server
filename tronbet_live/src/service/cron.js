@@ -49,7 +49,7 @@ let timer = setInterval(async () => {
       profit = profitRaw - fixSum2
     }
     console.log("after time trx profit2 is",profit)
-    profit = profit * 0.6
+    profit = profit * 0.5
     console.log("after time trx last is",profit)
     //先写死固定值
     console.log("this fix last is ",profit)
