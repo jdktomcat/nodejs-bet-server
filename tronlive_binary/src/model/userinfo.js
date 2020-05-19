@@ -99,6 +99,10 @@ async function isTxClose(params){
         const tmp = rs[0] || {}
         const status = tmp.status || '-1'
         console.log("--->status--->",status)
+        if(status === '-1'){
+            console.log("this tx is not found!")
+            return true
+        }
         if(status === statusDict.refund || status === statusDict.close){
             return true
         }else {
