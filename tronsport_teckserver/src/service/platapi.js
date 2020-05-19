@@ -253,7 +253,7 @@ async function betMake(ctx) {
       if (conn == null) {
         return await sendErrorMessage2Client(ctx, 403, 204);
       }
-      conn.beginTransaction();
+      await conn.beginTransaction();
       await userinfo.userBet(transactionParams, betLogParams, conn);
 
       if(odds >= 2){
@@ -261,7 +261,7 @@ async function betMake(ctx) {
         sendGameMsg(transactionParams.addr, new Date().getTime(), transactionParams.amount / 1000000, transactionParams.currency);
       }
 
-      conn.commit();
+      await conn.commit();
     } catch (error) {
       console.log('======================rollback=======================');
       logger.info(error);
@@ -390,9 +390,9 @@ async function betRefund(ctx) {
       if (conn == null) {
         return await sendErrorMessage2Client(ctx, 403, 204);
       }
-      conn.beginTransaction();
+      await conn.beginTransaction();
       await userinfo.userRefund(transactionParams, conn);
-      conn.commit();
+      await conn.commit();
     } catch (error) {
       console.log('======================rollback=======================');
       logger.info(error);
@@ -486,9 +486,9 @@ async function betWin(ctx) {
       if (conn == null) {
         return await sendErrorMessage2Client(ctx, 403, 204);
       }
-      conn.beginTransaction();
+      await conn.beginTransaction();
       await userinfo.userWin(transactionParams, conn);
-      conn.commit();
+      await conn.commit();
     } catch (error) {
       console.log('======================rollback=======================');
       logger.info(error);
@@ -580,10 +580,10 @@ async function betCancel(ctx) {
       if (conn == null) {
         return await sendErrorMessage2Client(ctx, 403, 204);
       }
-      conn.beginTransaction();
+      await conn.beginTransaction();
       console.log(transactionParams);
       await userinfo.userCancel(transactionParams, conn);
-      conn.commit();
+      await conn.commit();
     } catch (error) {
       console.log('======================rollback=======================');
       logger.info(error);
@@ -669,9 +669,9 @@ async function betDiscard(ctx) {
       if (conn == null) {
         return await sendErrorMessage2Client(ctx, 403, 204);
       }
-      conn.beginTransaction();
+      await conn.beginTransaction();
       await userinfo.userDiscard(transactionParams, conn);
-      conn.commit();
+      await conn.commit();
     } catch (error) {
       console.log('======================rollback=======================');
       logger.info(error);
@@ -738,9 +738,9 @@ async function betRollback(ctx) {
       if (conn == null) {
         return await sendErrorMessage2Client(ctx, 403, 204);
       }
-      conn.beginTransaction();
+      await conn.beginTransaction();
       await userinfo.userRollBack(transactionParams, conn);
-      conn.commit();
+      await conn.commit();
     } catch (error) {
       console.log('======================rollback=======================');
       logger.info(error);

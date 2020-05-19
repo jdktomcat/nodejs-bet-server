@@ -315,7 +315,7 @@ async function Wager(ctx) {
     if (conn == null) {
       return await sendMsgToClient(ctx, 101, "unknown failed");
     }
-    conn.beginTransaction();
+    await conn.beginTransaction();
     let res = await usermodel.userAction(
       AccountId,
       RoundId,
@@ -337,7 +337,7 @@ async function Wager(ctx) {
     // 触发活动
     sendGameMsg(AccountId, new Date().getTime(), Amount, Currency);
 
-    conn.commit();
+    await conn.commit();
   } catch (error) {
     logger.info(error);
     if (conn) conn.release();
@@ -444,7 +444,7 @@ async function Result(ctx) {
     if (conn == null) {
       return await sendMsgToClient(ctx, 101, "unknown failed");
     }
-    conn.beginTransaction();
+    await conn.beginTransaction();
     let res = await usermodel.userAction(
       AccountId,
       RoundId,
@@ -462,7 +462,7 @@ async function Result(ctx) {
       Currency,
       conn
     );
-    conn.commit();
+    await conn.commit();
   } catch (error) {
     logger.info(error);
     if (conn) conn.release();
@@ -559,7 +559,7 @@ async function RollBack(ctx) {
     if (conn == null) {
       return await sendMsgToClient(ctx, 101, "unknown failed");
     }
-    conn.beginTransaction();
+    await conn.beginTransaction();
     let res = await usermodel.userRollBack(
       AccountId,
       RoundId,
@@ -576,7 +576,7 @@ async function RollBack(ctx) {
       Currency,
       conn
     );
-    conn.commit();
+    await conn.commit();
   } catch (error) {
     logger.info(error);
     if (conn) conn.release();
