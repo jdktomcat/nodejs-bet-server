@@ -60,10 +60,10 @@ const getAdditionRate = function () {
     }
 }
 
-const logParams = function (params,type) {
-    if(type === 'identify'){
+const logParams = function (params, type) {
+    if (type === 'identify') {
         console.log(`${new Date()},${type}_params `, params)
-    }else {
+    } else {
         console.log(`${new Date()},${type}_params@${params.id} `, params)
     }
 }
@@ -90,10 +90,12 @@ class Service {
     }
 
 
-    static filter(messgae) {
+    static async filterClose(params) {
+        const data = await usermodel.getBalance({addr: params.user, currency: params.currency})
         const t = {
             code: 3,
-            message: messgae,
+            message: "this tx is expired!",
+            data: data
         }
         console.log(t)
         return t
@@ -118,23 +120,23 @@ class Service {
             'TUSBc3o2PvW2bPRiUiQfvm9FjERthtynN8',
             'TDg1bjCjtLBrN1HyZSaMTsetwzacznhL9F',
         ]
-        console.log("user is ",user,!whiteList.includes(user.trim()))
+        console.log("user is ", user, !whiteList.includes(user.trim()))
         const env = process.env.NODE_ENV
-        if(env === 'test'){
+        if (env === 'test') {
             return t
         }
-        if(!whiteList.includes(user.trim())){
+        if (!whiteList.includes(user.trim())) {
             return {
-                tokenError : true,
-                tokenInfo : {},
+                tokenError: true,
+                tokenInfo: {},
             }
-        }else {
-            return  t
+        } else {
+            return t
         }
     }
 
     static async identify(params) {
-        logParams(params,'identify')
+        logParams(params, 'identify')
         const {tokenError, tokenInfo} = usermodel.checkToken(params.payload)
         if (tokenError) {
             return this.error("token parse error , please check with your token!")
@@ -170,10 +172,10 @@ class Service {
     }
 
     static async buy(params) {
-        logParams(params,'buy')
+        logParams(params, 'buy')
         //
         if (!['TRX'].includes(params.currency)) {
-        // if (!['TRX', 'USDT'].includes(params.currency)) {
+            // if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
         //
@@ -187,7 +189,7 @@ class Service {
             return this.error("balance not enough!")
         }
         let amount = Number(params.sum)
-        if(amount > 1500 * 1e6){
+        if (amount > 1500 * 1e6) {
             return this.error("play amount too large!")
         }
         //
@@ -218,21 +220,23 @@ class Service {
     }
 
     static async close(params) {
-        logParams(params,'close')
+        logParams(params, 'close')
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
         const expiration = params.expiration || {}
         const expiration_date = expiration.date || ''
         const expiration_date_time = new Date(expiration_date).getTime()
-        console.log("expiration is ",expiration_date,new Date())
-        if(isNaN(expiration_date_time)){
-            return this.filter("this tx is expired")
+        console.log("expiration is ", expiration_date, new Date())
+        if (isNaN(expiration_date_time)) {
+            const rs = await this.filterClose(params)
+            return rs
         }
         // 30 hours
         const timeStr = Date.now() - expiration_date_time - 30 * 60 * 60 * 1000
-        if(timeStr > 0){
-            return this.filter("this tx is expired!")
+        if (timeStr > 0) {
+            const rs = await this.filterClose(params)
+            return rs
         }
         const sqlParam = {
             win: Number(params.income),
@@ -243,8 +247,9 @@ class Service {
         }
         console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.win / 1e6}TRX`)
         const isClose = await usermodel.isTxClose(sqlParam)
-        if(isClose){
-            return this.filter("this tx is over!")
+        if (isClose) {
+            const rs = await this.filterClose(params)
+            return rs
         }
         await usermodel.close(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
@@ -254,21 +259,23 @@ class Service {
     }
 
     static async refund(params) {
-        logParams(params,'refund')
+        logParams(params, 'refund')
         if (!['TRX', 'USDT'].includes(params.currency)) {
             return this.error("currency value is error !")
         }
         const expiration = params.expiration || {}
         const expiration_date = expiration.date || ''
         const expiration_date_time = new Date(expiration_date).getTime()
-        console.log("expiration is ",expiration_date,new Date())
-        if(isNaN(expiration_date_time)){
-            return this.filter("this tx is expired")
+        console.log("expiration is ", expiration_date, new Date())
+        if (isNaN(expiration_date_time)) {
+            const rs = await this.filterClose(params)
+            return rs
         }
         // 30 hours
         const timeStr = Date.now() - expiration_date_time - 30 * 60 * 60 * 1000
-        if(timeStr > 0){
-            return this.filter("this tx is expired!")
+        if (timeStr > 0) {
+            const rs = await this.filterClose(params)
+            return rs
         }
         const sqlParam = {
             amount: Number(params.sum),
@@ -278,8 +285,9 @@ class Service {
         }
         console.log(`transaction_id${sqlParam.transaction_id}@addr${sqlParam.addr}@close${sqlParam.amount / 1e6}TRX`)
         const isClose = await usermodel.isTxClose(sqlParam)
-        if(isClose){
-            return this.filter("this tx is over!")
+        if (isClose) {
+            const rs = await this.filterClose(params)
+            return rs
         }
         await usermodel.refund(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
