@@ -29,11 +29,11 @@ async function main() {
   let obj3 = {};
   //回购燃烧
   obj3.type = 1;
-  obj3.addr = "THNpF5h4isLgXe7rtw6833nSgTqhfuVJLN";
-  obj3.amount = 376007484281000;
-  obj3.ts = 1586846238000;
-  obj3.tx = "6894c11fd6c6424a04991f06565941028f68b1a5fd3a971a17987867e96967fe";
-  //info.push(obj3);
+  obj3.addr = "TW8UBosxaTYKAS22WywSVnyjjJr4iEvjNr";
+  obj3.amount = 408516594925900;
+  obj3.ts = 1589880267000;
+  obj3.tx = "f98f26201eef86c9aad885e4d4e6b9aba5ba814e5df020eda1855e4546bc210a";
+  info.push(obj3);
 
   for (let item of info) {
     await insertDB(item);
