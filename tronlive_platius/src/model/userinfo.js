@@ -140,7 +140,7 @@ async function queryTxIfExist(params) {
             return true
         }
     }
-    return false
+    return true
 }
 
 
