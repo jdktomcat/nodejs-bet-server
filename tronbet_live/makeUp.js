@@ -33,22 +33,7 @@ async function makeUpLiveToken() {
 
     // update 20200220
     let users = [
-        {"addr": "TQuSYAXY8xr6xcEKNxCnTPsx5VW6f89mWn", "amount": 145563.5194, "adAmount": (145563.5194 / 392) * 1000000},
-        {"addr": "TSgL2AbnG1TVUabQFgFPZQy2jKUzJAysZb", "amount": 905399.78147, "adAmount": (905399.78147 / 392 - 1177.7954) * 1000000},
-        {"addr": "TEU1LitnnG1gfxsQGW262wEF7ecaAF8cYi", "amount": 712054.6926, "adAmount": (712054.6926 / 392 - 1.0833) * 1000000},
-        // {"addr": "TBxMsTDJxYnt27zNTeUAtJcAZCmV7dgq1x", "amount": 5382.08423, "adAmount": (5382.08423 / 392 - 101.8958) * 1000000},
-        {"addr": "TVegedWTbKYk4GGZVcEpmG3Js62CZFk8tE", "amount": 18347.3361, "adAmount": (18347.3361 / 392) * 1000000},
-        {"addr": "TBEAM7GPc8oouWeUjPkhY8ein9pw7mQjAb", "amount": 13935.6955, "adAmount": (13935.6955 / 392 - 21.6908) * 1000000},
-        {"addr": "THZc1k8eL8CRSXzykXZ8fjQocX1vZaQoxz", "amount": 194207.2201, "adAmount": (194207.2201 / 392 - 158.9422) * 1000000},
-        {"addr": "TXE39AXK1czhuDSsHoe4w6dfSiyAvNViGf", "amount": 1051, "adAmount": (1051 / 392) * 1000000},
-        {"addr": "TAVExusD5UqP2cRiQ8NbKmTK42LXPmWqiX", "amount": 328185.0925, "adAmount": (328185.0925 / 392) * 1000000},
-        {"addr": "TP1yemoGpWhXg56XbueU9AQiNwTMTYRjpD", "amount": 42551.3489, "adAmount": (42551.3489 / 392 - 10.7594) * 1000000},
-        {"addr": "TCjAUcVqNPBUsVgsmwYnGJUx4qksvdeSFy", "amount": 66957.5, "adAmount": (66957.5 / 392 - 143.2031) * 1000000},
-        {"addr": "TEjrbhv5MCobGKDsbddaHArbc1gode67DH", "amount": 8664.8769, "adAmount": (8664.8769 / 392 - 0.7854) * 1000000},
-        {"addr": "TEXAJi4N2Gho9xjkaoSxwma281dimnFkoH", "amount": 3035, "adAmount": (3035 / 392 - 1.2436) * 1000000},
-        {"addr": "TQgoxGxxuzCCyN33WCqHqzhAdaESZKKHNP", "amount": 622.5, "adAmount": (622.5 / 392) * 1000000},
-        {"addr": "TYWARzmK8UmMHjyZowd9J3eUCd1sPXWSpQ", "amount": 2443.5, "adAmount": (2443.5 / 392 - 4.2969) * 1000000},
-        {"addr": "TFa8h1BALTZzNw9BwqkMY2ynjpPfs6i3E2", "amount": 66698.4393, "adAmount": (66698.4393 / 392) * 1000000},
+        {"addr": "TUegyE57yFmju8WQoQDsn9gAef68Mh4bPs", "amount": 390000, "adAmount": (390000 / 390) * 1000000},
     ]
     users.forEach(e=>{
         e.adAmount = parseInt(e.adAmount)
