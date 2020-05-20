@@ -66,19 +66,19 @@ db.execTrans = async function (sql, param, connection) {
     // });
 }
 
-// db.execTrans1 = async function (sql, param, connection) {
-//     console.log("sql is ",sql)
-//     console.log("param is ",param)
-//     return new Promise((reslove, reject) => {
-//         if (connection == null) { return; }
-//         connection.query(sql, param, function (err, result) {
-//             if (err) {
-//                 return reject(err);
-//             }
-//             return reslove(result);
-//         });
-//     });
-// }
+db.execTrans1 = async function (sql, param, connection) {
+    console.log("sql is ",sql)
+    console.log("param is ",param)
+    return new Promise((reslove, reject) => {
+        if (connection == null) { return; }
+        connection.query(sql, param, function (err, result) {
+            if (err) {
+                return reject(err);
+            }
+            return reslove(result);
+        });
+    });
+}
 
 db.getConnection = () => {
     return new Promise((reslove, reject) => {

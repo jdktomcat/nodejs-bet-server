@@ -66,7 +66,7 @@ async function userBet(tsp, blp, conn) {
       one.odds
     ]);
   }
-  await db.execTrans(betLogSql, [blparmas], conn);
+  await db.execTrans1(betLogSql, [blparmas], conn);
 }
 
 async function userRefund(params, conn) {
