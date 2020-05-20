@@ -1,6 +1,6 @@
 module.exports = [
     'TJ7E7A7hhJU5w6nsDBFVL9zpUCoChnhQiw',
-    'TUegyE57yFmju8WQoQDsn9gAef68Mh4bPs',
+    // 'TUegyE57yFmju8WQoQDsn9gAef68Mh4bPs', //1300w ,但是已经清零
     'TUpZbBqWFDe3pvkcVH9ugdPcqCjzC6edGa',
     'TSzbuy1vfKqgWwFSX3XZRNSBQ9gYbiGoxf',
     'TYTMdWAsRqRw1vhSwbAbKMZAhR3Nx7TD3d',
