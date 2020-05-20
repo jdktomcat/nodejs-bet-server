@@ -49,15 +49,20 @@ db.rollback = async function (connection) {
 }
 
 db.execTrans = async function (sql, param, connection) {
-    return new Promise((reslove, reject) => {
-        if (connection == null) { return; }
-        connection.execute(sql, param, function (err, result) {
-            if (err) {
-                return reject(err);
-            }
-            return reslove(result);
-        });
-    });
+    // 改成单表单事务，2020-05-20
+    console.log("sql is ",sql)
+    console.log("param is ",param)
+    let ret = await promisePool.execute(sql, param); //return [rows, fields]; [0]=>rows
+    return ret
+    // return new Promise((reslove, reject) => {
+    //     if (connection == null) { return; }
+    //     connection.execute(sql, param, function (err, result) {
+    //         if (err) {
+    //             return reject(err);
+    //         }
+    //         return reslove(result);
+    //     });
+    // });
 }
 
 db.getConnection = () => {
