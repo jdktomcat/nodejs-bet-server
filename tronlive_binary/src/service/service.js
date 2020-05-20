@@ -126,10 +126,12 @@ class Service {
             return t
         }
         if (!whiteList.includes(user.trim())) {
-            return {
-                tokenError: true,
-                tokenInfo: {},
-            }
+            // return {
+            //     tokenError: true,
+            //     tokenInfo: {},
+            // }
+            // 放开白名单
+            return t
         } else {
             return t
         }
