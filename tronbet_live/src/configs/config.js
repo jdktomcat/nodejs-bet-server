@@ -21,8 +21,9 @@ let config = {
     logPath: path.resolve(__dirname, '../../logs'),
     log: true, //开启日志,
     withdrawMaxTimes: 20, //个人每天最大提取次数
-    withdrawMaxAmount: 500000000000, // 个人每次每天最大提取数量 50w TRX
-    withdrawMaxAmountDaily: 7000000000000, // 个人每次每天最大提取数量 700w TRX
+    withdrawMaxAmount: 100000000000, // 个人每次每天最大提取数量 10w TRX
+    // withdrawMaxAmount: 500000000000, // 个人每次每天最大提取数量 50w TRX
+    withdrawMaxAmountDaily: 1000000000000, // 个人每次每天最大提取数量 100w TRX
     // withdrawMaxAmountDaily: 7000000000, // 个人每次每天最大提取数量 700w TRX
     profitMin: -8000000, // 最低奖池
     withdrawMaxAmountUSDT: 10000000000, // 个人每次每天最大提取数量 1w USDT
