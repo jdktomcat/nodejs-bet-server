@@ -54,6 +54,7 @@ function sendGameMsg(addr, order_id, trxAmount, currency) {
 
 async function sendMsgToClient(ctx, errno, errmsg, data) {
   data = data || {};
+  console.log("response_data is ",data)
   let params = ctx.request.body;
   let result = {
     ReturnCode: errno,
