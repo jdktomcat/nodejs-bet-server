@@ -47,6 +47,7 @@ function sendGameMsg(addr, order_id, trxAmount, currency) {
 }
 
 function sendSuccessMessage2Client(ctx, httpcode, data) {
+  console.log(`${new Date().toJSON()}-->response_data is: `,data)
   if (httpcode != 403) httpcode = 200;
   if (!data) data = {};
   let result = {
@@ -177,7 +178,7 @@ async function betMake(ctx) {
     let user = await userinfo.getAccountBySportsSessionId(sessionId);
     if (_.isEmpty(user)) return sendErrorMessage2Client(ctx, 400, 2004);
     let userBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, currency);
-
+    console.log(`buy_before_balance is ${user[0].uid}@${userBalance}`)
     if (userBalance < fromCpAmount(currency, amount)) return sendErrorMessage2Client(ctx, 400, 2001); //余额不足
 
     let price = await userinfo.getTRXPrice(currency);

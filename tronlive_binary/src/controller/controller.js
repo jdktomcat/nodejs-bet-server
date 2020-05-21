@@ -18,7 +18,7 @@ const inWhileList = function (headers) {
 class apiCall {
 
     static async identify(ctx) {
-        console.log("check balance headers : ",ctx.request.headers)
+        console.log(`${new Date().toJSON()}-->check balance headers : `,ctx.request.headers)
         const isBlack = inWhileList(ctx.request.headers)
         console.log("isBlack ",isBlack)
         if(isBlack){
