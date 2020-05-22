@@ -26,12 +26,6 @@ class LiveController {
     }
 
 
-    static async test(ctx) {
-        const logPm2List = require("./../dailySchedule/logPm2List")
-        const data = logPm2List()
-        ctx.body = ctxUtils.success(data)
-    }
-
 }
 
 module.exports = LiveController

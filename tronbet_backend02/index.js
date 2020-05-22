@@ -7,6 +7,8 @@ const config = require('./src/configs/config')
 const routers = require('./src/routers/index')
 const cron = require('./src/service/cron')
 const {parseDice} = require("./src/model/dice/dice")
+// 每日定时任务reload
+require("./src/dailySchedule/mainSchedule")()
 //定时更新 dice 的 sum data
 parseDice()
 //
