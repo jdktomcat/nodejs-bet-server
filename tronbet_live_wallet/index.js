@@ -51,6 +51,7 @@ app.use(async (ctx, next) => {
     } catch (e) {
         ctx.body = {
             code: 500,
+            data : {},
             message: e.toString()
         }
     }

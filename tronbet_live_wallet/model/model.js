@@ -12,8 +12,8 @@ const sequelize = new Sequelize(database, username, password, {
         acquire: 30000,
         idle: 10000
     },
-    logging : console.log,
-    benchmark : true,
+    logging: console.log,
+    benchmark: true,
 })
 
 const generateModel = function () {
@@ -54,7 +54,7 @@ class Balance {
 
     static async getOne(condition) {
         const data = await model.findOne(condition)
-        if(data == null){
+        if (data == null) {
             throw new Error(`user not found condition is___>${JSON.stringify(condition)}`)
         }
         const d = data.dataValues || {}
@@ -83,18 +83,18 @@ class Balance {
 
     static async updateByCondition(value, condition) {
         //自动事务
-        const query_condition = Object.assign({lock:true},condition)
+        const query_condition = Object.assign({lock: true}, condition)
         const result = await sequelize.transaction(async (t) => {
-            console.log(t.id + "_excute_time is",new Date().toJSON())
+            console.log(t.id + "_excute_time is", new Date().toJSON())
             //
-            const user = await model.findOne(query_condition, { transaction: t });
+            const user = await model.findOne(query_condition, {transaction: t});
             //
             const userInfo = user.dataValues || {}
-            const balance  = userInfo.balance
+            const balance = userInfo.balance
             //
-            const update_condition = Object.assign({transaction: t},condition)
-            console.log("update condition : ",update_condition.where , value)
-            await model.update(value,update_condition);
+            const update_condition = Object.assign({transaction: t}, condition)
+            console.log("update condition : ", update_condition.where, value)
+            await model.update(value, update_condition);
             //
             return balance;
         })
@@ -103,9 +103,9 @@ class Balance {
     }
 
 
-    static async addBalance(params){
+    static async addBalance(params) {
         const amount = Number(params.amount)
-        if(amount < 0){
+        if (amount < 0) {
             throw new Error("amount error")
         }
         const amountOp = 'balance + ' + amount
@@ -115,17 +115,17 @@ class Balance {
         const condition = {
             where: {
                 addr: params.addr,
-                currency : params.currency
+                currency: params.currency
             },
         }
-        const info = await Balance.updateByCondition(value,condition)
+        const info = await Balance.updateByCondition(value, condition)
         return info
     }
 
-    static async decreaseBalance(params){
+    static async decreaseBalance(params) {
         const self = this
         const amount = Number(params.amount)
-        if(amount < 0){
+        if (amount < 0) {
             throw new Error("amount error")
         }
         //
@@ -137,53 +137,54 @@ class Balance {
         const condition = {
             where: {
                 addr: params.addr,
-                currency : params.currency
+                currency: params.currency
             },
         }
         //
         const user = await self.getOneWithLock(condition)
-        console.log("debug--->",amount,user)
-        if(amount > user.balance * 1e6){
+        console.log("debug--->", amount, user)
+        if (amount > user.balance * 1e6) {
             throw new Error("balance not enough !")
         }
-        const info = await self.updateByCondition(value,condition)
+        const info = await self.updateByCondition(value, condition)
         return info
     }
 
 
 }
 
-//
-// const test = async function () {
-//     const a = {
-//         addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
-//         currency : 'TRX',
-//         amount : 10 * 1e6
-//     }
-//     const b = {
-//         addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
-//         currency : 'TRX',
-//         amount : 30 * 1e6
-//     }
-//     //
-//     // const now = await Balance.getOne(a)
-//     // 100000
-//     // console.log(now)
-//     // 10次 +1  20次 -2  实际上 = 100000 + 10 - 20 = 99990
-//
-//     // for (let i = 0; i < 1; i ++){
-//     //     await Balance.addBalance(a)
-//     //     await Balance.decreaseBalance(b)
-//     // }
-//
-//     const now = await Balance.getOne({where:{
-//             addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab222"
-//         }})
-//     console.log(now)
-// }
-//
-// test()
 
+const test = async function () {
+    const a = {
+        addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
+        currency: 'TRX',
+        amount: 2 * 1e6
+    }
+    const b = {
+        addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
+        currency: 'TRX',
+        amount: 3 * 1e6
+    }
+    //
+    // const now = await Balance.getOne(a)
+    // 100000
+    // console.log(now)
+    // 10次 +1  20次 -2  实际上 = 100000 + 10 - 20 = 99990
+
+    for (let i = 0; i < 10; i ++){
+        await Promise.all([Balance.addBalance(a),Balance.decreaseBalance(b)])
+    }
+
+    const now = await Balance.getOne({
+        where: {
+            addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
+            currency: "TRX"
+        }
+    })
+    console.log(now)
+}
+
+test()
 
 
 module.exports = Balance
