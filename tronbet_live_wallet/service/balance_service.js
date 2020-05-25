@@ -14,8 +14,8 @@ const parseParams = function (params) {
         throw new Error("amount error!")
     }
     // uid 还是addr
-    const uid = params.uid
-    const addr = params.addr
+    const uid = params.uid || ''
+    const addr = params.addr || ''
     if (uid === '' && addr === '') {
         throw new Error("uid and addr is empty!")
     }
@@ -36,8 +36,6 @@ const parseParams = function (params) {
             amount: amount,
         }
         return t
-    } else {
-        throw new Error("uid and addr is error!")
     }
 }
 
