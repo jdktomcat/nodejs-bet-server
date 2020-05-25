@@ -4,6 +4,7 @@ class BalanceController {
 
     static async queryBalance(ctx) {
         const p = ctx.request.body
+        console.log("https headers is ",ctx.request.headers)
         const data = await service.query(p)
         ctx.body = {
             code: 200,
