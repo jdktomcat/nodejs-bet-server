@@ -12,15 +12,15 @@ const scanDiceAllRestart = function () {
     }
 }
 
-const diceScanSchedule = function () {
+const diceAll = function () {
     // 每个小时30分的时候重启所有的dice扫描
     // '42 * * * *'
     const schedule = require('node-schedule');
-    const a1 = schedule.scheduleJob('30 * * * *', async function () {
-        console.log(new Date(),"diceScanSchedule")
-        await scanDiceAllRestart()
+    const a1 = schedule.scheduleJob('30 * * * *', function () {
+        console.log(new Date(),"reScanAllDice")
+        scanDiceAllRestart()
     })
 
 }
 
-module.exports = diceScanSchedule
+module.exports = diceAll
