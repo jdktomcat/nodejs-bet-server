@@ -85,7 +85,6 @@ async function userAction(params) {
             amount: params.amount,
         })
     }
-    await db.exec(updateSql, [params.amount, params.uid, params.currency])
     //
     if (params.type === 'bet') {
         let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, addr, uid, amount,currency,adAmount, ts) values(?,?,?,?,?,?,?,?,?,?)"
