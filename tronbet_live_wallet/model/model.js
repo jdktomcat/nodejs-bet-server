@@ -175,38 +175,38 @@ class Balance {
 
 }
 
-
-const test = async function () {
-    const a = {
-        addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
-        currency: 'TRX',
-        amount: 2 * 1e6
-    }
-    const b = {
-        addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
-        currency: 'TRX',
-        amount: 3 * 1e6
-    }
-    //
-    // const now = await Balance.getOne(a)
-    // 100000
-    // console.log(now)
-    // 10次 +1  20次 -2  实际上 = 100000 + 10 - 20 = 99990
-
-    for (let i = 0; i < 10; i ++){
-        await Promise.all([Balance.addBalance(a),Balance.decreaseBalance(b)])
-    }
-
-    const now = await Balance.getOne({
-        where: {
-            addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
-            currency: "TRX"
-        }
-    })
-    console.log(now)
-}
-
-test()
+//
+// const test = async function () {
+//     const a = {
+//         addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
+//         currency: 'TRX',
+//         amount: 2 * 1e6
+//     }
+//     const b = {
+//         addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
+//         currency: 'TRX',
+//         amount: 3 * 1e6
+//     }
+//     //
+//     // const now = await Balance.getOne(a)
+//     // 100000
+//     // console.log(now)
+//     // 10次 +1  20次 -2  实际上 = 100000 + 10 - 20 = 99990
+//
+//     for (let i = 0; i < 10; i ++){
+//         await Promise.all([Balance.addBalance(a),Balance.decreaseBalance(b)])
+//     }
+//
+//     const now = await Balance.getOne({
+//         where: {
+//             addr: "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
+//             currency: "TRX"
+//         }
+//     })
+//     console.log(now)
+// }
+//
+// test()
 
 
 module.exports = Balance
