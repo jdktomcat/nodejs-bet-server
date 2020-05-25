@@ -62,7 +62,7 @@ class Balance {
         const o = {
             currency: d.currency,
             addr: d.addr,
-            balance: d.balance / 1e6
+            balance: d.balance
         }
         return o
     }
@@ -75,7 +75,7 @@ class Balance {
         const o = {
             currency: d.currency,
             addr: d.addr,
-            balance: d.balance / 1e6
+            balance: d.balance
         }
         return o
     }
@@ -112,11 +112,22 @@ class Balance {
         const value = {
             balance: sequelize.literal(amountOp)
         }
-        const condition = {
-            where: {
+        let where = {}
+        if(params.uid === ''){
+            where = {
                 addr: params.addr,
                 currency: params.currency
-            },
+            }
+        }else if(params.addr === ''){
+            where = {
+                uid: params.uid,
+                currency: params.currency
+            }
+        } else {
+            throw new Error("uid or addr is error !")
+        }
+        const condition = {
+            where: where,
         }
         const info = await Balance.updateByCondition(value, condition)
         return info
@@ -129,23 +140,34 @@ class Balance {
             throw new Error("amount error")
         }
         //
-
         const amountOp = 'balance - ' + amount
         const value = {
             balance: sequelize.literal(amountOp)
         }
-        const condition = {
-            where: {
+        let where = {}
+        if(params.uid === ''){
+            where = {
                 addr: params.addr,
                 currency: params.currency
-            },
+            }
+        }else if(params.addr === ''){
+            where = {
+                uid: params.uid,
+                currency: params.currency
+            }
+        } else {
+            throw new Error("uid or addr is error !")
+        }
+        const condition = {
+            where: where,
         }
         //
         const user = await self.getOneWithLock(condition)
         console.log("debug--->", amount, user)
-        if (amount > user.balance * 1e6) {
+        if (amount > user.balance) {
             throw new Error("balance not enough !")
         }
+
         const info = await self.updateByCondition(value, condition)
         return info
     }

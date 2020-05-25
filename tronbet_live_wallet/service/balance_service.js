@@ -9,9 +9,9 @@ const parseParams = async function (params) {
             k[e] = v
         }
     })
-    if (!['TRX','USDT'].includes(params.currency)) {
-        throw new Error("currency error!")
-    }
+    // if (!['TRX','USDT'].includes(params.currency)) {
+    //     throw new Error("currency error!")
+    // }
     const amount = params.amount || 0
     if (amount < 0) {
         throw new Error("amount error!")
@@ -22,20 +22,13 @@ const parseParams = async function (params) {
     if (uid === '' && addr === '') {
         throw new Error("uid and addr is empty!")
     }
-    if (addr === '') {
-        const balanceInfo = await model.getOne({
-            where: {
-                uid: params.uid,
-                currency: params.currency,
-            }
-        })
-        addr = balanceInfo.addr
-    }
     const t = {
         addr: addr,
+        uid: uid,
         currency: params.currency,
         amount: amount,
     }
+    console.log("actual params ",t)
     return t
 }
 
@@ -46,18 +39,24 @@ class opBalance {
             where: params
         }
         const data = await model.getOne(condition)
+        if(['TRX','USDT'].includes(params.currency)){
+            data.balance = data.balance / 1e6
+        }else {
+            // muti currency
+            data.balance = data.balance / 1e9
+        }
         return data
     }
 
     static async addBalance(rawParams) {
-        const params = await parseParams(rawParams)
+        const params = parseParams(rawParams)
         const msg = await model.addBalance(params)
         return msg
     }
 
     static async decreaseBalance(rawParams) {
         const params = await parseParams(rawParams)
-        const msg = await model.decreaseBalance(params)
+        const msg = model.decreaseBalance(params)
         return msg
     }
 
