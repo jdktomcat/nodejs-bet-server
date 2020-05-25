@@ -41,7 +41,7 @@ async function getBalance(params) {
     const o = {
         user : userInfo.addr,
         currency : userInfo.currency,
-        balance : userInfo.balance,
+        balance : Number(userInfo.balance) * 1e6,
     }
     return o
 }
