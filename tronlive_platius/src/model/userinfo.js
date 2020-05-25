@@ -2,18 +2,19 @@ const db = require('../utils/dbUtil')
 const config = require('../configs/config')
 const _ = require('lodash')._
 const jwt = require('jsonwebtoken');
+const live_wallet = require('./../utils/live_wallet');
 
 async function getBalance(params) {
-    const {addr,currency} = params
+    const {addr, currency} = params
     const sqlUid = 'select uid from tron_live.live_account where email = ?'
     let uidArray = await db.exec(sqlUid, [addr])
-    if(uidArray.length === 0){
+    if (uidArray.length === 0) {
         throw new Error("user not found")
     }
     const uid = uidArray[0].uid
     //
     let sql = "select round(balance / 1000000, 3) as balance from tron_live.live_balance where uid = ? and currency = ? and addr = ?"
-    let res = await db.exec(sql, [uid, currency,addr])
+    let res = await db.exec(sql, [uid, currency, addr])
     console.log("rs is ", res)
     if (res.length === 0) {
         throw new Error("user not found")
@@ -25,7 +26,7 @@ async function getBalance(params) {
 function checkToken(token) {
     try {
         const secretKey = config.Platinus.secretKey
-        if(secretKey === undefined){
+        if (secretKey === undefined) {
             return {
                 tokenError: true,
                 tokenInfo: {}
@@ -51,7 +52,7 @@ async function parseToken(tokenInfo, currency) {
     const {addr} = tokenInfo
     const sqlUid = 'select uid from tron_live.live_account where email = ?'
     let uidArray = await db.exec(sqlUid, [addr])
-    if(uidArray.length === 0){
+    if (uidArray.length === 0) {
         throw new Error("user not found")
     }
     const uid = uidArray[0].uid
@@ -71,13 +72,22 @@ async function parseToken(tokenInfo, currency) {
 
 async function userAction(params) {
     //update balance
-    let updateSql = "update tron_live.live_balance set balance = balance - ? where uid = ? and currency = ?"
-    if (params.type === 'result') {
-        updateSql = "update tron_live.live_balance set balance = balance + ? where uid = ? and currency = ?"
+    if (params.type === 'bet') {
+        await live_wallet.decreaseBalance({
+            addr: params.addr,
+            currency: params.currency,
+            amount: params.amount,
+        })
+    } else if (params.type === 'result') {
+        await live_wallet.increaseBalance({
+            addr: params.addr,
+            currency: params.currency,
+            amount: params.amount,
+        })
     }
     await db.exec(updateSql, [params.amount, params.uid, params.currency])
     //
-    if(params.type === 'bet'){
+    if (params.type === 'bet') {
         let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, addr, uid, amount,currency,adAmount, ts) values(?,?,?,?,?,?,?,?,?,?)"
         const sqlParam = [
             params.transaction_id,
@@ -92,7 +102,7 @@ async function userAction(params) {
             Date.now()
         ]
         await db.exec(sql, sqlParam)
-    }else if(params.type === 'result'){
+    } else if (params.type === 'result') {
         let sql = "update tron_live.platipus_transaction_log set resultId = ? , win = ?, status = 2 where round_id = ? and addr = ?"
         const sqlParam = [
             params.transaction_id,
@@ -107,11 +117,14 @@ async function userAction(params) {
 
 async function rollback(params) {
     //update balance
-    let updateSql = "update tron_live.live_balance set balance = balance - ? where uid = ? and currency = ?"
     if (params.type === 'rollback' && params.amount > 0) {
-        updateSql = "update tron_live.live_balance set balance = balance + ? where uid = ? and currency = ?"
+        //rollback
+        await live_wallet.increaseBalance({
+            addr: params.addr,
+            currency: params.currency,
+            amount: params.amount,
+        })
     }
-    await db.exec(updateSql, [params.amount, params.uid, params.currency])
     //
     let sqlReset = "update tron_live.platipus_transaction_log set status = 0 where round_id = ? and addr = ?"
     const sqlResetParam = [
@@ -129,14 +142,14 @@ async function queryTxIfExist(params) {
         params.addr,
     ]
     const rs = await db.exec(sql, sqlResetParam)
-    if(rs.length > 0){
+    if (rs.length > 0) {
         const tmp = rs[0] || {}
         const statusTmp = tmp.status || '-1'
         const status = Number(statusTmp)
-        console.log("--->status--->",status)
-        if(status === 2 || status === 0){
+        console.log("--->status--->", status)
+        if (status === 2 || status === 0) {
             return false
-        }else {
+        } else {
             return true
         }
     }
