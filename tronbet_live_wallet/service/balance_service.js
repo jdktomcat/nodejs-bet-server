@@ -10,7 +10,7 @@ const parseParams = function (params) {
         }
     })
     const amount = params.amount || 0
-    if (amount <= 0) {
+    if (amount < 0) {
         throw new Error("amount error!")
     }
     return k

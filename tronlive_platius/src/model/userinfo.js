@@ -79,11 +79,13 @@ async function userAction(params) {
             amount: params.amount,
         })
     } else if (params.type === 'result') {
-        await live_wallet.increaseBalance({
-            addr: params.addr,
-            currency: params.currency,
-            amount: params.amount,
-        })
+        if(params.amount > 0){
+            await live_wallet.increaseBalance({
+                addr: params.addr,
+                currency: params.currency,
+                amount: params.amount,
+            })
+        }
     }
     //
     if (params.type === 'bet') {
