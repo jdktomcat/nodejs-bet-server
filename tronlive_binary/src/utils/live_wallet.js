@@ -23,12 +23,8 @@ const queryBalance = async function (body) {
 }
 
 
-const increaseBalance = async function () {
+const increaseBalance = async function (body) {
     const url = basePath + "/api/increase"
-    const body = {
-        "addr": "TJ8x34N7H3MxQkucpjFhnwW8aGjcYA94Ab",
-        "currency": "TRX"
-    }
     const res = await fetch(url, {
         method: 'post',
         body: JSON.stringify(body),

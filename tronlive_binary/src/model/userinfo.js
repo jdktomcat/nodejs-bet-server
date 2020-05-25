@@ -34,10 +34,16 @@ async function getTRXPrice(currency) {
 
 
 async function getBalance(params) {
-    return await live_wallet.queryBalance({
+    const userInfo =  await live_wallet.queryBalance({
         addr: params.addr,
         currency: params.currency,
     })
+    const o = {
+        user : userInfo.addr,
+        currency : userInfo.currency,
+        balance : userInfo.balance,
+    }
+    return o
 }
 
 function checkToken(token) {
