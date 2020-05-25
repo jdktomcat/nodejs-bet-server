@@ -16,7 +16,11 @@ const parseParams = function (params) {
     // uid 还是addr
     const uid = params.uid || ''
     const addr = params.addr || ''
+    console.log("uid is ",uid)
+    console.log("addr is ",addr)
+    console.log("uid === '' && addr === '' ",uid === '' && addr === '')
     if (uid === '' && addr === '') {
+        // request params:  { uid: 33749, currency: 'TRX', amount: 500000 }
         throw new Error("uid and addr is empty!")
     }
     //
