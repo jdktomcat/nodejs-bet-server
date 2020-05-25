@@ -13,17 +13,39 @@ const parseParams = function (params) {
     if (amount < 0) {
         throw new Error("amount error!")
     }
-    return k
+    // uid 还是addr
+    const uid = params.uid
+    const addr = params.addr
+    if (uid === '' && addr === '') {
+        throw new Error("uid and addr is empty!")
+    }
+    //
+    if (uid === '') {
+        // 使用addr
+        const t = {
+            addr: params.addr,
+            currency: params.currency,
+            amount: amount,
+        }
+        return t
+    } else if (addr === '') {
+        // 使用uid
+        const t = {
+            uid: params.uid,
+            currency: params.currency,
+            amount: amount,
+        }
+        return t
+    } else {
+        throw new Error("uid and addr is error!")
+    }
 }
 
 class opBalance {
 
     static async query(params) {
         const condition = {
-            where: {
-                addr: params.addr,
-                currency: params.currency,
-            }
+            where: params
         }
         const data = await model.getOne(condition)
         return data
@@ -31,25 +53,13 @@ class opBalance {
 
     static async addBalance(rawParams) {
         const params = parseParams(rawParams)
-        const amount = params.amount || 0
-        const condition = {
-            addr: params.addr,
-            amount: amount,
-            currency: params.currency,
-        }
-        const msg = await model.addBalance(condition)
+        const msg = await model.addBalance(params)
         return msg
     }
 
     static async decreaseBalance(rawParams) {
         const params = parseParams(rawParams)
-        const amount = params.amount || 0
-        const condition = {
-            addr: params.addr,
-            amount: amount,
-            currency: params.currency,
-        }
-        const msg = await model.decreaseBalance(condition)
+        const msg = await model.decreaseBalance(params)
         return msg
     }
 
