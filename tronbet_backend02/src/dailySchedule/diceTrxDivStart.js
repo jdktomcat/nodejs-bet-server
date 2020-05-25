@@ -1,15 +1,9 @@
-const process_desc = "tronbet_auto_dividends_win_"
+const process_desc = "tronbet_auto_dividends_"
 const schedule = require('node-schedule');
 const db = require('../utils/dbUtil')
-const raw = async function (sql, params) {
-    console.log(sql)
-    console.log(params)
-    const data = await db.exec(sql, params)
-    return data
-}
 const reloadProcess = function () {
     console.log("----tronbet_auto_dividends---->", new Date());
-    const cmd = 'pm2 reload tronbet_auto_dividends_win'
+    const cmd = 'pm2 reload tronbet_auto_dividends'
     try {
         const child_process = require("child_process")
         const a = child_process.execSync(cmd).toString()
@@ -20,7 +14,13 @@ const reloadProcess = function () {
         return e.toString()
     }
 }
-//
+const raw = async function (sql, params) {
+    console.log(sql)
+    console.log(params)
+    const data = await db.exec(sql, params)
+    return data
+}
+
 const queryDivInfo = async function () {
     let start = new Date();
     start.setUTCMinutes(0)
@@ -28,7 +28,7 @@ const queryDivInfo = async function () {
     start.setUTCMilliseconds(0)
     const now = start.getTime() / 1e3
     //
-    let sql = 'select send_ts from tron_bet_wzc.win_ver_v1 where send_ts >= ?';
+    let sql = 'select send_ts from tron_bet_wzc.dice_ver_v1 where send_ts >= ?';
     const data = await raw(sql, [now])
     //
     if (data.length > 0) {
@@ -49,7 +49,7 @@ const queryDivIfComplete = async function (type) {
     start.setUTCMilliseconds(0)
     const now = start.getTime() / 1e3
     //
-    let sql = 'select send_ts from tron_live.live_div_info where send_ts >= ? and div_state = ?';
+    let sql = 'select send_ts from tron_bet_wzc.dice_ver_v1 where send_ts >= ? and div_state = ?';
     const data = await raw(sql, [now, type])
     //
     if (data.length > 0) {
@@ -77,11 +77,11 @@ const compareDate = async function () {
 
 
 const divSchedule = function () {
-    // 4点，即12点profit的时候
-    const a1 = schedule.scheduleJob('*/5 4-5 * * *', async function () {
+    // 3点，即11点profit的时候
+    const a1 = schedule.scheduleJob('*/5 3-4 * * *', async function () {
         await compareDate()
     })
 }
 
 
-module.exports =  divSchedule
+module.exports = divSchedule
