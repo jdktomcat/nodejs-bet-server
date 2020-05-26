@@ -1,6 +1,6 @@
 const model = require("./../model/model")
 
-const parseParams = async function (params) {
+const parseParams = function (params) {
     console.log("request params: ", params)
     let k = {}
     Object.keys(params).forEach(e => {
@@ -56,7 +56,7 @@ class opBalance {
 
     static async decreaseBalance(rawParams) {
         const params = parseParams(rawParams)
-        const msg = model.decreaseBalance(params)
+        const msg = await model.decreaseBalance(params)
         return msg
     }
 
