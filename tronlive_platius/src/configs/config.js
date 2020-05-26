@@ -46,6 +46,7 @@ let config = {
 
 if (process.env.NODE_ENV === 'production' && fs.existsSync(__dirname + '/config.js')) {
   //生产环境
+  config.live_wallet_url = prdCfg.liveWalletUrl
   console.log('>>>Use production config!');
 } else if (process.env.NODE_ENV === 'test' && fs.existsSync(__dirname + '/config_test.js')) {
   //测试环境

@@ -106,12 +106,16 @@ module.exports = {
     tronpoker_jackpot: 18071,
     tronlive_platinus: 18072,
     tronlive_binary: 18073,
+    tronbet_live_wallet : 18074
   },
   // 远程接口
   // back01
   userInfoUrl: 'https://backendapi.tronbet.io/beter/userOverViewInfo?addr=',
   // back02
   liveProfitUrl: 'https://webliveapi.tronbet.io/user/profit',
+  // tronbet_live_wallet url
+  liveWalletUrl: 'https://pro-live-wallet.wink.org',
+  //
   pokerProfitUrl: 'https://jackpotapi.tronbet.io/jackpot/profit',
 
   // tron
