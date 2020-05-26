@@ -49,11 +49,13 @@ app.use(async (ctx, next) => {
         ctx.set('Access-Control-Allow-Headers', 'Content-Type');
         await next()
     } catch (e) {
-        ctx.body = {
+        const res_data = {
             code: 500,
-            data : {},
+            data: {},
             message: e.toString()
         }
+        console.log("error response is ", res_data)
+        ctx.body = res_data
     }
 })
 

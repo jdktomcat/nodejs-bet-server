@@ -113,6 +113,8 @@ class Balance {
             balance: sequelize.literal(amountOp)
         }
         let where = {}
+        //{ addr: '', uid: 33724, currency: 'TRX', amount: 1800000 }
+        console.log("db params ",params)
         if(params.uid === ''){
             where = {
                 addr: params.addr,
