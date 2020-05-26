@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "start": "cross-env NODE_ENV=production node index.js",
-    "dev": "cross-env NODE_ENV=development node index.js",
-    "test": "cross-env NODE_ENV=test node index.js"
+    "start": "npm i&&cross-env NODE_ENV=production node index.js",
+    "dev": "npm i&&cross-env NODE_ENV=development node index.js",
+    "test": "npm i&&cross-env NODE_ENV=test node index.js"
   },
   "dependencies": {
     "axios": "^0.19.0",
@@ -20,6 +20,7 @@
     "moment": "^2.24.0",
     "mysql2": "^1.6.5",
     "njwt": "^1.0.0",
+    "node-fetch": "^2.6.0",
     "redis": "^2.8.0",
     "tronweb": "^2.1.32",
     "uuid": "^3.3.2",
