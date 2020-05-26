@@ -48,11 +48,13 @@ let timer = setInterval(async () => {
       const fixSum2 = await usermodel.getLiveFix();
       profit = profitRaw - fixSum2
     }
+    const balance_now = await usermodel.getTRXSum()
     console.log("after time trx profit2 is",profit)
     profit = profit * 0.4
     console.log("after time trx last is",profit)
     //先写死固定值
     console.log("this fix last is ",profit)
+    console.log(new Date(), " balance_now is ",balance_now)
     //
     await redisUtil.hset('tronlive:realtime', 'profit', profit);
     await redisUtil.hset('tronlive:realtime', 'usdt', usdt);
