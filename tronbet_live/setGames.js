@@ -1,6 +1,6 @@
 const db = require("./src/utils/dbUtil");
 
-const update2020526 = async function () {
+const update202052601 = async function () {
     const addr = [
             'TSDNKq7X9E3DJP9jFyPwoVUPA63bK83pdK'
         ]
@@ -21,7 +21,7 @@ const update2020526 = async function () {
 }
 
 const main = async function(){
-    await update2020526()
+    await update202052601()
 }
 
 main().then(() => {
