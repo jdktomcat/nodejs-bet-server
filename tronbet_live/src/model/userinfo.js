@@ -778,6 +778,17 @@ async function isInLiveBlackList(addr) {
     }
 }
 
+async function getTRXSum() {
+    let sql = "select sum(balance) / 1000000 as balance_all from live_balance where currency = 'TRX'"
+    const data = await db.exec(sql, [])
+    if(data.length > 0){
+        let o = data[0] || {}
+        let sum = o.balance_all || 0
+        return sum
+    }
+    return  0
+}
+
 module.exports = {
     getUserBalance,
     userRegister,
@@ -846,4 +857,5 @@ module.exports = {
     getLiveFix,
     addLiveFix,
     isInLiveBlackList,
+    getTRXSum,
 }
