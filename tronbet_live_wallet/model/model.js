@@ -61,6 +61,7 @@ class Balance {
         // 处理trx,usdt
         const o = {
             currency: d.currency,
+            uid: d.uid,
             addr: d.addr,
             balance: d.balance
         }
@@ -74,6 +75,7 @@ class Balance {
         // 处理trx,usdt
         const o = {
             currency: d.currency,
+            uid: d.uid,
             addr: d.addr,
             balance: d.balance
         }
@@ -99,6 +101,7 @@ class Balance {
             return balance;
         })
         const newUser = await this.getOneWithLock(condition)
+        newUser.old_balance = result
         return newUser
     }
 
@@ -114,7 +117,7 @@ class Balance {
         }
         let where = {}
         //{ addr: '', uid: 33724, currency: 'TRX', amount: 1800000 }
-        console.log("db params ",params)
+        // console.log("db params ",params)
         if(params.uid === ''){
             where = {
                 addr: params.addr,
@@ -148,7 +151,7 @@ class Balance {
         }
         let where = {}
         //{ addr: '', uid: 33724, currency: 'TRX', amount: 1800000 }
-        console.log("db params ",params)
+        // console.log("db params ",params)
         if(params.uid === ''){
             where = {
                 addr: params.addr,
@@ -167,7 +170,7 @@ class Balance {
         }
         //
         const user = await self.getOneWithLock(condition)
-        console.log("debug--->", amount, user)
+        // console.log("debug--->", amount, user)
         if (amount > user.balance) {
             throw new Error("balance not enough !")
         }
