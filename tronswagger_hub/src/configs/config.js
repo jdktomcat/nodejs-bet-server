@@ -54,14 +54,16 @@ let config = {
     ACTIVITY_END_TS: 1580799600000,//Tue Feb 04 2020 15:00:00
   }
 };
-
+// wallet url
+config.live_wallet_url = 'http://127.0.0.1:18074'
+//
 if (process.env.NODE_ENV === 'production' && fs.existsSync(__dirname + '/config.js')) {
   //生产环境
   console.log('>>>Use production config!');
 } else if (process.env.NODE_ENV === 'test' && fs.existsSync(__dirname + '/config_test.js')) {
   //测试环境
   config = Object.assign(config, require('./config_test.js'));
-} else if (process.env.NODE_ENV === 'development' && fs.existsSync(__dirname + '/config_dev.js')) {
+} else if (process.env.NODE_ENV === 'development' && fs.existsSync(__dirname + '/config_test.js')) {
   //开发环境
   config = Object.assign(config, require('./config_dev.js'));
 } else {

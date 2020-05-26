@@ -1,6 +1,6 @@
 const db = require('../utils/dbUtil')
 const _ = require('lodash')._
-
+const live_wallet = require('./../utils/live_wallet');
 const dividendsDuration = 86400
 const daystart = 18005
 
@@ -25,8 +25,13 @@ async function getUserBalanceBySessionId(sessionId) {
 
 async function userBet(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, conn) {
     //update balance
-    let updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
-    await db.execTrans(updateSql, [amount, uid, currency], conn)
+    // let updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
+    // await db.execTrans(updateSql, [amount, uid, currency], conn)
+    await live_wallet.decreaseBalance({
+        uid: uid,
+        currency: currency,
+        amount: amount,
+    })
 
     let now = new Date().getTime()
     let sql = "insert into swagger_transaction_log(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, resultTxId, ts) values(?,?,?,?,?,?,?,?,?,?,?,?)"
@@ -37,8 +42,15 @@ async function userBet(transactionId, uid, email, round, isFree, gameId, currenc
 async function userWin(uid, currency, resultTxId, transactionId, amount, conn) {
 
     //update balance
-    let updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
-    await db.execTrans(updateSql, [amount, uid, currency], conn)
+    // let updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
+    // await db.execTrans(updateSql, [amount, uid, currency], conn)
+    if(amount > 0){
+        await live_wallet.increaseBalance({
+            uid: uid,
+            currency: currency,
+            amount: amount,
+        })
+    }
 
     let now = new Date().getTime()
     let sql = "update swagger_transaction_log set resultTxId = ?, win = ? where transactionId = ?"
@@ -48,8 +60,15 @@ async function userWin(uid, currency, resultTxId, transactionId, amount, conn) {
 
 async function userRollBack(uid, currency, resultTxId, transactionId, amount, conn) {
 
-    let updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
-    await db.execTrans(updateSql, [amount, uid, currency], conn)
+    // let updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
+    // await db.execTrans(updateSql, [amount, uid, currency], conn)
+    if(amount > 0){
+        await live_wallet.increaseBalance({
+            uid: uid,
+            currency: currency,
+            amount: amount,
+        })
+    }
 
     let now = new Date().getTime()
     let sql = "update swagger_transaction_log set resultTxId = ?, status = status - 1 where transactionId = ?"
