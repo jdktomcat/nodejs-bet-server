@@ -7,7 +7,6 @@ const action = require('./../service/platapi')
 
 module.exports = router.get( 'ping', action.ping)
 module.exports = router.get( 'identify', action.identify)
-
 module.exports = router.post( 'bet/make', action.betMake)
 module.exports = router.post( 'bet/commit', action.betCommit)
 module.exports = router.post( 'bet/settlement', action.betSettlement)
