@@ -20,7 +20,7 @@ class apiCall {
     static async balance(ctx) {
         try {
             //
-            console.log("check balance headers : ",ctx.request.headers)
+            console.log(`${new Date().toJSON()}-->check balance headers : `,ctx.request.headers)
             const isBalck = inWhileList(ctx.request.headers)
             if(isBalck){
                 console.log("debug---->Black ",isBalck)

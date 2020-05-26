@@ -45,7 +45,7 @@ let config = {
   addition:{
     START_TS: 1589859000000,
     END_TS: 1590031800000,
-    RATE: 2
+    RATE: 1
   }
 };
 

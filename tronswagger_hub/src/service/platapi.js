@@ -21,6 +21,7 @@ const hmCrypto = HmCrypto(digestType, privateKey, publicKey);
 let LocalCurrency = "TRX"
 
 function sendMsg2Client(ctx, result) {
+    console.log("response_data is ",result)
     ctx.body = result
 }
 
@@ -132,8 +133,7 @@ async function balance(ctx) {
 async function win(ctx) {
     let params = ctx.request.body
     let headers = ctx.request.headers
-    console.log("debug_win, ",headers)
-    console.log("debug_body, ",params)
+    console.log(`${new Date().toJSON()}-->request_win: `,params)
 
     const localSignature = hmCrypto.sign(JSON.stringify(params))
     const remoteSignature = headers['X-Hub88-Signature'] || headers['x-hub88-signature']
@@ -226,6 +226,8 @@ async function bet(ctx) {
     let params = ctx.request.body
     let headers = ctx.request.headers
 
+    console.log(`${new Date().toJSON()}-->request_bet: `,params)
+
     const localSignature = hmCrypto.sign(JSON.stringify(params))
     const remoteSignature = headers['X-Hub88-Signature'] || headers['x-hub88-signature']
 
@@ -312,6 +314,7 @@ async function bet(ctx) {
 async function rollback(ctx) {
     let params = ctx.request.body
     let headers = ctx.request.headers
+    console.log(`${new Date().toJSON()}-->request_rollback: `,params)
 
     const localSignature = hmCrypto.sign(JSON.stringify(params))
     const remoteSignature = headers['X-Hub88-Signature'] || headers['x-hub88-signature']

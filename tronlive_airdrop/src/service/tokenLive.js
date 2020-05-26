@@ -122,7 +122,8 @@ async function airdrop() {
         }
     }
 
-    console.log("---->data,length ",datas.length)
+    const addrsLogsNum = datas.map(e=>e.addr)
+    console.log("this_time_air_addr is :",addrsLogsNum)
 
     // return
     //计算当前挖了多少

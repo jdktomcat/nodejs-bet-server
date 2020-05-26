@@ -18,7 +18,7 @@ const inWhileList = function (headers) {
 class apiCall {
 
     static async identify(ctx) {
-        console.log("check balance headers : ",ctx.request.headers)
+        console.log(`${new Date().toJSON()}-->check balance headers : `,ctx.request.headers)
         const isBlack = inWhileList(ctx.request.headers)
         console.log("isBlack ",isBlack)
         if(isBlack){
@@ -53,6 +53,9 @@ class apiCall {
         if(t.code === 2){
             ctx.status = 400;
             ctx.body = t
+        }else if(t.code === 3){
+            ctx.status = 200;
+            ctx.body = t.data
         }else {
             ctx.body = t
         }
@@ -77,6 +80,9 @@ class apiCall {
         if(t.code === 2){
             ctx.status = 400;
             ctx.body = t
+        }else if(t.code === 3){
+            ctx.status = 200;
+            ctx.body = t.data
         }else {
             ctx.body = t
         }
@@ -100,6 +106,9 @@ class apiCall {
         if(t.code === 2){
             ctx.status = 400;
             ctx.body = t
+        }else if(t.code === 3){
+            ctx.status = 200;
+            ctx.body = t.data
         }else {
             ctx.body = t
         }

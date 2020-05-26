@@ -1,29 +1,26 @@
-const {spawn} = require("child_process");
-const restartWinProcess = async function () {
-    console.log("----pm2restart---->", new Date());
-    const ls = spawn("pm2", ["restart", "tronbet_auto_dividends_win"]);
-    ls.stdout.on("data", data => {
-        console.log(`tronbet_auto_dividends_win输出：${data}`);
-    });
-
-    ls.stderr.on("data", data => {
-        console.log(`tronbet_auto_dividends_win错误：${data}`);
-    });
-
-    ls.on("close", code => {
-        console.log(`tronbet_auto_dividends_win子进程退出码：${code}`);
-    });
-}
+const process_desc = "tronbet_auto_dividends_"
 const schedule = require('node-schedule');
 const db = require('../utils/dbUtil')
-
+const reloadProcess = function () {
+    console.log("----tronbet_auto_dividends---->", new Date());
+    const cmd = 'pm2 reload tronbet_auto_dividends'
+    try {
+        const child_process = require("child_process")
+        const a = child_process.execSync(cmd).toString()
+        console.log(process_desc + "reloadProcess_out: \n", a)
+        return a
+    } catch (e) {
+        console.log(process_desc + "reloadProcess_error: \n", e)
+        return e.toString()
+    }
+}
 const raw = async function (sql, params) {
     console.log(sql)
     console.log(params)
     const data = await db.exec(sql, params)
     return data
 }
-//tron_bet_wzc.win_ver_v1
+
 const queryDivInfo = async function () {
     let start = new Date();
     start.setUTCMinutes(0)
@@ -31,16 +28,16 @@ const queryDivInfo = async function () {
     start.setUTCMilliseconds(0)
     const now = start.getTime() / 1e3
     //
-    let sql = 'select send_ts from tron_bet_wzc.win_ver_v1 where send_ts >= ?';
+    let sql = 'select send_ts from tron_bet_wzc.dice_ver_v1 where send_ts >= ?';
     const data = await raw(sql, [now])
     //
     if (data.length > 0) {
         //分红正常
-        console.log("queryDivInfo normal!", new Date().toUTCString())
+        console.log(process_desc + "queryDivInfo_normal!", new Date().toUTCString())
     } else {
         //
-        console.log("queryDivInfo reStartLiveDiv!", new Date().toUTCString())
-        await restartWinProcess()
+        console.log(process_desc + "queryDivInfo_restart!", new Date().toUTCString())
+        await reloadProcess()
     }
 }
 
@@ -52,15 +49,15 @@ const queryDivIfComplete = async function (type) {
     start.setUTCMilliseconds(0)
     const now = start.getTime() / 1e3
     //
-    let sql = 'select send_ts from tron_live.live_div_info where send_ts >= ? and div_state = ?';
+    let sql = 'select send_ts from tron_bet_wzc.dice_ver_v1 where send_ts >= ? and div_state = ?';
     const data = await raw(sql, [now, type])
     //
     if (data.length > 0) {
         //分红正常
-        console.log(`queryDivIfComplete_${type} normal!`, new Date().toUTCString())
+        console.log(`${process_desc}queryDivIfComplete_${type} normal!`, new Date().toUTCString())
     } else {
-        console.log(`queryDivIfComplete_${type} reStartLiveDiv!`, new Date().toUTCString())
-        await restartWinProcess()
+        console.log(`${process_desc}queryDivIfComplete_${type} restart`, new Date().toUTCString())
+        await reloadProcess()
     }
 }
 
@@ -80,11 +77,11 @@ const compareDate = async function () {
 
 
 const divSchedule = function () {
-    // 4点，即12点profit的时候
-    const a1 = schedule.scheduleJob('*/5 4-5 * * *', async function () {
+    // 3点，即11点profit的时候
+    const a1 = schedule.scheduleJob('*/5 3-4 * * *', async function () {
         await compareDate()
     })
 }
 
 
-module.exports =  divSchedule
+module.exports = divSchedule

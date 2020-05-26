@@ -25,6 +25,7 @@ class LiveController {
         ctx.body = ctxUtils.success(data)
     }
 
+
 }
 
 module.exports = LiveController
