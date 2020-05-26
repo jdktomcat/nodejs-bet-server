@@ -11,11 +11,15 @@ async function userAction(AccountId, RoundId, EMGameId, GPGameId, GPId, Transact
             amount: Amount * 1e6,
         })
     }else if (action === 'result') {
-        await live_wallet.increaseBalance({
-            uid: uid,
-            currency: currency,
-            amount: Amount * 1e6,
-        })
+        if(Amount > 0){
+            await live_wallet.increaseBalance({
+                uid: uid,
+                currency: currency,
+                amount: Amount * 1e6,
+            })
+        }else {
+            console.log("lost,the amount is ",Amount)
+        }
     }
     let now = new Date().getTime()
     let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, AddsAmount, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
@@ -25,11 +29,15 @@ async function userAction(AccountId, RoundId, EMGameId, GPGameId, GPId, Transact
 
 async function userRollBack(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, uid, currency, conn) {
     if (action == 'rbbet') {
-        await live_wallet.increaseBalance({
-            uid: uid,
-            currency: currency,
-            amount: Amount * 1e6,
-        })
+        if(Amount > 0){
+            await live_wallet.increaseBalance({
+                uid: uid,
+                currency: currency,
+                amount: Amount * 1e6,
+            })
+        }else {
+            console.log("lost,the amount is ",Amount)
+        }
     } else if (action == 'rbresult') {
         await live_wallet.decreaseBalance({
             uid: uid,
