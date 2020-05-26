@@ -71,11 +71,6 @@ const logParams = function (params, type) {
 class Service {
 
     static success(data) {
-        // return {
-        //     code: 200,
-        //     message: "success",
-        //     data: data,
-        // }
         console.log(data)
         return data
     }

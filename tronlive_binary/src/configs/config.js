@@ -52,9 +52,11 @@ let config = {
 if (process.env.NODE_ENV === 'production' && fs.existsSync(__dirname + '/config.js')) {
   //生产环境
   console.log('>>>Use production config!');
+  config.live_wallet_url = prdCfg.liveWalletUrl
 } else if (process.env.NODE_ENV === 'test' && fs.existsSync(__dirname + '/config_test.js')) {
   //测试环境
   config = Object.assign(config, require('./config_test.js'));
+  config.live_wallet_url = 'http://3.15.85.91:18074'
 }
 
 

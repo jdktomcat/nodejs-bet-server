@@ -43,4 +43,7 @@ cd tronswagger_hub && pm2 start npm --name tronswagger_hub -- run start && cd ..
 
 cd tronbet_event02 && pm2 start npm --name tronbet_event02 -- run start && cd ..
 
-cd tronbet_live && npm run start:game
+
+cd tronlive_platius && pm2 start npm --name tronlive_platius -- run test && cd ..
+cd tronlive_binary && pm2 start npm --name tronlive_binary -- run test && cd ..
+cd tronbet_live_wallet && pm2 start npm --name tronbet_live_wallet -- run test && cd ..

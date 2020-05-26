@@ -1,14 +1,26 @@
 const db = require('../utils/dbUtil')
 const _ = require('lodash')._
+const live_wallet = require('./../utils/live_wallet')
 
 async function userAction(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, AddsAmount, uid, currency, conn) {
     //update balance
-    let updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
-    if (action === 'result') {
-        updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
+    if (action === 'bet') {
+        await live_wallet.decreaseBalance({
+            uid: uid,
+            currency: currency,
+            amount: Amount * 1e6,
+        })
+    }else if (action === 'result') {
+        if(Amount > 0){
+            await live_wallet.increaseBalance({
+                uid: uid,
+                currency: currency,
+                amount: Amount * 1e6,
+            })
+        }else {
+            console.log("lost,the amount is ",Amount)
+        }
     }
-    await db.execTrans(updateSql, [Amount * 1e6, uid, currency], conn)
-
     let now = new Date().getTime()
     let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, AddsAmount, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
     let res = await db.execTrans(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, '' + TransactionId, RoundStatus, Amount, Device, txId, action, now, AddsAmount, currency], conn)
@@ -16,14 +28,23 @@ async function userAction(AccountId, RoundId, EMGameId, GPGameId, GPId, Transact
 }
 
 async function userRollBack(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, uid, currency, conn) {
-    let updateSql = ''
     if (action == 'rbbet') {
-        updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
+        if(Amount > 0){
+            await live_wallet.increaseBalance({
+                uid: uid,
+                currency: currency,
+                amount: Amount * 1e6,
+            })
+        }else {
+            console.log("lost,the amount is ",Amount)
+        }
     } else if (action == 'rbresult') {
-        updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
+        await live_wallet.decreaseBalance({
+            uid: uid,
+            currency: currency,
+            amount: Amount * 1e6,
+        })
     }
-    await db.execTrans(updateSql, [Amount * 1e6, uid, currency], conn)
-
     let updateStatusSql = "update live_action_log_v2 set txStatus = txStatus - 1 where addr = ? and TransactionId = ?"
     await db.execTrans(updateStatusSql, [AccountId, '' + TransactionId], conn)
 
