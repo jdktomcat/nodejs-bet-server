@@ -871,4 +871,5 @@ module.exports = {
     addLiveFix,
     isInLiveBlackList,
     getTRXSum,
+    getUserAuditFlag,
 }
