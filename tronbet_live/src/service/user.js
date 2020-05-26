@@ -170,6 +170,17 @@ async function withdraw(ctx) {
     }
   }
 
+  /*
+      flag 为normal 说明账户是正常的
+      flag 为malicious 说明账户是异常的，余额与流水表是无法对应起来的，需要静止提现
+  */
+  const flag =await usermodel.getUserAuditFlag(addr);
+  if (flag !== 'normal'){
+    console.log("addr ${addr} try to withdraw failed");
+    return await common.sendMsgToClient(ctx, 1008, 'withdraw reached max amount');
+  }
+
+
   // 并发限制
   let withdrawLimit = await redisUtils.hget(redisUserKeyPrefix + addr, 'withdrawLimit');
   console.log(redisUserKeyPrefix + addr, "withdrawLimit", withdrawLimit)

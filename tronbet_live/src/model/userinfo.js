@@ -12,6 +12,19 @@ async function getUserBalance(addr) {
     }
     return null
 }
+/*
+    根据地址获取live_balance_audi，判断用户的资产和流水是否能够对的上，如果对不上将不允许提现
+    如果flag是normal 则是正常的，其他不允许通过
+    malicious 异常
+ */
+async function getUserAuditFlag(addr) {
+    let sql = "select flag from live_balance_audit where addr= ?";
+    let res=await db.exec(sql, ['' + addr]);
+    if (!_.isEmpty(res)) {
+        return res[0].flag;
+    }
+    return 'normal';//如果没有记录，默认是正常的用户
+}
 
 async function getUserBalanceBySessionId(sessionId) {
     let sql = "select round(trx / 1000000, 3) as trx from live_user where sessionId = ?"
@@ -858,4 +871,5 @@ module.exports = {
     addLiveFix,
     isInLiveBlackList,
     getTRXSum,
+    getUserAuditFlag,
 }
