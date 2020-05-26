@@ -55,7 +55,7 @@ class opBalance {
     }
 
     static async decreaseBalance(rawParams) {
-        const params = await parseParams(rawParams)
+        const params = parseParams(rawParams)
         const msg = model.decreaseBalance(params)
         return msg
     }
