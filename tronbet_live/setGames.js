@@ -1,27 +1,33 @@
 const db = require("./src/utils/dbUtil");
-const child_process = require("child_process");
 
-const raw = async function (updateSql, params) {
-    console.log(updateSql, params)
-    const t = await db.exec(updateSql, params);
-    return t
-}
-
-const logProcess = function () {
-    console.log("----reScanDice---->", new Date());
-    const cmd = 'pm2 list'
-    try{
-        const a = child_process.execSync(cmd).toString()
-        console.log("reScanDice_out: \n",a)
-        process.exit(0)
-    }catch (e) {
-        console.log("reScanDice_error: \n",e)
-        process.exit(1)
+const update202052601 = async function () {
+    const addr = [
+            'TSDNKq7X9E3DJP9jFyPwoVUPA63bK83pdK'
+        ]
+    for(let e of addr){
+        const sql1 = `select uid,currency,addr,balance / 1000000 as balance  from tron_live.live_balance where addr = ? and currency = 'TRX'`
+        const a1 = await db.exec(sql1,[e])
+        console.log("before is ",a1)
+        const updateSql = `update tron_live.live_balance set balance = 0 where addr = ? and currency = 'TRX' `
+        await db.exec(updateSql,[e])
     }
+    console.log("\n\n===>\n")
+    for(let e of addr){
+        const sql1 = `select  uid,currency,addr,balance / 1000000 as balance   from tron_live.live_balance where addr = ? and currency = 'TRX'`
+        const a1 = await db.exec(sql1,[e])
+        console.log("after is ",a1)
+    }
+
 }
 
-const main = function () {
-    logProcess()
+const main = async function(){
+    await update202052601()
 }
 
-main()
+main().then(() => {
+    console.log("end!")
+    process.exit(0)
+}).catch(e => {
+    console.log('error is : ', e)
+    process.exit(1)
+})
