@@ -15,14 +15,12 @@ let config = {
         http_port : prdCfg.port.tronbet_live_wallet,
     },
     mysqlConfig: {
-        read_db_host: prdCfg.mysql.read_db_host,
         db_host: prdCfg.mysql.host,
-        db_host2: prdCfg.mysql.host,
-        db_port: '3306',
+        db_port: prdCfg.mysql.port,
         db_name: 'tron_live',
         db_user: prdCfg.mysql.user,
         db_pwd: prdCfg.mysql.pwd,
-        connectionLimit : 10,
+        connectionLimit: 30
     },
     redisConfig: {
         host: '127.0.0.1',

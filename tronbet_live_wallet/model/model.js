@@ -1,10 +1,14 @@
 const Sequelize = require("sequelize")
 const config = require('../configs/config');
+const db_host = config.mysqlConfig.db_host
+const db_port = config.mysqlConfig.db_port
 const database = config.mysqlConfig.db_name
 const username = config.mysqlConfig.db_user
 const password = config.mysqlConfig.db_pwd
 
 const sequelize = new Sequelize(database, username, password, {
+    host: db_host,
+    port: db_port,
     dialect: 'mysql',
     pool: {
         max: 10,
@@ -181,8 +185,6 @@ class Balance {
 
 
 }
-
-
 
 
 module.exports = Balance
