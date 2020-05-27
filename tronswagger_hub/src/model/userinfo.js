@@ -34,13 +34,12 @@ async function userBet(transactionId, uid, email, round, isFree, gameId, currenc
     })
 
     let now = new Date().getTime()
-    let sql = "insert into swagger_transaction_log(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, resultTxId, ts) values(?,?,?,?,?,?,?,?,?,?,?,?)"
+    let sql = "insert into swagger_transaction_log(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, resultTxId, ts, status) values(?,?,?,?,?,?,?,?,?,?,?,?,'2')"
     let res = await db.execTrans(sql, [transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, transactionId, now], conn)
     return res
 }
 
 async function userWin(uid, currency, resultTxId, transactionId, amount, conn) {
-
     //update balance
     // let updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
     // await db.execTrans(updateSql, [amount, uid, currency], conn)
@@ -53,7 +52,7 @@ async function userWin(uid, currency, resultTxId, transactionId, amount, conn) {
     }
 
     let now = new Date().getTime()
-    let sql = "update swagger_transaction_log set resultTxId = ?, win = ? where transactionId = ?"
+    let sql = "update swagger_transaction_log set resultTxId = ?, win = ?, status = '1' where transactionId = ? and status = '2' "
     let res = await db.execTrans(sql, [resultTxId, amount, transactionId], conn)
     return res
 }
@@ -71,7 +70,7 @@ async function userRollBack(uid, currency, resultTxId, transactionId, amount, co
     }
 
     let now = new Date().getTime()
-    let sql = "update swagger_transaction_log set resultTxId = ?, status = status - 1 where transactionId = ?"
+    let sql = "update swagger_transaction_log set resultTxId = ?, status = '0' where transactionId = ? and status = '2' "
     let res = await db.execTrans(sql, [resultTxId, transactionId], conn)
     return res
 }
