@@ -57,37 +57,36 @@ async function updateUserKey(addr, userKey) {
 }
 
 async function userAction(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, AddsAmount, uid, currency, conn) {
-
     //update balance
-    let updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
-    if (action === 'result') {
-        updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
-    }
-    await db.execTrans(updateSql, [Amount * 1e6, uid, currency], conn)
-
-    let now = new Date().getTime()
-    let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, AddsAmount, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    let res = await db.execTrans(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, '' + TransactionId, RoundStatus, Amount, Device, txId, action, now, AddsAmount, currency], conn)
-    return res
+    // let updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
+    // if (action === 'result') {
+    //     updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
+    // }
+    // await db.execTrans(updateSql, [Amount * 1e6, uid, currency], conn)
+    //
+    // let now = new Date().getTime()
+    // let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, AddsAmount, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+    // let res = await db.execTrans(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, '' + TransactionId, RoundStatus, Amount, Device, txId, action, now, AddsAmount, currency], conn)
+    // return res
 }
 
 async function userRollBack(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, uid, currency, conn) {
-    let updateSql = ''
-    if (action == 'rbbet') {
-        updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
-    } else if (action == 'rbresult') {
-        updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
-    }
-    await db.execTrans(updateSql, [Amount * 1e6, uid, currency], conn)
-
-    let updateStatusSql = "update live_action_log_v2 set txStatus = txStatus - 1 where addr = ? and TransactionId = ?"
-    await db.execTrans(updateStatusSql, [AccountId, '' + TransactionId], conn)
-
-    let now = new Date().getTime()
-    console.log({ AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action })
-    let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    let res = await db.execTrans(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, 'rb' + TransactionId, RoundStatus, Amount, Device, txId, action, now, currency], conn)
-    return res
+    // let updateSql = ''
+    // if (action == 'rbbet') {
+    //     updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
+    // } else if (action == 'rbresult') {
+    //     updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
+    // }
+    // await db.execTrans(updateSql, [Amount * 1e6, uid, currency], conn)
+    //
+    // let updateStatusSql = "update live_action_log_v2 set txStatus = txStatus - 1 where addr = ? and TransactionId = ?"
+    // await db.execTrans(updateStatusSql, [AccountId, '' + TransactionId], conn)
+    //
+    // let now = new Date().getTime()
+    // console.log({ AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action })
+    // let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?)"
+    // let res = await db.execTrans(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, 'rb' + TransactionId, RoundStatus, Amount, Device, txId, action, now, currency], conn)
+    // return res
 }
 
 async function getTransactionById(TransactionId) {
