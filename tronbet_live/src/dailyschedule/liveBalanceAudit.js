@@ -129,7 +129,7 @@ const updateAudit = async function (uid) {
     }
 
     let live_balance = await getLiveBalance(addr)
-    if (!live_balance) {
+    if (!live_balance || live_balance === 0) {
         return
     }
 
