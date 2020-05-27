@@ -329,21 +329,21 @@ async function rollback(ctx) {
     })
 
 }
-
-async function getSwaggerGames(ctx) {
-    let games = await redisUtils.hget('tronswaggergame', 'games')
-    if (!games) {
-        games = []
-    } else {
-        games = JSON.parse(games)
-    }
-    return await common.sendMsg2Client(ctx, 0, '', games)
-}
+//
+// async function getSwaggerGames(ctx) {
+//     let games = await redisUtils.hget('tronswaggergame', 'games')
+//     if (!games) {
+//         games = []
+//     } else {
+//         games = JSON.parse(games)
+//     }
+//     return await common.sendMsg2Client(ctx, 0, '', games)
+// }
 
 module.exports = {
     balance,
     win,
     bet,
     rollback,
-    getSwaggerGames
+    // getSwaggerGames
 }
