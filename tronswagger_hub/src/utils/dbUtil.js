@@ -15,9 +15,11 @@ const pool = mysql.createPool({
 
 const promisePool = pool.promise();
 
-var db = {};
+let db = {};
 //执行单条sql语句
 db.exec = async function (sql, param) {
+    console.log("excute sql is: ",sql)
+    console.log("excute params is: ",param)
     let ret = await promisePool.execute(sql, param); //return [rows, fields]; [0]=>rows
     return ret[0];
 }
@@ -49,20 +51,17 @@ db.rollback = async function (connection) {
 }
 
 db.execTrans = async function (sql, param, connection) {
-    console.log("sql is ",sql)
-    console.log("param is ",param)
-    // 改成单表单事务，2020-05-20
-    let ret = await promisePool.execute(sql, param); //return [rows, fields]; [0]=>rows
-    return ret
-    // return new Promise((reslove, reject) => {
-    //     if (connection == null) { return; }
-    //     connection.execute(sql, param, function (err, result) {
-    //         if (err) {
-    //             return reject(err);
-    //         }
-    //         return reslove(result);
-    //     });
-    // });
+    console.log('excute sql is ',sql)
+    console.log('excute param is ',param)
+    return new Promise((reslove, reject) => {
+        if (connection == null) { return; }
+        connection.execute(sql, param, function (err, result) {
+            if (err) {
+                return reject(err);
+            }
+            return reslove(result);
+        });
+    });
 }
 
 db.getConnection = () => {
@@ -77,5 +76,9 @@ db.getConnection = () => {
     });
 }
 
-// test();
-module.exports = db;
+
+const rawQuery = async function (sql, params) {
+    return await db.exec(sql, params)
+}
+
+module.exports = rawQuery;

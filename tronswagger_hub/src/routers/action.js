@@ -9,8 +9,6 @@ module.exports = router.post( '/user/balance', action.balance)
 module.exports = router.post( '/transaction/win', action.win)
 module.exports = router.post( '/transaction/rollback', action.rollback)
 module.exports = router.post( '/transaction/bet', action.bet)
-module.exports = router.post( '/plat/games', action.getSwaggerGames)
-module.exports = router.post( '/plat/startUrl', action.getLanchUrl)
 
 
 
