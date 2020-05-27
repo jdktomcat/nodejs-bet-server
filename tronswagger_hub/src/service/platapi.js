@@ -216,7 +216,7 @@ async function win(ctx) {
     let transaction = await userinfo.getTransactionById(betTxId)
     console.log("transaction", transaction)
     if (transaction.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_IS_OVER'})
     }
     //
     const statusTmp = Number(transaction[0].status)
@@ -284,7 +284,7 @@ async function rollback(ctx) {
     console.log("transaction",transaction)
     // update 20200527  处理成2(刚pay)
     if (transaction.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_IS_OVER'})
     }
     //
     let currency = transaction[0].currency
@@ -325,21 +325,10 @@ async function rollback(ctx) {
     })
 
 }
-//
-// async function getSwaggerGames(ctx) {
-//     let games = await redisUtils.hget('tronswaggergame', 'games')
-//     if (!games) {
-//         games = []
-//     } else {
-//         games = JSON.parse(games)
-//     }
-//     return await common.sendMsg2Client(ctx, 0, '', games)
-// }
 
 module.exports = {
     balance,
     win,
     bet,
     rollback,
-    // getSwaggerGames
 }
