@@ -193,7 +193,6 @@ async function win(ctx) {
     console.log(`${new Date().toJSON()}-->request_win: `, params)
 
     const localSignature = hmCrypto.sign(JSON.stringify(params))
-    console.log("headers is ",headers)
     const remoteSignature = headers['X-Hub88-Signature'] || headers['x-hub88-signature']
 
     let isTrue = hmCrypto.isValid(JSON.stringify(params), remoteSignature)
