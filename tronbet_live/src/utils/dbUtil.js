@@ -22,6 +22,14 @@ db.exec = async function (sql, param) {
     return ret[0];
 }
 
+/*
+    执行查询where in(?) [[]], 使用array 替换？
+ */
+db.query = async function (sql, param) {
+    let ret = await promisePool.query(sql, param);
+    return ret[0];
+}
+
 db.commit = async function (connection) {
     return new Promise((reslove, reject) => {
         if (connection == null) { return; }
