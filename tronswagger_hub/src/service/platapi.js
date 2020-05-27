@@ -160,15 +160,18 @@ async function win(ctx) {
     if (_.isEmpty(account)) return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN'})
 
     let transaction = await userinfo.getTransactionById(betTxId)
-
-    if (_.isEmpty(transaction)) return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
-
-    const statusTmp  = Number(transaction[0].status)
-    if (statusTmp !== 2) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK'})
+    if(transaction.length === 0){
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
     }
-
-    if (transaction[0].win > 0) {
+    //
+    const statusTmp  = Number(transaction[0].status)
+    const transactionWin  = Number(transaction[0].win)
+    if (statusTmp !== 2) {
+        console.log("statusTmp is ",statusTmp)
+        return sendMsg2Client(ctx, {status: 'RS_OK', request_uuid: params.request_uuid, currency: currency, user: account.nickName || account.email})
+    }
+    if (transactionWin > 0) {
+        console.log("transactionWin is ",transactionWin)
         return sendMsg2Client(ctx, {status: 'RS_OK', request_uuid: params.request_uuid, currency: currency, user: account.nickName || account.email})
     }
 
@@ -336,31 +339,24 @@ async function rollback(ctx) {
     let betTxId = params.reference_transaction_uuid
 
     let transaction = await userinfo.getTransactionById(betTxId)
-
-    if (_.isEmpty(transaction)) {
-        if (account[0].currency == 'USDT') {
-            account[0].currency = 'TRX'
-        }
-        let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, account[0].currency)
-        console.log({status: 'RS_OK_NO_TRANSACTION', request_uuid: params.request_uuid, currency: account[0].currency, user: account[0].nickName || account[0].email, balance: toCpAmount(account[0].currency, newBalance)})
-        return sendMsg2Client(ctx, {status: 'RS_OK', request_uuid: params.request_uuid, currency: account[0].currency, user: account[0].nickName || account[0].email, balance: toCpAmount(account[0].currency, newBalance)})
-    }
-
     let currency = transaction[0].currency
     let amount = transaction[0].amount
 
     // update 20200527  处理成2(刚pay)
-    const statusTmp = transaction[0].status
-    console.log("statusTmp___> ",statusTmp)
-    if (Number(statusTmp) !== 2) {
-        let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
-        console.log({status: 'RS_OK', request_uuid: params.request_uuid, currency: currency, user: account[0].nickName || account[0].email, balance:toCpAmount(currency, newBalance)})
-        return sendMsg2Client(ctx, {status: 'RS_OK', request_uuid: params.request_uuid, currency: currency, user: account[0].nickName || account[0].email, balance: toCpAmount(currency, newBalance)})
+    if(transaction.length === 0){
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
+    }
+    const statusTmp  = Number(transaction[0].status)
+    const transactionWin  = Number(transaction[0].win)
+    if (statusTmp !== 2) {
+        console.log("statusTmp is ",statusTmp)
+        return sendMsg2Client(ctx, {status: 'RS_OK', request_uuid: params.request_uuid, currency: currency, user: account.nickName || account.email})
+    }
+    if (transactionWin > 0) {
+        console.log("transactionWin is ",transactionWin)
+        return sendMsg2Client(ctx, {status: 'RS_OK', request_uuid: params.request_uuid, currency: currency, user: account.nickName || account.email})
     }
 
-    if (transaction[0].win > 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION'})
-    }
     let conn = null
     try {
         conn = await db.getConnection()
