@@ -11,7 +11,7 @@ const update_balance = async function () {
 	const rs1 = await raw(sql1,[])
     console.log("before is ",rs1)
     //
-    const sql3 = `update tron_live.live_balance set balance = balance + ? where currency = 'TRX' and addr = 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj' `
+    const sql3 = `update tron_live.live_balance set balance = balance - ? where currency = 'TRX' and addr = 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj' `
     const num = 1000000 * 1e6
     const rs3 = await raw(sql3,[num])
     console.log("update affectedRows is ",rs3.affectedRows)
