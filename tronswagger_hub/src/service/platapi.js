@@ -163,11 +163,12 @@ async function win(ctx) {
 
     if (_.isEmpty(transaction)) return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
 
-    if (transaction[0].status != 1) {
+    const statusTmp  = Number(transaction[0].status)
+    if (statusTmp !== 2) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK'})
     }
 
-    if (transaction.win > 0) {
+    if (transaction[0].win > 0) {
         return sendMsg2Client(ctx, {status: 'RS_OK', request_uuid: params.request_uuid, currency: currency, user: account.nickName || account.email})
     }
 
@@ -255,14 +256,6 @@ async function bet(ctx) {
     let balance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
     if (balance < fromCpAmount(currency, params.amount)) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_NOT_ENOUGH_MONEY'})
-    }
-
-    // add filter 20200527
-    let transaction = await userinfo.getTransactionById(transactionId)
-    const statusTmp = transaction[0].status
-    console.log("statusTmp is ",statusTmp)
-    if (Number(statusTmp) !== 2) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION'})
     }
 
     console.log(`${account[0].email} bet ${amount} @ ${transactionId} `)
