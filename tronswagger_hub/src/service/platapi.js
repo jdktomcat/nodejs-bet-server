@@ -197,10 +197,10 @@ async function win(ctx) {
     const remoteSignature = headers['X-Hub88-Signature'] || headers['x-hub88-signature']
 
     let isTrue = hmCrypto.isValid(JSON.stringify(params), remoteSignature)
-    // if (!isTrue) {
-    //     console.log(localSignature, remoteSignature)
-    //     return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_TOKEN'})
-    // }
+    if (!isTrue) {
+        console.log(localSignature, remoteSignature)
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_TOKEN'})
+    }
     let transactionId = params.transaction_uuid
     let currency = params.currency
     let amount = params.amount * 10
