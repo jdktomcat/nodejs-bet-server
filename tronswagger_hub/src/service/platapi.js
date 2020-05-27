@@ -288,13 +288,14 @@ async function rollback(ctx) {
     let betTxId = params.reference_transaction_uuid
     let transaction = await userinfo.getTransactionById(betTxId)
     console.log("transaction",transaction)
-    let currency = transaction[0].currency
-    let amount = transaction[0].amount
-
     // update 20200527  处理成2(刚pay)
     if (transaction.length === 0) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
     }
+    //
+    let currency = transaction[0].currency
+    let amount = transaction[0].amount
+    //
     const statusTmp = Number(transaction[0].status)
     const transactionWin = Number(transaction[0].win)
     if (statusTmp !== 2) {
