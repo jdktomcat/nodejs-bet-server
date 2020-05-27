@@ -1,6 +1,8 @@
 const schedule = require('node-schedule')
 const db = require('../utils/dbUtil')
 
+let running = false
+
 const raw = async function (sql, params) {
     console.log(sql)
     console.log(params)
@@ -12,7 +14,7 @@ const getMaxUid = async function () {
     let sql = "select max(uid) as max_uid from tron_live.live_account where currency='trx'"
     const data = await raw(sql, [])
     if (data.length > 0) {
-        console.log("%s getMaxUid success, uid: %d", new Date().toUTCString(), data[0].max_uid)
+        console.log("%s getMaxUid success, max_uid: %d", new Date().toUTCString(), data[0].max_uid)
         return data[0].max_uid
     } else {
         console.log("%s getMaxUid failed", new Date().toUTCString())
@@ -24,7 +26,7 @@ const getAddr = async function (uid) {
     let sql = "select distinct email from tron_live.live_account where uid=? and currency='trx'"
     const data = await raw(sql, [uid])
     if (data.length > 0) {
-        console.log("%s getAddr success, addr: %s", new Date().toUTCString(), data[0].email)
+        console.log("%s getAddr success, uid: %d, addr: %s", new Date().toUTCString(), uid, data[0].email)
         return data[0].email
     } else {
         console.log("%s getAddr failed", new Date().toUTCString())
@@ -36,8 +38,8 @@ const getLiveBalanceAndFlagInAudit = async function (addr) {
     let sql = "select live_balance, flag from tron_live.live_balance_audit where addr=?"
     const data = await raw(sql, [addr])
     if (data.length > 0) {
-        console.log("%s getLiveBalanceAndFlagInAudit success, live_balance: %d, flag: %s",
-                new Date().toUTCString(), data[0].live_balance, data[0].flag)
+        console.log("%s getLiveBalanceAndFlagInAudit success, addr: %s, live_balance: %d, flag: %s",
+                new Date().toUTCString(), addr, data[0].live_balance, data[0].flag)
         return data[0]
     } else {
         console.log("%s getLiveBalanceAndFlagInAudit failed", new Date().toUTCString())
@@ -49,7 +51,7 @@ const getLiveBalance = async function (addr) {
     let sql = "select sum(balance) as live_balance from tron_live.live_balance where addr=? and currency = 'trx' group by addr"
     const data = await raw(sql, [addr])
     if (data.length > 0) {
-        console.log("%s getAddr success, live_balance: %d", new Date().toUTCString(), data[0].live_balance)
+        console.log("%s getAddr success, addr: %s, live_balance: %d", new Date().toUTCString(), addr, data[0].live_balance)
         return data[0].live_balance
     } else {
         console.log("%s getAddr failed", new Date().toUTCString())
@@ -98,8 +100,8 @@ const getLiveBalanceAndCalcBalance = async function (addr) {
 
     const data = await raw(sql, [addr, addr, addr, addr, addr, addr, addr, addr, addr])
     if (data.length > 0) {
-        console.log("%s getLiveBalanceAndCalcBalance success, live_balance: %d, calc_balance: %d",
-                new Date().toUTCString(), data[0].live_balance, data[0].calc_balance)
+        console.log("%s getLiveBalanceAndCalcBalance success, addr: %s, live_balance: %d, calc_balance: %d",
+                new Date().toUTCString(), addr, data[0].live_balance, data[0].calc_balance)
         return data[0]
     } else {
         console.log("%s getLiveBalanceAndCalcBalance failed", new Date().toUTCString())
@@ -114,7 +116,7 @@ const updateLiveBalance = async function (addr, live_balance, calc_balance) {
             on DUPLICATE KEY update live_balance=values(live_balance), calc_balance=values(calc_balance), flag=values(flag)`
 
     const data = await raw(sql, [addr, live_balance, calc_balance, flag])
-    console.log("%s updateLiveBalance success", new Date().toUTCString())
+    console.log("%s updateLiveBalance success, addr: %s", new Date().toUTCString(), addr)
 }
 
 const updateAudit = async function (uid) {
@@ -146,11 +148,27 @@ const updateAudit = async function (uid) {
 }
 
 const run = async function () {
-    const minUid = 50000
-    let maxUid = await getMaxUid()
+    if (running) {
+        console.log("%s auditSchedule is running", new Date().toUTCString())
+        return
+    }
 
-    for (let uid = minUid; uid <= maxUid; uid++) {
-        await updateAudit(uid)
+    try {
+        running = true
+
+        console.log("%s auditSchedule start", new Date().toUTCString())
+
+        const minUid = 50000
+        let maxUid = await getMaxUid()
+
+        for (let uid = minUid; uid <= maxUid; uid++) {
+            await updateAudit(uid)
+        }
+    } catch (err) {
+        console.log("%s auditSchedule run exception, err: %s", new Date().toUTCString(), err)
+    } finally {
+        running = false
+        console.log("%s auditSchedule stop", new Date().toUTCString())
     }
 }
 
