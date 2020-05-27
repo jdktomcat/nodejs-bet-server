@@ -179,7 +179,7 @@ async function bet(ctx) {
      */
     let multi = await getAdditionByGameId(game_id)
     let addAmount = amount * multi
-    await userinfo.userBet(transactionId, account[0].uid, account[0].email, round, is_free, game_id, currency, bet, amount, addAmount, conn)
+    await userinfo.userBet(transactionId, account[0].uid, account[0].email, round, is_free, game_id, currency, bet, amount, addAmount)
     // 触发活动
     // console.log("amount", amount)
     sendGameMsg(account[0].email, new Date().getTime(), amount / 1000000, currency);
@@ -287,6 +287,7 @@ async function rollback(ctx) {
     let transactionId = params.transaction_uuid
     let betTxId = params.reference_transaction_uuid
     let transaction = await userinfo.getTransactionById(betTxId)
+    console.log("transaction",transaction)
     let currency = transaction[0].currency
     let amount = transaction[0].amount
 
@@ -317,7 +318,7 @@ async function rollback(ctx) {
     /**
      * begin tx
      */
-    await userinfo.userRollBack(account[0].uid, currency, transactionId, transaction[0].transactionId, amount, conn)
+    await userinfo.userRollBack(account[0].uid, currency, transactionId, transaction[0].transactionId, amount)
 
     let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
     return sendMsg2Client(ctx, {
