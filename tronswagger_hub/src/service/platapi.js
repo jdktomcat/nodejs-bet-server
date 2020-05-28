@@ -156,6 +156,11 @@ async function bet(ctx) {
 
     amount = fromCpAmount(currency, amount)
     if (bet.length > 30) bet = bet.slice(0, 30)
+    //
+    let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId)
+    if(transactionByResultTxId.length > 0){
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION'})
+    }
 
     let token = getToken(params.token)
     let account = await userinfo.getAccountBySessionId(token)
