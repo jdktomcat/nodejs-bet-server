@@ -23,7 +23,7 @@ async function userBet(transactionId, uid, email, round, isFree, gameId, currenc
     return res
 }
 
-async function userWin(resultTxId, uid, win, currency, transaction) {
+async function userWin(resultTxId, uid, win, currency, bet, transaction) {
     if (win > 0) {
         await live_wallet.increaseBalance({
             uid: uid,
@@ -34,14 +34,14 @@ async function userWin(resultTxId, uid, win, currency, transaction) {
     // let sql = "update swagger_transaction_log set resultTxId = ?, win = ?, status = '1' where transactionId = ? and status = '2' "
     // let res = await rawQuery(sql, [resultTxId, amount, transactionId])
     // update hub88逻辑
-    let sql = "insert into swagger_transaction_log(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, resultTxId, ts, status) values(?,?,?,?,?,?,?,?,?,?,?,?,'1')"
+    let sql = "insert into swagger_transaction_log(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, win, adAmount, resultTxId, ts, status) values(?,?,?,?,?,?,?,?,?,?,?,?,'1')"
     const transactionId = transaction.transactionId
     const email = transaction.email
     const round = transaction.round
     const gameId = transaction.gameId
     let res = await rawQuery(
         sql,
-        [transactionId, uid, email, round, 0, gameId, currency, 0, win, 0, resultTxId, Date.now()]
+        [transactionId, uid, email, round, 0, gameId, currency, bet, 0, win, 0, resultTxId, Date.now()]
     )
     return res
 }

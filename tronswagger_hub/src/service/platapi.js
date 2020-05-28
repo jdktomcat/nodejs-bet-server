@@ -203,6 +203,8 @@ async function win(ctx) {
     let transactionId = params.transaction_uuid
     let currency = params.currency
     let amount = params.amount * 10
+    let bet = params.bet || ''
+    if (bet.length > 30) bet = bet.slice(0, 30)
     let betTxId = params.reference_transaction_uuid
     amount = fromCpAmount(currency, amount)
     let token = getToken(params.token)
@@ -223,7 +225,7 @@ async function win(ctx) {
     }
     console.log(`${account[0].email} win ${amount} @ ${betTxId}, winTransaction: ${transactionId} `)
     //
-    await userinfo.userWin(transactionId, account[0].uid, amount, currency, transaction[0])
+    await userinfo.userWin(transactionId, account[0].uid, amount, currency,bet, transaction[0])
     //
     let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
     return sendMsg2Client(ctx, {
