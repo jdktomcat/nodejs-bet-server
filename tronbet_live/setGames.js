@@ -1,7 +1,7 @@
 const db = require("./src/utils/dbUtil");
 
 const update2222 = async function () {
-	const sql = " DROP INDEX transactionIdIDX on swagger_transaction_log;";
+	const sql = " DROP INDEX transactionIdIDX on tron_live.swagger_transaction_log;";
 	console.log(sql)
 	const rs = await db.exec(sql,[])
 }
@@ -17,3 +17,4 @@ main().then(() => {
     console.log('error is : ', e)
     process.exit(1)
 })
+
