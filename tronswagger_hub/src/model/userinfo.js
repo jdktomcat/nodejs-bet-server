@@ -18,7 +18,7 @@ async function userBet(transactionId, uid, email, round, isFree, gameId, currenc
     })
     let now = new Date().getTime()
     let sql = "insert into swagger_transaction_log(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, resultTxId, ts, status) values(?,?,?,?,?,?,?,?,?,?,?,?,'1')"
-    const resultTxId = "transactionId" + "_result"
+    const resultTxId = transactionId + "_result"
     let res = await rawQuery(sql, [transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, resultTxId, now])
     return res
 }
