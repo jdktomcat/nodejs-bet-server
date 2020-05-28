@@ -268,7 +268,7 @@ async function rollback(ctx) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
     }
     //
-    let transactionByResultTxId = await userinfo.getTransactionByResultTxId(betTxId)
+    let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId)
     if(transactionByResultTxId.length > 0){
         return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION'})
     }
