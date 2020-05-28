@@ -1,7 +1,8 @@
 const db = require("./src/utils/dbUtil");
 
 const update2222 = async function () {
-	const sql = " DROP INDEX transactionIdIDX on tron_live.swagger_transaction_log;";
+    //ALTER table tableName ADD INDEX indexName(columnName)
+	const sql = " ALTER table tron_live.swagger_transaction_log ADD INDEX transactionIdIDX(transactionId)";
 	console.log(sql)
 	const rs = await db.exec(sql,[])
 }
