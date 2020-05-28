@@ -215,12 +215,16 @@ async function win(ctx) {
     let transaction = await userinfo.getTransactionById(betTxId)
     console.log("transaction", transaction)
     if (transaction.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_IS_OVER'})
+        console.log("RS_ERROR_TRANSACTION_IS_OVER ")
+        return sendMsg2Client(ctx, {
+            status: 'RS_OK',
+            request_uuid: params.request_uuid,
+            currency: currency,
+            user: account.nickName || account.email
+        })
     }
-    //
     const statusTmp = Number(transaction[0].status)
-    const transactionWin = Number(transaction[0].win)
-    if (statusTmp !== 2) {
+    if (statusTmp !== 1) {
         console.log("statusTmp is ", statusTmp)
         return sendMsg2Client(ctx, {
             status: 'RS_OK',
@@ -229,20 +233,9 @@ async function win(ctx) {
             user: account.nickName || account.email
         })
     }
-    if (transactionWin > 0) {
-        console.log("transactionWin is ", transactionWin)
-        return sendMsg2Client(ctx, {
-            status: 'RS_OK',
-            request_uuid: params.request_uuid,
-            currency: currency,
-            user: account.nickName || account.email
-        })
-    }
-
     console.log(`${account[0].email} win ${amount} @ ${betTxId}, winTransaction: ${transactionId} `)
     //
-    //
-    await userinfo.userWin(account[0].uid, currency, transactionId, transaction[0].transactionId, amount)
+    await userinfo.userWin(transactionId, account[0].uid, amount, currency, transaction[0])
     //
     let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
     return sendMsg2Client(ctx, {
@@ -280,10 +273,16 @@ async function rollback(ctx) {
     let transactionId = params.transaction_uuid
     let betTxId = params.reference_transaction_uuid
     let transaction = await userinfo.getTransactionById(betTxId)
-    console.log("transaction",transaction)
+    console.log("transaction", transaction)
     // update 20200527  处理成2(刚pay)
     if (transaction.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_IS_OVER'})
+        console.log('RS_ERROR_TRANSACTION_IS_OVER')
+        return sendMsg2Client(ctx, {
+            status: 'RS_OK',
+            request_uuid: params.request_uuid,
+            currency: currency,
+            user: account.nickName || account.email
+        })
     }
     //
     let currency = transaction[0].currency
@@ -291,7 +290,7 @@ async function rollback(ctx) {
     //
     const statusTmp = Number(transaction[0].status)
     const transactionWin = Number(transaction[0].win)
-    if (statusTmp !== 2) {
+    if (statusTmp !== 1) {
         console.log("statusTmp is ", statusTmp)
         return sendMsg2Client(ctx, {
             status: 'RS_OK',

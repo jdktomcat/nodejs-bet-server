@@ -17,21 +17,31 @@ async function userBet(transactionId, uid, email, round, isFree, gameId, currenc
         amount: amount,
     })
     let now = new Date().getTime()
-    let sql = "insert into swagger_transaction_log(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, resultTxId, ts, status) values(?,?,?,?,?,?,?,?,?,?,?,?,'2')"
+    let sql = "insert into swagger_transaction_log(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, resultTxId, ts, status) values(?,?,?,?,?,?,?,?,?,?,?,?,'1')"
     let res = await rawQuery(sql, [transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, transactionId, now])
     return res
 }
 
-async function userWin(uid, currency, resultTxId, transactionId, amount) {
-    if (amount > 0) {
+async function userWin(resultTxId, uid, win, currency, transaction) {
+    if (win > 0) {
         await live_wallet.increaseBalance({
             uid: uid,
             currency: currency,
-            amount: amount,
+            amount: win,
         })
     }
-    let sql = "update swagger_transaction_log set resultTxId = ?, win = ?, status = '1' where transactionId = ? and status = '2' "
-    let res = await rawQuery(sql, [resultTxId, amount, transactionId])
+    // let sql = "update swagger_transaction_log set resultTxId = ?, win = ?, status = '1' where transactionId = ? and status = '2' "
+    // let res = await rawQuery(sql, [resultTxId, amount, transactionId])
+    // update hub88逻辑
+    let sql = "insert into swagger_transaction_log(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, adAmount, resultTxId, ts, status) values(?,?,?,?,?,?,?,?,?,?,?,?,'1')"
+    const transactionId = transaction.transactionId
+    const email = transaction.email
+    const round = transaction.round
+    const gameId = transaction.gameId
+    let res = await rawQuery(
+        sql,
+        [transactionId, uid, email, round, 0, gameId, currency, 0, win, 0, transactionId, Date.now()]
+    )
     return res
 }
 
@@ -43,13 +53,13 @@ async function userRollBack(uid, currency, resultTxId, transactionId, amount) {
             amount: amount,
         })
     }
-    let sql = "update swagger_transaction_log set resultTxId = ?, status = '0' where transactionId = ? and status = '2' "
+    let sql = "update swagger_transaction_log set resultTxId = ?, status = '0' where transactionId = ? and status = '1' "
     let res = await rawQuery(sql, [resultTxId, transactionId])
     return res
 }
 
 async function getTransactionById(TransactionId) {
-    let sql = "select * from swagger_transaction_log where transactionId = ? and status = '2' "
+    let sql = "select * from swagger_transaction_log where transactionId = ? and status = '1' "
     return await rawQuery(sql, ['' + TransactionId])
 }
 
@@ -62,9 +72,9 @@ async function getAccountBySessionId(sessionId) {
 async function getUserBalanceByCurrency(uid, currency) {
     let sql = "select round(balance / 10, 3) balance from live_balance where uid = ? and currency = ?"
     let res = await rawQuery(sql, [uid, currency])
-    if(res.length === 0){
+    if (res.length === 0) {
         return 0
-    }else {
+    } else {
         return Number(Math.floor(res[0].balance)) || 0
     }
 }
