@@ -309,46 +309,26 @@ async function Wager(ctx) {
     }
   }
 
-  let conn = null;
+  // let conn = null;
   let txId = common.getRandomSeed(64);
-  try {
-    conn = await db.getConnection();
-    if (conn == null) {
-      return await sendMsgToClient(ctx, 101, "unknown failed");
-    }
-    conn.beginTransaction();
-    let res = await usermodel.userAction(
-      AccountId,
-      RoundId,
-      EMGameId,
-      GPGameId,
-      GPId,
-      TransactionId,
-      RoundStatus,
-      Amount,
-      Device,
-      txId,
-      "bet",
-      addAmount,
-      user[0].uid,
-      Currency,
-      conn
-    );
-
-    // 触发活动
-    sendGameMsg(AccountId, new Date().getTime(), Amount, Currency);
-
-    conn.commit();
-  } catch (error) {
-    logger.info(error);
-    if (conn) conn.release();
-    if (error.code === "ER_DUP_ENTRY")
-      return await sendMsgToClient(ctx, 0, "Success");
-    return await sendMsgToClient(ctx, 104, "Insufficient funds");
-  } finally {
-    if (conn) conn.release();
-  }
-
+  let res = await usermodel.userAction(
+    AccountId,
+    RoundId,
+    EMGameId,
+    GPGameId,
+    GPId,
+    TransactionId,
+    RoundStatus,
+    Amount,
+    Device,
+    txId,
+    "bet",
+    addAmount,
+    user[0].uid,
+    Currency,
+  );
+  // 触发活动
+  sendGameMsg(AccountId, new Date().getTime(), Amount, Currency);
   Balance = await usermodel.getUserBalanceByCurrency(user[0].uid, Currency);
   if (Currency != "TRX") {
     Balance = Balance / 1000;
@@ -438,42 +418,23 @@ async function Result(ctx) {
     return await sendMsgToClient(ctx, 0, "Success", result);
   }
 
-  let conn = null;
   let txId = common.getRandomSeed(64);
-  try {
-    conn = await db.getConnection();
-    if (conn == null) {
-      return await sendMsgToClient(ctx, 101, "unknown failed");
-    }
-    conn.beginTransaction();
-    let res = await usermodel.userAction(
-      AccountId,
-      RoundId,
-      EMGameId,
-      GPGameId,
-      GPId,
-      TransactionId,
-      RoundStatus,
-      Amount,
-      Device,
-      txId,
-      "result",
-      0,
-      user[0].uid,
-      Currency,
-      conn
-    );
-    conn.commit();
-  } catch (error) {
-    logger.info(error);
-    if (conn) conn.release();
-    if (error.code === "ER_DUP_ENTRY")
-      return await sendMsgToClient(ctx, 0, "Success");
-    return await sendMsgToClient(ctx, 104, "Insufficient funds");
-  } finally {
-    if (conn) conn.release();
-  }
-
+  let res = await usermodel.userAction(
+    AccountId,
+    RoundId,
+    EMGameId,
+    GPGameId,
+    GPId,
+    TransactionId,
+    RoundStatus,
+    Amount,
+    Device,
+    txId,
+    "result",
+    0,
+    user[0].uid,
+    Currency,
+  );
   Balance = await usermodel.getUserBalanceByCurrency(user[0].uid, Currency);
   if (Currency != "TRX") {
     Balance = Balance / 1000;
@@ -553,40 +514,22 @@ async function RollBack(ctx) {
     return await sendMsgToClient(ctx, 0, "Success", result);
   }
 
-  let conn = null;
   let txId = common.getRandomSeed(64);
-  try {
-    conn = await db.getConnection();
-    if (conn == null) {
-      return await sendMsgToClient(ctx, 101, "unknown failed");
-    }
-    conn.beginTransaction();
-    let res = await usermodel.userRollBack(
-      AccountId,
-      RoundId,
-      EMGameId,
-      GPGameId,
-      GPId,
-      TransactionId,
-      "rollback",
-      Amount,
-      Device,
-      txId,
-      "rb" + transaction[0].action,
-      user[0].uid,
-      Currency,
-      conn
-    );
-    conn.commit();
-  } catch (error) {
-    logger.info(error);
-    if (conn) conn.release();
-    if (error.code === "ER_DUP_ENTRY")
-      return await sendMsgToClient(ctx, 0, "Success");
-    return await sendMsgToClient(ctx, 104, "Insufficient funds");
-  } finally {
-    if (conn) conn.release();
-  }
+  let res = await usermodel.userRollBack(
+    AccountId,
+    RoundId,
+    EMGameId,
+    GPGameId,
+    GPId,
+    TransactionId,
+    "rollback",
+    Amount,
+    Device,
+    txId,
+    "rb" + transaction[0].action,
+    user[0].uid,
+    Currency,
+  );
 
   Balance = await usermodel.getUserBalanceByCurrency(user[0].uid, Currency);
   if (Currency != "TRX") {
