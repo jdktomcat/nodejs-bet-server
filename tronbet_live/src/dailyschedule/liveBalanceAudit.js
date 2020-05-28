@@ -17,7 +17,7 @@ let batchSize=50;
 /*
     那个uid开始
  */
-let startUid=50000;
+let startUid=43073;
 
 /*
     用户余额-计算的余额 允许的最大偏向值
