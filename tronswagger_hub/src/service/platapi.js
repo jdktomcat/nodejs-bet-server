@@ -211,27 +211,15 @@ async function win(ctx) {
     if (account.length === 0) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN'})
     }
-
+    //
     let transaction = await userinfo.getTransactionById(betTxId)
-    console.log("transaction", transaction)
     if (transaction.length === 0) {
-        console.log("RS_ERROR_TRANSACTION_IS_OVER ")
-        return sendMsg2Client(ctx, {
-            status: 'RS_OK',
-            request_uuid: params.request_uuid,
-            currency: currency,
-            user: account.nickName || account.email
-        })
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
     }
+    //
     const statusTmp = Number(transaction[0].status)
     if (statusTmp !== 1) {
-        console.log("statusTmp is ", statusTmp)
-        return sendMsg2Client(ctx, {
-            status: 'RS_OK',
-            request_uuid: params.request_uuid,
-            currency: currency,
-            user: account.nickName || account.email
-        })
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK'})
     }
     console.log(`${account[0].email} win ${amount} @ ${betTxId}, winTransaction: ${transactionId} `)
     //
@@ -273,16 +261,9 @@ async function rollback(ctx) {
     let transactionId = params.transaction_uuid
     let betTxId = params.reference_transaction_uuid
     let transaction = await userinfo.getTransactionById(betTxId)
-    console.log("transaction", transaction)
     // update 20200527  处理成2(刚pay)
     if (transaction.length === 0) {
-        console.log('RS_ERROR_TRANSACTION_IS_OVER')
-        return sendMsg2Client(ctx, {
-            status: 'RS_OK',
-            request_uuid: params.request_uuid,
-            currency: currency,
-            user: account.nickName || account.email
-        })
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
     }
     //
     let currency = transaction[0].currency
@@ -291,13 +272,7 @@ async function rollback(ctx) {
     const statusTmp = Number(transaction[0].status)
     const transactionWin = Number(transaction[0].win)
     if (statusTmp !== 1) {
-        console.log("statusTmp is ", statusTmp)
-        return sendMsg2Client(ctx, {
-            status: 'RS_OK',
-            request_uuid: params.request_uuid,
-            currency: currency,
-            user: account.nickName || account.email
-        })
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK'})
     }
     if (transactionWin > 0) {
         console.log("transactionWin is ", transactionWin)
