@@ -15,67 +15,17 @@ const pool = mysql.createPool({
 
 const promisePool = pool.promise();
 
-var db = {};
+let db = {};
 //执行单条sql语句
 db.exec = async function (sql, param) {
+    console.log("excute sql is: ",sql)
+    console.log("excute params is: ",param)
     let ret = await promisePool.execute(sql, param); //return [rows, fields]; [0]=>rows
     return ret[0];
 }
 
-db.commit = async function (connection) {
-    return new Promise((reslove, reject) => {
-        if (connection == null) { return; }
-        connection.execute("commit;", [], function (err, result) {
-            if (err) {
-                return reject(err);
-            }
-            connection.release();
-            return reslove(result);
-        });
-    });
+const rawQuery = async function (sql, params) {
+    return await db.exec(sql, params)
 }
 
-db.rollback = async function (connection) {
-    return new Promise((reslove, reject) => {
-        if (connection == null) { return; }
-        connection.execute("rollback;", [], function (err, result) {
-            if (err) {
-                return reject(err);
-            }
-            connection.release();
-            return reslove(result);
-        });
-    });
-}
-
-db.execTrans = async function (sql, param, connection) {
-    // 改成单表单事务，2020-05-20
-    console.log("sql is ",sql)
-    console.log("param is ",param)
-    let ret = await promisePool.execute(sql, param); //return [rows, fields]; [0]=>rows
-    return ret
-    // return new Promise((reslove, reject) => {
-    //     if (connection == null) { return; }
-    //     connection.execute(sql, param, function (err, result) {
-    //         if (err) {
-    //             return reject(err);
-    //         }
-    //         return reslove(result);
-    //     });
-    // });
-}
-
-db.getConnection = () => {
-    return new Promise((reslove, reject) => {
-        pool.getConnection(async (err, conn) => {
-            if (err) {
-                console.error(err);
-                return reject(null);
-            }
-            return reslove(conn);
-        });
-    });
-}
-
-// test();
-module.exports = db;
+module.exports = rawQuery;
