@@ -219,6 +219,11 @@ async function win(ctx) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
     }
     //
+    let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId)
+    if(transactionByResultTxId.length > 0){
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION'})
+    }
+    //
     const statusTmp = Number(transaction[0].status)
     if (statusTmp !== 1) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK'})
