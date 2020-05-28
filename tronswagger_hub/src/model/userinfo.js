@@ -34,7 +34,7 @@ async function userWin(resultTxId, uid, win, currency, bet, transaction) {
     // let sql = "update swagger_transaction_log set resultTxId = ?, win = ?, status = '1' where transactionId = ? and status = '2' "
     // let res = await rawQuery(sql, [resultTxId, amount, transactionId])
     // update hub88逻辑
-    let sql = "insert into swagger_transaction_log(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, win, adAmount, resultTxId, ts, status) values(?,?,?,?,?,?,?,?,?,?,?,?,'1')"
+    let sql = "insert into swagger_transaction_log(transactionId, uid, email, round, isFree, gameId, currency, bet, amount, win, adAmount, resultTxId, ts, status) values(?,?,?,?,?,?,?,?,?,?,?,?,?,'1')"
     const transactionId = transaction.transactionId
     const email = transaction.email
     const round = transaction.round
