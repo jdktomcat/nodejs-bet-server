@@ -2,7 +2,7 @@ const rawQuery = require('../utils/dbUtil')
 const _ = require('lodash')._
 const live_wallet = require('./../utils/live_wallet')
 
-async function userAction(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, AddsAmount, uid, currency, conn) {
+async function userAction(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, AddsAmount, uid, currency) {
     //update balance
     if (action === 'bet') {
         await live_wallet.decreaseBalance({
@@ -23,11 +23,11 @@ async function userAction(AccountId, RoundId, EMGameId, GPGameId, GPId, Transact
     }
     let now = new Date().getTime()
     let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, AddsAmount, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    let res = await rawQuery(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, '' + TransactionId, RoundStatus, Amount, Device, txId, action, now, AddsAmount, currency], conn)
+    let res = await rawQuery(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, '' + TransactionId, RoundStatus, Amount, Device, txId, action, now, AddsAmount, currency])
     return res
 }
 
-async function userRollBack(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, uid, currency, conn) {
+async function userRollBack(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, uid, currency) {
     if (action == 'rbbet') {
         if(Amount > 0){
             await live_wallet.increaseBalance({
@@ -46,12 +46,12 @@ async function userRollBack(AccountId, RoundId, EMGameId, GPGameId, GPId, Transa
         })
     }
     let updateStatusSql = "update live_action_log_v2 set txStatus = txStatus - 1 where addr = ? and TransactionId = ?"
-    await rawQuery(updateStatusSql, [AccountId, '' + TransactionId], conn)
+    await rawQuery(updateStatusSql, [AccountId, '' + TransactionId])
 
     let now = new Date().getTime()
     console.log({ AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action })
     let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    let res = await rawQuery(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, 'rb' + TransactionId, RoundStatus, Amount, Device, txId, action, now, currency], conn)
+    let res = await rawQuery(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, 'rb' + TransactionId, RoundStatus, Amount, Device, txId, action, now, currency])
     return res
 }
 
