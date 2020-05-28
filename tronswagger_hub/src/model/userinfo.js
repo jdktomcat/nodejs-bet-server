@@ -64,6 +64,11 @@ async function getTransactionById(TransactionId) {
     return await rawQuery(sql, ['' + TransactionId])
 }
 
+async function getTransactionByResultTxId(resultTxId) {
+    let sql = "select * from swagger_transaction_log where resultTxId = ?"
+    return await rawQuery(sql, ['' + resultTxId])
+}
+
 async function getAccountBySessionId(sessionId) {
     let sql = "select * from live_account where sessionId = ?"
     let res = await rawQuery(sql, [sessionId])
@@ -88,4 +93,5 @@ module.exports = {
     getAccountBySessionId,
     getTransactionById,
     getUserBalanceByCurrency,
+    getTransactionByResultTxId,
 }
