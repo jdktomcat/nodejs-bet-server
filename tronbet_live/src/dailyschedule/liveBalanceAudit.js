@@ -3,7 +3,7 @@ const Event= require('events');
 /*
     多久跑一次任务
  */
-const duration=3*60*1000;
+const duration=2*60*1000;
 /*
     进行了多少次任务
  */
@@ -18,12 +18,17 @@ let batchSize=50;
     那个uid开始
  */
 let startUid=43073;
+//let startUid=3073;
 
 /*
     用户余额-计算的余额 允许的最大偏向值
  */
 let allowMiss=1000*1000000;
 
+/*
+ *  live_balance-calc_balance>clearBalanceThreshold
+ */
+let clearBalanceThreshold=10000*1000000;
 
 
 const queryLiveBalanceAndCalcBalance = async function (addresses) {
@@ -67,7 +72,7 @@ const queryLiveBalanceAndCalcBalance = async function (addresses) {
             ) as info group by addr`
 
     const data = await db.query(sql, [addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses])
-    console.log("%s queryLiveBalanceAndCalcBalance success, live_balance: %d, calc_balance: %d",new Date().toUTCString(), data[0].live_balance, data[0].calc_balance)
+    console.log(data); 
     return data
 }
 /*
@@ -115,18 +120,43 @@ const doBatchUpdate = async function(list){
             return
         }
         let il=[]
+	let cleanAddrs=[];
         rl.forEach((record)=>{
             if(record.liveBalance -record.calcBalance>allowMiss){
                 //异常记录
                 let tmp=[record.addr,record.liveBalance,record.calcBalance,'malicious'];
                 il.push(tmp);
+		if((record.liveBalance-record.calcBalance)>clearBalanceThreshold){
+			cleanAddrs.push(record.addr);
+		}
             }else{
                 let tmp=[record.addr,record.liveBalance,record.calcBalance,'normal'];
                 il.push(tmp)
             }
         });
+	console.log(il);
         let sql="insert into tron_live.live_balance_audit (addr, live_balance, calc_balance, flag) values ? on duplicate key update flag=values(flag),live_balance=values(live_balance),calc_balance=values(calc_balance)";
         await db.query(sql, [il]);
+	if(cleanAddrs.length==0){
+		return
+	}
+	console.log("##################################################Clean User Balance##################################################");
+	console.log(cleanAddrs);
+	console.log("before clean user balance");
+	let qUserBalSql=`select uid,addr,balance,tag from live_balance where addr in(?)`;	
+	let beforeCleanBalance = await db.query(qUserBalSql, [cleanAddrs]);
+	console.log(beforeCleanBalance);
+	let cleanBalanceSql="insert into tron_live.live_balance(uid,currency,addr,tag, balance) values ? on duplicate key update balance=0";
+	let cleanList=[];
+	beforeCleanBalance.forEach((record)=>{
+		let tmp =[record.uid,'TRX',record.addr,record.tag,0];
+		cleanList.push(tmp);
+	});
+        await db.query(cleanBalanceSql, [cleanList]);
+	console.log("after clear user balance");
+	let afterCleanBalance = await db.query(qUserBalSql, [cleanAddrs]);	
+	console.log(afterCleanBalance);
+	console.log("##################################################Clean User Balance##################################################");
     }
 }
 
