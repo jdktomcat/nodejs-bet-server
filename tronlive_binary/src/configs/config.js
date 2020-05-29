@@ -43,9 +43,9 @@ let config = {
     ACTIVITY_END_TS: 1580799600000,//Tue Feb 04 2020 15:00:00
   },
   addition:{
-    START_TS: 1589859000000,
-    END_TS: 1590031800000,
-    RATE: 1
+    START_TS: 1590836400000, //'2020-05-30 19:00:00'
+    END_TS: 1590922800000,  //'2020-05-31 19:00:00'
+    RATE: 2
   }
 };
 config.live_wallet_url = 'http://127.0.0.1:18074'
