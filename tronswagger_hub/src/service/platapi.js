@@ -178,6 +178,7 @@ async function bet(ctx) {
      */
     let multi = await getAdditionByGameId(game_id)
     let addAmount = amount * multi
+    console.log(new Date().toJSON() + " addr@" + account[0].email + "@balance_sub" + amount / 1e6 + "@TRX")
     await userinfo.userBet(transactionId, account[0].uid, account[0].email, round, is_free, game_id, currency, bet, amount, addAmount)
     // 触发活动
     // console.log("amount", amount)
@@ -234,8 +235,9 @@ async function win(ctx) {
     if (statusTmp !== 1) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK'})
     }
-    console.log(`${account[0].email} win ${amount} @ ${betTxId}, winTransaction: ${transactionId} `)
+    // console.log(`${account[0].email} win ${amount} @ ${betTxId}, winTransaction: ${transactionId} `)
     //
+    console.log(new Date().toJSON() + " addr@" + account[0].email + "@balance_add" + amount / 1e6 + "@TRX")
     await userinfo.userWin(transactionId, account[0].uid, amount, currency, bet, transaction[0])
     //
     let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
@@ -304,6 +306,7 @@ async function rollback(ctx) {
     /**
      * begin tx
      */
+    console.log(new Date().toJSON() + " addr@" + account[0].email + "@balance_add" + amount / 1e6 + "@TRX")
     await userinfo.userRollBack(account[0].uid, currency, transactionId, transaction[0].transactionId, amount)
 
     let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
