@@ -2,13 +2,13 @@ const db = require('../utils/dbUtil');
 const _ = require('lodash')._;
 const airBlackList = require("../configs/aridropBlackList")
 
-async function isInAirDropBlackListInDB(addr) {
-  let sql = `select addr from tron_live.live_balance_audit where addr = ? and flag = 'malicious'`;
-  let res = await db.exec(sql, [addr]);
-  if (res && res.length > 0) {
-    return true;
+async function getAirDropBlackListInDB() {
+  let sql = `select addr from tron_live.live_balance_audit where flag = 'malicious'`;
+  let res = await db.exec(sql, []);
+  if (res) {
+    return res.map(e => String(e.addr).trim());
   } else {
-    return false;
+    return [];
   }
 }
 
@@ -42,11 +42,17 @@ async function getLiveAirdropData(startTs, endTs) {
   ]
   try {
     let res = await db.exec(sql, param);
-    // add black filer
-    console.log("addata_res---->",res.length)
-    let data = res.filter(e=>!airBlackList.includes(String(e.addr).trim()))
-    data = res.filter(e=>!isInAirDropBlackListInDB(String(e.addr).trim()))
-    console.log("addata_length---->",data.length)
+    console.log("getLiveAirdropData, data count:", res.length);
+
+    let blackListInDB = await getAirDropBlackListInDB();
+    console.log("getLiveAirdropData, blackList count:", blackListInDB.length);
+
+    let data = res.filter(function (e) {
+      let addr = String(e.addr).trim();
+      return !airBlackList.includes(addr) && !blackListInDB.includes(addr);
+    });
+
+    console.log("getLiveAirdropData, data count after filter:", data.length);
     return data;
   }catch (e) {
     console.log("AirdropError: ",e.toString())
@@ -57,20 +63,35 @@ async function getSportsAirdropData(startTs, endTs) {
   let sql =
     "select sum(adAmount / 1000000) Amount, addr from sports_transaction_log where ts >= ? and ts < ? and (status = 0 or status = 50 or status = 51) and (currency = 'TRX' or currency = 'USDT') group by addr";
   let res = await db.exec(sql, [(startTs - 300) * 1000, (endTs - 300) * 1000]);
-  let data = res.filter(e=>!airBlackList.includes(String(e.addr).trim()))
-  data = res.filter(e=>!isInAirDropBlackListInDB(String(e.addr).trim()))
+  console.log("getSportsAirdropData, data count:", res.length);
+
+  let blackListInDB = await getAirDropBlackListInDB();
+  console.log("getSportsAirdropData, blackList count:", blackListInDB.length);
+
+  let data = res.filter(function (e) {
+    let addr = String(e.addr).trim();
+    return !airBlackList.includes(addr) && !blackListInDB.includes(addr);
+  });
+
+  console.log("getSportsAirdropData, data count after filter:", data.length);
   return data;
 }
 
 async function liveAirdropLog(addr, startTs, endTs, betAmount, adAmount) {
   if(airBlackList.includes(addr)){
+    console.log("liveAirdropLog block addr:", addr);
     return []
   }
-  if(isInAirDropBlackListInDB(addr)){
+
+  let blackListInDB = await getAirDropBlackListInDB();
+  if(blackListInDB.includes(addr)){
+    console.log("liveAirdropLog block(db) addr:", addr);
     return []
   }
+
   let sql = 'insert into live_airdrop_log(addr, startTs, endTs, betAmount, adAmount) values (?,?,?,?,?);';
   let res = await db.exec(sql, [addr, startTs, endTs, betAmount, adAmount]);
+  console.log("liveAirdropLog drop to addr:", addr);
   return res;
 }
 
