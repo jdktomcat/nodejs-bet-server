@@ -17,7 +17,7 @@ let LocalCurrency = "TRX"
 
 function sendMsg2Client(ctx, result) {
     console.log("response_data is ", result)
-    console.log(new Date().toJSON() + "addr@" + result.user + "@balance@" + result.balance / 1e5 + "@TRX")
+    console.log(new Date().toJSON() + " addr@" + result.user + "@balance@" + result.balance / 1e5 + "@TRX")
     ctx.body = result
 }
 
