@@ -83,12 +83,6 @@ async function liveAirdropLog(addr, startTs, endTs, betAmount, adAmount) {
     return []
   }
 
-  let blackListInDB = await getAirDropBlackListInDB();
-  if(blackListInDB.includes(addr)){
-    console.log("liveAirdropLog block(db) addr:", addr);
-    return []
-  }
-
   let sql = 'insert into live_airdrop_log(addr, startTs, endTs, betAmount, adAmount) values (?,?,?,?,?);';
   let res = await db.exec(sql, [addr, startTs, endTs, betAmount, adAmount]);
   console.log("liveAirdropLog drop to addr:", addr);
