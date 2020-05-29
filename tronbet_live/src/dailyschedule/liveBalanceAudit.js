@@ -17,7 +17,7 @@ let batchSize=50;
 /*
     那个uid开始
  */
-let startUid=43073;
+let startUid=3073;
 
 /*
     用户余额-计算的余额 允许的最大偏向值
@@ -71,7 +71,7 @@ const queryLiveBalanceAndCalcBalance = async function (addresses) {
             ) as info group by addr`
 
     const data = await db.query(sql, [addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses])
-    console.log("%s queryLiveBalanceAndCalcBalance success, live_balance: %d, calc_balance: %d",new Date().toUTCString(), data[0].live_balance, data[0].calc_balance)
+    console.log(data); 
     return data
 }
 /*
@@ -133,6 +133,7 @@ const doBatchUpdate = async function(list){
                 il.push(tmp)
             }
         });
+	console.log(il);
         let sql="insert into tron_live.live_balance_audit (addr, live_balance, calc_balance, flag) values ? on duplicate key update flag=values(flag),live_balance=values(live_balance),calc_balance=values(calc_balance)";
         await db.query(sql, [il]);
 	if(cleanAddrs.length==0){
