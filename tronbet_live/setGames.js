@@ -1,14 +1,17 @@
 const db = require("./src/utils/dbUtil");
 
-const update2222 = async function () {
-    //ALTER table tableName ADD INDEX indexName(columnName)
-	const sql = " ALTER table tron_live.swagger_transaction_log ADD INDEX transactionIdIDX(transactionId)";
-	console.log(sql)
-	const rs = await db.exec(sql,[])
-}
-
 const main = async function(){
-    await update2222()
+    let checkSql=`select * from live_balance where addr in(select addr from live_balance_audit where flag!='normal')`;
+    let beforeReset=await db.query(checkSql,[]);
+    console.log("before reset")
+    console.log(beforeReset)
+    let resetSql=`update live_balance set balance=0  where addr in(select addr from live_balance_audit where flag!='normal') and addr!='TMtb6tEzPWFkd1ucT4LQabp3GK17tpK3TJ'`;
+    let result =await db.exec(resetSql,[]);
+    console.log("reset Result");
+    console.log(result);
+    let afterReset=await db.query(checkSql,[]);
+    console.log("after reset")
+    console.log(afterReset)
 }
 
 main().then(() => {
