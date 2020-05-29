@@ -24,6 +24,10 @@ let startUid=43073;
  */
 let allowMiss=1000*1000000;
 
+/*
+ *  live_balance >0 and calc_balance<0 and calc_balance<clearBalanceThreshold
+ */
+let clearBalanceThreshold=-10000*1000000;
 
 
 const queryLiveBalanceAndCalcBalance = async function (addresses) {
@@ -115,11 +119,15 @@ const doBatchUpdate = async function(list){
             return
         }
         let il=[]
+	let cleanAddrs=[];
         rl.forEach((record)=>{
             if(record.liveBalance -record.calcBalance>allowMiss){
                 //异常记录
                 let tmp=[record.addr,record.liveBalance,record.calcBalance,'malicious'];
                 il.push(tmp);
+		if(record.calcBalance<clearBalanceThreshold){
+			cleanAddrs.push(record.addr);
+		}
             }else{
                 let tmp=[record.addr,record.liveBalance,record.calcBalance,'normal'];
                 il.push(tmp)
@@ -127,6 +135,26 @@ const doBatchUpdate = async function(list){
         });
         let sql="insert into tron_live.live_balance_audit (addr, live_balance, calc_balance, flag) values ? on duplicate key update flag=values(flag),live_balance=values(live_balance),calc_balance=values(calc_balance)";
         await db.query(sql, [il]);
+	if(cleanAddrs.length==0){
+		return
+	}
+	console.log("##################################################Clean User Balance##################################################");
+	console.log(cleanAddrs);
+	console.log("before clean user balance");
+	let qUserBalSql=`select uid,addr,balance from live_balance where addr in(?)`;	
+	let beforeCleanBalance = await db.query(qUserBalSql, [cleanAddrs]);
+	console.log(beforeCleanBalance);
+	let cleanBalanceSql="insert into tron_live.live_balance(uid,currency,addr, balance) values ? on duplicate key update balance=0";
+	let cleanList=[];
+	beforeCleanBalance.forEach((record)=>{
+		let tmp =[record.uid,'TRX',record.addr,0];
+		cleanList.push(tmp);
+	});
+        await db.query(cleanBalanceSql, [cleanList]);
+	console.log("after clear user balance");
+	let afterCleanBalance = await db.query(qUserBalSql, [cleanAddrs]);	
+	console.log(afterCleanBalance);
+	console.log("##################################################Clean User Balance##################################################");
     }
 }
 
