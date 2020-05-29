@@ -2,6 +2,16 @@ const db = require('../utils/dbUtil');
 const _ = require('lodash')._;
 const airBlackList = require("../configs/aridropBlackList")
 
+async function isInAirDropBlackListInDB(addr) {
+  let sql = `select addr from tron_live.live_balance_audit where addr = ? and flag = 'malicious'`;
+  let res = await db.exec(sql, [addr]);
+  if (res && res.length > 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 async function getLiveAirdropData(startTs, endTs) {
   let sql = `select addr, sum(Amount) Amount from (
   
@@ -35,6 +45,7 @@ async function getLiveAirdropData(startTs, endTs) {
     // add black filer
     console.log("addata_res---->",res.length)
     let data = res.filter(e=>!airBlackList.includes(String(e.addr).trim()))
+    data = res.filter(e=>!isInAirDropBlackListInDB(String(e.addr).trim()))
     console.log("addata_length---->",data.length)
     return data;
   }catch (e) {
@@ -47,11 +58,15 @@ async function getSportsAirdropData(startTs, endTs) {
     "select sum(adAmount / 1000000) Amount, addr from sports_transaction_log where ts >= ? and ts < ? and (status = 0 or status = 50 or status = 51) and (currency = 'TRX' or currency = 'USDT') group by addr";
   let res = await db.exec(sql, [(startTs - 300) * 1000, (endTs - 300) * 1000]);
   let data = res.filter(e=>!airBlackList.includes(String(e.addr).trim()))
+  data = res.filter(e=>!isInAirDropBlackListInDB(String(e.addr).trim()))
   return data;
 }
 
 async function liveAirdropLog(addr, startTs, endTs, betAmount, adAmount) {
   if(airBlackList.includes(addr)){
+    return []
+  }
+  if(isInAirDropBlackListInDB(addr)){
     return []
   }
   let sql = 'insert into live_airdrop_log(addr, startTs, endTs, betAmount, adAmount) values (?,?,?,?,?);';
