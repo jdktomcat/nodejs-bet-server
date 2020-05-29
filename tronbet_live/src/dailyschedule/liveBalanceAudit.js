@@ -3,7 +3,7 @@ const Event= require('events');
 /*
     多久跑一次任务
  */
-const duration=3*60*1000;
+const duration=2*60*1000;
 /*
     进行了多少次任务
  */
@@ -17,8 +17,8 @@ let batchSize=50;
 /*
     那个uid开始
  */
-//let startUid=43073;
-let startUid=3073;
+let startUid=43073;
+//let startUid=3073;
 
 /*
     用户余额-计算的余额 允许的最大偏向值
