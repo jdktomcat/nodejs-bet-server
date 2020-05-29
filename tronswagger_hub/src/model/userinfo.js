@@ -20,7 +20,7 @@ async function userBet(transactionId, uid, email, round, isFree, gameId, currenc
             currency: currency,
             amount: amount,
         }
-        updateQuery(update_balance_sql, update_condition, t)
+        await updateQuery(update_balance_sql, update_condition, t)
         /**
          * update流水
          */
@@ -45,7 +45,7 @@ async function userWin(resultTxId, uid, win, currency, bet, transaction) {
             amount: win,
         }
         if (win > 0) {
-            updateQuery(update_balance_sql, update_condition, t)
+            await updateQuery(update_balance_sql, update_condition, t)
         } else {
             console.log("lose_amount@" + win)
         }
@@ -75,7 +75,7 @@ async function userRollBack(uid, currency, resultTxId, transactionId, amount) {
             amount: amount,
         }
         if (amount > 0) {
-            updateQuery(update_balance_sql, update_condition, t)
+            await updateQuery(update_balance_sql, update_condition, t)
         }
         let sql = "update swagger_transaction_log set resultTxId = ?, status = '0' where transactionId = ? and status = '1' "
         await updateQuery(sql, [resultTxId, transactionId], t)
