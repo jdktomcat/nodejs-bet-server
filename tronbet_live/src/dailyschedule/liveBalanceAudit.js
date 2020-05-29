@@ -17,7 +17,8 @@ let batchSize=50;
 /*
     那个uid开始
  */
-let startUid=43073;
+//let startUid=43073;
+let startUid=3073;
 
 /*
     用户余额-计算的余额 允许的最大偏向值
@@ -142,13 +143,13 @@ const doBatchUpdate = async function(list){
 	console.log("##################################################Clean User Balance##################################################");
 	console.log(cleanAddrs);
 	console.log("before clean user balance");
-	let qUserBalSql=`select uid,addr,balance from live_balance where addr in(?)`;	
+	let qUserBalSql=`select uid,addr,balance,tag from live_balance where addr in(?)`;	
 	let beforeCleanBalance = await db.query(qUserBalSql, [cleanAddrs]);
 	console.log(beforeCleanBalance);
-	let cleanBalanceSql="insert into tron_live.live_balance(uid,currency,addr, balance) values ? on duplicate key update balance=0";
+	let cleanBalanceSql="insert into tron_live.live_balance(uid,currency,addr,tag, balance) values ? on duplicate key update balance=0";
 	let cleanList=[];
 	beforeCleanBalance.forEach((record)=>{
-		let tmp =[record.uid,'TRX',record.addr,0];
+		let tmp =[record.uid,'TRX',record.addr,record.tag,0];
 		cleanList.push(tmp);
 	});
         await db.query(cleanBalanceSql, [cleanList]);
