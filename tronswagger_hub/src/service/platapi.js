@@ -17,6 +17,7 @@ let LocalCurrency = "TRX"
 
 function sendMsg2Client(ctx, result) {
     console.log("response_data is ", result)
+    console.log(new Date().toJSON() + "addr@" + result.user + "@balance@" + result.balance / 1e5 + "@TRX")
     ctx.body = result
 }
 
@@ -158,7 +159,7 @@ async function bet(ctx) {
     if (bet.length > 30) bet = bet.slice(0, 30)
     //
     let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId + "_result")
-    if(transactionByResultTxId.length > 0){
+    if (transactionByResultTxId.length > 0) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION'})
     }
 
@@ -225,7 +226,7 @@ async function win(ctx) {
     }
     //
     let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId)
-    if(transactionByResultTxId.length > 0){
+    if (transactionByResultTxId.length > 0) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION'})
     }
     //
@@ -235,7 +236,7 @@ async function win(ctx) {
     }
     console.log(`${account[0].email} win ${amount} @ ${betTxId}, winTransaction: ${transactionId} `)
     //
-    await userinfo.userWin(transactionId, account[0].uid, amount, currency,bet, transaction[0])
+    await userinfo.userWin(transactionId, account[0].uid, amount, currency, bet, transaction[0])
     //
     let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
     return sendMsg2Client(ctx, {
@@ -279,7 +280,7 @@ async function rollback(ctx) {
     }
     //
     let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId)
-    if(transactionByResultTxId.length > 0){
+    if (transactionByResultTxId.length > 0) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION'})
     }
     //
