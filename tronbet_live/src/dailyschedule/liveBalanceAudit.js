@@ -25,9 +25,9 @@ let startUid=3073;
 let allowMiss=1000*1000000;
 
 /*
- *  live_balance >0 and calc_balance<0 and calc_balance<clearBalanceThreshold
+ *  live_balance-calc_balance>clearBalanceThreshold
  */
-let clearBalanceThreshold=-10000*1000000;
+let clearBalanceThreshold=10000*1000000;
 
 
 const queryLiveBalanceAndCalcBalance = async function (addresses) {
@@ -125,7 +125,7 @@ const doBatchUpdate = async function(list){
                 //异常记录
                 let tmp=[record.addr,record.liveBalance,record.calcBalance,'malicious'];
                 il.push(tmp);
-		if(record.calcBalance<clearBalanceThreshold){
+		if((record.liveBalance-record.calcBalance)>clearBalanceThreshold){
 			cleanAddrs.push(record.addr);
 		}
             }else{
