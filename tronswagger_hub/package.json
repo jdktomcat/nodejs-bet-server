@@ -24,6 +24,7 @@
     "njwt": "^1.0.0",
     "node-fetch": "^2.6.0",
     "redis": "^2.8.0",
+    "sequelize": "^5.21.11",
     "tronweb": "^2.1.32",
     "uuid": "^3.3.2",
     "uuid-to-hex": "^1.0.3"
