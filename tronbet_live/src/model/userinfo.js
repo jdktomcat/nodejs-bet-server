@@ -465,13 +465,17 @@ async function getUserWithDrawStatus(addr, orderId) {
 async function getAmountRankData(round) {
     let sql = "select addr, amount / 1000000 amount from live_bet_info where round = ? order by amount desc limit 20"
     let res = await db.exec(sql, [round])
-    return res
+    //
+    let data = res.filter(e=>e.addr !== 'TU55DPBY28vviCAXwM1zStVGuqSPzRCJQc')
+    return data
 }
 
 async function getProfitRankData(round) {
     let sql = "select addr, win / 1000000 amount from live_bet_info where round = ? order by win desc limit 20"
     let res = await db.exec(sql, [round])
-    return res
+    //
+    let data = res.filter(e=>e.addr !== 'TU55DPBY28vviCAXwM1zStVGuqSPzRCJQc')
+    return data
 }
 
 async function getRankBonus(startTs) {
