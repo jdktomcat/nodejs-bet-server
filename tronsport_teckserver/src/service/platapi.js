@@ -92,7 +92,6 @@ async function identify(ctx) {
   let querys = ctx.request.query;
 
   let jwtToken = params.payload;
-
   let key = querys.key;
   let ip = querys.ip;
   let uacode = querys.uacode;
@@ -126,7 +125,6 @@ async function identify(ctx) {
         isCashout = true;
       }
     }
-
     let result = {
       user_id: user[0].email,
       username: user[0].nickName || user[0].email,
@@ -178,7 +176,7 @@ async function betMake(ctx) {
     let user = await userinfo.getAccountBySportsSessionId(sessionId);
     if (_.isEmpty(user)) return sendErrorMessage2Client(ctx, 400, 2004);
     let userBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, currency);
-    console.log(`buy_before_balance is ${user[0].uid}@${userBalance}`)
+    // console.log(`buy_before_balance is ${user[0].uid}@${userBalance}`)
     if (userBalance < fromCpAmount(currency, amount)) return sendErrorMessage2Client(ctx, 400, 2001); //余额不足
 
     let price = await userinfo.getTRXPrice(currency);
@@ -247,49 +245,48 @@ async function betMake(ctx) {
       console.log("adAmount", config.addition.RATE, transactionParams.adAmount);    
     }
 
-    let conn = null;
-
-    try {
-      conn = await db.getConnection();
-      if (conn == null) {
-        return await sendErrorMessage2Client(ctx, 403, 204);
-      }
-      conn.beginTransaction();
-      await userinfo.userBet(transactionParams, betLogParams, conn);
-
-      if(odds >= 2){
-        // console.log("amount", transactionParams.amount)
-        sendGameMsg(transactionParams.addr, new Date().getTime(), transactionParams.amount / 1000000, transactionParams.currency);
-      }
-
-      conn.commit();
-    } catch (error) {
-      console.log('======================rollback=======================');
-      logger.info(error);
-      if (conn) conn.rollback();
-      if (conn) conn.release();
-      if (error.code === 'ER_DUP_ENTRY') {
-        let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, currency);
-
-        let result = {
-          id: datas.transaction.id,
-          ext_transaction_id: datas.transaction.id,
-          parent_transaction_id: null,
-          user_id: addr,
-          operation: 'bet',
-          amount: datas.amount,
-          currency: datas.currency,
-          balance: toCpAmount(datas.currency, Math.floor(newBalance * 1e2))
-        };
-        return sendSuccessMessage2Client(ctx, 200, result);
-      }
-      return await sendErrorMessage2Client(ctx, 400, 2004);
-    } finally {
-      if (conn) conn.release();
+    // let conn = null;
+    //
+    // try {
+    //   conn = await db.getConnection();
+    //   if (conn == null) {
+    //     return await sendErrorMessage2Client(ctx, 403, 204);
+    //   }
+    //   conn.beginTransaction();
+    await userinfo.userBet(transactionParams, betLogParams);
+    if(odds >= 2){
+      // console.log("amount", transactionParams.amount)
+      sendGameMsg(transactionParams.addr, new Date().getTime(), transactionParams.amount / 1000000, transactionParams.currency);
     }
+    //
+    //   conn.commit();
+    // } catch (error) {
+    //   console.log('======================rollback=======================');
+    //   logger.info(error);
+    //   if (conn) conn.rollback();
+    //   if (conn) conn.release();
+    //   if (error.code === 'ER_DUP_ENTRY') {
+    //     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, currency);
+    //
+    //     let result = {
+    //       id: datas.transaction.id,
+    //       ext_transaction_id: datas.transaction.id,
+    //       parent_transaction_id: null,
+    //       user_id: addr,
+    //       operation: 'bet',
+    //       amount: datas.amount,
+    //       currency: datas.currency,
+    //       balance: toCpAmount(datas.currency, Math.floor(newBalance * 1e2))
+    //     };
+    //     return sendSuccessMessage2Client(ctx, 200, result);
+    //   }
+    //   return await sendErrorMessage2Client(ctx, 400, 2004);
+    // } finally {
+    //   if (conn) conn.release();
+    // }
 
     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, currency);
-
+    console.log(`balance_mark: bet, ${user[0].uid}_before_trx_or_usdt is ${userBalance},after is ${newBalance}`)
     let result = {
       id: datas.transaction.id,
       ext_transaction_id: datas.transaction.id,
@@ -385,26 +382,27 @@ async function betRefund(ctx) {
     if (_.isEmpty(user)) return sendErrorMessage2Client(ctx, 400, 2004);
     transactionParams.uid = user[0].uid;
 
-    let conn = null;
-    try {
-      conn = await db.getConnection();
-      if (conn == null) {
-        return await sendErrorMessage2Client(ctx, 403, 204);
-      }
-      conn.beginTransaction();
-      await userinfo.userRefund(transactionParams, conn);
-      conn.commit();
-    } catch (error) {
-      console.log('======================rollback=======================');
-      logger.info(error);
-      if (conn) conn.rollback();
-      if (conn) conn.release();
-      return await sendErrorMessage2Client(ctx, 400, 2004);
-    } finally {
-      if (conn) conn.release();
-    }
+    // let conn = null;
+    // try {
+    //   conn = await db.getConnection();
+    //   if (conn == null) {
+    //     return await sendErrorMessage2Client(ctx, 403, 204);
+    //   }
+    //   conn.beginTransaction();
+    await userinfo.userRefund(transactionParams);
+    //   conn.commit();
+    // } catch (error) {
+    //   console.log('======================rollback=======================');
+    //   logger.info(error);
+    //   if (conn) conn.rollback();
+    //   if (conn) conn.release();
+    //   return await sendErrorMessage2Client(ctx, 400, 2004);
+    // } finally {
+    //   if (conn) conn.release();
+    // }
 
     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
+    console.log(`balance_mark: refund, ${user[0].uid}_before_trx_or_usdt after is ${newBalance}`)
     let result = {
       id: datas.transaction.id,
       ext_transaction_id: datas.transaction.id,
@@ -481,40 +479,41 @@ async function betWin(ctx) {
       return sendErrorMessage2Client(ctx, 400, 2004);
     }
 
-    let conn = null;
-    try {
-      conn = await db.getConnection();
-      if (conn == null) {
-        return await sendErrorMessage2Client(ctx, 403, 204);
-      }
-      conn.beginTransaction();
-      await userinfo.userWin(transactionParams, conn);
-      conn.commit();
-    } catch (error) {
-      console.log('======================rollback=======================');
-      logger.info(error);
-      if (conn) conn.rollback();
-      if (conn) conn.release();
-      if (error.code === 'ER_DUP_ENTRY') {
-        let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
-        let result = {
-          id: datas.transaction.id,
-          ext_transaction_id: datas.transaction.id,
-          parent_transaction_id: datas.bet_transaction_id,
-          user_id: transactionParams.addr,
-          operation: 'win',
-          amount: transactionParams.amount,
-          currency: transactionParams.currency,
-          balance: toCpAmount(transactionParams.currency, Math.floor(newBalance * 1e2))
-        };
-        return sendSuccessMessage2Client(ctx, 200, result);
-      }
-      return await sendErrorMessage2Client(ctx, 400, 2004);
-    } finally {
-      if (conn) conn.release();
-    }
+    // let conn = null;
+    // try {
+    //   conn = await db.getConnection();
+    //   if (conn == null) {
+    //     return await sendErrorMessage2Client(ctx, 403, 204);
+    //   }
+    //   conn.beginTransaction();
+    await userinfo.userWin(transactionParams);
+    //   conn.commit();
+    // } catch (error) {
+    //   console.log('======================rollback=======================');
+    //   logger.info(error);
+    //   if (conn) conn.rollback();
+    //   if (conn) conn.release();
+    //   if (error.code === 'ER_DUP_ENTRY') {
+    //     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
+    //     let result = {
+    //       id: datas.transaction.id,
+    //       ext_transaction_id: datas.transaction.id,
+    //       parent_transaction_id: datas.bet_transaction_id,
+    //       user_id: transactionParams.addr,
+    //       operation: 'win',
+    //       amount: transactionParams.amount,
+    //       currency: transactionParams.currency,
+    //       balance: toCpAmount(transactionParams.currency, Math.floor(newBalance * 1e2))
+    //     };
+    //     return sendSuccessMessage2Client(ctx, 200, result);
+    //   }
+    //   return await sendErrorMessage2Client(ctx, 400, 2004);
+    // } finally {
+    //   if (conn) conn.release();
+    // }
 
     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
+    console.log(`balance_mark: win, ${user[0].uid}_before_trx_or_usdt after is ${newBalance}`)
     let result = {
       id: datas.transaction.id,
       ext_transaction_id: datas.transaction.id,
@@ -575,41 +574,42 @@ async function betCancel(ctx) {
     if (_.isEmpty(user)) return sendErrorMessage2Client(ctx, 400, 2004);
     transactionParams.uid = user[0].uid;
 
-    let conn = null;
-    try {
-      conn = await db.getConnection();
-      if (conn == null) {
-        return await sendErrorMessage2Client(ctx, 403, 204);
-      }
-      conn.beginTransaction();
+    // let conn = null;
+    // try {
+    //   conn = await db.getConnection();
+    //   if (conn == null) {
+    //     return await sendErrorMessage2Client(ctx, 403, 204);
+    //   }
+    //   conn.beginTransaction();
       console.log(transactionParams);
-      await userinfo.userCancel(transactionParams, conn);
-      conn.commit();
-    } catch (error) {
-      console.log('======================rollback=======================');
-      logger.info(error);
-      if (conn) conn.rollback();
-      if (conn) conn.release();
-      if (error.code === 'ER_DUP_ENTRY') {
-        let newBalance = await userinfo.getUserBalance(transactionParams.addr, transactionParams.currency);
-        let result = {
-          id: datas.transaction.id,
-          ext_transaction_id: datas.transaction.id,
-          parent_transaction_id: datas.bet_transaction_id,
-          user_id: transactionParams.addr,
-          operation: transactionParams.action,
-          amount: transactionParams.amount,
-          currency: transactionParams.currency,
-          balance: toCpAmount(transactionParams.currency, Math.floor(newBalance * 1e2))
-        };
-        return sendSuccessMessage2Client(ctx, 200, result);
-      }
-      return await sendErrorMessage2Client(ctx, 200, 2004);
-    } finally {
-      if (conn) conn.release();
-    }
+      await userinfo.userCancel(transactionParams);
+    //   conn.commit();
+    // } catch (error) {
+    //   console.log('======================rollback=======================');
+    //   logger.info(error);
+    //   if (conn) conn.rollback();
+    //   if (conn) conn.release();
+    //   if (error.code === 'ER_DUP_ENTRY') {
+    //     let newBalance = await userinfo.getUserBalance(transactionParams.addr, transactionParams.currency);
+    //     let result = {
+    //       id: datas.transaction.id,
+    //       ext_transaction_id: datas.transaction.id,
+    //       parent_transaction_id: datas.bet_transaction_id,
+    //       user_id: transactionParams.addr,
+    //       operation: transactionParams.action,
+    //       amount: transactionParams.amount,
+    //       currency: transactionParams.currency,
+    //       balance: toCpAmount(transactionParams.currency, Math.floor(newBalance * 1e2))
+    //     };
+    //     return sendSuccessMessage2Client(ctx, 200, result);
+    //   }
+    //   return await sendErrorMessage2Client(ctx, 200, 2004);
+    // } finally {
+    //   if (conn) conn.release();
+    // }
 
     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
+    console.log(`balance_mark: cancel, ${user[0].uid}_before_trx_or_usdt after is ${newBalance}`)
     let result = {
       id: datas.transaction.id,
       ext_transaction_id: datas.transaction.id,
@@ -664,25 +664,25 @@ async function betDiscard(ctx) {
       uid: user[0].uid,
       currency : transaction[0].currency,
     };
-    let conn = null;
-    try {
-      conn = await db.getConnection();
-      if (conn == null) {
-        return await sendErrorMessage2Client(ctx, 403, 204);
-      }
-      conn.beginTransaction();
-      await userinfo.userDiscard(transactionParams, conn);
-      conn.commit();
-    } catch (error) {
-      console.log('======================rollback=======================');
-      logger.info(error);
-      if (conn) conn.rollback();
-      if (conn) conn.release();
-      if (error.code === 'ER_DUP_ENTRY') return sendSuccessMessage2Client(ctx, 200, {});
-      return await sendErrorMessage2Client(ctx, 400, 2004);
-    } finally {
-      if (conn) conn.release();
-    }
+    // let conn = null;
+    // try {
+    //   conn = await db.getConnection();
+    //   if (conn == null) {
+    //     return await sendErrorMessage2Client(ctx, 403, 204);
+    //   }
+    //   conn.beginTransaction();
+      await userinfo.userDiscard(transactionParams);
+    //   conn.commit();
+    // } catch (error) {
+    //   console.log('======================rollback=======================');
+    //   logger.info(error);
+    //   if (conn) conn.rollback();
+    //   if (conn) conn.release();
+    //   if (error.code === 'ER_DUP_ENTRY') return sendSuccessMessage2Client(ctx, 200, {});
+    //   return await sendErrorMessage2Client(ctx, 400, 2004);
+    // } finally {
+    //   if (conn) conn.release();
+    // }
     return sendErrorMessage2Client(ctx, 200, 0);
   } catch (error) {
     console.log(error);
@@ -733,26 +733,27 @@ async function betRollback(ctx) {
     if (_.isEmpty(user)) return sendErrorMessage2Client(ctx, 400, 2004);
     transactionParams.uid = user[0].uid;
 
-    let conn = null;
-    try {
-      conn = await db.getConnection();
-      if (conn == null) {
-        return await sendErrorMessage2Client(ctx, 403, 204);
-      }
-      conn.beginTransaction();
-      await userinfo.userRollBack(transactionParams, conn);
-      conn.commit();
-    } catch (error) {
-      console.log('======================rollback=======================');
-      logger.info(error);
-      if (conn) conn.rollback();
-      if (conn) conn.release();
-      return await sendErrorMessage2Client(ctx, 400, 2004);
-    } finally {
-      if (conn) conn.release();
-    }
+    // let conn = null;
+    // try {
+    //   conn = await db.getConnection();
+    //   if (conn == null) {
+    //     return await sendErrorMessage2Client(ctx, 403, 204);
+    //   }
+    //   conn.beginTransaction();
+    await userinfo.userRollBack(transactionParams);
+    //   conn.commit();
+    // } catch (error) {
+    //   console.log('======================rollback=======================');
+    //   logger.info(error);
+    //   if (conn) conn.rollback();
+    //   if (conn) conn.release();
+    //   return await sendErrorMessage2Client(ctx, 400, 2004);
+    // } finally {
+    //   if (conn) conn.release();
+    // }
 
     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
+    console.log(`balance_mark: rollback, ${user[0].uid}_before_trx_or_usdt after is ${newBalance}`)
     let result = {
       id: datas.transaction.id,
       ext_transaction_id: datas.transaction.id,
