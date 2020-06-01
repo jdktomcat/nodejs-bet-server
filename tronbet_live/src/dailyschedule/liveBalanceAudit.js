@@ -46,6 +46,9 @@ const queryLiveBalanceAndCalcBalance = async function (addresses) {
                 select 0 as live_balance, 0 as deposit, sum(amount) as withdraw, 0 as amount, 0 as win,addr
                     from tron_live.live_cb_withdraw_log where addr in (?) and currency = 'trx' and status = 1 group by addr
                 union all
+                select 0 as live_balance, sum(offset) as deposit, 0 as withdraw, 0 as amount, 0 as win,addr
+                    from tron_live.live_balance_audit_offset where addr in (?) group by addr
+                union all
                 select 0 as live_balance, 0 as deposit, 0 as withdraw, sum(total.amount) as amount, sum(total.win) as win,addr from
                 (
                     select sum(em.amount) as amount, sum(em.win) as win,addr  from
@@ -71,7 +74,7 @@ const queryLiveBalanceAndCalcBalance = async function (addresses) {
                 )  as total group by addr
             ) as info group by addr`
 
-    const data = await db.query(sql, [addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses])
+    const data = await db.query(sql, [addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses])
     console.log(data); 
     return data
 }
@@ -90,7 +93,7 @@ const queryNewAccounts =async function(){
  */
 const queryBalanceChangeAccounts =async function(){
     let params =['TRX',startUid,0]
-    let sql="select * from ( select * from live_balance where currency=? and uid>? and balance>?) a inner join (select * from live_balance_audit where flag='normal') b on a.addr=b.addr and a.balance!=b.live_balance"
+    let sql="select * from ( select * from live_balance where currency=? and uid>? and balance>?) a inner join (select * from live_balance_audit) b on a.addr=b.addr and a.balance!=b.live_balance"
     let result=await db.query(sql,params);
     return result;
 }
