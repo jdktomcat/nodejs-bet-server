@@ -176,7 +176,7 @@ async function betMake(ctx) {
     let user = await userinfo.getAccountBySportsSessionId(sessionId);
     if (_.isEmpty(user)) return sendErrorMessage2Client(ctx, 400, 2004);
     let userBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, currency);
-    console.log(`buy_before_balance is ${user[0].uid}@${userBalance}`)
+    // console.log(`buy_before_balance is ${user[0].uid}@${userBalance}`)
     if (userBalance < fromCpAmount(currency, amount)) return sendErrorMessage2Client(ctx, 400, 2001); //余额不足
 
     let price = await userinfo.getTRXPrice(currency);
@@ -286,7 +286,7 @@ async function betMake(ctx) {
     // }
 
     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, currency);
-
+    console.log(`balance_mark: bet, ${user[0].uid}_before_trx_or_usdt is ${userBalance},after is ${newBalance}`)
     let result = {
       id: datas.transaction.id,
       ext_transaction_id: datas.transaction.id,
@@ -402,6 +402,7 @@ async function betRefund(ctx) {
     // }
 
     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
+    console.log(`balance_mark: refund, ${user[0].uid}_before_trx_or_usdt after is ${newBalance}`)
     let result = {
       id: datas.transaction.id,
       ext_transaction_id: datas.transaction.id,
@@ -512,6 +513,7 @@ async function betWin(ctx) {
     // }
 
     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
+    console.log(`balance_mark: win, ${user[0].uid}_before_trx_or_usdt after is ${newBalance}`)
     let result = {
       id: datas.transaction.id,
       ext_transaction_id: datas.transaction.id,
@@ -607,6 +609,7 @@ async function betCancel(ctx) {
     // }
 
     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
+    console.log(`balance_mark: cancel, ${user[0].uid}_before_trx_or_usdt after is ${newBalance}`)
     let result = {
       id: datas.transaction.id,
       ext_transaction_id: datas.transaction.id,
@@ -750,6 +753,7 @@ async function betRollback(ctx) {
     // }
 
     let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
+    console.log(`balance_mark: rollback, ${user[0].uid}_before_trx_or_usdt after is ${newBalance}`)
     let result = {
       id: datas.transaction.id,
       ext_transaction_id: datas.transaction.id,
