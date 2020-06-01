@@ -1,20 +1,19 @@
-const db = require('../utils/dbUtil')
 const config = require('../configs/config')
 const _ = require('lodash')._
 const jwt = require('jsonwebtoken');
-const live_wallet = require('./../utils/live_wallet');
+const {sequelize, updateQuery, rawQuery} = require('./../utils/mysqlUtils');
 
 async function getBalance(params) {
     const {addr, currency} = params
     const sqlUid = 'select uid from tron_live.live_account where email = ?'
-    let uidArray = await db.exec(sqlUid, [addr])
+    let uidArray = await rawQuery(sqlUid, [addr])
     if (uidArray.length === 0) {
         throw new Error("user not found")
     }
     const uid = uidArray[0].uid
     //
     let sql = "select round(balance / 1000000, 3) as balance from tron_live.live_balance where uid = ? and currency = ? and addr = ?"
-    let res = await db.exec(sql, [uid, currency, addr])
+    let res = await rawQuery(sql, [uid, currency, addr])
     console.log("rs is ", res)
     if (res.length === 0) {
         throw new Error("user not found")
@@ -51,14 +50,14 @@ function checkToken(token) {
 async function parseToken(tokenInfo, currency) {
     const {addr} = tokenInfo
     const sqlUid = 'select uid from tron_live.live_account where email = ?'
-    let uidArray = await db.exec(sqlUid, [addr])
+    let uidArray = await rawQuery(sqlUid, [addr])
     if (uidArray.length === 0) {
         throw new Error("user not found")
     }
     const uid = uidArray[0].uid
     //
     let sql = "select * from tron_live.live_balance where uid = ? and addr = ? and currency = ?"
-    let res = await db.exec(sql, [uid, addr, currency])
+    let res = await rawQuery(sql, [uid, addr, currency])
     let notExist = false
     let balance = 0
     if (res.length !== 1) {
@@ -71,68 +70,57 @@ async function parseToken(tokenInfo, currency) {
 }
 
 async function userAction(params) {
-    //update balance
-    if (params.type === 'bet') {
-        await live_wallet.decreaseBalance({
-            addr: params.addr,
-            currency: params.currency,
-            amount: params.amount,
-        })
-    } else if (params.type === 'result') {
-        if(params.amount > 0){
-            await live_wallet.increaseBalance({
-                addr: params.addr,
-                currency: params.currency,
-                amount: params.amount,
-            })
+    await sequelize.transaction(async (t) => {
+        if (params.type === 'bet') {
+            let updateSql = "update live_balance set balance = balance - ? where addr = ? and currency = ?"
+            await updateQuery(updateSql, [params.amount, params.addr, params.currency], t)
+            let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, addr, uid, amount,currency,adAmount, ts) values(?,?,?,?,?,?,?,?,?,?)"
+            const sqlParam = [
+                params.transaction_id,
+                params.round_id,
+                params.game_id,
+                params.game_name,
+                params.addr,
+                params.uid,
+                params.amount,
+                params.currency,
+                params.adAmount,
+                Date.now()
+            ]
+            await updateQuery(sql, sqlParam, t)
+        } else if (params.type === 'result') {
+            if (params.amount > 0) {
+                let updateSql = "update live_balance set balance = balance + ? where addr = ? and currency = ?"
+                await updateQuery(updateSql, [params.amount, params.addr, params.currency], t)
+            }
+            let sql = "update tron_live.platipus_transaction_log set resultId = ? , win = ?, status = 2 where round_id = ? and addr = ?"
+            const sqlParam = [
+                params.transaction_id,
+                params.amount,
+                params.round_id,
+                params.addr,
+            ]
+            await updateQuery(sql, sqlParam, t)
         }
-    }
-    //
-    if (params.type === 'bet') {
-        let sql = "insert into tron_live.platipus_transaction_log(transaction_id,round_id, game_id, game_name, addr, uid, amount,currency,adAmount, ts) values(?,?,?,?,?,?,?,?,?,?)"
-        const sqlParam = [
-            params.transaction_id,
-            params.round_id,
-            params.game_id,
-            params.game_name,
-            params.addr,
-            params.uid,
-            params.amount,
-            params.currency,
-            params.adAmount,
-            Date.now()
-        ]
-        await db.exec(sql, sqlParam)
-    } else if (params.type === 'result') {
-        let sql = "update tron_live.platipus_transaction_log set resultId = ? , win = ?, status = 2 where round_id = ? and addr = ?"
-        const sqlParam = [
-            params.transaction_id,
-            params.amount,
-            params.round_id,
-            params.addr,
-        ]
-        await db.exec(sql, sqlParam)
-    }
+    })
 }
 
 
 async function rollback(params) {
-    //update balance
-    if (params.type === 'rollback' && params.amount > 0) {
-        //rollback
-        await live_wallet.increaseBalance({
-            addr: params.addr,
-            currency: params.currency,
-            amount: params.amount,
-        })
-    }
-    //
-    let sqlReset = "update tron_live.platipus_transaction_log set status = 0 where round_id = ? and addr = ?"
-    const sqlResetParam = [
-        params.round_id,
-        params.addr,
-    ]
-    await db.exec(sqlReset, sqlResetParam)
+    await sequelize.transaction(async (t) => {
+        if (params.type === 'rollback' && params.amount > 0) {
+            //rollback
+            let updateSql = "update live_balance set balance = balance + ? where addr = ? and currency = ?"
+            await updateQuery(updateSql, [params.amount, params.addr, params.currency], t)
+        }
+        //
+        let sqlReset = "update tron_live.platipus_transaction_log set status = 0 where round_id = ? and addr = ?"
+        const sqlResetParam = [
+            params.round_id,
+            params.addr,
+        ]
+        await updateQuery(sqlReset, sqlResetParam, t)
+    })
 }
 
 
@@ -142,7 +130,7 @@ async function queryTxIfExist(params) {
         params.round_id,
         params.addr,
     ]
-    const rs = await db.exec(sql, sqlResetParam)
+    const rs = await rawQuery(sql, sqlResetParam)
     if (rs.length > 0) {
         const tmp = rs[0] || {}
         const statusTmp = tmp.status || '-1'

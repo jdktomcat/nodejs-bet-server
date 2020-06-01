@@ -34,31 +34,31 @@ const parseParams = function (params) {
 
 class opBalance {
 
-    static async query(params) {
-        const condition = {
-            where: params
-        }
-        const data = await model.getOne(condition)
-        if(['TRX','USDT'].includes(params.currency)){
-            data.balance = data.balance / 1e6
-        }else {
-            // muti currency
-            data.balance = data.balance / 1e9
-        }
-        return data
-    }
-
-    static async addBalance(rawParams) {
-        const params = parseParams(rawParams)
-        const msg = await model.addBalance(params)
-        return msg
-    }
-
-    static async decreaseBalance(rawParams) {
-        const params = parseParams(rawParams)
-        const msg = await model.decreaseBalance(params)
-        return msg
-    }
+    // static async query(params) {
+    //     const condition = {
+    //         where: params
+    //     }
+    //     const data = await model.getOne(condition)
+    //     if(['TRX','USDT'].includes(params.currency)){
+    //         data.balance = data.balance / 1e6
+    //     }else {
+    //         // muti currency
+    //         data.balance = data.balance / 1e9
+    //     }
+    //     return data
+    // }
+    //
+    // static async addBalance(rawParams) {
+    //     const params = parseParams(rawParams)
+    //     const msg = await model.addBalance(params)
+    //     return msg
+    // }
+    //
+    // static async decreaseBalance(rawParams) {
+    //     const params = parseParams(rawParams)
+    //     const msg = await model.decreaseBalance(params)
+    //     return msg
+    // }
 
 }
 
