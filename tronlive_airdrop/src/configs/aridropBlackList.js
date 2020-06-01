@@ -2,7 +2,7 @@ module.exports = [
     'TJ7E7A7hhJU5w6nsDBFVL9zpUCoChnhQiw',
     // 'TUegyE57yFmju8WQoQDsn9gAef68Mh4bPs', //1300w ,但是已经清零
     'TUpZbBqWFDe3pvkcVH9ugdPcqCjzC6edGa',
-    'TSzbuy1vfKqgWwFSX3XZRNSBQ9gYbiGoxf',
+    // 'TSzbuy1vfKqgWwFSX3XZRNSBQ9gYbiGoxf',  // 2020-06-01 移除
     'TYTMdWAsRqRw1vhSwbAbKMZAhR3Nx7TD3d',
     // 'TQuSYAXY8xr6xcEKNxCnTPsx5VW6f89mWn',
     // 'TSgL2AbnG1TVUabQFgFPZQy2jKUzJAysZb',
