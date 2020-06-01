@@ -46,7 +46,7 @@ const queryLiveBalanceAndCalcBalance = async function (addresses) {
                 select 0 as live_balance, 0 as deposit, sum(amount) as withdraw, 0 as amount, 0 as win,addr
                     from tron_live.live_cb_withdraw_log where addr in (?) and currency = 'trx' and status = 1 group by addr
                 union all
-                select 0 as live_balance, offset as deposit, 0 as withdraw, 0 as amount, 0 as win,addr
+                select 0 as live_balance, sum(offset) as deposit, 0 as withdraw, 0 as amount, 0 as win,addr
                     from tron_live.live_balance_audit_offset where addr in (?) group by addr
                 union all
                 select 0 as live_balance, 0 as deposit, 0 as withdraw, sum(total.amount) as amount, sum(total.win) as win,addr from
