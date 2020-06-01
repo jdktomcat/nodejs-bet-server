@@ -12,7 +12,7 @@ let times=1;
 /*
      每次批量任务的大小
  */
-let batchSize=50;
+let batchSize=300;
 
 /*
     那个uid开始
