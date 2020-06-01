@@ -13,7 +13,7 @@ async function getUserByKey(key) {
 async function updateSportsSessionByKey(sessionId, key) {
     let now = new Date().getTime();
     let sql = 'update live_account set sportsSession = ? where userKey = ?';
-    let res = await rawQuery(sql, [sessionId, key]);
+    let res = await updateQuery(sql, [sessionId, key]);
     return res;
 }
 
@@ -43,6 +43,7 @@ async function userBet(tsp, blp) {
     const key = "sport_user:bet:" + tsp.uid
     await lockTxByKey(key)
     //
+
     try {
         await sequelize.transaction(async (t) => {
             //update balance
