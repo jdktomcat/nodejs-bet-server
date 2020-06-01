@@ -105,6 +105,10 @@ const testAuditBatch = async function(){
     await testQueryBatch(addrs, 200);
     await testQueryBatch(addrs, 250);
     await testQueryBatch(addrs, 300);
+    await testQueryBatch(addrs, 350);
+    await testQueryBatch(addrs, 400);
+    await testQueryBatch(addrs, 450);
+    await testQueryBatch(addrs, 500);
 }
 
 testAuditBatch().then(() => {
