@@ -23,13 +23,28 @@ app.use(bodyParser({
 }))
 
 app.use(async (ctx, next) => {
-    ctx.set('Access-Control-Allow-Origin', '*')
-    await next()
-});
+    try {
+        ctx.set('Access-Control-Allow-Origin', '*');
+        ctx.set('Access-Control-Allow-Credentials', true);
+        ctx.set('Access-Control-Allow-Headers', 'Content-Type');
+        await next()
+    } catch (e) {
+        let result = {
+            ReturnCode: 101,
+            ApiVersion: "",
+            Request: "",
+            Message: "unknown failed " + e.toString(),
+            data: {}
+        };
+        console.log("response error is ", e.toString())
+        ctx.status(200)
+        ctx.body = result
+    }
+})
 
 // 初始化路由中间件
 app.use(routers.routes()).use(routers.allowedMethods)
 
 // 监听启动端口
-app.listen( config.app.http_port, '0.0.0.0')
+app.listen(config.app.http_port, '0.0.0.0')
 console.log(`the server is start at port ${config.app.http_port}`)
