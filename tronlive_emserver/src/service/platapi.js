@@ -327,6 +327,7 @@ async function Wager(ctx) {
     user[0].uid,
     Currency,
   );
+
   // 触发活动
   sendGameMsg(AccountId, new Date().getTime(), Amount, Currency);
   Balance = await usermodel.getUserBalanceByCurrency(user[0].uid, Currency);
