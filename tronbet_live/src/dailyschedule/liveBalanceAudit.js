@@ -83,7 +83,7 @@ const queryLiveBalanceAndCalcBalance = async function (addresses) {
  */
 const queryNewAccounts =async function(){
     let params =['TRX',startUid,0]
-    let sql="select * from live_balance where currency=? and uid>? and balance>? and addr in (select addr from live_balance_audit) order by balance desc"
+    let sql="select * from live_balance where currency=? and uid>? and balance>? and addr not in(select addr from live_balance_audit) order by balance desc"
     let result=await db.query(sql,params);
     return result;
 }
