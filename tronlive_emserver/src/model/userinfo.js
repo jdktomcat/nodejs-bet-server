@@ -1,58 +1,46 @@
-const rawQuery = require('../utils/dbUtil')
+const {sequelize, rawQuery, updateQuery} = require('../utils/mysqlUtils')
 const _ = require('lodash')._
-const live_wallet = require('./../utils/live_wallet')
 
 async function userAction(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, AddsAmount, uid, currency) {
     //update balance
-    if (action === 'bet') {
-        await live_wallet.decreaseBalance({
-            uid: uid,
-            currency: currency,
-            amount: Amount * 1e6,
-        })
-    }else if (action === 'result') {
-        if(Amount > 0){
-            await live_wallet.increaseBalance({
-                uid: uid,
-                currency: currency,
-                amount: Amount * 1e6,
-            })
-        }else {
-            console.log("lost,the amount is ",Amount)
+    await sequelize.transaction(async (t) => {
+        if (action === 'bet') {
+            let updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
+            await updateQuery(updateSql, [Amount * 1e6, uid, currency], t)
+        } else if (action === 'result') {
+            if (Amount > 0) {
+                let updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
+                await updateQuery(updateSql, [Amount * 1e6, uid, currency], t)
+            } else {
+                console.log("lost,the amount is ", Amount * 1e6)
+            }
         }
-    }
-    let now = new Date().getTime()
-    let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, AddsAmount, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    let res = await rawQuery(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, '' + TransactionId, RoundStatus, Amount, Device, txId, action, now, AddsAmount, currency])
-    return res
+        let now = new Date().getTime()
+        let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, AddsAmount, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        await updateQuery(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, '' + TransactionId, RoundStatus, Amount, Device, txId, action, now, AddsAmount, currency], t)
+    })
 }
 
 async function userRollBack(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, uid, currency) {
-    if (action == 'rbbet') {
-        if(Amount > 0){
-            await live_wallet.increaseBalance({
-                uid: uid,
-                currency: currency,
-                amount: Amount * 1e6,
-            })
-        }else {
-            console.log("lost,the amount is ",Amount)
+    await sequelize.transaction(async (t) => {
+        if (action == 'rbbet') {
+            if (Amount > 0) {
+                let updateSql = "update live_balance set balance = balance + ? where uid = ? and currency = ?"
+                await updateQuery(updateSql, [Amount * 1e6, uid, currency], t)
+            } else {
+                console.log("lost,the amount is ", Amount * 1e6)
+            }
+        } else if (action == 'rbresult') {
+            let updateSql = "update live_balance set balance = balance - ? where uid = ? and currency = ?"
+            await updateQuery(updateSql, [Amount * 1e6, uid, currency], t)
         }
-    } else if (action == 'rbresult') {
-        await live_wallet.decreaseBalance({
-            uid: uid,
-            currency: currency,
-            amount: Amount * 1e6,
-        })
-    }
-    let updateStatusSql = "update live_action_log_v2 set txStatus = txStatus - 1 where addr = ? and TransactionId = ?"
-    await rawQuery(updateStatusSql, [AccountId, '' + TransactionId])
-
-    let now = new Date().getTime()
-    console.log({ AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action })
-    let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    let res = await rawQuery(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, 'rb' + TransactionId, RoundStatus, Amount, Device, txId, action, now, currency])
-    return res
+        let updateStatusSql = "update live_action_log_v2 set txStatus = txStatus - 1 where addr = ? and TransactionId = ?"
+        await updateQuery(updateStatusSql, [AccountId, '' + TransactionId], t)
+        //
+        let sql = "insert into live_action_log_v2(addr, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, ts, currency) values(?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        let res = await updateQuery(sql, [AccountId, RoundId, EMGameId, GPGameId, GPId, 'rb' + TransactionId, RoundStatus, Amount, Device, txId, action, Date.now(), currency], t)
+        return res
+    })
 }
 
 async function getTransactionById(TransactionId) {
