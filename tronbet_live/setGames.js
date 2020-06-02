@@ -65,12 +65,13 @@ const main = async function () {
                 //
                 await query_balance(addr)
                 //
-                await update_balance(addr)
                 //update 流水
                 const win = Number(balanceDict[addr]) * 1e6
                 const sql1 = `update sports_transaction_log set status = 50, win = ? where addr = ? and betslipId = ?`
                 console.log(sql1, [win, addr, betslipId])
                 await db.exec(sql1, [win, addr, betslipId])
+                //
+                await update_balance(addr)
                 //再查一次
                 await query_balance(addr)
                 console.log("\n")
