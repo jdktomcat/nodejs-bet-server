@@ -53,7 +53,7 @@ const main = async function () {
     )
     `
     let data = await db.exec(sql, []);
-    if (data.length === 0) {
+    if (data.length === 5) {
         console.log("normal")
         //
         for (let e of data) {
