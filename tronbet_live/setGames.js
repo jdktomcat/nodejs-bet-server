@@ -1,114 +1,85 @@
 const db = require("./src/utils/dbUtil");
-
-const main = async function(){
-    let checkSql=`select * from live_balance where addr in(select addr from live_balance_audit where flag!='normal')`;
-    let beforeReset=await db.query(checkSql,[]);
-    console.log("before reset")
-    console.log(beforeReset)
-    let resetSql=`update live_balance set balance=0  where addr in(select addr from live_balance_audit where flag!='normal') and addr!='TMtb6tEzPWFkd1ucT4LQabp3GK17tpK3TJ'`;
-    let result =await db.exec(resetSql,[]);
-    console.log("reset Result");
-    console.log(result);
-    let afterReset=await db.query(checkSql,[]);
-    console.log("after reset")
-    console.log(afterReset)
+// TX57b1dn4orgiAERk2xHYn5LMF9r78wDYE                        8700 TRX
+// TXATntw1udujrh58yJH1LwoJCosoKs5bpJ                           14000 TRX
+// TRYPmyHKycRvmJp5jPgGuLPDP3CjiS3Nsz                        12156 TRX
+// TBasnkGWV1ka1TxdQ5o9UEmKU1WMCa9MDC             122 TRX
+// TXzKiGvNBNXw71WQijmdzwCyEABGfQAfX8                      504 TRX
+const balanceDict = {
+    'TX57b1dn4orgiAERk2xHYn5LMF9r78wDYE': 8700,
+    'TXATntw1udujrh58yJH1LwoJCosoKs5bpJ': 14000,
+    'TRYPmyHKycRvmJp5jPgGuLPDP3CjiS3Nsz': 12156,
+    'TBasnkGWV1ka1TxdQ5o9UEmKU1WMCa9MDC': 122,
+    'TXzKiGvNBNXw71WQijmdzwCyEABGfQAfX8': 504,
 }
 
-const createTableLiveBalanceAuditOffset = async function(){
-    let sql=`
-    CREATE TABLE live_balance_audit_offset (
-        id bigint(20) NOT NULL AUTO_INCREMENT,
-        uid bigint(20) NOT NULL,
-        addr varchar(64) NOT NULL,
-        offset bigint(20) NOT NULL DEFAULT 0,
-        create_time bigint(20) NOT NULL DEFAULT 0,
-        PRIMARY KEY (id)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-    `;
-    let res=await db.query(sql,[]);
+const query_balance = async function (addr) {
+    const sql = "select * from tron_live.live_balance where addr = ? and currency = 'TRX'"
+    const params = [addr]
+    console.log(sql, params)
+    const a = await db.exec(sql, params)
+    console.log("balance info is ", a)
+    //
 }
 
-const getAddresses =async function(){
-    let params =['TRX',50000,0]
-    let sql="select addr from live_balance where currency=? and uid>? and balance>? order by balance desc limit 500"
-    let res=await db.query(sql,params);
-    if (res) {
-      return res.map(e => String(e.addr).trim());
+const update_balance = async function (addr) {
+    const balance = balanceDict[addr] || ''
+    if (balance === '') {
+        throw new Error("error " + addr)
+    }
+    const update_balance_sql = "update tron_live.live_balance set balance = balance + ? where addr = ? and currency = 'TRX'"
+    const params = [balance * 1e6, addr]
+    console.log(update_balance_sql, params)
+    await db.exec(update_balance_sql, params)
+    //
+}
+
+
+const main = async function () {
+    const ticketId = [
+        '1875329104476246017',
+        '1875450408848199683',
+        '1875522850283200514',
+        '1875373007531286529',
+        '1875009360946663425'
+    ]
+    const sql = `
+    select * from sports_transaction_log where betslipId in
+    (
+        '1875329104476246017',
+        '1875450408848199683',
+        '1875522850283200514',
+        '1875373007531286529',
+        '1875009360946663425'
+    )
+    `
+    let data = await db.exec(sql, []);
+    if (data.length === 5) {
+        console.log("normal")
+        //
+        for (let e of data) {
+            //
+            const betslipId = e.betslipId
+            const addr = e.addr
+            //
+            if (ticketId.includes(betslipId)) {
+                //
+                await query_balance(addr)
+                //
+                //update 流水
+                const win = Number(balanceDict[addr]) * 1e6
+                const sql1 = `update sports_transaction_log set status = 50, win = ? where addr = ? and betslipId = ?`
+                console.log(sql1, [win, addr, betslipId])
+                await db.exec(sql1, [win, addr, betslipId])
+                //
+                await update_balance(addr)
+                //再查一次
+                await query_balance(addr)
+                console.log("\n")
+            }
+        }
     } else {
-      return [];
+        console.log("error")
     }
-}
-
-const queryLiveBalanceAndCalcBalance = async function (addresses) {
-    let sql = `
-        select sum(info.live_balance) as liveBalance,
-            sum(info.deposit) - sum(info.withdraw) - sum(info.amount) + sum(info.win) as calcBalance,addr from
-            (
-                select sum(balance) as live_balance, 0 as deposit, 0 as withdraw, 0 as amount, 0 as win,addr
-                    from tron_live.live_balance where addr in (?) and currency = 'trx' group by addr
-                union all
-                select 0 as live_balance, sum(amount) as deposit, 0 as withdraw, 0 as amount, 0 as win,addr
-                    from tron_live.live_cb_deposit_log where addr in (?) and currency = 'trx' group by addr
-                union all
-                select 0 as live_balance, 0 as deposit, sum(amount) as withdraw, 0 as amount, 0 as win,addr
-                    from tron_live.live_cb_withdraw_log where addr in (?) and currency = 'trx' and status = 1 group by addr
-                union all
-                select 0 as live_balance, sum(offset) as deposit, 0 as withdraw, 0 as amount, 0 as win,addr
-                    from tron_live.live_balance_audit_offset where addr in (?) group by addr
-                union all
-                select 0 as live_balance, 0 as deposit, 0 as withdraw, sum(total.amount) as amount, sum(total.win) as win,addr from
-                (
-                    select sum(em.amount) as amount, sum(em.win) as win,addr  from
-                    (
-                        select cast(sum(amount) * 1000000 as unsigned) as amount, 0 as win,addr  from tron_live.live_action_log_v2
-                            where addr in(?) and currency = 'trx' and action = 'bet' and txstatus = 1 group by addr
-                        union all
-                        select 0 as amount, cast(sum(amount) * 1000000 as unsigned) as win,addr from tron_live.live_action_log_v2
-                            where addr in(?) and currency = 'trx' and action = 'result' and txstatus = 1 group by addr
-                    ) as em group by addr
-                    union all
-                    select sum(amount) as amount, sum(win) as win,email as addr
-                        from tron_live.swagger_transaction_log where email in (?) and currency = 'trx' and status = 1 group by email
-                    union all
-                    select sum(amount) as amount, sum(win) as win,addr
-                        from tron_live.sports_transaction_log where addr in (?) and currency = 'trx' and (status = 50 or status = 51) group by addr
-                    union all
-                    select sum(amount) as amount, sum(win) as win,addr
-                        from tron_live.platipus_transaction_log where addr in (?) and currency = 'trx' and status = 2 and resultId is not null group by addr
-                    union all
-                    select sum(amount) as amount, sum(win) as win,addr
-                        from tron_live.binary_transaction_log where addr in (?) and currency = 'trx' and status = 'close' group by addr
-                )  as total group by addr
-            ) as info group by addr`
-
-    const data = await db.query(sql, [addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses])
-    return data
-}
-
-
-const testQueryBatch = async function(addresses, count){
-    let start = new Date().getTime();
-    await queryLiveBalanceAndCalcBalance(addresses.slice(0, count));
-    let end = new Date().getTime();
-    console.log("testQueryBatch:"+new Date(start)+" end:"+new Date(end)+"[end-start]:"+(end-start));
-}
-
-const testAuditBatch = async function(){
-    let addrs = await getAddresses();
-    if (addrs.length < 500) {
-        console.log("addrs less than 500")
-        return
-    }
-    await testQueryBatch(addrs, 50);
-    await testQueryBatch(addrs, 100);
-    await testQueryBatch(addrs, 150);
-    await testQueryBatch(addrs, 200);
-    await testQueryBatch(addrs, 250);
-    await testQueryBatch(addrs, 300);
-    await testQueryBatch(addrs, 350);
-    await testQueryBatch(addrs, 400);
-    await testQueryBatch(addrs, 450);
-    await testQueryBatch(addrs, 500);
 }
 
 const resetBalance = async function(addr) {
