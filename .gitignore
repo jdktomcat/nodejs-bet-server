@@ -61,3 +61,14 @@ typings/
 .next
 
 *.blocknum
+
+# vim
+*.swp
+*.swo
+
+# emacs
+*~
+\#*\#
+.marked_files.el
+.counsel_ignore.el
+
