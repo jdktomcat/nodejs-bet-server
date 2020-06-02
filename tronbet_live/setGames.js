@@ -82,7 +82,25 @@ const main = async function () {
     }
 }
 
-main().then(() => {
+const resetBalance = async function(addr) {
+    let querySql=`select calc_balance from live_balance_audit where addr = ?`;
+    let query = await db.query(querySql, [addr]);
+    if (!query || query.length === 0) {
+        return
+    }
+
+    let calc_balance = query[0].calc_balance;
+    console.log("resetBalance: addr: %s, calc_balance: %d", addr, calc_balance);
+
+    let updateSql=`update live_balance set balance = ? where addr = ? and currency = 'trx'`;
+    let update = await db.query(updateSql, [calc_balance, addr]);
+    console.log("resetBalance success: addr: %s, calc_balance: %d", addr, calc_balance);
+}
+
+resetBalance('TZH9dwGW3cZ7nnkStaLDq3xiRzKQU5MGL1').then(() => {
+//testAuditBatch().then(() => {
+//createTableLiveBalanceAuditOffset().then(() => {
+// main().then(() => {
     console.log("end!")
     process.exit(0)
 }).catch(e => {
