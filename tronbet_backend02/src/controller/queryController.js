@@ -5,7 +5,7 @@ const TopGameId = require("../model/topGameId")
 const TopUser = require("../model/topUsers")
 const TransactionByAddr = require("../model/transactionByAddr")
 const transactionByAddrAndDate = require("../model/transactionByAddrAndDate")
-const dailyDAU = require("../model/dailySchedule/dailyDAU")
+const BalanceAudit = require("../model/balanceAudit")
 const ctxUtils = require("./ctxUtils")
 
 class QueryController {
@@ -142,7 +142,7 @@ class QueryController {
         const addr = ctx.query.addr
         const start = ctx.query.start
         const end = ctx.query.end
-        const data = await transactionByAddrAndDate.getData(addr,start,end)
+        const data = await transactionByAddrAndDate.getData(addr, start, end)
         ctx.body = ctxUtils.success(data)
     }
 
@@ -150,10 +150,39 @@ class QueryController {
         const addr = ctx.query.addr
         const start = ctx.query.start
         const end = ctx.query.end
-        const data = await transactionByAddrAndDate.getDataFile(addr,start,end)
+        const data = await transactionByAddrAndDate.getDataFile(addr, start, end)
         ctxUtils.file(ctx, data)
     }
 
+    /**
+     * 根据日期余额审计查询列表
+     */
+    static async getBalanceAuditList(ctx) {
+        const startDate = ctx.query.startDate
+        const endDate = ctx.query.endDate
+        const offset = ctx.query.offset
+        const limit = ctx.query.limit
+        const data = await BalanceAudit.getBalanceAuditPage(startDate, endDate, offset, limit)
+        ctx.body = ctxUtils.success(data)
+    }
+
+    /**
+     * 根据日期余额审计查询列表
+     */
+    static async fetchBalanceAudit(ctx) {
+        const addr = ctx.query.addr
+        const data = await BalanceAudit.fetchBalanceAudit(addr)
+        ctx.body = ctxUtils.success(data)
+    }
+    /**
+     * 下载根据日期查询余额信息列表
+     */
+    static async downloadBalanceAudit(ctx) {
+        const startDate = ctx.query.startDate
+        const endDate = ctx.query.endDate
+        const data = await BalanceAudit.getBalanceAuditList(startDate, endDate)
+        ctxUtils.file(ctx, data)
+    }
 }
 
 module.exports = QueryController
