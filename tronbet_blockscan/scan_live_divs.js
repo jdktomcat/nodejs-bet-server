@@ -293,7 +293,7 @@ async function saveCompleteInfo(info) {
     const number = 5 + 5 * Math.random()
     const fixNumber = Number.parseInt(number * 10000)
     let fixParams = [fixNumber,Date.now()]
-    await query(live_fix_log_sql, fixParams);
+    // await query(live_fix_log_sql, fixParams);
   } catch (error) {
     console.log(error);
     return false;
