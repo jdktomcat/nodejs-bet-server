@@ -1,6 +1,6 @@
 const {raw} = require("./utils/dbutils")
 
-const getDice = async function (addr) {
+const getDice = async function (addr, startDate, endDate) {
     const sql = `
         SELECT
             count(1) as count,
@@ -22,7 +22,7 @@ const getDice = async function (addr) {
     return results
 }
 
-const getMoon = async function (addr) {
+const getMoon = async function (addr, startDate, endDate) {
     const sql = `
         SELECT
             count(1) as count,
@@ -45,7 +45,7 @@ const getMoon = async function (addr) {
     return results
 }
 
-const getRing = async function (addr) {
+const getRing = async function (addr, startDate, endDate) {
     const sql = `
     SELECT
         count(1) as count,
@@ -67,7 +67,7 @@ const getRing = async function (addr) {
     return results
 }
 
-const getDuel = async function (addr) {
+const getDuel = async function (addr, startDate, endDate) {
     const sql = `
 SELECT
     count(1) as count,
@@ -137,7 +137,7 @@ WHERE
     return o
 }
 
-const getEM = async function (addr) {
+const getEM = async function (addr, startDate, endDate) {
     const sql = `
         select
             sum(g.count) as count,
@@ -177,7 +177,13 @@ const getEM = async function (addr) {
 }
 
 
-const getNewEM = async function (addr) {
+const getNewEM = async function (addr, startDate, endDate) {
+    let sql_piece = ''
+    if (startDate !== '' && endDate !== '') {
+        sql_piece = "\n" + ' and ts >= ? AND ts < ? ' + "\n"
+    }
+    const start1 = new Date(startDate).getTime()
+    const end1 = new Date(endDate).getTime()
     const sql = `
 select
     sum(g.count) as count,
@@ -195,7 +201,7 @@ select
     from
         tron_live.live_action_log_v2 as a
     where
-        a.addr = ?
+        a.addr = ?  ${sql_piece}
         and action = 'bet'
         and txstatus = 1
         and currency = ?
@@ -208,16 +214,22 @@ select
     from
         tron_live.live_action_log_v2 as a
     where
-        a.addr = ?
+        a.addr = ? ${sql_piece}
         and action = 'result'
         and txstatus = 1
         and currency = ?
 ) as g
     `
-    const currency = ['TRX', 'BTC', 'ETH', 'LTC', 'BNB']
+    const currency = ['TRX', 'USDT']
     let a = []
     for (let e of currency) {
-        const params = [addr, e, addr, e]
+        let params = [addr, e, addr, e]
+        if (startDate !== '' && endDate !== '') {
+            params = [
+                addr, start1, end1, e,
+                addr, start1, end1, e,
+            ]
+        }
         const data = await raw(sql, params)
         data.forEach(d => d.currency = e)
         a = a.concat(data)
@@ -227,7 +239,14 @@ select
 }
 
 
-const getHub88 = async function (addr) {
+const getHub88 = async function (addr, startDate, endDate) {
+    let sql_piece = ''
+    if (startDate !== '' && endDate !== '') {
+        sql_piece = "\n" + ' and ts >= ? AND ts < ? ' + "\n"
+    }
+    const start1 = new Date(startDate).getTime()
+    const end1 = new Date(endDate).getTime()
+    //
     const sql = `
         SELECT
             count(1) as count,
@@ -239,12 +258,17 @@ const getHub88 = async function (addr) {
         WHERE
             a.email = ?
             AND status = 1
-            AND currency = ?
+            AND currency = ?   ${sql_piece}
     `
     const currency = ['TRX', 'BTC', 'ETH', 'LTC', 'BNB']
     let a = []
     for (let e of currency) {
-        const params = [addr, e]
+        let params = [addr, e]
+        if (startDate !== '' && endDate !== '') {
+            params = [
+                addr, e, start1, end1,
+            ]
+        }
         const data = await raw(sql, params)
         data.forEach(d => d.currency = e)
         a = a.concat(data)
@@ -254,7 +278,13 @@ const getHub88 = async function (addr) {
 
 }
 
-const getSport = async function (addr) {
+const getSport = async function (addr, startDate, endDate) {
+    let sql_piece = ''
+    if (startDate !== '' && endDate !== '') {
+        sql_piece = "\n" + ' and ts >= ? AND ts < ? ' + "\n"
+    }
+    const start1 = new Date(startDate).getTime()
+    const end1 = new Date(endDate).getTime()
     const sql = `
         SELECT
             count(1) as count,
@@ -266,12 +296,17 @@ const getSport = async function (addr) {
         WHERE
             a.addr = ?
             AND (a.status = 50 or a.status = 51)
-            AND a.currency = ?
+            AND a.currency = ? ${sql_piece}
     `
-    const currency = ['TRX', 'USDT', 'BNB']
+    const currency = ['TRX', 'USDT']
     let a = []
     for (let e of currency) {
-        const params = [addr, e]
+        let params = [addr, e]
+        if (startDate !== '' && endDate !== '') {
+            params = [
+                addr, e, start1, end1,
+            ]
+        }
         const data = await raw(sql, params)
         data.forEach(d => d.currency = e)
         a = a.concat(data)
@@ -280,7 +315,75 @@ const getSport = async function (addr) {
     return a
 }
 
-const getPoker = async function (addr) {
+
+const getPlatius = async function (addr, startDate, endDate) {
+    let sql_piece = ''
+    if (startDate !== '' && endDate !== '') {
+        sql_piece = "\n" + ' and ts >= ? AND ts < ? ' + "\n"
+    }
+    const start1 = new Date(startDate).getTime()
+    const end1 = new Date(endDate).getTime()
+    const sql = `
+        SELECT
+            'platius' as category,
+            count(1) as count,
+            sum(amount) / 1000000 as all_amount,
+            sum(win) / 1000000  as all_win,
+            (sum(amount) - sum(win)) / 1000000  as balance,
+            'TRX' as currency
+        FROM
+            tron_live.platipus_transaction_log
+        WHERE
+            addr = ?
+            and status = 2
+            And resultId is not null
+            AND currency = 'TRX'  ${sql_piece}
+    `
+    let params = [addr]
+    if (startDate !== '' && endDate !== '') {
+        params = [
+            addr, start1, end1,
+        ]
+    }
+    const data = await raw(sql, params)
+    return data
+}
+
+
+const getBinary = async function (addr , startDate, endDate) {
+    let sql_piece = ''
+    if (startDate !== '' && endDate !== '') {
+        sql_piece = "\n" + ' and expiration_date >= ? AND expiration_date < ? ' + "\n"
+    }
+    const start1 = new Date(startDate).getTime()
+    const end1 = new Date(endDate).getTime()
+    const sql = `
+        SELECT
+            'binary' as category,
+            count(1) as count,
+            sum(amount) / 1000000 as all_amount,
+            sum(win) / 1000000  as all_win,
+            (sum(amount) - sum(win)) / 1000000  as balance,
+            'TRX' as currency
+        FROM
+            tron_live.binary_transaction_log
+        WHERE
+            addr = ?
+            AND status = 'close'
+            AND currency = 'TRX'  ${sql_piece}
+    `
+    let params = [addr]
+    if (startDate !== '' && endDate !== '') {
+        params = [
+            addr, start1, end1,
+        ]
+    }
+    const data = await raw(sql, params)
+    return data
+}
+
+
+const getPoker = async function (addr, startDate, endDate) {
     const sql = `
         select
             count(1) as count,
@@ -304,8 +407,8 @@ const getPoker = async function (addr) {
 
 
 class TransactionByAddr {
-    static async getData(addr) {
-        if(addr === ''){
+    static async getData(addr, startDate, endDate) {
+        if (addr === '') {
             return []
         }
         const typeDict = {
@@ -313,15 +416,19 @@ class TransactionByAddr {
             "moon": getMoon,
             "ring": getRing,
             "duel": getDuel,
-            "em": getEM,
+            //移除旧的em查询
+            // "em": getEM,
             "newEM": getNewEM,
             "hub88": getHub88,
             "sport": getSport,
+            "platius" : getPlatius,
+            "binary" : getBinary,
+            //
             "poker": getPoker,
         }
         let data = []
         for (let e of Object.keys(typeDict)) {
-            let o = await typeDict[e](addr)
+            let o = await typeDict[e](addr, startDate, endDate)
             if (o instanceof Array) {
                 data = data.concat(o)
             } else {
@@ -333,8 +440,8 @@ class TransactionByAddr {
     }
 
 
-    static async getDataFile(addr) {
-        const data = await this.getData(addr)
+    static async getDataFile(addr, startDate, endDate) {
+        const data = await this.getData(addr, startDate, endDate)
         const keys = Object.keys(data[0])
         let sbody = ''
         keys.forEach(e => {
