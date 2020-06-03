@@ -30,7 +30,8 @@ function getRole(username) {
         "/liveSportList":"Sport流水查询",
         "/liveDeposit": "Live充值流水",
         "/liveWithDraw": "Live提现流水",
-        "/AirDropList": "live空投查询"
+        "/AirDropList": "live空投查询",
+        "/BalanceAuditList":"账户余额异常查询"
     }
     //
     if(username === 'admin'){
