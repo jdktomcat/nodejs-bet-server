@@ -180,6 +180,20 @@ class QueryController {
         const startDate = ctx.query.startDate
         const endDate = ctx.query.endDate
         const data = await BalanceAudit.getBalanceAuditList(addr,startDate, endDate)
+        const keys = Object().keys(data[0])
+        let body = ''
+        keys.forEach(key => {
+            body += key + "\t"
+        })
+        body = body.trim()
+        body += "\n"
+        data.forEach(record => {
+            keys.forEach((key) => {
+                body = body + (record[key] || 0) + '\t'
+            })
+            body = body.trim()
+            body += '\n'
+        })
         ctxUtils.file(ctx, data)
     }
 
