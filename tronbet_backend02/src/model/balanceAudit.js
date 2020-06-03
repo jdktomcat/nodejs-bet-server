@@ -17,7 +17,7 @@ class BalanceAudit {
     static async getBalanceAuditPage(addr, startTime, endTime, offset, limit) {
         let sql, params
         if (addr) {
-            sql = `select id, addr, live_balance, cal_balance, clear_amount, flag, create_time, last_modify_time from live_balance_audit where  addr = ? flag = 'malicious'`
+            sql = `select id, addr, live_balance, cal_balance, clear_amount, flag, create_time, last_modify_time from live_balance_audit where  addr = ? AND flag = 'malicious'`
             params = [addr]
         } else {
             sql = `select id, addr, live_balance, cal_balance, flag, create_time, last_modify_time from 
