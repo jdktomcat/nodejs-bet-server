@@ -43,13 +43,14 @@ module.exports = router.get('/getAddrDate', controller.getAddrDate)
  * 根据日期分页余额审计查询列表
  */
 module.exports = router.get('/getBalanceAuditList', controller.getBalanceAuditList)
-/**
- * 根据钱包地址查询余额审计
- */
-module.exports = router.get('/fetchBalanceAudit', controller.fetchBalanceAudit)
+
 /**
  * 下载对应的日期分页余额审计查询列表信息
  */
 module.exports = router.get('/downloadBalanceAudit', controller.downloadBalanceAudit)
 
+/**
+ * 根据钱包地址查询清除记录列表
+ */
+module.exports = router.get('/queryClearLog', )
 

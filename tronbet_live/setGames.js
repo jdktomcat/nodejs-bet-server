@@ -1,21 +1,21 @@
 const db = require("./src/utils/dbUtil");
 
-const main = async function(){
-    let checkSql=`select * from live_balance where addr in(select addr from live_balance_audit where flag!='normal')`;
-    let beforeReset=await db.query(checkSql,[]);
+const main = async function () {
+    let checkSql = `select * from live_balance where addr in(select addr from live_balance_audit where flag!='normal')`;
+    let beforeReset = await db.query(checkSql, []);
     console.log("before reset")
     console.log(beforeReset)
-    let resetSql=`update live_balance set balance=0  where addr in(select addr from live_balance_audit where flag!='normal') and addr!='TMtb6tEzPWFkd1ucT4LQabp3GK17tpK3TJ'`;
-    let result =await db.exec(resetSql,[]);
+    let resetSql = `update live_balance set balance=0  where addr in(select addr from live_balance_audit where flag!='normal') and addr!='TMtb6tEzPWFkd1ucT4LQabp3GK17tpK3TJ'`;
+    let result = await db.exec(resetSql, []);
     console.log("reset Result");
     console.log(result);
-    let afterReset=await db.query(checkSql,[]);
+    let afterReset = await db.query(checkSql, []);
     console.log("after reset")
     console.log(afterReset)
 }
 
-const createTableLiveBalanceAuditOffset = async function(){
-    let sql=`
+const createTableLiveBalanceAuditOffset = async function () {
+    let sql = `
     CREATE TABLE live_balance_audit_offset (
         id bigint(20) NOT NULL AUTO_INCREMENT,
         uid bigint(20) NOT NULL,
@@ -25,17 +25,17 @@ const createTableLiveBalanceAuditOffset = async function(){
         PRIMARY KEY (id)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
     `;
-    let res=await db.query(sql,[]);
+    let res = await db.query(sql, []);
 }
 
-const getAddresses =async function(){
-    let params =['TRX',50000,0]
-    let sql="select addr from live_balance where currency=? and uid>? and balance>? order by balance desc limit 500"
-    let res=await db.query(sql,params);
+const getAddresses = async function () {
+    let params = ['TRX', 50000, 0]
+    let sql = "select addr from live_balance where currency=? and uid>? and balance>? order by balance desc limit 500"
+    let res = await db.query(sql, params);
     if (res) {
-      return res.map(e => String(e.addr).trim());
+        return res.map(e => String(e.addr).trim());
     } else {
-      return [];
+        return [];
     }
 }
 
@@ -86,14 +86,14 @@ const queryLiveBalanceAndCalcBalance = async function (addresses) {
 }
 
 
-const testQueryBatch = async function(addresses, count){
+const testQueryBatch = async function (addresses, count) {
     let start = new Date().getTime();
     await queryLiveBalanceAndCalcBalance(addresses.slice(0, count));
     let end = new Date().getTime();
-    console.log("testQueryBatch:"+new Date(start)+" end:"+new Date(end)+"[end-start]:"+(end-start));
+    console.log("testQueryBatch:" + new Date(start) + " end:" + new Date(end) + "[end-start]:" + (end - start));
 }
 
-const testAuditBatch = async function(){
+const testAuditBatch = async function () {
     let addrs = await getAddresses();
     if (addrs.length < 500) {
         console.log("addrs less than 500")
@@ -109,6 +109,24 @@ const testAuditBatch = async function(){
     await testQueryBatch(addrs, 400);
     await testQueryBatch(addrs, 450);
     await testQueryBatch(addrs, 500);
+}
+
+/**
+ * 创建清空账户记录表
+ */
+const createClearLogTable = async function () {
+    let sql = `
+        CREATE TABLE \`live_balance_clear_log\` (
+            \`id\` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+            \`addr\` varchar(100) NOT NULL COMMENT '账户钱包地址或邮箱地址',
+            \`clear_balance\` bigint(20) unsigned NOT NULL COMMENT '清除金额',
+            \`live_balance\` bigint(20) NOT NULL COMMENT '清除账户余额时对应的余额',
+            \`cal_balance\` bigint(20) NOT NULL COMMENT '计算出流水余额',
+            \`create_time\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+            PRIMARY KEY (\`id\`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='清空账户日志表'
+    `;
+    let res = await db.query(sql, []);
 }
 
 testAuditBatch().then(() => {

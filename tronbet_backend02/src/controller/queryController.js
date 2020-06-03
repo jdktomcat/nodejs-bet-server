@@ -158,29 +158,41 @@ class QueryController {
      * 根据日期余额审计查询列表
      */
     static async getBalanceAuditList(ctx) {
+        const addr = ctx.query.addr
         const startDate = ctx.query.startDate
         const endDate = ctx.query.endDate
         const offset = ctx.query.offset
         const limit = ctx.query.limit
-        const data = await BalanceAudit.getBalanceAuditPage(startDate, endDate, offset, limit)
+        const data = await BalanceAudit.getBalanceAuditPage(addr,startDate, endDate, offset, limit)
         ctx.body = ctxUtils.success(data)
     }
 
     /**
-     * 根据日期余额审计查询列表
-     */
-    static async fetchBalanceAudit(ctx) {
-        const addr = ctx.query.addr
-        const data = await BalanceAudit.fetchBalanceAudit(addr)
-        ctx.body = ctxUtils.success(data)
-    }
-    /**
      * 下载根据日期查询余额信息列表
      */
     static async downloadBalanceAudit(ctx) {
+        const addr = ctx.query.addr
         const startDate = ctx.query.startDate
         const endDate = ctx.query.endDate
-        const data = await BalanceAudit.getBalanceAuditList(startDate, endDate)
+        const data = await BalanceAudit.getBalanceAuditList(addr,startDate, endDate)
+        ctxUtils.file(ctx, data)
+    }
+
+    /**
+     * 根据钱包地址查询清除账户日志列表
+     */
+    static async queryClearLog(ctx) {
+        const addr = ctx.query.addr
+        const data = await BalanceAudit.queryClearLogList(addr)
+        ctx.body = ctxUtils.success(data)
+    }
+
+    /**
+     * 下载根据钱包地址查询清除账户日志列表
+     */
+    static async downloadClearLog(ctx) {
+        const addr = ctx.query.addr
+        const data = await BalanceAudit.queryClearLogList(addr)
         ctxUtils.file(ctx, data)
     }
 }

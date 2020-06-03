@@ -1,34 +1,34 @@
 const db = require('../utils/dbUtil')
-const Event= require('events');
+const Event = require('events');
 /*
     多久跑一次任务
  */
-const duration=2*60*1000;
+const duration = 2 * 60 * 1000;
 /*
     进行了多少次任务
  */
-let times=1;
+let times = 1;
 
 /*
      每次批量任务的大小
  */
-let batchSize=300;
+let batchSize = 300;
 
 /*
     那个uid开始
  */
-let startUid=43073;
+let startUid = 43073;
 //let startUid=3073;
 
 /*
     用户余额-计算的余额 允许的最大偏向值
  */
-let allowMiss=1000*1000000;
+let allowMiss = 1000 * 1000000;
 
 /*
  *  live_balance-calc_balance>clearBalanceThreshold
  */
-let clearBalanceThreshold=10000*1000000;
+let clearBalanceThreshold = 10000 * 1000000;
 
 
 const queryLiveBalanceAndCalcBalance = async function (addresses) {
@@ -75,26 +75,26 @@ const queryLiveBalanceAndCalcBalance = async function (addresses) {
             ) as info group by addr`
 
     const data = await db.query(sql, [addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses, addresses])
-    console.log(data); 
+    console.log(data);
     return data
 }
 /*
     查询出 tron_live.live_balance 中存在，但是 tron_live.live_balance_audit 不存在的数据
  */
-const queryNewAccounts =async function(){
-    let params =['TRX',startUid,0]
-    let sql="select * from live_balance where currency=? and uid>? and balance>? and addr not in(select addr from live_balance_audit) order by balance desc"
-    let result=await db.query(sql,params);
+const queryNewAccounts = async function () {
+    let params = ['TRX', startUid, 0]
+    let sql = "select * from live_balance where currency=? and uid>? and balance>? and addr not in(select addr from live_balance_audit) order by balance desc"
+    let result = await db.query(sql, params);
     return result;
 }
 
 /*
     查询出 tron_live.live_balance 中存在， tron_live.live_balance_audit 也存在，但是余额产生了变化的用户
  */
-const queryBalanceChangeAccounts =async function(){
-    let params =['TRX',startUid,0]
-    let sql="select * from ( select * from live_balance where currency=? and uid>? and balance>?) a inner join (select * from live_balance_audit) b on a.addr=b.addr and a.balance!=b.live_balance"
-    let result=await db.query(sql,params);
+const queryBalanceChangeAccounts = async function () {
+    let params = ['TRX', startUid, 0]
+    let sql = "select * from ( select * from live_balance where currency=? and uid>? and balance>?) a inner join (select * from live_balance_audit) b on a.addr=b.addr and a.balance!=b.live_balance"
+    let result = await db.query(sql, params);
     return result;
 }
 
@@ -102,64 +102,78 @@ const queryBalanceChangeAccounts =async function(){
     批量处理列表中的数据插入或者更新
  */
 
-const doBatchUpdate = async function(list){
-    for(let i=0;i<Math.floor(list.length/batchSize+1);i++){
-        let start=i*batchSize;
-        let end=(i+1)*batchSize;
-        if(end>list.length){
-            end=list.length;
+const doBatchUpdate = async function (list) {
+    for (let i = 0; i < Math.floor(list.length / batchSize + 1); i++) {
+        let start = i * batchSize;
+        let end = (i + 1) * batchSize;
+        if (end > list.length) {
+            end = list.length;
         }
-        let bl=list.slice(start,end);
-        let addresses=[]
-        let ilMap={}
-        bl.forEach((record)=>{
+        let bl = list.slice(start, end);
+        let addresses = []
+        let ilMap = {}
+        bl.forEach((record) => {
             addresses.push(record.addr);
-            ilMap.addr=record.addr;
-            ilMap.data=record
+            ilMap.addr = record.addr;
+            ilMap.data = record
         });
-        let rl=await queryLiveBalanceAndCalcBalance(addresses);
-        if (!rl || rl.length===0){
+        let rl = await queryLiveBalanceAndCalcBalance(addresses);
+        if (!rl || rl.length === 0) {
             console.log("calc balance wrong!")
             return
         }
-        let il=[]
-	let cleanAddrs=[];
-        rl.forEach((record)=>{
-            if(record.liveBalance -record.calcBalance>allowMiss){
+        let il = []
+        let cleanAddrs = [];
+        let cleanRecordList = [];
+        rl.forEach((record) => {
+            if (record.liveBalance - record.calcBalance > allowMiss) {
                 //异常记录
-                let tmp=[record.addr,record.liveBalance,record.calcBalance,'malicious'];
+                let tmp = [record.addr, record.liveBalance, record.calcBalance, 'malicious'];
                 il.push(tmp);
-		if((record.liveBalance-record.calcBalance)>clearBalanceThreshold){
-			cleanAddrs.push(record.addr);
-		}
-            }else{
-                let tmp=[record.addr,record.liveBalance,record.calcBalance,'normal'];
+                if ((record.liveBalance - record.calcBalance) > clearBalanceThreshold) {
+                    cleanAddrs.push(record.addr);
+                    cleanRecordList.push([record.addr, record.liveBalance, record.calcBalance])
+                }
+            } else {
+                let tmp = [record.addr, record.liveBalance, record.calcBalance, 'normal'];
                 il.push(tmp)
             }
         });
-	console.log(il);
-        let sql="insert into tron_live.live_balance_audit (addr, live_balance, calc_balance, flag) values ? on duplicate key update flag=values(flag),live_balance=values(live_balance),calc_balance=values(calc_balance)";
+        console.log(il);
+        let sql = "insert into tron_live.live_balance_audit (addr, live_balance, calc_balance, flag) values ? on duplicate key update flag=values(flag),live_balance=values(live_balance),calc_balance=values(calc_balance)";
         await db.query(sql, [il]);
-	if(cleanAddrs.length==0){
-		return
-	}
-	console.log("##################################################Clean User Balance##################################################");
-	console.log(cleanAddrs);
-	console.log("before clean user balance");
-	let qUserBalSql=`select uid,addr,balance,tag from live_balance where addr in(?)`;	
-	let beforeCleanBalance = await db.query(qUserBalSql, [cleanAddrs]);
-	console.log(beforeCleanBalance);
-	let cleanBalanceSql="insert into tron_live.live_balance(uid,currency,addr,tag, balance) values ? on duplicate key update balance=0";
-	let cleanList=[];
-	beforeCleanBalance.forEach((record)=>{
-		let tmp =[record.uid,'TRX',record.addr,record.tag,0];
-		cleanList.push(tmp);
-	});
+        if (cleanAddrs.length == 0) {
+            return
+        }
+        console.log("##################################################Clean User Balance##################################################");
+        console.log(cleanAddrs);
+        console.log("before clean user balance");
+        let qUserBalSql = `select uid,addr,balance,tag from live_balance where addr in(?)`;
+        let beforeCleanBalance = await db.query(qUserBalSql, [cleanAddrs]);
+        console.log(beforeCleanBalance);
+        let cleanBalanceSql = "insert into tron_live.live_balance(uid,currency,addr,tag, balance) values ? on duplicate key update balance=0";
+        let cleanList = [];
+        let clearMap = new Map();
+        beforeCleanBalance.forEach((record) => {
+            let tmp = [record.uid, 'TRX', record.addr, record.tag, 0];
+            cleanList.push(tmp);
+            clearMap.set(record.addr, record.balance);
+        });
         await db.query(cleanBalanceSql, [cleanList]);
-	console.log("after clear user balance");
-	let afterCleanBalance = await db.query(qUserBalSql, [cleanAddrs]);	
-	console.log(afterCleanBalance);
-	console.log("##################################################Clean User Balance##################################################");
+        console.log("after clear user balance");
+        let afterCleanBalance = await db.query(qUserBalSql, [cleanAddrs]);
+        console.log(afterCleanBalance);
+
+        // 保存对应账户清除记录
+        console.log("save clear balance log start")
+        cleanRecordList.forEach(function (record) {
+            record.push(clearMap.get(record[0]));
+        })
+        let insertClearLog = "insert into tron_live.live_balance_clear_log(addr,live_balance,cal_balance,clear_balance) values ? ";
+        let insertResult = await db.query(insertClearLog, [cleanRecordList])
+        console.log("save clear balance log end,result:" + insertResult)
+
+        console.log("##################################################Clean User Balance##################################################");
     }
 }
 
@@ -167,20 +181,20 @@ const doBatchUpdate = async function(list){
     1.查询出 tron_live.live_balance 中存在，但是 tron_live.live_balance_audit 不存在的数据 union 上tron_live.live_balance_audit 以及tron_live.live_balance 中都存在的数数据 余额有变化的数据
     2.对于查询出来的数据，每次进行查找，批量进行处理
  */
-const doJob=async function(){
-    console.log("do job ..."+times);
+const doJob = async function () {
+    console.log("do job ..." + times);
     times++
-    let newList= await queryNewAccounts();
+    let newList = await queryNewAccounts();
     console.log("newList")
     console.log(newList);
-    if (newList && newList.length>0){
+    if (newList && newList.length > 0) {
         await doBatchUpdate(newList)
     }
     console.log("end new List")
-    let changeList= await queryBalanceChangeAccounts();
+    let changeList = await queryBalanceChangeAccounts();
     console.log("changeList")
     console.log(changeList);
-    if (changeList && changeList.length>0){
+    if (changeList && changeList.length > 0) {
         await doBatchUpdate(changeList)
     }
 }
@@ -188,20 +202,20 @@ const doJob=async function(){
      1.没空隔t时间执行一次任务，如果执行任务的过程中超过了t时间，那么接下来继续执行
      2.如果执行的过程中出现了异常，那么重新执行
  */
-const startMission= async function () {
+const startMission = async function () {
     let start = new Date().getTime();
     let end;
     try {
         await doJob()
     } catch (e) {
-        console.log("job 执行异常 "+e);
+        console.log("job 执行异常 " + e);
     } finally {
         end = new Date().getTime();
-        console.log("finally...start:"+new Date(start)+" end:"+new Date(end)+"[end-start]:"+(end-start));
+        console.log("finally...start:" + new Date(start) + " end:" + new Date(end) + "[end-start]:" + (end - start));
     }
-    if(end-start<duration){
-        setTimeout(startMission,duration-(end-start));
-    }else{
+    if (end - start < duration) {
+        setTimeout(startMission, duration - (end - start));
+    } else {
         await startMission();
 
     }
