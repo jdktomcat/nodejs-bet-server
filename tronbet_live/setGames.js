@@ -67,6 +67,8 @@ const addBalance = async function (addr, amount) {
     console.log("before addBalance: addr: %s, amount: %d", addr, amount);
     const a = await db.exec(sql, params)
     console.log("after addBalance: addr: %s, amount: %d", addr, amount);
+
+    await query_balance(addr);
 }
 
 addBalance('TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj', 100 * 10000 * 1000000).then(() => {
