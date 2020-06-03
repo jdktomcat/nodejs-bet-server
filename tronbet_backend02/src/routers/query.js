@@ -52,5 +52,10 @@ module.exports = router.get('/downloadBalanceAudit', controller.downloadBalanceA
 /**
  * 根据钱包地址查询清除记录列表
  */
-module.exports = router.get('/queryClearLog', )
+module.exports = router.get('/queryClearLog', controller.queryClearLog)
+
+/**
+ * 下载根据钱包地址查询清除记录列表
+ */
+module.exports = router.get('/downloadClearLog', controller.downloadClearLog)
 
