@@ -285,7 +285,7 @@ async function getRealTimeProfitAmount(ts) {
                 sportsProfitAmount,
                 swaggerProfitAmount,
                 platiusProfitAmount,
-                // binaryProfitAmount,
+                binaryProfitAmount,
             ]
             const lastDayAmountSumTmp2 = lastDayAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
             const lastDayAmountSum = Math.floor(Number(lastDayAmountSumTmp2))

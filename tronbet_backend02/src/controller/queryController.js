@@ -123,14 +123,19 @@ class QueryController {
      * 根据用户获取交易
      */
     static async getAddrTransactionList(ctx) {
+        //startDate, endDate
         const addr = ctx.query.addr
-        const data = await TransactionByAddr.getData(addr)
+        const startDate = ctx.query.startDate
+        const endDate = ctx.query.endDate
+        const data = await TransactionByAddr.getData(addr,startDate,endDate)
         ctx.body = ctxUtils.success(data)
     }
 
     static async getAddrTransaction(ctx) {
         const addr = ctx.query.addr
-        const data = await TransactionByAddr.getDataFile(addr)
+        const startDate = ctx.query.startDate
+        const endDate = ctx.query.endDate
+        const data = await TransactionByAddr.getDataFile(addr,startDate,endDate)
         ctxUtils.file(ctx, data)
     }
 
