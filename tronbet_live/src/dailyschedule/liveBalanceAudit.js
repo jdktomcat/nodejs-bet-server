@@ -23,7 +23,7 @@ let startUid=43073;
 /*
     用户余额-计算的余额 允许的最大偏向值
  */
-let allowMiss=1000*1000000;
+let allowMiss=3000*1000000;
 
 /*
  *  live_balance-calc_balance>clearBalanceThreshold
