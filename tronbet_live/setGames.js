@@ -1,13 +1,13 @@
 const db = require("./src/utils/dbUtil");
 
-// const query_balance = async function (addr) {
-//     const sql = "select * from tron_live.live_balance where addr = ? and currency = 'TRX'"
-//     const params = [addr]
-//     console.log(sql, params)
-//     const a = await db.exec(sql, params)
-//     console.log("balance info is ", a)
-//     //
-// }
+const query_balance = async function (addr) {
+    const sql = "select * from tron_live.live_balance where addr = ? and currency = 'TRX'"
+    const params = [addr]
+    console.log(sql, params)
+    const a = await db.exec(sql, params)
+    console.log("balance info is ", a)
+    //
+}
 
 // const update_balance = async function (addr,win) {
 //     const update_balance_sql = "update tron_live.live_balance set balance = balance + ? where addr = ? and currency = 'TRX'"
@@ -60,6 +60,8 @@ const db = require("./src/utils/dbUtil");
 // }
 
 const addBalance = async function (addr, amount) {
+    await query_balance(addr);
+
     const sql = "update tron_live.live_balance set balance = balance + ?  where addr = ? and currency = 'TRX'";
     const params = [amount, addr]
     console.log("before addBalance: addr: %s, amount: %d", addr, amount);
