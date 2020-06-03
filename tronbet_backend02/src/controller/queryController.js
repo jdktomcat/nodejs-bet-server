@@ -180,7 +180,7 @@ class QueryController {
         const startDate = ctx.query.startDate
         const endDate = ctx.query.endDate
         const data = await BalanceAudit.getBalanceAuditList(addr,startDate, endDate)
-        const keys = Object().keys(data[0])
+        const keys = Object.keys(data[0])
         let body = ''
         keys.forEach(key => {
             body += key + "\t"
