@@ -194,7 +194,7 @@ class QueryController {
             body = body.trim()
             body += '\n'
         })
-        ctxUtils.file(ctx, data)
+        ctxUtils.file(ctx, body)
     }
 
     /**
