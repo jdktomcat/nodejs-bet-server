@@ -196,8 +196,8 @@ const main = async function () {
     // await remove_from_black_list()
     // await addBalance('TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj', 100 * 10000 * 1000000)
     // await doJob();
-    await resetBalance('TA1tiExCTYxT4LpEdKHpzxBENPaQSTxGCL', 5158 * 1000000)
-    await resetBalance('TJGpJpaQkDq6MULddpguYCE4Nn96GDMdPY', 89068 * 1000000)
+    // await resetBalance('TA1tiExCTYxT4LpEdKHpzxBENPaQSTxGCL', 5158 * 1000000)
+    // await resetBalance('TJGpJpaQkDq6MULddpguYCE4Nn96GDMdPY', 89068 * 1000000)
 }
 
 /**
