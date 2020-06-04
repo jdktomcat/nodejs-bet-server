@@ -225,7 +225,6 @@ async function win(ctx) {
     }
     let transactionId = params.transaction_uuid
     let currency = params.currency
-    let round = params.round
     let amount = params.amount * 10
     let bet = params.bet || ''
     if (bet.length > 30) bet = bet.slice(0, 30)
@@ -247,7 +246,8 @@ async function win(ctx) {
     if (transactionByResultTxId.length > 0) {
         //
         const transactionByResultTxIdInfo = transactionByResultTxId[0]
-        if (transactionByResultTxIdInfo.round === round && transactionByResultTxIdInfo.amount === amount) {
+        if (transactionByResultTxIdInfo.transactionId === betTxId && transactionByResultTxIdInfo.round === params.round
+            && transactionByResultTxIdInfo.amount === amount) {
             return sendMsg2Client(ctx,
                 {
                     status: 'RS_OK',
@@ -286,7 +286,6 @@ async function rollback(ctx) {
     let headers = ctx.request.headers
     console.log(`${new Date().toJSON()}-->request_rollback: `, params)
     let currencyRaw = params.currency
-    let amountRaw = params.amount
     //
     const localSignature = hmCrypto.sign(JSON.stringify(params))
     const remoteSignature = headers['X-Hub88-Signature'] || headers['x-hub88-signature']
@@ -330,7 +329,8 @@ async function rollback(ctx) {
     if (transactionByResultTxId.length > 0) {
         //
         const transactionByResultTxIdInfo = transactionByResultTxId[0]
-        if (transactionByResultTxIdInfo.round === round && transactionByResultTxIdInfo.amount === amountRaw) {
+        //
+        if (transactionByResultTxIdInfo.transactionId === betTxId && transactionByResultTxIdInfo.round === params.round) {
             let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currencyRaw)
             return sendMsg2Client(ctx,
                 {
