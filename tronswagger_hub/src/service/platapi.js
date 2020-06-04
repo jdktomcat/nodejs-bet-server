@@ -161,24 +161,6 @@ async function bet(ctx) {
     if (amount < 0) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_WRONG_TYPES', request_uuid: params.request_uuid,})
     }
-
-    let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId + "_result")
-    if (transactionByResultTxId.length > 0) {
-        //
-        const transactionByResultTxIdInfo = transactionByResultTxId[0]
-        if (transactionByResultTxIdInfo.round === round && transactionByResultTxIdInfo.amount === amount) {
-            return sendMsg2Client(ctx,
-                {
-                    status: 'RS_OK',
-                    request_uuid: params.request_uuid,
-                    user: account[0].nickName || account[0].email,
-                })
-        } else {
-            //重复
-            return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION', request_uuid: params.request_uuid,})
-        }
-    }
-
     let token = getToken(params.token)
     let account = await userinfo.getAccountBySessionId(token)
     if (account.length === 0) {
@@ -187,6 +169,21 @@ async function bet(ctx) {
     let balance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
     if (balance < fromCpAmount(currency, params.amount)) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_NOT_ENOUGH_MONEY', request_uuid: params.request_uuid,})
+    }
+    let transaction = await userinfo.getTransactionById(transactionId)
+    if(transaction.length > 0){
+        const transactionTmpInfo = transaction[0]
+        if(transactionTmpInfo.amount === amount && transactionTmpInfo.round === round){
+            return sendMsg2Client(ctx, {
+                user: account[0].nickName || account[0].email,
+                status: "RS_OK",
+                request_uuid: params.request_uuid,
+                currency: currency,
+                balance: toCpAmount(currency, balance)
+            })
+        }else {
+            return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION', request_uuid: params.request_uuid,})
+        }
     }
     /**
      * begin business
@@ -240,16 +237,29 @@ async function win(ctx) {
     let transaction = await userinfo.getTransactionById(betTxId)
     if (transaction.length === 0) {
         return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST', request_uuid: params.request_uuid,})
+    } else if (transaction.length > 0) {
+        const transactionTmp = transaction.filter(e => e.round === params.round && e.resultTxId === transactionId && e.win === amount)
+        if (transactionTmp.length > 0) {
+            let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
+            return sendMsg2Client(ctx,
+                {
+                    status: 'RS_OK',
+                    request_uuid: params.request_uuid,
+                    user: account[0].nickName || account[0].email,
+                    currency: currency,
+                    balance: toCpAmount(currency, newBalance)
+                })
+        }
     }
     //
     let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId)
     if (transactionByResultTxId.length > 0) {
         //
         const transactionByResultTxIdInfo = transactionByResultTxId[0]
-        console.log("transactionId---> ",transactionByResultTxIdInfo.transactionId,betTxId)
-        console.log("amount---> ",transactionByResultTxIdInfo.amount,amount)
+        console.log("transactionId---> ", transactionByResultTxIdInfo.transactionId, betTxId)
+        console.log("amount---> ", transactionByResultTxIdInfo.amount, amount)
         if (transactionByResultTxIdInfo.transactionId === betTxId && transactionByResultTxIdInfo.round === params.round
-            && transactionByResultTxIdInfo.amount === amount) {
+            && transactionByResultTxIdInfo.win === amount) {
             let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
             return sendMsg2Client(ctx,
                 {
@@ -335,7 +345,7 @@ async function rollback(ctx) {
                     currency: currencyRaw,
                     balance: toCpAmount(currencyRaw, newBalance)
                 })
-        }else if (Number(transactionInfoTmp.status) === 0) {
+        } else if (Number(transactionInfoTmp.status) === 0) {
             return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK', request_uuid: params.request_uuid,})
         }
     }
