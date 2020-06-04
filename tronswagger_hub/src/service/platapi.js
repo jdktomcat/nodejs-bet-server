@@ -286,6 +286,7 @@ async function rollback(ctx) {
     let headers = ctx.request.headers
     console.log(`${new Date().toJSON()}-->request_rollback: `, params)
     let currencyRaw = params.currency
+    let amountRaw = params.amount
     //
     const localSignature = hmCrypto.sign(JSON.stringify(params))
     const remoteSignature = headers['X-Hub88-Signature'] || headers['x-hub88-signature']
@@ -309,7 +310,7 @@ async function rollback(ctx) {
     let transaction = await userinfo.getTransactionById(betTxId)
     // update 20200527  处理成2(刚pay)
     if (transaction.length === 0) {
-        let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
+        let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currencyRaw)
         return sendMsg2Client(ctx,
             {
                 status: 'RS_OK',
@@ -329,8 +330,8 @@ async function rollback(ctx) {
     if (transactionByResultTxId.length > 0) {
         //
         const transactionByResultTxIdInfo = transactionByResultTxId[0]
-        if (transactionByResultTxIdInfo.round === round && transactionByResultTxIdInfo.amount === amount) {
-            let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
+        if (transactionByResultTxIdInfo.round === round && transactionByResultTxIdInfo.amount === amountRaw) {
+            let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currencyRaw)
             return sendMsg2Client(ctx,
                 {
                     status: 'RS_OK',
