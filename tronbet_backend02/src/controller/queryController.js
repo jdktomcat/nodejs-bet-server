@@ -6,7 +6,7 @@ const TopUser = require("../model/topUsers")
 const TransactionByAddr = require("../model/transactionByAddr")
 const transactionByAddrAndDate = require("../model/transactionByAddrAndDate")
 const BalanceAudit = require("../model/balanceAudit")
-const ctxUtils = require("./ctxUtils")
+const ctxUtils = require("../utils/ctxUtils")
 
 class QueryController {
 

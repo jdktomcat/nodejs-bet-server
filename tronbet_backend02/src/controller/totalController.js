@@ -1,4 +1,4 @@
-const ctxUtils = require("./ctxUtils")
+const ctxUtils = require("../utils/ctxUtils")
 const dailyTotal = require("../model/dailySchedule/dailyTotal")
 
 

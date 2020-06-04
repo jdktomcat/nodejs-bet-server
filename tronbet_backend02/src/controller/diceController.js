@@ -1,4 +1,4 @@
-const ctxUtils = require("./ctxUtils")
+const ctxUtils = require("../utils/ctxUtils")
 const diceQuery = require("../model/dice/diceQuery")
 const queryPlayers = require("../model/dice/queryPlayers")
 
