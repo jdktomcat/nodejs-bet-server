@@ -31,7 +31,7 @@ function getRole(username) {
         "/liveDeposit": "Live充值流水",
         "/liveWithDraw": "Live提现流水",
         "/AirDropList": "live空投查询",
-        "/BalanceAuditList":"账户余额异常查询"
+        "/BalanceAuditList":"黑名单账户余额变更查询"
     }
     //
     if(username === 'admin'){
