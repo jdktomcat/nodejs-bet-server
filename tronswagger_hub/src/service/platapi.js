@@ -297,10 +297,8 @@ async function rollback(ctx) {
     let transaction = await userinfo.getTransactionById(betTxId)
     // update 20200527  处理成2(刚pay)
     if (transaction.length === 0) {
-        // return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST',request_uuid: params.request_uuid,})
         return sendMsg2Client(ctx, {status: 'RS_OK',request_uuid: params.request_uuid,})
     }else  if (transaction.length > 0) {
-        //
         const transactionInfoTmp = transaction[0]
         if(Number(transactionInfoTmp.status) === 0){
             return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK',request_uuid: params.request_uuid,})

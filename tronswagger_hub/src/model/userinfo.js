@@ -84,7 +84,7 @@ async function userRollBack(uid, currency, resultTxId, transactionId, amount) {
 }
 
 async function getTransactionById(TransactionId) {
-    let sql = "select * from swagger_transaction_log where transactionId = ? and status = '1' "
+    let sql = "select * from swagger_transaction_log where transactionId = ? "
     return await rawQuery(sql, ['' + TransactionId])
 }
 
