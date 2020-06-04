@@ -1,34 +1,68 @@
-const fileGenerate = function (ctx, sbody) {
+const fileGenerate = function (ctx, body, fileName) {
     const Readable = require('stream').Readable;
-    const s = new Readable();
-    s._read = () => {
+    const content = new Readable();
+    content._read = () => {
     }; // redundant? see update below
-    s.push(sbody);
-    s.push(null);
-    //
-    const name = ctx.request.query.type || ''
-    const startDate = ctx.request.query.startDate || ''
-    const endDate = ctx.request.query.endDate || ''
-    let fileName = name + '_' + startDate + "_" + endDate + ".xls"
-    if(startDate === '' && endDate === ''){
-        const addr = ctx.request.query.addr || '';
-        if(addr === ''){
-            //给个临时名
-            fileName = new Date().toJSON() + '.xls'
-        }else {
-            //给个临时名
-            fileName = addr + '.xls'
+    content.push(body);
+    content.push(null);
+    // 优先取自定义名称
+    if (!fileName) {
+        // 合成文件名称
+        const name = ctx.request.query.type || ''
+        const startDate = ctx.request.query.startDate || ''
+        const endDate = ctx.request.query.endDate || ''
+        fileName = name + '_' + startDate + "_" + endDate + ".xls"
+        if (startDate === '' && endDate === '') {
+            const addr = ctx.request.query.addr || '';
+            if (addr === '') {
+                //给个临时名
+                fileName = new Date().toJSON() + '.xls'
+            } else {
+                //给个临时名
+                fileName = addr + '.xls'
+            }
         }
     }
     ctx.response.set('Content-disposition', `attachment;filename=${fileName}`);
     ctx.response.set("content-type", "txt/html");
-    ctx.body = s
+    ctx.body = content
 }
 
 class CtxUtils {
 
-    static file(ctx, sbody) {
-        fileGenerate(ctx, sbody)
+    /**
+     * 生成对应的文件
+     *
+     * @param ctx 参数上下文
+     * @param body 文件内容
+     * @param fileName 文件名称
+     */
+    static file(ctx, body, fileName) {
+        fileGenerate(ctx, body, fileName)
+    }
+
+    /**
+     * 根据查询结果生成文件
+     * @param ctx 参数上下文
+     * @param data 查询结果
+     * @param fileName 文件名称
+     */
+    static fileWithData(ctx, data, fileName) {
+        const keys = Object.keys(data[0])
+        let body = ''
+        keys.forEach(key => {
+            body += key + "\t"
+        })
+        body = body.trim()
+        body += "\n"
+        data.forEach(record => {
+            keys.forEach((key) => {
+                body = body + (record[key] || 0) + '\t'
+            })
+            body = body.trim()
+            body += '\n'
+        })
+        fileGenerate(ctx, body, fileName);
     }
 
     static businessCheck(ctx) {
@@ -36,7 +70,7 @@ class CtxUtils {
         const type = params.type || ''
         params.startDate = params.startDate || ''
         params.endDate = params.endDate || ''
-        const typeArray = ["dice", "moon", "ring", "duel", "em", "hub88", "sport", "poker", "platius","binary"]
+        const typeArray = ["dice", "moon", "ring", "duel", "em", "hub88", "sport", "poker", "platius", "binary"]
         if (!typeArray.includes(type)) {
             ctx.body = {code: 500, message: "type error!"}
             return false

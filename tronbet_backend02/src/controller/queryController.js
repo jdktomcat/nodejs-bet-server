@@ -179,22 +179,9 @@ class QueryController {
         const addr = ctx.query.addr
         const startDate = ctx.query.startDate
         const endDate = ctx.query.endDate
-        const data = await BalanceAudit.getBalanceAuditList(addr,startDate, endDate)
-        const keys = Object.keys(data[0])
-        let body = ''
-        keys.forEach(key => {
-            body += key + "\t"
-        })
-        body = body.trim()
-        body += "\n"
-        data.forEach(record => {
-            keys.forEach((key) => {
-                body = body + (record[key] || 0) + '\t'
-            })
-            body = body.trim()
-            body += '\n'
-        })
-        ctxUtils.file(ctx, body)
+        const data = await BalanceAudit.getBalanceAuditList(addr, startDate, endDate)
+        let fileName = 'balance_audit_'+Date.now()+Math.random().toString(36).substr(2)+'.xls';
+        ctxUtils.fileWithData(ctx, data, fileName)
     }
 
     /**
@@ -212,21 +199,8 @@ class QueryController {
     static async downloadClearLog(ctx) {
         const addr = ctx.query.addr
         const data = await BalanceAudit.queryClearLogList(addr)
-        const keys = Object.keys(data[0])
-        let body = ''
-        keys.forEach(key => {
-            body += key + "\t"
-        })
-        body = body.trim()
-        body += "\n"
-        data.forEach(record => {
-            keys.forEach((key) => {
-                body = body + (record[key] || 0) + '\t'
-            })
-            body = body.trim()
-            body += '\n'
-        })
-        ctxUtils.file(ctx, body)
+        let fileName = 'clear_log_'+Date.now()+Math.random().toString(36).substr(2)+'.xls';
+        ctxUtils.fileWithData(ctx, data,fileName)
     }
 }
 
