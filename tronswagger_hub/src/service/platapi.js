@@ -144,7 +144,7 @@ async function bet(ctx) {
     let isTrue = hmCrypto.isValid(JSON.stringify(params), remoteSignature)
     if (!isTrue) {
         console.log(localSignature, remoteSignature)
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_TOKEN',request_uuid: params.request_uuid,})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_SIGNATURE',request_uuid: params.request_uuid,})
     }
 
     let transactionId = params.transaction_uuid
@@ -153,14 +153,25 @@ async function bet(ctx) {
     let game_id = params.game_id
     let currency = params.currency
     let bet = params.bet || ''
-    let amount = params.amount * 10
+    let amount = Number(params.amount) * 10
 
     amount = fromCpAmount(currency, amount)
     if (bet.length > 30) bet = bet.slice(0, 30)
     //
+    if(amount < 0){
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_WRONG_TYPES',request_uuid: params.request_uuid,})
+    }
+
     let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId + "_result")
     if (transactionByResultTxId.length > 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION',request_uuid: params.request_uuid,})
+        //
+        const transactionByResultTxIdInfo = transactionByResultTxId[0]
+        if(transactionByResultTxIdInfo.round === round && transactionByResultTxIdInfo.amount === amount){
+            return sendMsg2Client(ctx, {status: 'RS_OK',request_uuid: params.request_uuid,})
+        }else {
+            //重复
+            return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION',request_uuid: params.request_uuid,})
+        }
     }
 
     let token = getToken(params.token)
@@ -205,10 +216,11 @@ async function win(ctx) {
     let isTrue = hmCrypto.isValid(JSON.stringify(params), remoteSignature)
     if (!isTrue) {
         console.log(localSignature, remoteSignature)
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_TOKEN'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_SIGNATURE',request_uuid: params.request_uuid,})
     }
     let transactionId = params.transaction_uuid
     let currency = params.currency
+    let round = params.round
     let amount = params.amount * 10
     let bet = params.bet || ''
     if (bet.length > 30) bet = bet.slice(0, 30)
@@ -228,7 +240,14 @@ async function win(ctx) {
     //
     let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId)
     if (transactionByResultTxId.length > 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION',request_uuid: params.request_uuid,})
+        //
+        const transactionByResultTxIdInfo = transactionByResultTxId[0]
+        if(transactionByResultTxIdInfo.round === round && transactionByResultTxIdInfo.amount === amount){
+            return sendMsg2Client(ctx, {status: 'RS_OK',request_uuid: params.request_uuid,})
+        }else {
+            //重复
+            return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION',request_uuid: params.request_uuid,})
+        }
     }
     //
     const statusTmp = Number(transaction[0].status)
@@ -278,12 +297,26 @@ async function rollback(ctx) {
     let transaction = await userinfo.getTransactionById(betTxId)
     // update 20200527  处理成2(刚pay)
     if (transaction.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST',request_uuid: params.request_uuid,})
+        // return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST',request_uuid: params.request_uuid,})
+        return sendMsg2Client(ctx, {status: 'RS_OK',request_uuid: params.request_uuid,})
+    }else  if (transaction.length > 0) {
+        //
+        const transactionInfoTmp = transaction[0]
+        if(Number(transactionInfoTmp.status) === 0){
+            return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK',request_uuid: params.request_uuid,})
+        }
     }
     //
     let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId)
     if (transactionByResultTxId.length > 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION',request_uuid: params.request_uuid,})
+        //
+        const transactionByResultTxIdInfo = transactionByResultTxId[0]
+        if(transactionByResultTxIdInfo.round === round && transactionByResultTxIdInfo.amount === amount){
+            return sendMsg2Client(ctx, {status: 'RS_OK',request_uuid: params.request_uuid,})
+        }else {
+            //重复
+            return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION',request_uuid: params.request_uuid,})
+        }
     }
     //
     let currency = transaction[0].currency
