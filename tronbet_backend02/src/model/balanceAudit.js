@@ -22,7 +22,7 @@ class BalanceAudit {
         } else {
             sql = `select id, addr, live_balance, calc_balance, flag, create_time, last_modify_time from 
                          tron_live.live_balance_audit where create_time >= ? AND create_time < ? AND flag = 'malicious' order by create_time desc limit ?,?`
-            params = [new Date(startTime+" 00:00:00").getTime(), new Date(endTime+" 23:59:59").getTime(), offset, limit]
+            params = [new Date(startTime+" 00:00:00"), new Date(endTime+" 23:59:59"), offset, limit]
         }
         return await raw(sql, params);
     }
@@ -44,7 +44,7 @@ class BalanceAudit {
             sql = `select id, addr, live_balance, calc_balance, flag, create_time, last_modify_time from 
                          live_balance_audit where create_time >= ? AND create_time < ? AND flag = 'malicious' order by create_time desc`
             params = [
-                new Date(startTime+" 00:00:00").getTime(), new Date(endTime+" 23:59:59").getTime()
+                new Date(startTime+" 00:00:00"), new Date(endTime+" 23:59:59")
             ]
         }
         return await raw(sql, params);
