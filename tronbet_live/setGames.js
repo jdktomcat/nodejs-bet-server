@@ -1,13 +1,12 @@
 const db = require("./src/utils/dbUtil");
 
-// const query_balance = async function (addr) {
-//     const sql = "select * from tron_live.live_balance where addr = ? and currency = 'TRX'"
-//     const params = [addr]
-//     console.log(sql, params)
-//     const a = await db.exec(sql, params)
-//     console.log("balance info is ", a)
-//     //
-// }
+const queryBalance = async function (addr) {
+    const sql = "select * from tron_live.live_balance where addr = ? and currency = 'TRX'"
+    const params = [addr]
+    console.log(sql, params)
+    const a = await db.exec(sql, params)
+    console.log("balance info is ", a)
+}
 
 const remove_from_black_list = async function () {
     const update_balance_sql = "delete from tron_live.live_black_list where addr = 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj' and id = 2057"
@@ -175,9 +174,13 @@ const resetBalance = async function(addr) {
     let calc_balance = query[0].calc_balance;
     console.log("resetBalance: addr: %s, calc_balance: %d", addr, calc_balance);
 
+    await queryBalance(addr);
+
     let updateSql=`update live_balance set balance = ? where addr = ? and currency = 'trx'`;
     let update = await db.query(updateSql, [calc_balance, addr]);
     console.log("resetBalance success: addr: %s, calc_balance: %d", addr, calc_balance);
+
+    await queryBalance(addr);
 }
 
 const doJob=async function(){
