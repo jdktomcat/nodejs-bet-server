@@ -165,6 +165,21 @@ const doBatchUpdate = async function(list){
     }
 }
 
+const resetBalance = async function(addr) {
+    let querySql=`select calc_balance from live_balance_audit where addr = ?`;
+    let query = await db.query(querySql, [addr]);
+    if (!query || query.length === 0) {
+        return
+    }
+
+    let calc_balance = query[0].calc_balance;
+    console.log("resetBalance: addr: %s, calc_balance: %d", addr, calc_balance);
+
+    let updateSql=`update live_balance set balance = ? where addr = ? and currency = 'trx'`;
+    let update = await db.query(updateSql, [calc_balance, addr]);
+    console.log("resetBalance success: addr: %s, calc_balance: %d", addr, calc_balance);
+}
+
 const doJob=async function(){
     await createTable();
 
@@ -177,7 +192,9 @@ const doJob=async function(){
 const main = async function () {
     // await remove_from_black_list()
     // await addBalance('TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj', 100 * 10000 * 1000000)
-    await doJob();
+    // await doJob();
+    await resetBalance('TA1tiExCTYxT4LpEdKHpzxBENPaQSTxGCL')
+    await resetBalance('TJGpJpaQkDq6MULddpguYCE4Nn96GDMdPY')
 }
 
 /**
