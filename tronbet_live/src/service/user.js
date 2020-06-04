@@ -243,7 +243,7 @@ async function withdraw(ctx) {
     return await common.sendMsgToClient(ctx, 1009, 'withdraw reached max times');
   }
 
-  let withdrawMaxAmount = addr === 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj' ? 10*10000*1000000 : app.withdrawMaxAmount;
+  let withdrawMaxAmount = (addr === 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj' ? 15*10000*1000000 : app.withdrawMaxAmount);
   let withdrawMaxAmountDaily = app.withdrawMaxAmountDaily;
   if (currency == 'USDT') {
     withdrawMaxAmount = app.withdrawMaxAmountUSDT;
