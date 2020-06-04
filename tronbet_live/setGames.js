@@ -86,10 +86,10 @@ const createClearLogTable = async function () {
             PRIMARY KEY (\`id\`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='清空账户日志表'
     `;
-    let res = await db.query(sql, []);
+    await db.query(sql);
 }
 
-addBalance('TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj', 100 * 10000 * 1000000).then(() => {
+createClearLogTable().then(() => {
 // main().then(() => {
     console.log("end!")
     process.exit(0)
