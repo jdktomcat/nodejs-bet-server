@@ -109,7 +109,7 @@ async function balance(ctx) {
     let isTrue = hmCrypto.isValid(JSON.stringify(params), remoteSignature)
     if (!isTrue) {
         console.log(localSignature, remoteSignature)
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_TOKEN',request_uuid: params.request_uuid,})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_SIGNATURE',request_uuid: params.request_uuid,})
     }
     let token = getToken(params.token)
     let account = await userinfo.getAccountBySessionId(token)
@@ -167,7 +167,12 @@ async function bet(ctx) {
         //
         const transactionByResultTxIdInfo = transactionByResultTxId[0]
         if(transactionByResultTxIdInfo.round === round && transactionByResultTxIdInfo.amount === amount){
-            return sendMsg2Client(ctx, {status: 'RS_OK',request_uuid: params.request_uuid,})
+            return sendMsg2Client(ctx,
+                {
+                    status: 'RS_OK',
+                    request_uuid: params.request_uuid,
+                    user: account[0].nickName || account[0].email,
+                })
         }else {
             //重复
             return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION',request_uuid: params.request_uuid,})
@@ -243,7 +248,12 @@ async function win(ctx) {
         //
         const transactionByResultTxIdInfo = transactionByResultTxId[0]
         if(transactionByResultTxIdInfo.round === round && transactionByResultTxIdInfo.amount === amount){
-            return sendMsg2Client(ctx, {status: 'RS_OK',request_uuid: params.request_uuid,})
+            return sendMsg2Client(ctx,
+                {
+                    status: 'RS_OK',
+                    request_uuid: params.request_uuid,
+                    user: account[0].nickName || account[0].email,
+                })
         }else {
             //重复
             return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION',request_uuid: params.request_uuid,})
@@ -293,11 +303,17 @@ async function rollback(ctx) {
     }
 
     let transactionId = params.transaction_uuid
+    let round = params.round
     let betTxId = params.reference_transaction_uuid
     let transaction = await userinfo.getTransactionById(betTxId)
     // update 20200527  处理成2(刚pay)
     if (transaction.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_OK',request_uuid: params.request_uuid,})
+        return sendMsg2Client(ctx,
+            {
+                status: 'RS_OK',
+                request_uuid: params.request_uuid,
+                user: account[0].nickName || account[0].email,
+            })
     }else  if (transaction.length > 0) {
         const transactionInfoTmp = transaction[0]
         if(Number(transactionInfoTmp.status) === 0){
@@ -310,7 +326,12 @@ async function rollback(ctx) {
         //
         const transactionByResultTxIdInfo = transactionByResultTxId[0]
         if(transactionByResultTxIdInfo.round === round && transactionByResultTxIdInfo.amount === amount){
-            return sendMsg2Client(ctx, {status: 'RS_OK',request_uuid: params.request_uuid,})
+            return sendMsg2Client(ctx,
+                {
+                    status: 'RS_OK',
+                    request_uuid: params.request_uuid,
+                    user: account[0].nickName || account[0].email,
+                })
         }else {
             //重复
             return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION',request_uuid: params.request_uuid,})
