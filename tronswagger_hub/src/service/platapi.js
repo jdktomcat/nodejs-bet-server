@@ -256,8 +256,6 @@ async function win(ctx) {
     if (transactionByResultTxId.length > 0) {
         //
         const transactionByResultTxIdInfo = transactionByResultTxId[0]
-        console.log("transactionId---> ", transactionByResultTxIdInfo.transactionId, betTxId)
-        console.log("amount---> ", transactionByResultTxIdInfo.amount, amount)
         if (transactionByResultTxIdInfo.transactionId === betTxId && transactionByResultTxIdInfo.round === params.round
             && transactionByResultTxIdInfo.win === amount) {
             let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
