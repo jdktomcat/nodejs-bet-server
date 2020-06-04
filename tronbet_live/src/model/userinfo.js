@@ -325,7 +325,7 @@ async function getRealTimeProfitAmount(ts) {
         soportsRealTimeProfit,
         swaggerRealProfit,
         platiusProfit,
-        // binaryProfit
+        binaryProfit
     ]
     const realTimeAmountSumTmp2 = realTimeAmountSumTmp.reduce((accumulator, currentValue) => Number(accumulator) + Number(currentValue))
     const last = Math.floor(Number(realTimeAmountSumTmp2))

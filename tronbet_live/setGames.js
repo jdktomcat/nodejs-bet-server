@@ -9,14 +9,12 @@ const db = require("./src/utils/dbUtil");
 //     //
 // }
 
-// const update_balance = async function (addr,win) {
-//     const update_balance_sql = "update tron_live.live_balance set balance = balance + ? where addr = ? and currency = 'TRX'"
-//     const params = [win, addr]
-//     console.log(update_balance_sql, params)
-//     await db.exec(update_balance_sql, params)
-//     //
-// }
-
+const remove_from_black_list = async function () {
+    const update_balance_sql = "delete from tron_live.live_black_list where addr = 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj' and id = 2057"
+    const params = []
+    console.log(update_balance_sql, params)
+    await db.exec(update_balance_sql, params)
+}
 
 // const main = async function () {
 //     const balanceDict = {
@@ -176,9 +174,13 @@ const doJob=async function(){
     }
 }
 
-doJob().then(() => {
-// addBalance('TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj', 100 * 10000 * 1000000).then(() => {
-// main().then(() => {
+const main = async function () {
+    // await remove_from_black_list()
+    // await addBalance('TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj', 100 * 10000 * 1000000)
+    await doJob();
+}
+
+main().then(() => {
     console.log("end!")
     process.exit(0)
 }).catch(e => {
