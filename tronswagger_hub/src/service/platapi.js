@@ -246,13 +246,18 @@ async function win(ctx) {
     if (transactionByResultTxId.length > 0) {
         //
         const transactionByResultTxIdInfo = transactionByResultTxId[0]
+        console.log("transactionId---> ",transactionByResultTxIdInfo.transactionId,betTxId)
+        console.log("amount---> ",transactionByResultTxIdInfo.amount,amount)
         if (transactionByResultTxIdInfo.transactionId === betTxId && transactionByResultTxIdInfo.round === params.round
             && transactionByResultTxIdInfo.amount === amount) {
+            let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
             return sendMsg2Client(ctx,
                 {
                     status: 'RS_OK',
                     request_uuid: params.request_uuid,
                     user: account[0].nickName || account[0].email,
+                    currency: currency,
+                    balance: toCpAmount(currency, newBalance)
                 })
         } else {
             //重复
