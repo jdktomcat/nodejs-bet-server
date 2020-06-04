@@ -30,6 +30,29 @@ class BalanceAudit {
     }
 
     /**
+     * 统计总条数
+     *
+     * @param addr      钱包地址
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @returns {Promise<void>}
+     */
+    static async countBalanceAudit(addr, startTime, endTime){
+        let sql, params
+        if (addr) {
+            sql = `select count(*) as total from live_balance_audit where  addr = ? AND flag = 'malicious'`
+            params = [addr]
+        } else {
+            sql = `select count(*) as total from live_balance_audit where create_time >= ? AND create_time < ? AND flag = 'malicious'`
+            params = [
+                new Date(startTime + " 00:00:00"), new Date(endTime + " 23:59:59")
+            ]
+        }
+        let result = await raw(sql, params);
+        return result[0];
+    }
+
+    /**
      * 查询余额审计列表
      *
      * @param addr 钱包地址

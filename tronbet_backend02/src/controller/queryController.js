@@ -168,8 +168,9 @@ class QueryController {
         const endDate = ctx.query.endDate
         const offset = ctx.query.offset
         const limit = ctx.query.limit
+        const count = await BalanceAudit.countBalanceAudit(addr, startDate, endDate)
         const data = await BalanceAudit.getBalanceAuditPage(addr, startDate, endDate, offset, limit)
-        ctx.body = ctxUtils.success(data)
+        ctx.body = ctxUtils.success({count: count.total, list: data})
     }
 
     /**
