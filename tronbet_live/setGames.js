@@ -218,8 +218,8 @@ const createClearLogTable = async function () {
     await db.query(sql);
 }
 
-createClearLogTable().then(() => {
-// main().then(() => {
+// createClearLogTable().then(() => {
+main().then(() => {
     console.log("end!")
     process.exit(0)
 }).catch(e => {
