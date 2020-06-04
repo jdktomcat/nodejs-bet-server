@@ -82,8 +82,8 @@ const queryLiveBalanceAndCalcBalance = async function (addresses) {
     查询出 tron_live.live_balance 中存在，但是 tron_live.live_balance_audit 不存在的数据
  */
 const queryNewAccounts = async function () {
-    let params = ['TRX', startUid, 0]
-    let sql = "select * from live_balance where currency=? and uid>? and balance>? and addr not in(select addr from live_balance_audit) order by balance desc"
+    let params = ['TRX', startUid]
+    let sql = "select * from live_balance where currency=? and uid>? and addr not in(select addr from live_balance_audit) order by balance desc"
     let result = await db.query(sql, params);
     return result;
 }
@@ -92,8 +92,8 @@ const queryNewAccounts = async function () {
     查询出 tron_live.live_balance 中存在， tron_live.live_balance_audit 也存在，但是余额产生了变化的用户
  */
 const queryBalanceChangeAccounts = async function () {
-    let params = ['TRX', startUid, 0]
-    let sql = "select * from ( select * from live_balance where currency=? and uid>? and balance>?) a inner join (select * from live_balance_audit) b on a.addr=b.addr and a.balance!=b.live_balance"
+    let params = ['TRX', startUid]
+    let sql = "select * from ( select * from live_balance where currency=? and uid>?) a inner join (select * from live_balance_audit) b on a.addr=b.addr and a.balance!=b.live_balance"
     let result = await db.query(sql, params);
     return result;
 }

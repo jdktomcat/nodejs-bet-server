@@ -8,6 +8,13 @@ const queryBalance = async function (addr) {
     console.log("balance info is ", a)
 }
 
+const remove_from_black_list = async function () {
+    const update_balance_sql = "delete from tron_live.live_black_list where addr = 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj' and id = 2057"
+    const params = []
+    console.log(update_balance_sql, params)
+    await db.exec(update_balance_sql, params)
+}
+
 // const remove_from_black_list = async function () {
 //     const update_balance_sql = "delete from tron_live.live_black_list where addr = 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj' and id = 2057"
 //     const params = []
@@ -171,6 +178,27 @@ const resetBalance = async function(addr, balance) {
     //     return
     // }
 
+const resetBalance = async function(addr) {
+    let querySql=`select calc_balance from live_balance_audit where addr = ?`;
+    let query = await db.query(querySql, [addr]);
+    if (!query || query.length === 0) {
+        return
+    }
+
+    let calc_balance = query[0].calc_balance;
+    console.log("resetBalance: addr: %s, calc_balance: %d", addr, calc_balance);
+
+    await queryBalance(addr);
+
+    let updateSql=`update live_balance set balance = ? where addr = ? and currency = 'trx'`;
+    let update = await db.query(updateSql, [calc_balance, addr]);
+    console.log("resetBalance success: addr: %s, calc_balance: %d", addr, calc_balance);
+
+    await queryBalance(addr);
+}
+
+const doJob=async function(){
+    // await createTable();
     // let calc_balance = query[0].calc_balance;
     // console.log("resetBalance: addr: %s, calc_balance: %d", addr, calc_balance);
 
