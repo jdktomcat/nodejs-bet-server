@@ -5,8 +5,8 @@ const TopGameId = require("../model/topGameId")
 const TopUser = require("../model/topUsers")
 const TransactionByAddr = require("../model/transactionByAddr")
 const transactionByAddrAndDate = require("../model/transactionByAddrAndDate")
-const dailyDAU = require("../model/dailySchedule/dailyDAU")
-const ctxUtils = require("./ctxUtils")
+const BalanceAudit = require("../model/balanceAudit")
+const ctxUtils = require("../utils/ctxUtils")
 
 class QueryController {
 
@@ -127,7 +127,7 @@ class QueryController {
         const addr = ctx.query.addr
         const startDate = ctx.query.startDate
         const endDate = ctx.query.endDate
-        const data = await TransactionByAddr.getData(addr,startDate,endDate)
+        const data = await TransactionByAddr.getData(addr, startDate, endDate)
         ctx.body = ctxUtils.success(data)
     }
 
@@ -135,7 +135,7 @@ class QueryController {
         const addr = ctx.query.addr
         const startDate = ctx.query.startDate
         const endDate = ctx.query.endDate
-        const data = await TransactionByAddr.getDataFile(addr,startDate,endDate)
+        const data = await TransactionByAddr.getDataFile(addr, startDate, endDate)
         ctxUtils.file(ctx, data)
     }
 
@@ -147,7 +147,7 @@ class QueryController {
         const addr = ctx.query.addr
         const start = ctx.query.start
         const end = ctx.query.end
-        const data = await transactionByAddrAndDate.getData(addr,start,end)
+        const data = await transactionByAddrAndDate.getData(addr, start, end)
         ctx.body = ctxUtils.success(data)
     }
 
@@ -155,10 +155,53 @@ class QueryController {
         const addr = ctx.query.addr
         const start = ctx.query.start
         const end = ctx.query.end
-        const data = await transactionByAddrAndDate.getDataFile(addr,start,end)
+        const data = await transactionByAddrAndDate.getDataFile(addr, start, end)
         ctxUtils.file(ctx, data)
     }
 
+    /**
+     * 根据日期余额审计查询列表
+     */
+    static async getBalanceAuditList(ctx) {
+        const addr = ctx.query.addr
+        const startDate = ctx.query.startDate
+        const endDate = ctx.query.endDate
+        const offset = ctx.query.offset
+        const limit = ctx.query.limit
+        const data = await BalanceAudit.getBalanceAuditPage(addr, startDate, endDate, offset, limit)
+        ctx.body = ctxUtils.success(data)
+    }
+
+    /**
+     * 下载根据日期查询余额信息列表
+     */
+    static async downloadBalanceAudit(ctx) {
+        const addr = ctx.query.addr
+        const startDate = ctx.query.startDate
+        const endDate = ctx.query.endDate
+        const data = await BalanceAudit.getBalanceAuditList(addr, startDate, endDate)
+        let fileName = 'balance_audit_' + Date.now() + "_" + Math.random().toString(36).substr(2) + '.xls';
+        ctxUtils.fileWithData(ctx, data, fileName)
+    }
+
+    /**
+     * 根据钱包地址查询清除账户日志列表
+     */
+    static async queryClearLog(ctx) {
+        const addr = ctx.query.addr
+        const data = await BalanceAudit.queryClearLogList(addr)
+        ctx.body = ctxUtils.success(data)
+    }
+
+    /**
+     * 下载根据钱包地址查询清除账户日志列表
+     */
+    static async downloadClearLog(ctx) {
+        const addr = ctx.query.addr
+        const data = await BalanceAudit.queryClearLogList(addr)
+        let fileName = 'clear_log_' + Date.now() + "_" + Math.random().toString(36).substr(2) + '.xls';
+        ctxUtils.fileWithData(ctx, data, fileName)
+    }
 }
 
 module.exports = QueryController

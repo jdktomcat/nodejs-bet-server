@@ -1,4 +1,4 @@
-const ctxUtils = require("./ctxUtils")
+const ctxUtils = require("../utils/ctxUtils")
 const queryWin = require("../model/win/queryWin")
 
 class WinController {

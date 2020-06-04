@@ -1,4 +1,4 @@
-const ctxUtils = require("./ctxUtils")
+const ctxUtils = require("../utils/ctxUtils")
 const QueryById = require("../model/live/queryById")
 const QueryUsers = require("../model/live/queryUsers")
 const queryEM = require("../model/live/queryEM")
