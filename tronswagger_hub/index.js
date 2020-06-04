@@ -36,7 +36,6 @@ app.use(async (ctx, next) => {
             message: e.toString()
         }
         console.log("error response is ", res_data)
-        ctx.status(500)
         ctx.body = res_data.message
     }
 })
