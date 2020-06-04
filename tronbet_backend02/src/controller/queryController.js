@@ -127,7 +127,7 @@ class QueryController {
         const addr = ctx.query.addr
         const startDate = ctx.query.startDate
         const endDate = ctx.query.endDate
-        const data = await TransactionByAddr.getData(addr,startDate,endDate)
+        const data = await TransactionByAddr.getData(addr, startDate, endDate)
         ctx.body = ctxUtils.success(data)
     }
 
@@ -135,7 +135,7 @@ class QueryController {
         const addr = ctx.query.addr
         const startDate = ctx.query.startDate
         const endDate = ctx.query.endDate
-        const data = await TransactionByAddr.getDataFile(addr,startDate,endDate)
+        const data = await TransactionByAddr.getDataFile(addr, startDate, endDate)
         ctxUtils.file(ctx, data)
     }
 
@@ -168,7 +168,7 @@ class QueryController {
         const endDate = ctx.query.endDate
         const offset = ctx.query.offset
         const limit = ctx.query.limit
-        const data = await BalanceAudit.getBalanceAuditPage(addr,startDate, endDate, offset, limit)
+        const data = await BalanceAudit.getBalanceAuditPage(addr, startDate, endDate, offset, limit)
         ctx.body = ctxUtils.success(data)
     }
 
@@ -180,7 +180,7 @@ class QueryController {
         const startDate = ctx.query.startDate
         const endDate = ctx.query.endDate
         const data = await BalanceAudit.getBalanceAuditList(addr, startDate, endDate)
-        let fileName = 'balance_audit_'+Date.now()+Math.random().toString(36).substr(2)+'.xls';
+        let fileName = 'balance_audit_' + Date.now() + "_" + Math.random().toString(36).substr(2) + '.xls';
         ctxUtils.fileWithData(ctx, data, fileName)
     }
 
@@ -199,8 +199,8 @@ class QueryController {
     static async downloadClearLog(ctx) {
         const addr = ctx.query.addr
         const data = await BalanceAudit.queryClearLogList(addr)
-        let fileName = 'clear_log_'+Date.now()+Math.random().toString(36).substr(2)+'.xls';
-        ctxUtils.fileWithData(ctx, data,fileName)
+        let fileName = 'clear_log_' + Date.now() + "_" + Math.random().toString(36).substr(2) + '.xls';
+        ctxUtils.fileWithData(ctx, data, fileName)
     }
 }
 
