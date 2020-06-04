@@ -22,7 +22,7 @@ class BalanceAudit {
         } else {
             sql = `select id, addr, live_balance, calc_balance, flag, create_time, last_modify_time from 
                          tron_live.live_balance_audit where create_time >= ? AND create_time < ? AND flag = 'malicious' order by create_time desc limit ?,?`
-            params = [new Date(startTime+" 00:00:00").getDate(), new Date(endTime+" 23:59:59").getDate(), offset, limit]
+            params = [startTime + " 00:00:00", endTime + " 23:59:59", offset - 1, limit]
         }
         return await raw(sql, params);
     }
@@ -44,7 +44,7 @@ class BalanceAudit {
             sql = `select id, addr, live_balance, calc_balance, flag, create_time, last_modify_time from 
                          live_balance_audit where create_time >= ? AND create_time < ? AND flag = 'malicious' order by create_time desc`
             params = [
-                new Date(startTime+" 00:00:00").getDate(), new Date(endTime+" 23:59:59").getDate()
+                new Date(startTime + " 00:00:00"), new Date(endTime + " 23:59:59")
             ]
         }
         return await raw(sql, params);
@@ -56,10 +56,10 @@ class BalanceAudit {
      * @param addr 钱包地址
      * @returns {Promise<void>}
      */
-    static async queryClearLogList(addr){
+    static async queryClearLogList(addr) {
         const querySql = `select addr,clear_balance,live_balance,cal_balance,create_time from tron_live.live_balance_clear_log where addr=? order by create_time desc`
         const params = [addr]
-        return await raw(querySql,params)
+        return await raw(querySql, params)
     }
 }
 
