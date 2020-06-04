@@ -282,7 +282,7 @@ async function rollback(ctx) {
     let isTrue = hmCrypto.isValid(JSON.stringify(params), remoteSignature)
     if (!isTrue) {
         console.log(localSignature, remoteSignature)
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_TOKEN',request_uuid: params.request_uuid,})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_SIGNATURE',request_uuid: params.request_uuid,})
     }
 
 
