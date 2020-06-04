@@ -325,7 +325,17 @@ async function rollback(ctx) {
             })
     } else if (transaction.length > 0) {
         const transactionInfoTmp = transaction[0]
-        if (Number(transactionInfoTmp.status) === 0) {
+        if (transactionInfoTmp.resultTxId === transactionId && transactionInfoTmp.round === params.round) {
+            let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currencyRaw)
+            return sendMsg2Client(ctx,
+                {
+                    status: 'RS_OK',
+                    request_uuid: params.request_uuid,
+                    user: account[0].nickName || account[0].email,
+                    currency: currencyRaw,
+                    balance: toCpAmount(currencyRaw, newBalance)
+                })
+        }else if (Number(transactionInfoTmp.status) === 0) {
             return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK', request_uuid: params.request_uuid,})
         }
     }
