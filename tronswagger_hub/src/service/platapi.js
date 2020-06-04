@@ -109,13 +109,13 @@ async function balance(ctx) {
     let isTrue = hmCrypto.isValid(JSON.stringify(params), remoteSignature)
     if (!isTrue) {
         console.log(localSignature, remoteSignature)
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_TOKEN'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_SIGNATURE', request_uuid: params.request_uuid,})
     }
     let token = getToken(params.token)
     let account = await userinfo.getAccountBySessionId(token)
     console.log(account)
     if (account.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN', request_uuid: params.request_uuid,})
     }
     if (account[0].currency == 'USDT') {
         account[0].currency = 'TRX'
@@ -144,7 +144,7 @@ async function bet(ctx) {
     let isTrue = hmCrypto.isValid(JSON.stringify(params), remoteSignature)
     if (!isTrue) {
         console.log(localSignature, remoteSignature)
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_TOKEN'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_SIGNATURE', request_uuid: params.request_uuid,})
     }
 
     let transactionId = params.transaction_uuid
@@ -153,24 +153,37 @@ async function bet(ctx) {
     let game_id = params.game_id
     let currency = params.currency
     let bet = params.bet || ''
-    let amount = params.amount * 10
+    let amount = Number(params.amount) * 10
 
     amount = fromCpAmount(currency, amount)
     if (bet.length > 30) bet = bet.slice(0, 30)
     //
-    let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId + "_result")
-    if (transactionByResultTxId.length > 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION'})
+    if (amount < 0) {
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_WRONG_TYPES', request_uuid: params.request_uuid,})
     }
-
     let token = getToken(params.token)
     let account = await userinfo.getAccountBySessionId(token)
     if (account.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN', request_uuid: params.request_uuid,})
     }
     let balance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
     if (balance < fromCpAmount(currency, params.amount)) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_NOT_ENOUGH_MONEY'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_NOT_ENOUGH_MONEY', request_uuid: params.request_uuid,})
+    }
+    let transaction = await userinfo.getTransactionById(transactionId)
+    if(transaction.length > 0){
+        const transactionTmpInfo = transaction[0]
+        if(transactionTmpInfo.amount === amount && transactionTmpInfo.round === round){
+            return sendMsg2Client(ctx, {
+                user: account[0].nickName || account[0].email,
+                status: "RS_OK",
+                request_uuid: params.request_uuid,
+                currency: currency,
+                balance: toCpAmount(currency, balance)
+            })
+        }else {
+            return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION', request_uuid: params.request_uuid,})
+        }
     }
     /**
      * begin business
@@ -205,7 +218,7 @@ async function win(ctx) {
     let isTrue = hmCrypto.isValid(JSON.stringify(params), remoteSignature)
     if (!isTrue) {
         console.log(localSignature, remoteSignature)
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_TOKEN'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_SIGNATURE', request_uuid: params.request_uuid,})
     }
     let transactionId = params.transaction_uuid
     let currency = params.currency
@@ -218,22 +231,51 @@ async function win(ctx) {
     //
     let account = await userinfo.getAccountBySessionId(token)
     if (account.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN', request_uuid: params.request_uuid,})
     }
     //
     let transaction = await userinfo.getTransactionById(betTxId)
     if (transaction.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST', request_uuid: params.request_uuid,})
+    } else if (transaction.length > 0) {
+        const transactionTmp = transaction.filter(e => e.round === params.round && e.resultTxId === transactionId && e.win === amount)
+        if (transactionTmp.length > 0) {
+            let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
+            return sendMsg2Client(ctx,
+                {
+                    status: 'RS_OK',
+                    request_uuid: params.request_uuid,
+                    user: account[0].nickName || account[0].email,
+                    currency: currency,
+                    balance: toCpAmount(currency, newBalance)
+                })
+        }
     }
     //
     let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId)
     if (transactionByResultTxId.length > 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION'})
+        //
+        const transactionByResultTxIdInfo = transactionByResultTxId[0]
+        if (transactionByResultTxIdInfo.transactionId === betTxId && transactionByResultTxIdInfo.round === params.round
+            && transactionByResultTxIdInfo.win === amount) {
+            let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
+            return sendMsg2Client(ctx,
+                {
+                    status: 'RS_OK',
+                    request_uuid: params.request_uuid,
+                    user: account[0].nickName || account[0].email,
+                    currency: currency,
+                    balance: toCpAmount(currency, newBalance)
+                })
+        } else {
+            //重复
+            return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION', request_uuid: params.request_uuid,})
+        }
     }
     //
     const statusTmp = Number(transaction[0].status)
     if (statusTmp !== 1) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK', request_uuid: params.request_uuid,})
     }
     // console.log(`${account[0].email} win ${amount} @ ${betTxId}, winTransaction: ${transactionId} `)
     //
@@ -256,34 +298,75 @@ async function rollback(ctx) {
     let params = ctx.request.body
     let headers = ctx.request.headers
     console.log(`${new Date().toJSON()}-->request_rollback: `, params)
-
+    let currencyRaw = params.currency
+    //
     const localSignature = hmCrypto.sign(JSON.stringify(params))
     const remoteSignature = headers['X-Hub88-Signature'] || headers['x-hub88-signature']
 
     let isTrue = hmCrypto.isValid(JSON.stringify(params), remoteSignature)
     if (!isTrue) {
         console.log(localSignature, remoteSignature)
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_TOKEN'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_SIGNATURE', request_uuid: params.request_uuid,})
     }
 
 
     let token = getToken(params.token)
     let account = await userinfo.getAccountBySessionId(token)
     if (account.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN', request_uuid: params.request_uuid,})
     }
 
     let transactionId = params.transaction_uuid
+    let round = params.round
     let betTxId = params.reference_transaction_uuid
     let transaction = await userinfo.getTransactionById(betTxId)
     // update 20200527  处理成2(刚pay)
     if (transaction.length === 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_DOES_NOT_EXIST'})
+        let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currencyRaw)
+        return sendMsg2Client(ctx,
+            {
+                status: 'RS_OK',
+                request_uuid: params.request_uuid,
+                user: account[0].nickName || account[0].email,
+                currency: currencyRaw,
+                balance: toCpAmount(currencyRaw, newBalance)
+            })
+    } else if (transaction.length > 0) {
+        const transactionInfoTmp = transaction[0]
+        if (transactionInfoTmp.resultTxId === transactionId && transactionInfoTmp.round === params.round) {
+            let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currencyRaw)
+            return sendMsg2Client(ctx,
+                {
+                    status: 'RS_OK',
+                    request_uuid: params.request_uuid,
+                    user: account[0].nickName || account[0].email,
+                    currency: currencyRaw,
+                    balance: toCpAmount(currencyRaw, newBalance)
+                })
+        } else if (Number(transactionInfoTmp.status) === 0) {
+            return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK', request_uuid: params.request_uuid,})
+        }
     }
     //
     let transactionByResultTxId = await userinfo.getTransactionByResultTxId(transactionId)
     if (transactionByResultTxId.length > 0) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION'})
+        //
+        const transactionByResultTxIdInfo = transactionByResultTxId[0]
+        //
+        if (transactionByResultTxIdInfo.transactionId === betTxId && transactionByResultTxIdInfo.round === params.round) {
+            let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currencyRaw)
+            return sendMsg2Client(ctx,
+                {
+                    status: 'RS_OK',
+                    request_uuid: params.request_uuid,
+                    user: account[0].nickName || account[0].email,
+                    currency: currencyRaw,
+                    balance: toCpAmount(currencyRaw, newBalance)
+                })
+        } else {
+            //重复
+            return sendMsg2Client(ctx, {status: 'RS_ERROR_DUPLICATE_TRANSACTION', request_uuid: params.request_uuid,})
+        }
     }
     //
     let currency = transaction[0].currency
@@ -292,16 +375,19 @@ async function rollback(ctx) {
     const statusTmp = Number(transaction[0].status)
     const transactionWin = Number(transaction[0].win)
     if (statusTmp !== 1) {
-        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK'})
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_TRANSACTION_ROLLED_BACK', request_uuid: params.request_uuid,})
     }
     if (transactionWin > 0) {
         console.log("transactionWin is ", transactionWin)
-        return sendMsg2Client(ctx, {
-            status: 'RS_OK',
-            request_uuid: params.request_uuid,
-            currency: currency,
-            user: account.nickName || account.email
-        })
+        let newBalance = await userinfo.getUserBalanceByCurrency(account[0].uid, currency)
+        return sendMsg2Client(ctx,
+            {
+                status: 'RS_OK',
+                request_uuid: params.request_uuid,
+                user: account[0].nickName || account[0].email,
+                currency: currencyRaw,
+                balance: toCpAmount(currencyRaw, newBalance)
+            })
     }
     /**
      * begin tx
