@@ -24,7 +24,7 @@ class BalanceAudit {
             sql = `select id, addr, live_balance, calc_balance, flag, 
                    DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, DATE_FORMAT(last_modify_time,'%Y-%m-%d %H:%i:%s') as last_modify_time
                    from tron_live.live_balance_audit where create_time >= ? AND create_time < ? AND flag = 'malicious' order by create_time desc limit ?,?`
-            params = [startTime + " 00:00:00", endTime + " 23:59:59", offset - 1, limit]
+            params = [startTime + " 00:00:00", endTime + " 23:59:59", (offset - 1) * limit, limit]
         }
         return await raw(sql, params);
     }

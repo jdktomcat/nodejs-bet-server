@@ -23,7 +23,7 @@ let startUid = 43073;
 /*
     用户余额-计算的余额 允许的最大偏向值
  */
-let allowMiss=3000*1000000;
+let allowMiss = 3000 * 1000000;
 
 /*
  *  live_balance-calc_balance>clearBalanceThreshold
@@ -169,6 +169,7 @@ const doBatchUpdate = async function (list) {
         cleanRecordList.forEach(function (record) {
             record.push(clearMap.get(record[0]));
         })
+        cleanRecordList = cleanRecordList.filter(record => record[3] > 0)
         let insertClearLog = "insert into tron_live.live_balance_clear_log(addr,live_balance,cal_balance,clear_balance) values ? ";
         let insertResult = await db.query(insertClearLog, [cleanRecordList])
         console.log("save clear balance log end,result:" + insertResult)
