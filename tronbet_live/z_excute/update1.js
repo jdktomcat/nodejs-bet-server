@@ -29,34 +29,22 @@ const query_sport_tmp = async function () {
     return a
 }
 
-// TDadzsjnk6VQeHeKLCanqHPoZ5qdp1kioV    3780 TRX
-// TAMYYbmqMBMmPcRCpj7Fx9dxJ4FZ8XekBo  11620 TRX
-// TXATntw1udujrh58yJH1LwoJCosoKs5bpJ    4155 TRX
+const update_sport_id = async function () {
+    const sql = `
+    update sports_transaction_log set status = 50 where betslipId in
+    (
+        '1875353212685520897',
+        '1875450408848199682'
+    )
+    `
+    const a = await rawQuery(sql, [])
+    return a
+}
+
 const test1 = async function () {
-    const amountDict = {
-        'TDadzsjnk6VQeHeKLCanqHPoZ5qdp1kioV': 3780,
-        'TXATntw1udujrh58yJH1LwoJCosoKs5bpJ': 4155,
-    }
-    const data = await query_sport_tmp()
-    for (let e of data) {
-        const addr = e.addr
-        const status = Number(e.status)
-        const win = Number(amountDict[addr]) * 1e6
-        // 只有0的状态
-        if (status !== 0) {
-            throw new Error("status error : " + JSON.stringify(e))
-        }
-        if (amountDict[addr] === undefined) {
-            throw new Error("status error : " + JSON.stringify(e))
-        }
-        //1
-        await query_balance(addr)
-        //2
-        await update_balance(addr, win)
-        //3
-        await query_balance(addr)
-        //
-        console.log("===========分割线===========\n")
+    const a = await query_sport_tmp()
+    if(a.length === 2){
+        await update_sport_id()
     }
 }
 
