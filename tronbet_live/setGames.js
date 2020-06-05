@@ -171,15 +171,16 @@ const remove_from_black_list = async function () {
 //     }
 // }
 
-const resetBalance = async function(addr, balance) {
+const resetBalance = async function (addr, balance) {
     // let querySql=`select calc_balance from live_balance_audit where addr = ?`;
     // let query = await db.query(querySql, [addr]);
     // if (!query || query.length === 0) {
     //     return
     // }
+}
 
-const resetBalance = async function(addr) {
-    let querySql=`select calc_balance from live_balance_audit where addr = ?`;
+const resetBalance = async function (addr) {
+    let querySql = `select calc_balance from live_balance_audit where addr = ?`;
     let query = await db.query(querySql, [addr]);
     if (!query || query.length === 0) {
         return
@@ -190,21 +191,21 @@ const resetBalance = async function(addr) {
 
     await queryBalance(addr);
 
-    let updateSql=`update live_balance set balance = ? where addr = ? and currency = 'trx'`;
+    let updateSql = `update live_balance set balance = ? where addr = ? and currency = 'trx'`;
     let update = await db.query(updateSql, [calc_balance, addr]);
     console.log("resetBalance success: addr: %s, calc_balance: %d", addr, calc_balance);
 
     await queryBalance(addr);
 }
 
-const doJob=async function(){
+const doJob = async function () {
     // await createTable();
     // let calc_balance = query[0].calc_balance;
     // console.log("resetBalance: addr: %s, calc_balance: %d", addr, calc_balance);
 
     await queryBalance(addr);
 
-    let updateSql=`update live_balance set balance = ? where addr = ? and currency = 'trx'`;
+    let updateSql = `update live_balance set balance = ? where addr = ? and currency = 'trx'`;
     let update = await db.query(updateSql, [balance, addr]);
     console.log("resetBalance success: addr: %s, balance: %d", addr, balance);
 
@@ -246,12 +247,23 @@ const createClearLogTable = async function () {
     await db.query(sql);
 }
 
+/**
+ * 删除无效数据
+ *
+ * @returns {Promise<void>}
+ */
+const clearDataLog = async function () {
+    let sql = `DELETE FROM live_balance_clear_log where clear_balance = 0 `
+    await db.query(sql)
+}
+
 // createClearLogTable().then(() => {
-main().then(() => {
+clearDataLog().then(() => {
     console.log("end!")
     process.exit(0)
 }).catch(e => {
     console.log('error is : ', e)
     process.exit(1)
 })
+
 
