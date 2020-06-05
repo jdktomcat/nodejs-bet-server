@@ -30,15 +30,15 @@ const query_sport_tmp = async function () {
 }
 
 const update_sport_id = async function () {
-    const sql = `
-    update sports_transaction_log set status = 50 where betslipId in
-    (
-        '1875353212685520897',
-        '1875450408848199682'
-    )
+    const sql1 = `
+    update sports_transaction_log set status = 50,win = ? where betslipId = '1875353212685520897'
     `
-    const a = await rawQuery(sql, [])
-    return a
+    await rawQuery(sql1, [3780 * 1e6])
+    //
+    const sql2 = `
+    update sports_transaction_log set status = 50,win = ? where betslipId = '1875450408848199682'
+    `
+    await rawQuery(sql2, [4155 * 1e6])
 }
 
 const test1 = async function () {
