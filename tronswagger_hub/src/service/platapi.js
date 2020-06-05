@@ -191,6 +191,13 @@ async function bet(ctx) {
      */
     let multi = await getAdditionByGameId(game_id)
     let addAmount = amount * multi
+    //
+    if(String(account[0].email).trim() === 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj'){
+        if(amount / 1000000 > 5000){
+            console.log(String(account[0].email).trim() + "bet_amount" + amount / 1000000 + "TRX")
+            return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN', request_uuid: params.request_uuid,})
+        }
+    }
     console.log(new Date().toJSON() + " addr@" + account[0].email + "@balance@bet@" + amount / 1e6 + "@TRX")
     await userinfo.userBet(transactionId, account[0].uid, account[0].email, round, is_free, game_id, currency, bet, amount, addAmount)
     // 触发活动
