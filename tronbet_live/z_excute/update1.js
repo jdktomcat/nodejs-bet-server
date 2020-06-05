@@ -37,11 +37,6 @@ const test1 = async function () {
         'TDadzsjnk6VQeHeKLCanqHPoZ5qdp1kioV': 3780,
         'TXATntw1udujrh58yJH1LwoJCosoKs5bpJ': 4155,
     }
-    //fake data
-    // const data = [
-    //     {betslipId: "1875353212685520897", status: "0", addr: "TDadzsjnk6VQeHeKLCanqHPoZ5qdp1kioV"},
-    //     {betslipId: "1875450408848199682", status: "0", addr: "TXATntw1udujrh58yJH1LwoJCosoKs5bpJ"},
-    // ]
     const data = await query_sport_tmp()
     for (let e of data) {
         const addr = e.addr
