@@ -3,7 +3,7 @@ const path = require("path");
 
 let prdCfg = {};
 try {
-  prdCfg = require("/Users/sid.tang/workspace/work-project/wink/nodejs-bet-server/tronbet_config/config");
+  prdCfg = require("/data/tronbet_config/config");
 } catch (error) {
   console.log("using app config");
 }
@@ -278,7 +278,7 @@ if (
   //开发环境
   config = Object.assign(config, require("./config_dev.js"));
 } else {
-  config = Object.assign(config, require("./config_dev.js"));
+  config = Object.assign(config, require("./config_test.js"));
 }
 
 module.exports = config;
