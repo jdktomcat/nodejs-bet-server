@@ -111,7 +111,12 @@ const autoAddLiveBalanceOffset = async function(addr) {
         uid, addr, offset);
     await addLiveBalanceOffset(uid, addr, offset);
 
-    await updateLiveBalanceAudit(addr, balanceInfo.liveBalance, balanceInfo.calcBalance);
+    let newBalanceInfo = await getBalanceInfo(addr);
+    if (!newBalanceInfo) {
+        console.log("autoAddLiveBalanceOffset getBalanceInfo failed");
+        return;
+    }
+    await updateLiveBalanceAudit(addr, newBalanceInfo.liveBalance, newBalanceInfo.calcBalance);
 }
 
 const main = (async function() {
