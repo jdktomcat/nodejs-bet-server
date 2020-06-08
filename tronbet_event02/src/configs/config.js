@@ -12,7 +12,7 @@ let config = {
   env: "dev",
   debug: false,
   app: {
-    http_port: prdCfg.port.tronbet_event01,
+    http_port: prdCfg.port.tronbet_event02,
     logPath: path.resolve(__dirname, "../../logs"),
     log: true, //开启日志,
     startTs: 1580108400000,//Mon Jan 27 2020 15:00:00

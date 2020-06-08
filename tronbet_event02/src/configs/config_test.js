@@ -2,7 +2,7 @@ const path = require("path");
 
 let prdCfg = {};
 try {
-  prdCfg = require("/data/Users/sid.tang/workspace/work-project/wink/nodejs-bet-server/tronbet_config/config_test");
+  prdCfg = require("/data/tronbet_config/config_test");
 } catch (error) {
   console.log("using app config");
 }
@@ -11,7 +11,7 @@ let config = {
   env: "dev",
   debug: false,
   app: {
-    http_port: prdCfg.port.tronbet_event01,
+    http_port: prdCfg.port.tronbet_event02,
     logPath: path.resolve(__dirname, "../../logs"),
     log: true, //开启日志,
     startTs: 1579996800000, //2019-01-26 00:00:00
