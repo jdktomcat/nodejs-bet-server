@@ -50,12 +50,36 @@ const queryDice = async function (params) {
 
 
 const queryMoon = async function (params) {
-    let {startDate, endDate, addr, page, pageNum} = params
+    let {startDate, endDate, addr, page, pageNum, round} = params
     const start = newUtcTime(startDate).getTime()
     const end = newUtcTime(endDate).getTime()
     const limit = Number(pageNum)
     const offset = (Number(page) - 1) * limit
-    let sql = `
+    if (round !== undefined && round !== '') {
+        let sql = `
+            SELECT
+            from_unixtime(a.ts / 1000,'%Y-%m-%d %H:%i:%S') as day,
+            a.addr,
+            a.amount / 1000000 as amount,
+            a.win / 1000000  as win,
+            a.crashAt,
+            a.autoAt,
+            a.escapeAt as userCrashAt,
+            a.tx_id,
+            a.round,
+            b.tx_id as round_tx_id,
+            b.crashAt as round_crashAt
+        FROM
+            tron_bet_admin.moon_user_order  as a
+            left join tron_bet_admin.moon_round_info as b
+            on a.round = b.round
+        WHERE
+            a.round = ?
+    `
+        const rs = await raw(sql, [round])
+        return rs
+    } else {
+        let sql = `
             SELECT
             from_unixtime(a.ts / 1000,'%Y-%m-%d %H:%i:%S') as day,
             a.addr,
@@ -78,18 +102,19 @@ const queryMoon = async function (params) {
             And a.addr = ?
             order by a.ts desc
     `
-    let sqlC = `select count(1) as count from (${sql}) as g`
-    const crs = await raw(sqlC, [start, end, addr])
-    const count = crs[0].count || 0
-    //
-    sql += ' limit ?,?'
-    const p = [start, end, addr, offset, limit]
-    let rsData = await raw(sql, p)
-    const rs = {
-        count: count,
-        rows: rsData
+        let sqlC = `select count(1) as count from (${sql}) as g`
+        const crs = await raw(sqlC, [start, end, addr])
+        const count = crs[0].count || 0
+        //
+        sql += ' limit ?,?'
+        const p = [start, end, addr, offset, limit]
+        let rsData = await raw(sql, p)
+        const rs = {
+            count: count,
+            rows: rsData
+        }
+        return rs
     }
-    return rs
 }
 
 
