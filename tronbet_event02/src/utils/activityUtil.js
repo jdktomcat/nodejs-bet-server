@@ -20,6 +20,7 @@ function calIntegral(ts, amount) {
     return integral;
 }
 
+
 module.exports = {
     calIntegral
 }

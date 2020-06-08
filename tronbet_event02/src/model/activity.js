@@ -390,6 +390,33 @@ async function saveUserFlight(dataList) {
 }
 
 /**
+ * 查询排名列表
+ *
+ * @param limit 排名
+ * @returns {Promise<void>}
+ */
+async function queryTopUserIntegral(limit){
+    const sql = `select addr, integral from tron_bet_event.user_integral order by integral desc limit ?`;
+    const result = await db.query(sql, [limit])
+    return result
+}
+
+/**
+ * 批量保存中奖用户信息
+ *
+ * @param dataList 中奖用户信息列表
+ * @returns {Promise<void>}
+ */
+async function saveAwardUser(dataList) {
+    if (!dataList || dataList.length == 0) {
+        return
+    }
+    let insertSql = "insert into tron_bet_event.award_log(addr,integral,order,prize) values ? ";
+    let insertResult = await db.exec(insertSql, [dataList])
+    console.log("save award user complete,result:" + insertResult)
+}
+
+/**
  * 对外开放接口
  * @type {{insertBatch: insertBatch, getMaxLogId: (function(): number)}}
  */
@@ -397,5 +424,7 @@ module.exports = {
     getMaxLogId,
     scanBetLog,
     saveUserIntegral,
-    saveUserFlight
+    saveUserFlight,
+    saveAwardUser,
+    queryTopUserIntegral
 }
