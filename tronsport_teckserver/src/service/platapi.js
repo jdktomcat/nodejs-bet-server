@@ -110,9 +110,13 @@ async function identify(ctx) {
     let user = await userinfo.getUserByKey(key);
     if (_.isEmpty(user)) return sendErrorMessage2Client(ctx, 403, 1001);
     let currency = user[0].currency;
+    let uid = user[0].uid;
     let balance = await userinfo.getUserBalanceByCurrency(user[0].uid, currency);
-
-    let sessionId = common.getRandomSeed(64);
+    // 999混淆一下
+    let uidTmp = String(Number(uid) + 999)
+    let randomLength = 64 - uidTmp.length
+    let sessionId = common.getRandomSeed(randomLength) + uidTmp;
+    //
     if (user[0].sportsSession == null || user[0].sportsSession.length < 40) {
       await userinfo.updateSportsSessionByKey(sessionId, key);
     } else {
