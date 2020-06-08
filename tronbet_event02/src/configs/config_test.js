@@ -8,7 +8,7 @@ try {
 }
 
 let config = {
-  env: "dev",
+  env: "test",
   debug: false,
   app: {
     http_port: prdCfg.port.tronbet_event02,
