@@ -2,7 +2,7 @@ const path = require("path");
 
 let prdCfg = {};
 try {
-  prdCfg = require("/data/tronbet_config/config_test");
+  prdCfg = require("/Users/sid.tang/workspace/work-project/wink/nodejs-bet-server/tronbet_config/config_test");
 } catch (error) {
   console.log("using app config");
 }
@@ -128,7 +128,111 @@ let config = {
     100,
     100,
     100
-  ]
+  ],
+  activity:{
+    championship: {
+      startTime:'2020-06-15 00:00:00',
+      endTime:'2020-06-24 23:59:59',
+      stage:[
+        {
+          name:'第一阶段',
+          rate:0.001,
+          startTime:'2020-06-15 00:00:00',
+          endTime:'2020-06-21 23:59:59'
+        },
+        {
+          name:'第二阶段',
+          rate:0.002,
+          startTime:'2020-06-22 00:00:00',
+          endTime:'2020-06-23 23:59:59'
+        },
+        {
+          name:'第三阶段',
+          rate:0.003,
+          startTime:'2020-06-24 00:00:00',
+          endTime:'2020-06-24 23:59:59'
+        }
+      ]
+    },
+    flight:{
+      startTime:'2020-06-15 00:00:00',
+      endTime:'2020-06-24 23:59:59',
+      minAmount:30,
+      rate:0.004,
+      plant:[
+        {
+          id:0,
+          name:'Earth',
+          fuel:20,
+          minPrize:50,
+          maxPrize:200
+        },
+        {
+          id:1,
+          name:'Moon',
+          fuel:40,
+          minPrize:100,
+          maxPrize:400
+        },
+        {
+          id:2,
+          name:'Mars',
+          fuel:80,
+          minPrize:200,
+          maxPrize:800
+        },
+        {
+          id:3,
+          name:'Mercury',
+          fuel:160,
+          minPrize:400,
+          maxPrize:1600
+        },
+        {
+          id:4,
+          name:'Venus',
+          fuel:320,
+          minPrize:800,
+          maxPrize:3200
+        },
+        {
+          id:5,
+          name:'Jupiter',
+          fuel:640,
+          minPrize:1600,
+          maxPrize:6400
+        },
+        {
+          id:6,
+          name:'Saturn',
+          fuel:1280,
+          minPrize:3200,
+          maxPrize:12800
+        },
+        {
+          id:7,
+          name:'Uranus',
+          fuel:2560,
+          minPrize:6400,
+          maxPrize:25600
+        },
+        {
+          id:8,
+          name:'Uranus',
+          fuel:5120,
+          minPrize:12800,
+          maxPrize:51200
+        },
+        {
+          id:9,
+          name:'Sun',
+          fuel: 10240,
+          minPrize:25600,
+          maxPrize:102400
+        }
+      ]
+    }
+  }
 };
 
 module.exports = config;
