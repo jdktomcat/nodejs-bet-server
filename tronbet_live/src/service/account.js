@@ -517,7 +517,8 @@ async function getSportsKey(ctx) {
     if (_.isEmpty(user)) {
         return common.sendMsgToClient(ctx, 2006, 'invalid account')
     }
-    let uid = String(user[0].uid)
+    // 999 混淆一下uid
+    let uid = String(Number(user[0].uid) + 999)
     let randomLength = 48 - uid.length
     let sportskey = common.getRandomSeed(randomLength) + uid
     try {

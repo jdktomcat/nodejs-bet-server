@@ -566,8 +566,9 @@ async function getKey(ctx) {
   //登录日志记录
   await usermodel.userLoginLog(addr);
 
-  const uid = String(user[0].uid)
-  const randomLength = 48 - uid.length
+  // 999 混淆一下uid
+  let uid = String(Number(user[0].uid) + 999)
+  let randomLength = 48 - uid.length
   let key = common.getRandomSeed(randomLength) + uid
 
   try {
