@@ -175,11 +175,15 @@ async function userLogin(ctx) {
 
     let sessionId = uid[0].sessionId
     if (!sessionId || sessionId.length > 40) {
+        // 666 混淆一下 真实id
+        let tmpSessionId = String(Number(uid[0].uid) + 666)
+        let tmpSessionLength = 40 - tmpSessionId.length
+        //
         try {
-            sessionId = common.getRandomSeed(40)
+            sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
             await userinfo.updateSessionId(uid[0].email, sessionId)
         } catch (error) {
-            sessionId = common.getRandomSeed(40)
+            sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
             await userinfo.updateSessionId(uid[0].email, sessionId)
         }
 

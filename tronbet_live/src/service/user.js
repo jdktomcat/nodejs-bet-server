@@ -60,13 +60,17 @@ async function login(ctx) {
 
   //登录日志记录
   await usermodel.userLoginLog(addr);
-
-  let sessionId = common.getRandomSeed(40);
+  //
+  // 666 混淆一下 真实id
+  let tmpSessionId = String(Number(user[0].uid) + 666)
+  let tmpSessionLength = 40 - tmpSessionId.length
+  //
+  let sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
 
   try {
     await usermodel.updateSessionId(addr, sessionId);
   } catch (error) {
-    sessionId = common.getRandomSeed(40);
+    sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
     await usermodel.updateSessionId(addr, sessionId);
   }
   await redisUtils.hset(redisUserKeyPrefix + addr, 'sessionId', sessionId);
