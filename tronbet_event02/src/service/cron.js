@@ -17,12 +17,12 @@ const activityUtil = require('../utils/activityUtil')
 /**
  * 活动开始时间
  */
-const startTime = config.activity.startTime
+const startTime = new Date(config.activity.startTime).getTime()
 
 /**
  * 活动结束时间
  */
-const endTime = config.activity.endTime
+const endTime = new Date(config.activity.endTime).getTime()
 
 /**
  * 燃料汇率
