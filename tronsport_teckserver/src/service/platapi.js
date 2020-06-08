@@ -112,8 +112,8 @@ async function identify(ctx) {
     let currency = user[0].currency;
     let uid = user[0].uid;
     let balance = await userinfo.getUserBalanceByCurrency(user[0].uid, currency);
-    // 888混淆一下uid
-    let uidTmp = String(Number(uid) + 888)
+    // 999混淆一下uid
+    let uidTmp = String(Number(uid) + 999)
     let randomLength = 64 - uidTmp.length
     let sessionId = common.getRandomSeed(randomLength) + uidTmp;
     //
