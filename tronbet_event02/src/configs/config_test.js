@@ -2,7 +2,7 @@ const path = require("path");
 
 let prdCfg = {};
 try {
-  prdCfg = require("/data/tronbet_config/config_test");
+  prdCfg = require("/home/java-tron/code/node-back/nodejs-bet-server/tronbet_config/config_test");
 } catch (error) {
   console.log("using app config");
 }
