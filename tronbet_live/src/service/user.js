@@ -566,12 +566,14 @@ async function getKey(ctx) {
   //登录日志记录
   await usermodel.userLoginLog(addr);
 
-  let key = common.getRandomSeed(48);
+  const uid = String(user[0].uid)
+  const randomLength = 48 - uid.length
+  let key = common.getRandomSeed(randomLength) + uid
 
   try {
     await usermodel.updateUserKey(addr, key);
   } catch (error) {
-    key = common.getRandomSeed(48);
+    key = common.getRandomSeed(randomLength) + uid
     await usermodel.updateUserKey(addr, key);
   }
   await redisUtils.hset(redisUserKeyPrefix + addr, 'userKey', key);
