@@ -33,7 +33,7 @@ async function makeUpLiveToken() {
 
     // update 20200220
     let users = [
-        {"addr": "TUegyE57yFmju8WQoQDsn9gAef68Mh4bPs", "amount": 390000, "adAmount": (390000 / 390) * 1000000},
+        {"addr": "TFo1tLHjSTUCrpeZDzhaefkHgMousgxjCq", "amount": 15500, "adAmount": (15500 / 392) * 1000000},
     ]
     users.forEach(e=>{
         e.adAmount = parseInt(e.adAmount)
