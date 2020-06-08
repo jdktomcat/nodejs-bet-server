@@ -66,7 +66,7 @@ async function login(ctx) {
   let tmpSessionLength = 40 - tmpSessionId.length
   //
   let sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
-
+  console.log("debug_sessionId is ",sessionId)
   try {
     await usermodel.updateSessionId(addr, sessionId);
   } catch (error) {
@@ -92,6 +92,7 @@ async function login(ctx) {
     name: _name,
     img: data.data.img
   };
+  console.log("lanuchOptions is ",lanuchOptions)
   return await common.sendMsgToClient(ctx, 0, '', lanuchOptions);
 }
 
