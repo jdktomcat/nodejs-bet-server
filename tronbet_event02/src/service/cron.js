@@ -48,6 +48,30 @@ const orderPrize = config.activity.championship.prize
  */
 const top = config.activity.championship.top
 
+/**
+ * 锦标赛开始时间
+ * @type {number}
+ */
+const championshipStartTime = new Date(config.activity.championship.startTime).getTime()
+
+/**
+ * 锦标赛结束时间
+ * @type {number}
+ */
+const championshipEndTime = new Date(config.activity.championship.endTime).getTime()
+
+/**
+ * 飞行游戏开始时间
+ * @type {number}
+ */
+const flightStartTime = new Date(config.activity.flight.startTime).getTime()
+
+/**
+ * 飞行游戏结束时间
+ * @type {number}
+ */
+const flightEndTime = new Date(config.activity.flight.startTime).getTime()
+
 /*
     进行了多少次任务
  */
@@ -64,10 +88,10 @@ cronEvent.on('scanBet', () => {
             const userIntegralList = [];
             const userFlightList = [];
             result.forEach(record => {
-                if (record.ts >= config.activity.championship.startTime && record.ts < config.activity.championship.endTime) {
+                if (record.ts >= championshipStartTime && record.ts < championshipEndTime) {
                     userIntegralList.push([record.addr, activityUtil.calIntegral(record.ts, record.amount), record.id])
                 }
-                if (record.ts >= config.activity.flight.startTime && record.ts < config.activity.flight.endTime) {
+                if (record.ts >= flightStartTime && record.ts < flightEndTime) {
                     if (record.amount >= config.activity.flight.minAmount) {
                         userFlightList.push([record.addr, record.amount * fuelRate, 0, record.id])
                     } else {
