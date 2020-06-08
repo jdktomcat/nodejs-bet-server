@@ -92,7 +92,7 @@ module.exports = {
 
     tronbet_backend02: 18056,
     tronbet_event01: 18058,
-    tronbet_event02: 18059,
+    tronbet_event02: 18058,
 
 
     tronlive_emserver: 18060,
