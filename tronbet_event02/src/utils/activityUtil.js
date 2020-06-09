@@ -26,24 +26,6 @@ function calIntegral(ts, amount) {
     return integral;
 }
 
-/**
- * 格式化当前时间
- * @returns {Promise<*>}
- */
-function formatNow(){
-    return formatDate(new Date());
-}
-
-/**
- * 格式化日期
- * @param date 日期
- */
-function formatDate(date){
-    return date.format("yyyy-MM-dd hh:mm:ss")
-}
-
 module.exports = {
-    calIntegral,
-    formatNow,
-    formatDate
+    calIntegral
 }

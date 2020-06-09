@@ -83,7 +83,7 @@ let times = 1
 cronEvent.on('scanBet', () => {
     setInterval(async () => {
         const scanStartTime = new Date();
-        console.log('scan start round:' + times + ' at ' + await activityUtil.formatDate(scanStartTime))
+        console.log('scan start round:' + times + ' at ' + scanStartTime.format('yyyy-MM-dd hh:mm:ss'))
         const maxLogId = await activity.getMaxLogId();
         console.log('scan param,maxLogId:' + maxLogId + ' startTime:' + startTime + ' endTime:' + endTime)
         const result = await activity.scanBetLog(maxLogId, startTime, endTime);
@@ -111,7 +111,7 @@ cronEvent.on('scanBet', () => {
         }
         const scanEndTime = new Date();
         const costTime = scanStartTime.getTime() - scanEndTime.getTime();
-        console.log('scan bet log complete, round:' + times + ', at ' + await activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
+        console.log('scan bet log complete, round:' + times + ', at ' + scanEndTime.format('yyyy-MM-dd hh:mm:ss') + ', cost:' + costTime + 'ms')
         times++
     }, duration);
 })
@@ -131,7 +131,7 @@ cronEvent.on("draw", () => {
                     awardUsers.push([record.addr, order, record.integral, orderPrize.get(order)])
                 })
                 await activity.saveAwardUser(awardUsers)
-                console.log("draw success at " + await activityUtil.formatNow())
+                console.log("draw success at " + new Date().format('yyyy-MM-dd hh:mm:ss'))
             } else {
                 console.error("draw fail,because there is no user data in database,please checkout the data!!!")
             }
