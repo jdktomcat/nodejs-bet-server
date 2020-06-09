@@ -124,44 +124,97 @@ const dbDo = async function(sql, params) {
 //     await updateLiveBalanceAudit(addr, newBalanceInfo.liveBalance, newBalanceInfo.calcBalance);
 // }
 
-const queryAccounts = async function() {
-    let params = [allowMissForReset]
-    let sql = `select balance.uid as uid,
-                   audit.addr as addr,
-                   audit.live_balance as liveBalance,
-                   audit.calc_balance as calcBalance
-               from live_balance_audit as audit, live_balance as balance
-               where audit.live_balance > audit.calc_balance and
-                   audit.live_balance <= audit.calc_balance + ? and
-                   audit.addr = balance.addr and
-                   balance.currency = 'trx'`;
-    return await dbDo(sql, params);
+// const queryAccounts = async function() {
+//     let params = [allowMissForReset]
+//     let sql = `select balance.uid as uid,
+//                    audit.addr as addr,
+//                    audit.live_balance as liveBalance,
+//                    audit.calc_balance as calcBalance
+//                from live_balance_audit as audit, live_balance as balance
+//                where audit.live_balance > audit.calc_balance and
+//                    audit.live_balance <= audit.calc_balance + ? and
+//                    audit.addr = balance.addr and
+//                    balance.currency = 'trx'`;
+//     return await dbDo(sql, params);
+// }
+
+// const addLiveBalanceOffsetBatch = async function(list) {
+//     const sql = `insert into live_balance_audit_offset (uid, addr, offset, create_time)
+//                  values ?`;
+//     await dbDo(sql, [list]);
+// }
+
+// const autoAddLiveBalanceOffsetBatch = async function() {
+//     let accounts = await queryAccounts();
+//     if (accounts.length === 0) {
+//         console.log("autoAddLiveBalanceOffsetBatch: accounts.length === 0");
+//         return;
+//     }
+
+//     const timestamp = new Date().getTime();
+//     console.log("autoAddLiveBalanceOffsetBatch: accounts.length: %d, timestamp: %d",
+//         accounts.length, timestamp);
+
+//     let list = accounts.map(e => [e.uid, e.addr, e.liveBalance - e.calcBalance, timestamp]);
+//     await addLiveBalanceOffsetBatch(list);
+// }
+
+const getBalance = async function(addr) {
+    const sql = `select balance from live_balance where addr = ? and currency = 'trx'`;
+    const res = await dbDo(sql, [addr]);
+    if (res.length > 0) {
+        return res.balance;
+    } else {
+        return null;
+    }
 }
 
-const addLiveBalanceOffsetBatch = async function(list) {
-    const sql = `insert into live_balance_audit_offset (uid, addr, offset, create_time)
-                 values ?`;
-    await dbDo(sql, [list]);
+const setBalance = async function(addr, balance) {
+    const before = await getBalance(addr);
+    if (!before) {
+        console.log("setBalance: !before");
+        return
+    }
+    console.log("setBalance: before: %d", before);
+
+    const sql = `update live_balance set balance = ? where currency = 'trx' and addr = ?`;
+    await dbDo(sql, [balance, addr]);
+
+    const after = await getBalance(addr);
+    if (!after) {
+        console.log("setBalance: !after");
+        return
+    }
+    console.log("setBalance: after: %d", after);
 }
 
-const autoAddLiveBalanceOffsetBatch = async function() {
-    let accounts = await queryAccounts();
-    if (accounts.length === 0) {
-        console.log("autoAddLiveBalanceOffsetBatch: accounts.length === 0");
-        return;
+const getCalcBalance = async function(addr) {
+    const sql = `select calc_balance as calcBalance from live_balance_audit where addr = ?`;
+    const res = await dbDo(sql, [addr]);
+    if (res.length > 0) {
+        return res.calcBalance;
+    } else {
+        return null;
+    }
+}
+
+const autoSetBalance = async function(addr) {
+    const calcBalance = await getCalcBalance(addr);
+    if (!calcBalance) {
+        console.log("autoSetBalance: !calcBalance");
+        return
     }
 
-    const timestamp = new Date().getTime();
-    console.log("autoAddLiveBalanceOffsetBatch: accounts.length: %d, timestamp: %d",
-        accounts.length, timestamp);
+    console.log("autoSetBalance: calcBalance: %d", calcBalance);
 
-    let list = accounts.map(e => [e.uid, e.addr, e.liveBalance - e.calcBalance, timestamp]);
-    await addLiveBalanceOffsetBatch(list);
+    await setBalance(addr, calcBalance);
 }
 
 const main = (async function() {
     console.log("updateDeclan start!");
-    await autoAddLiveBalanceOffsetBatch();
+    await autoSetBalance("TA1tiExCTYxT4LpEdKHpzxBENPaQSTxGCL");
+    await autoSetBalance("TJGpJpaQkDq6MULddpguYCE4Nn96GDMdPY");
+    await setBalance("TWrivC9o2MkeoKDcR1pvneaxmvw9uVU5zD", 0);
 })().then(() => {
     console.log("updateDeclan end!");
     process.exit(0);
