@@ -82,8 +82,13 @@ let times = 1
  */
 cronEvent.on('scanBet', () => {
     setInterval(async () => {
+        const scanStartTime = new Date();
+        console.log('scan start round:' + times + ' at ' + await activityUtil.formatDate(scanStartTime))
         const maxLogId = await activity.getMaxLogId();
+        console.log('scan param,maxLogId:' + maxLogId + ' startTime:' + startTime + ' endTime:' + endTime)
         const result = await activity.scanBetLog(maxLogId, startTime, endTime);
+        console.log('scan result:')
+        console.log(result)
         if (result && result.length != 0) {
             const userIntegralList = [];
             const userFlightList = [];
@@ -104,7 +109,9 @@ cronEvent.on('scanBet', () => {
             // 保存用户飞行燃料信息
             await activity.saveUserFlight(userFlightList)
         }
-        console.log('scan bet log complete, round:' + times)
+        const scanEndTime = new Date();
+        const costTime = scanStartTime.getTime() - scanEndTime.getTime();
+        console.log('scan bet log complete, round:' + times + ', at ' + await activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
         times++
     }, duration);
 })
@@ -124,7 +131,7 @@ cronEvent.on("draw", () => {
                     awardUsers.push([record.addr, order, record.integral, orderPrize.get(order)])
                 })
                 await activity.saveAwardUser(awardUsers)
-                console.log("draw success at " + new Date().format("yyyy-MM-dd hh:mm:ss"))
+                console.log("draw success at " + await activityUtil.formatNow())
             } else {
                 console.error("draw fail,because there is no user data in database,please checkout the data!!!")
             }
