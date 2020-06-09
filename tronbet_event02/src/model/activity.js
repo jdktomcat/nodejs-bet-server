@@ -42,8 +42,8 @@ async function saveUserIntegral(dataList) {
         return
     }
     let insertSql = "insert into tron_bet_event.user_integral(addr,integral,bet_log_id) values ? " +
-        "on duplicate key update integral=integral+values(integral),bet_log_id=values(bet_log_id)";
-    let insertResult = await db.exec(insertSql, [dataList])
+        " on duplicate key update integral=integral+values(integral),bet_log_id=values(bet_log_id)";
+    let insertResult = await db.query(insertSql, [dataList])
     console.log("save user integral complete,result:" + insertResult)
 }
 
@@ -59,7 +59,7 @@ async function saveUserFlight(dataList) {
     }
     let insertSql = "insert into tron_bet_event.user_flight(addr,fuel,plant,bet_log_id) values ? " +
         "on duplicate key update fuel=fuel+values(fuel),bet_log_id=values(bet_log_id)";
-    let insertResult = await db.exec(insertSql, [dataList])
+    let insertResult = await db.query(insertSql, [dataList])
     console.log("save user flight complete,result:" + insertResult)
 }
 
@@ -86,7 +86,7 @@ async function saveAwardUser(dataList) {
         return
     }
     let insertSql = "insert into tron_bet_event.award_log(addr,integral,order,prize) values ? ";
-    let insertResult = await db.exec(insertSql, [dataList])
+    let insertResult = await db.query(insertSql, [dataList])
     console.log("save award user complete,result:" + insertResult)
 }
 
