@@ -6,7 +6,7 @@ const db = require('../utils/dbUtil')
  */
 async function getMaxLogId() {
     let maxBetLog = 0
-    let sql = "SELECT greatest((select max(bet_log_id) from tron_bet_event.user_integral),(select max(bet_log_id) from tron_bet_event.user_flight)) as maxLogId"
+    let sql = "SELECT greatest((select IFNULL(max(bet_log_id),0) from tron_bet_event.user_integral),(select IFNULL(max(bet_log_id),0) from tron_bet_event.user_flight)) as maxLogId"
     let res = await db.exec(sql)
     if (res.length === 1) {
         if (res[0].maxLogId) {
