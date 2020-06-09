@@ -131,7 +131,7 @@ cronEvent.on("draw", () => {
                     awardUsers.push([record.addr, order, record.integral, orderPrize.get(order)])
                 })
                 await activity.saveAwardUser(awardUsers)
-                console.log("draw success at " + new Date().format('yyyy-MM-dd hh:mm:ss'))
+                console.log("draw success at " + activityUtil.formatDate(new Date()))
             } else {
                 console.error("draw fail,because there is no user data in database,please checkout the data!!!")
             }
