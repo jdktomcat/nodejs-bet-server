@@ -173,8 +173,8 @@ const setBalance = async function(addr, balance) {
     console.log("setBalance: addr: %s", addr);
 
     const before = await getBalance(addr);
-    if (!before) {
-        console.log("setBalance: !before");
+    if (before === null) {
+        console.log("setBalance: before === null");
         return
     }
     console.log("setBalance: before: %d", before);
@@ -183,8 +183,8 @@ const setBalance = async function(addr, balance) {
     await dbDo(sql, [balance, addr]);
 
     const after = await getBalance(addr);
-    if (!after) {
-        console.log("setBalance: !after");
+    if (after === null) {
+        console.log("setBalance: after === null");
         return
     }
     console.log("setBalance: after: %d", after);
@@ -202,8 +202,8 @@ const getCalcBalance = async function(addr) {
 
 const autoSetBalance = async function(addr) {
     const calcBalance = await getCalcBalance(addr);
-    if (!calcBalance) {
-        console.log("autoSetBalance: !calcBalance");
+    if (calcBalance === null) {
+        console.log("autoSetBalance: calcBalance === null");
         return
     }
 
@@ -215,8 +215,8 @@ const autoSetBalance = async function(addr) {
 const main = (async function() {
     console.log("updateDeclan start!");
     await autoSetBalance("TA1tiExCTYxT4LpEdKHpzxBENPaQSTxGCL");
-    await autoSetBalance("TJGpJpaQkDq6MULddpguYCE4Nn96GDMdPY");
-    await setBalance("TWrivC9o2MkeoKDcR1pvneaxmvw9uVU5zD", 0);
+    // await autoSetBalance("TJGpJpaQkDq6MULddpguYCE4Nn96GDMdPY");
+    // await setBalance("TWrivC9o2MkeoKDcR1pvneaxmvw9uVU5zD", 0);
 })().then(() => {
     console.log("updateDeclan end!");
     process.exit(0);
