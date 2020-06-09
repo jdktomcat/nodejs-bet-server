@@ -30,7 +30,7 @@ async function login(ctx) {
   if (!signResult) {
     return await common.sendMsgToClient(ctx, 1002, 'sign verify failed!!!!!!!!!');
   }
-
+  console.log("enter_user_login")
   let _name = await redisUtils.hget(redisUserKeyPrefix + addr, 'name');
   if (!_name) {
     _name = await tronUtils.getAccountName(addr);

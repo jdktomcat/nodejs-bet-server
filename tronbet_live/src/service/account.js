@@ -178,6 +178,7 @@ async function userLogin(ctx) {
         // 666 混淆一下 真实id
         let tmpSessionId = String(Number(uid[0].uid) + 666)
         let tmpSessionLength = 40 - tmpSessionId.length
+        console.log("debug_sessionId is ",sessionId)
         //
         try {
             sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
