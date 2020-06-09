@@ -1,6 +1,12 @@
 const {activity} = require('../configs/config')
 
 /**
+ * 阶段配置
+ * @type {[{rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}]|[{rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}]|[{rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}]}
+ */
+const stages = activity.championship.stage;
+
+/**
  * 计算积分
  *
  * @param ts 下注时间戳
@@ -9,10 +15,10 @@ const {activity} = require('../configs/config')
  */
 function calIntegral(ts, amount) {
     let integral = 0;
-    const stages = activity.championship.stage;
+    console.log('calculate integral, ts=' + ts + ' amount=' + amount)
     for (let index = 0; index < stages.length; index++) {
         const stage = stages[index];
-        if (ts >= stage.startTime && ts < stage.endTime) {
+        if (ts >= new Date(stage.startTime).getTime() && ts < new Date(stage.endTime).getTime()) {
             integral = amount * stage.rate;
             break;
         }
