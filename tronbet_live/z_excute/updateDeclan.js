@@ -163,13 +163,15 @@ const getBalance = async function(addr) {
     const sql = `select balance from live_balance where addr = ? and currency = 'trx'`;
     const res = await dbDo(sql, [addr]);
     if (res.length > 0) {
-        return res.balance;
+        return res[0].balance;
     } else {
         return null;
     }
 }
 
 const setBalance = async function(addr, balance) {
+    console.log("setBalance: addr: %s", addr);
+
     const before = await getBalance(addr);
     if (!before) {
         console.log("setBalance: !before");
@@ -192,7 +194,7 @@ const getCalcBalance = async function(addr) {
     const sql = `select calc_balance as calcBalance from live_balance_audit where addr = ?`;
     const res = await dbDo(sql, [addr]);
     if (res.length > 0) {
-        return res.calcBalance;
+        return res[0].calcBalance;
     } else {
         return null;
     }
