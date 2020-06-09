@@ -1,5 +1,7 @@
 const {activity} = require('../configs/config')
 
+const moment = require('moment');
+
 /**
  * 阶段配置
  * @type {[{rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}]|[{rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}]|[{rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}, {rate: number, name: string, startTime: string, endTime: string}]}
@@ -26,6 +28,16 @@ function calIntegral(ts, amount) {
     return integral;
 }
 
+/**
+ * 格式化日期显示
+ * @param date 日期
+ * @returns {string} 格式化
+ */
+function formatDate(date){
+    return new moment(date).format('YYYY-MM-DD HH:mm:ss')
+}
+
 module.exports = {
-    calIntegral
+    calIntegral,
+    formatDate
 }

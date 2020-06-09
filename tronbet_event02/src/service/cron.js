@@ -83,7 +83,7 @@ let times = 1
 cronEvent.on('scanBet', () => {
     setInterval(async () => {
         const scanStartTime = new Date();
-        console.log('scan start round:' + times + ' at ' + scanStartTime.format('yyyy-MM-dd hh:mm:ss'))
+        console.log('scan start round:' + times + ' at ' + activityUtil.formatDate(scanStartTime))
         const maxLogId = await activity.getMaxLogId();
         console.log('scan param,maxLogId:' + maxLogId + ' startTime:' + startTime + ' endTime:' + endTime)
         const result = await activity.scanBetLog(maxLogId, startTime, endTime);
@@ -110,8 +110,8 @@ cronEvent.on('scanBet', () => {
             await activity.saveUserFlight(userFlightList)
         }
         const scanEndTime = new Date();
-        const costTime = scanStartTime.getTime() - scanEndTime.getTime();
-        console.log('scan bet log complete, round:' + times + ', at ' + scanEndTime.format('yyyy-MM-dd hh:mm:ss') + ', cost:' + costTime + 'ms')
+        const costTime = scanEndTime.getTime() - scanStartTime.getTime();
+        console.log('scan bet log complete, round:' + times + ', at ' + activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
         times++
     }, duration);
 })
