@@ -7,7 +7,9 @@ const main = async function () {
     await openProductRateSchedule()
     await liveTrxStart()
     await liveUsdtStart()
-    await liveBalanceAudit()
+    if(process.env.NODE_ENV !== 'test'){
+        await liveBalanceAudit()
+    }
 }
 
 module.exports = main
