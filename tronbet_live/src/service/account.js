@@ -180,11 +180,10 @@ async function userLogin(ctx) {
         let tmpSessionLength = 40 - tmpSessionId.length
         console.log("debug_sessionId is ",sessionId)
         //
+        sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
         try {
-            sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
             await userinfo.updateSessionId(uid[0].email, sessionId)
         } catch (error) {
-            sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
             await userinfo.updateSessionId(uid[0].email, sessionId)
         }
 
@@ -461,46 +460,47 @@ async function getBalance(ctx) {
 }
 
 async function getEMSessionId(ctx) {
-    let params = ctx.request.body
-    let authToken = params.authToken
-
-    if (!authToken) {
-        return oldAccount.login(ctx)
-    }
-
-    let userPreView = await redisUtils.get(authToken)
-    if (!userPreView) {
-        return common.sendMsgToClient(ctx, 401, 'not authed account')
-    }
-
-    let email = userPreView
-    let user = await userinfo.getUserByEmail(email)
-    if (_.isEmpty(user)) {
-        return common.sendMsgToClient(ctx, 2006, 'invalid account')
-    }
-
-    let sessionId = user[0].sessionId
-    if(!sessionId || sessionId.length > 40) {
-        sessionId = common.getRandomSeed(40)
-        try {
-            await userinfo.updateSessionId(email, sessionId)
-        } catch (error) {
-            sessionId = common.getRandomSeed(40)
-            await userinfo.updateSessionId(email, sessionId)
-        }
-    }
-
-    // let currency = await redisUtils.hget('liveCurrency', '' + user[0].uid)
-    // let cipherSessionId = common.cipher(sessionId + '|' + currency)
-    let currency = user[0].currency
-
-    return await common.sendMsgToClient(ctx, 0, '', {
-        sessionId : `${sessionId}_${currency}`,
-        launchUrl : '',
-        lv : 1,
-        name : user[0].nickName,
-        img : user[0].head
-    })
+    //移除没调用函数
+    // let params = ctx.request.body
+    // let authToken = params.authToken
+    //
+    // if (!authToken) {
+    //     return oldAccount.login(ctx)
+    // }
+    //
+    // let userPreView = await redisUtils.get(authToken)
+    // if (!userPreView) {
+    //     return common.sendMsgToClient(ctx, 401, 'not authed account')
+    // }
+    //
+    // let email = userPreView
+    // let user = await userinfo.getUserByEmail(email)
+    // if (_.isEmpty(user)) {
+    //     return common.sendMsgToClient(ctx, 2006, 'invalid account')
+    // }
+    //
+    // let sessionId = user[0].sessionId
+    // if(!sessionId || sessionId.length > 40) {
+    //     sessionId = common.getRandomSeed(40)
+    //     try {
+    //         await userinfo.updateSessionId(email, sessionId)
+    //     } catch (error) {
+    //         sessionId = common.getRandomSeed(40)
+    //         await userinfo.updateSessionId(email, sessionId)
+    //     }
+    // }
+    //
+    // // let currency = await redisUtils.hget('liveCurrency', '' + user[0].uid)
+    // // let cipherSessionId = common.cipher(sessionId + '|' + currency)
+    // let currency = user[0].currency
+    //
+    // return await common.sendMsgToClient(ctx, 0, '', {
+    //     sessionId : `${sessionId}_${currency}`,
+    //     launchUrl : '',
+    //     lv : 1,
+    //     name : user[0].nickName,
+    //     img : user[0].head
+    // })
 
 }
 
@@ -789,11 +789,14 @@ async function getLanchUrl(ctx) {
 
     let sessionId = user[0].sessionId
     if(!sessionId || sessionId.length > 40) {
-        sessionId = common.getRandomSeed(40)
+        // 333 混淆一下 真实id
+        let tmpSessionId = String(Number(user[0].uid) + 333)
+        let tmpSessionLength = 40 - tmpSessionId.length
+        //
+        sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
         try {
             await userinfo.updateSessionId(email, sessionId)
         } catch (error) {
-            sessionId = common.getRandomSeed(40)
             await userinfo.updateSessionId(email, sessionId)
         }
     }
