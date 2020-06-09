@@ -25,7 +25,6 @@ app.listen(config.app.http_port,'0.0.0.0')
 
 // 开始扫描
 cronEvent.emit('scanBet')
-
 // 开奖
 cronEvent.emit("draw")
 

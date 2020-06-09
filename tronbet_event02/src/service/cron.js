@@ -30,17 +30,15 @@ const endTime = new Date(config.activity.endTime).getTime()
  */
 const fuelRate = config.activity.flight.rate
 
-/*
- *   多久跑一次任务
+/**
+ * 多久跑一次扫描任务 30秒
  */
-const duration = 30 * 1000
+const scanDuration = 30 * 1000
 
 /**
- * 奖品排名映射
- *
- * @type {{"44": number, "45": number, "46": number, "47": number, "48": number, "49": number, "50": number, "10": number, "11": number, "12": number, "13": number, "14": number, "15": number, "16": number, "17": number, "18": number, "19": number, "1": number, "2": number, "3": number, "4": number, "5": number, "6": number, "7": number, "8": number, "9": number, "20": number, "21": number, "22": number, "23": number, "24": number, "25": number, "26": number, "27": number, "28": number, "29": number, "30": number, "31": number, "32": number, "33": number, "34": number, "35": number, "36": number, "37": number, "38": number, "39": number, "40": number, "41": number, "42": number, "43": number}}
+ * 多久跑一次同步排名任务 60秒
  */
-const orderPrize = config.activity.championship.prize
+const syncDuration = 60 * 1000
 
 /**
  * 锦标赛奖励排名
@@ -72,10 +70,15 @@ const flightStartTime = new Date(config.activity.flight.startTime).getTime()
  */
 const flightEndTime = new Date(config.activity.flight.startTime).getTime()
 
-/*
-    进行了多少次任务
+/**
+ * 进行了多少次扫描任务
  */
-let times = 1
+let scanTimes = 1
+
+/**
+ * 进行了多少次同步任务
+ */
+let syncTimes = 1
 
 /**
  * 扫描下注记录
@@ -83,7 +86,7 @@ let times = 1
 cronEvent.on('scanBet', () => {
     setInterval(async () => {
         const scanStartTime = new Date();
-        console.log('scan start round:' + times + ' at ' + activityUtil.formatDate(scanStartTime))
+        console.log('scan start round:' + scanTimes + ' at ' + activityUtil.formatDate(scanStartTime))
         const maxLogId = await activity.getMaxLogId();
         console.log('scan param,maxLogId:' + maxLogId + ' startTime:' + startTime + ' endTime:' + endTime)
         const result = await activity.scanBetLog(maxLogId, startTime, endTime);
@@ -111,9 +114,21 @@ cronEvent.on('scanBet', () => {
         }
         const scanEndTime = new Date();
         const costTime = scanEndTime.getTime() - scanStartTime.getTime();
-        console.log('scan bet log complete, round:' + times + ', at ' + activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
-        times++
-    }, duration);
+        console.log('scan bet log complete, round:' + scanTimes + ', at ' + activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
+        scanTimes++
+    }, scanDuration);
+})
+
+// 同步排名
+cronEvent.on("syncRank", () => {
+    setInterval(async () => {
+        const scanStartTime = new Date();
+        console.log('sync rank start, round:' + syncTimes + ' at ' + activityUtil.formatDate(scanStartTime))
+        const scanEndTime = new Date();
+        const costTime = scanEndTime.getTime() - scanStartTime.getTime();
+        console.log('sync rank complete, round:' + syncTimes + ', at ' + activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
+        syncTimes++
+    }, syncDuration);
 })
 
 // 开奖
@@ -125,10 +140,9 @@ cronEvent.on("draw", () => {
         setTimeout(async () => {
             const result = await activity.queryTopUserIntegral(top);
             if (!result && result.length != 0) {
-                let order = 1
                 let awardUsers = [];
-                result.forEach(record => {
-                    awardUsers.push([record.addr, order, record.integral, orderPrize.get(order)])
+                result.forEach((record, index) => {
+                    awardUsers.push([record.addr, index + 1, record.integral, activityUtil.getPrize(index + 1)])
                 })
                 await activity.saveAwardUser(awardUsers)
                 console.log("draw success at " + activityUtil.formatDate(new Date()))
