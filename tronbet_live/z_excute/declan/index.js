@@ -1,5 +1,5 @@
 const Common = require("./common");
-const SetBalance = require("./SetBalance");
+const SetBalance = require("./setBalance");
 
 const Log = Common.Log;
 
