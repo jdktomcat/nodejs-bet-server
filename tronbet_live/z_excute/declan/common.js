@@ -7,7 +7,7 @@ function Log(fmt, ...args) {
 async function DbDo(sql, params) {
     Log("DbDo begin: sql: %s, params: %s", sql, params);
     const res = await Db.query(sql, params);
-    Log("DbDo end: %s\n", + JSON.stringify(res));
+    Log("DbDo end: %s\n", JSON.stringify(res));
     return res;
 }
 
