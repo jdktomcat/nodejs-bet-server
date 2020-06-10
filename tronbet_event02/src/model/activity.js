@@ -34,7 +34,15 @@ const topUserListKey = 'championship:top:integral:order:list'
  * @returns {Promise<number>}
  */
 async function getMaxBetLogId() {
-    return await redisUtil.get(maxScanDuelLogKey)
+    return await redisUtil.get(maxScanBetLogKey)
+}
+
+/**
+ * 设置最大下注日志记录标示
+ * @param maxBetLogId 最大下注日志标示
+ */
+async function setMaxBetLogId(maxBetLogId) {
+    await redisUtil.set(maxScanBetLogKey, maxBetLogId)
 }
 
 /**
@@ -46,11 +54,27 @@ async function getMaxDuelLogId() {
 }
 
 /**
+ * 设置最大Duel下注日志记录标示
+ * @param maxDuelLogId 最大duel日志标示
+ */
+async function setMaxDuelLogId(maxDuelLogId) {
+    await redisUtil.set(maxScanDuelLogKey, maxDuelLogId)
+}
+
+/**
  * 获取最大Poker下注日志记录标示
  * @returns {Promise<number>}
  */
 async function getMaxPokerLogId() {
     return await redisUtil.get(maxScanPokerLogKey)
+}
+
+/**
+ * 设置最大Poker下注日志记录标示
+ * @param maxPokerLogId 最大poker日志标示
+ */
+async function setMaxPokerLogId(maxPokerLogId) {
+    await redisUtil.set(maxScanPokerLogKey, maxPokerLogIds)
 }
 
 /**
@@ -193,6 +217,7 @@ async function pushTop(dataList) {
  * @type {{insertBatch: insertBatch, getMaxLogId: (function(): number)}}
  */
 module.exports = {
+    getMaxBetLogId,
     getMaxDuelLogId,
     getMaxPokerLogId,
     scanBetLog,
@@ -202,5 +227,8 @@ module.exports = {
     saveUserFlight,
     saveAwardUser,
     saveUserBetLog,
-    queryTopUserIntegral
+    queryTopUserIntegral,
+    setMaxBetLogId,
+    setMaxDuelLogId,
+    setMaxPokerLogId
 }

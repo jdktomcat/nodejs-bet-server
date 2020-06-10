@@ -2,8 +2,6 @@ const config = require('../configs/config')
 const events = require('events')
 const cronEvent = new events.EventEmitter()
 
-const redisUtil = require('../utils/redisUtil')
-
 /**
  * 活动数据访问接口
  * @type {{insertBatch: insertBatch, getMaxLogId: (function(): number)}}
@@ -111,11 +109,9 @@ cronEvent.on('scanBet', () => {
     setInterval(async () => {
         const scanStartTime = new Date();
         console.log('scan start round:' + scanTimes + ' at ' + activityUtil.formatDate(scanStartTime))
-        const maxLogId = await activity.getMaxLogId();
-        console.log('scan param,maxLogId:' + maxLogId + ' startTime:' + startTime + ' endTime:' + endTime)
+        let maxLogId = await activity.getMaxBetLogId();
+        console.log('scan param, maxLogId:' + maxLogId + ' startTime:' + startTime + ' endTime:' + endTime)
         const result = await activity.scanBetLog(maxLogId, startTime, endTime);
-        console.log('scan result:')
-        console.log(result)
         if (result && result.length != 0) {
             const userIntegralList = [];
             const userFlightList = [];
@@ -130,11 +126,14 @@ cronEvent.on('scanBet', () => {
                         console.warn("bet amount is too small,can not get fuel! bet log id:" + record.id)
                     }
                 }
+                maxLogId = (maxLogId < record.id ? record.id : maxLogId)
             });
             // 保存用户积分信息
             await activity.saveUserIntegral(userIntegralList)
             // 保存用户飞行燃料信息
             await activity.saveUserFlight(userFlightList)
+            // 保存最大扫描记录标示
+            await activity.setMaxBetLogId(maxLogId)
         }
         const scanEndTime = new Date();
         const costTime = scanEndTime.getTime() - scanStartTime.getTime();
@@ -146,31 +145,34 @@ cronEvent.on('scanBet', () => {
 /**
  * 扫描duel下注记录表
  */
-cronEvent.on("scanDuel", () =>{
+cronEvent.on("scanDuel", () => {
     setInterval(async () => {
         const scanStartTime = new Date();
         console.log('scan duel start round:' + scanDuelTimes + ' at ' + activityUtil.formatDate(scanStartTime))
-        const maxDuelLogId = await activity.getMaxDuelLogId()
+        let maxDuelLogId = await activity.getMaxDuelLogId()
         console.log('scan duel param,maxDuelLogId:' + maxDuelLogId + ' startTime:' + startTime + ' endTime:' + endTime)
         const duelResult = await activity.scanDuelBetLog(maxDuelLogId, startTime, endTime);
         if (duelResult && duelResult.length != 0) {
             const userBetLogList = [];
             duelResult.forEach(record => {
-                if(record.player1){
+                if (record.player1) {
                     userBetLogList.push([record.player1, record.id, record.amount, 3])
                 }
-                if(record.player2){
+                if (record.player2) {
                     userBetLogList.push([record.player2, record.id, record.amount, 3])
                 }
-                if(record.player3){
+                if (record.player3) {
                     userBetLogList.push([record.player3, record.id, record.amount, 3])
                 }
-                if(record.player4){
+                if (record.player4) {
                     userBetLogList.push([record.player4, record.id, record.amount, 3])
                 }
+                maxDuelLogId = (maxDuelLogId < record.id ? record.id : maxDuelLogId)
             })
             // 保存用户下注流水日志信息
             await activity.saveUserBetLog(userBetLogList)
+            // 保存最大扫描记录标示
+            await activity.setMaxDuelLogId(maxDuelLogId)
         }
         const scanEndTime = new Date();
         const costTime = scanEndTime.getTime() - scanStartTime.getTime();
@@ -182,20 +184,23 @@ cronEvent.on("scanDuel", () =>{
 /**
  * 扫描poker下注记录表
  */
-cronEvent.on("scanPoker", () =>{
+cronEvent.on("scanPoker", () => {
     setInterval(async () => {
         const scanStartTime = new Date();
         console.log('scan poker start round:' + scanPokerTimes + ' at ' + activityUtil.formatDate(scanStartTime))
-        const maxPokerLogId = await activity.getMaxPokerLogId()
+        let maxPokerLogId = await activity.getMaxPokerLogId()
         console.log('scan poker param,maxPokerLogId:' + maxPokerLogId + ' startTime:' + startTime + ' endTime:' + endTime)
         const pokerResult = await activity.scanPokerBetLog(maxPokerLogId, startTime, endTime);
         if (pokerResult && pokerResult.length != 0) {
             const userBetLogList = [];
             pokerResult.forEach(record => {
                 userBetLogList.push([record.addr, record.id, record.amount, 9])
+                maxPokerLogId = (maxPokerLogId < record.id ? record.id : maxPokerLogId)
             })
             // 保存用户下注流水日志信息
             await activity.saveUserBetLog(userBetLogList)
+            // 保存最大扫描记录标示
+            await activity.setMaxPokerLogId(maxPokerLogId)
         }
         const scanEndTime = new Date();
         const costTime = scanEndTime.getTime() - scanStartTime.getTime();
