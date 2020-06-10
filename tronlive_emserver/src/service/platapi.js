@@ -99,18 +99,18 @@ function getAccountId(idStr) {
   }
 }
 
-function getRealSessionId(SessionId) {
-  try {
-    let result = SessionId;
-    let tmp = result.split("_");
-    if (tmp.length >= 2) {
-      result = tmp[0];
-    }
-    return result;
-  } catch (error) {
-    return SessionId;
-  }
-}
+// function getRealSessionId(SessionId) {
+//   try {
+//     let result = SessionId;
+//     let tmp = result.split("_");
+//     if (tmp.length >= 2) {
+//       result = tmp[0];
+//     }
+//     return result;
+//   } catch (error) {
+//     return SessionId;
+//   }
+// }
 
 //GetAccount
 async function GetAccount(ctx) {
@@ -134,7 +134,7 @@ async function GetAccount(ctx) {
 
   let now = new Date().getTime();
 
-  let user = await usermodel.getAccountBySessionId(getRealSessionId(SessionId));
+  let user = await usermodel.getAccountBySessionId(SessionId);
 
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
@@ -177,7 +177,7 @@ async function GetBalance(ctx) {
     return await sendMsgToClient(ctx, 103, "User not found");
   }
 
-  let user = await usermodel.getAccountBySessionId(getRealSessionId(SessionId));
+  let user = await usermodel.getAccountBySessionId(SessionId);
 
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
@@ -261,7 +261,7 @@ async function Wager(ctx) {
   let multi = await getAdditionByGameId(EMGameId);
   let addAmount = Amount * multi;
 
-  let user = await usermodel.getAccountBySessionId(getRealSessionId(SessionId));
+  let user = await usermodel.getAccountBySessionId(SessionId);
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
   }
@@ -391,7 +391,7 @@ async function Result(ctx) {
     return await sendMsgToClient(ctx, 101, "auth failed");
   }
 
-  let user = await usermodel.getAccountBySessionId(getRealSessionId(SessionId));
+  let user = await usermodel.getAccountBySessionId(SessionId);
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
   }

@@ -1,5 +1,6 @@
 const {sequelize, rawQuery, updateQuery} = require('../utils/mysqlUtils')
 const _ = require('lodash')._
+const tokenParse = require("./../utils/tokenParse")
 
 async function userAction(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, AddsAmount, uid, currency) {
     //update balance
@@ -50,8 +51,14 @@ async function getTransactionById(TransactionId) {
 
 
 async function getAccountBySessionId(sessionId) {
-    let sql = "select * from live_account where sessionId = ?"
-    let res = await rawQuery(sql, [sessionId])
+    const {error,info} = tokenParse(sessionId)
+    if(error){
+        return []
+    }
+    const addr = info.addr
+    const currency = info.currency
+    let sql = "select t1.*  from live_account as t1 left join live_balance as t2 on t1.uid = t2.uid where t1.uid = t2.uid and t2.addr = ? and t2.currency = ?"
+    let res = await rawQuery(sql, [addr,currency])
     return res
 }
 
