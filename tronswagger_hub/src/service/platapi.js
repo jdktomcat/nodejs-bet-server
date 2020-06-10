@@ -111,7 +111,9 @@ async function balance(ctx) {
         console.log(localSignature, remoteSignature)
         return sendMsg2Client(ctx, {status: 'RS_ERROR_INVALID_SIGNATURE', request_uuid: params.request_uuid,})
     }
+    console.log("debug body---> ",params.token)
     let token = getToken(params.token)
+    console.log("debug token---> ",token)
     let account = await userinfo.getAccountBySessionId(token)
     console.log(account)
     if (account.length === 0) {
