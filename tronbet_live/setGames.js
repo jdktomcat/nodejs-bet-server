@@ -4,4 +4,4 @@
  *
  */
 // const test1 = require("./z_excute/update1")
-const test1 = require("./z_excute/updateDeclan")
+const test1 = require("./z_excute/declan/index")
