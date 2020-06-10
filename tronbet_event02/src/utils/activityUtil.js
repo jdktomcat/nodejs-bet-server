@@ -19,7 +19,11 @@ const orderPrize = new Map(Object.entries(activity.championship.prize).map(recor
     return record;
 }))
 
-
+/**
+ * 星球飞行配置
+ * @type {{minPrize: number, maxPrize: number, fuel: number, name: string, id: number}}
+ */
+const plantArray = activity.flight.plant
 
 /**
  * 计算积分
@@ -42,11 +46,23 @@ function calIntegral(ts, amount) {
 }
 
 /**
+ * 获取星球所需燃料
+ *
+ * @param plant 星球
+ */
+function calFuel(plant) {
+    if (plant >= 0 && plant < plantArray.length) {
+        return plantArray[plant].fuel
+    }
+    return Number.MAX_SAFE_INTEGER;
+}
+
+/**
  * 获取对应的奖励
  * @param order 排名
  */
 function getPrize(order) {
-    if(orderPrize.has(order)){
+    if (orderPrize.has(order)) {
         return orderPrize.get(order);
     }
     return 0;
@@ -57,12 +73,13 @@ function getPrize(order) {
  * @param date 日期
  * @returns {string} 格式化
  */
-function formatDate(date){
+function formatDate(date) {
     return new moment(date).format('YYYY-MM-DD HH:mm:ss')
 }
 
 module.exports = {
     calIntegral,
     formatDate,
-    getPrize
+    getPrize,
+    calFuel
 }

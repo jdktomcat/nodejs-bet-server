@@ -36,11 +36,6 @@ const fuelRate = config.activity.flight.rate
 const scanDuration = 30 * 1000
 
 /**
- * 多久跑一次同步排名任务 60秒
- */
-const syncDuration = 60 * 1000
-
-/**
  * 多久跑一次扫描duel任务 10秒
  * @type {number}
  */
@@ -87,10 +82,6 @@ const flightEndTime = new Date(config.activity.flight.startTime).getTime()
  */
 let scanTimes = 1
 
-/**
- * 进行了多少次同步任务
- */
-let syncTimes = 1
 
 /**
  * 进行了多少次扫描Duel任务
@@ -112,7 +103,7 @@ cronEvent.on('scanBet', () => {
         let maxLogId = await activity.getMaxBetLogId();
         console.log('scan param, maxLogId:' + maxLogId + ' startTime:' + startTime + ' endTime:' + endTime)
         const result = await activity.scanBetLog(maxLogId, startTime, endTime);
-        if (result && result.length != 0) {
+        if (result && result.length !== 0) {
             const userIntegralList = [];
             const userFlightList = [];
             result.forEach(record => {
@@ -152,7 +143,7 @@ cronEvent.on("scanDuel", () => {
         let maxDuelLogId = await activity.getMaxDuelLogId()
         console.log('scan duel param,maxDuelLogId:' + maxDuelLogId + ' startTime:' + startTime + ' endTime:' + endTime)
         const duelResult = await activity.scanDuelBetLog(maxDuelLogId, startTime, endTime);
-        if (duelResult && duelResult.length != 0) {
+        if (duelResult && duelResult.length !== 0) {
             const userBetLogList = [];
             duelResult.forEach(record => {
                 if (record.player1) {
@@ -191,7 +182,7 @@ cronEvent.on("scanPoker", () => {
         let maxPokerLogId = await activity.getMaxPokerLogId()
         console.log('scan poker param,maxPokerLogId:' + maxPokerLogId + ' startTime:' + startTime + ' endTime:' + endTime)
         const pokerResult = await activity.scanPokerBetLog(maxPokerLogId, startTime, endTime);
-        if (pokerResult && pokerResult.length != 0) {
+        if (pokerResult && pokerResult.length !== 0) {
             const userBetLogList = [];
             pokerResult.forEach(record => {
                 userBetLogList.push([record.addr, record.id, record.amount, 9])
@@ -209,23 +200,6 @@ cronEvent.on("scanPoker", () => {
     }, scanPokerDuration)
 })
 
-// 同步排名
-cronEvent.on("syncRank", () => {
-    setInterval(async () => {
-        const scanStartTime = new Date();
-        console.log('sync rank start, round:' + syncTimes + ' at ' + activityUtil.formatDate(scanStartTime))
-        const result = await activity.queryTopUserIntegral(top);
-        result.forEach((record, index) => {
-            record.push(activityUtil.getPrize(index))
-        })
-
-        const scanEndTime = new Date();
-        const costTime = scanEndTime.getTime() - scanStartTime.getTime();
-        console.log('sync rank complete, round:' + syncTimes + ', at ' + activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
-        syncTimes++
-    }, syncDuration);
-})
-
 // 开奖
 cronEvent.on("draw", () => {
     const championshipEndTime = new Date(config.activity.championship.endTime).getTime();
@@ -234,7 +208,7 @@ cronEvent.on("draw", () => {
         const timeout = championshipEndTime - nowTime + 5000;
         setTimeout(async () => {
             const result = await activity.queryTopUserIntegral(top);
-            if (!result && result.length != 0) {
+            if (result && result.length !== 0) {
                 let awardUsers = [];
                 result.forEach((record, index) => {
                     awardUsers.push([record.addr, index + 1, record.integral, activityUtil.getPrize(index + 1)])

@@ -200,16 +200,23 @@ async function saveAwardUser(dataList) {
 }
 
 /**
- * 保存排行榜
+ * 获取用户位置信息
  *
- * @param dataList 数据
+ * @param addr 用户钱包地址
  * @returns {Promise<void>}
  */
-async function pushTop(dataList) {
-    if (!dataList || dataList.length == 0) {
-        return
-    }
-    await redisUtil.lpush(topUserListKey, dataList)
+async function getPosition(addr) {
+    return await db.exec(`select addr, fuel, plant from tron_bet_event.user_flight where addr = ?`, [addr])
+}
+
+/**
+ * 获取用户飞行路径信息列表
+ *
+ * @param addr 用户钱包地址
+ * @returns {Promise<void>}
+ */
+async function getFlightPath(addr) {
+    return await db.exec(`select addr, to_plant as plant,reward as mine from tron_bet_event.flight_log where addr = ?`, [addr])
 }
 
 /**
@@ -230,5 +237,7 @@ module.exports = {
     queryTopUserIntegral,
     setMaxBetLogId,
     setMaxDuelLogId,
-    setMaxPokerLogId
+    setMaxPokerLogId,
+    getPosition,
+    getFlightPath
 }
