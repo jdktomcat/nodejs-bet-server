@@ -19,7 +19,7 @@ const digestType = 'RSA-SHA256';
 const publicKey  = conf.swaghub.swagPublick
 const privateKey = conf.swaghub.privetKey
 const geoip = require('geoip-lite')
-
+const {cpConfigKey, getCpToken} = require('../cp/cpTokenUtils')
 // init with default keypair and digest type
 const hmCrypto = HmCrypto(digestType, privateKey, publicKey);
 
@@ -467,6 +467,7 @@ async function getEMSessionId(ctx) {
     if (!authToken) {
         return oldAccount.login(ctx)
     }
+    //getCpToken
 
     let userPreView = await redisUtils.get(authToken)
     if (!userPreView) {
@@ -485,12 +486,8 @@ async function getEMSessionId(ctx) {
     let emCache = await redisUtils.get(emRedisKey)
     if (emCache === null) {
         try {
-            // 222 混淆一下uid
-            let uid = String(Number(user[0].uid) + 222)
-            let randomLength = 40 - uid.length
-            let sessionId = common.getRandomSeed(randomLength) + uid
-            //
-            await redisUtils.set(emRedisKey, sessionId)
+            let val = getCpToken(email,cpConfigKey.EveryMatrix,currency)
+            await redisUtils.set(emRedisKey, val)
             await redisUtils.expire(emRedisKey, 24 * 3600) // 设置过期时间为1天
             emCache = await redisUtils.get(emRedisKey)
         } catch (e) {

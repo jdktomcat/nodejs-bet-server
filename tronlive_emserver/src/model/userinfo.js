@@ -51,7 +51,7 @@ async function getTransactionById(TransactionId) {
 
 
 async function getAccountBySessionId(sessionId) {
-    const {error,info} = tokenParse(sessionId)
+    const {error,info} = await tokenParse(sessionId)
     if(error){
         return []
     }
