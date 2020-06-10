@@ -788,8 +788,9 @@ async function getLanchUrl(ctx) {
     }
 
     let sessionId = user[0].sessionId
-    // 加入= ， 每次打开某个会重置sessionId
-    if(!sessionId || sessionId.length >= 40) {
+    // 每次打开某个会重置sessionId
+    // if(!sessionId || sessionId.length >= 40) {
+    if(true) {
         // 333 混淆一下 真实id
         let tmpSessionId = String(Number(user[0].uid) + 333)
         let tmpSessionLength = 40 - tmpSessionId.length
