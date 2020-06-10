@@ -2,6 +2,8 @@ const config = require('../configs/config')
 const events = require('events')
 const cronEvent = new events.EventEmitter()
 
+const redisUtil = require('../utils/redisUtil')
+
 /**
  * 活动数据访问接口
  * @type {{insertBatch: insertBatch, getMaxLogId: (function(): number)}}
@@ -39,6 +41,18 @@ const scanDuration = 30 * 1000
  * 多久跑一次同步排名任务 60秒
  */
 const syncDuration = 60 * 1000
+
+/**
+ * 多久跑一次扫描duel任务 10秒
+ * @type {number}
+ */
+const scanDuelDuration = 10 * 1000
+
+/**
+ * 多久跑一次扫描poker任务 10秒
+ * @type {number}
+ */
+const scanPokerDuration = 10 * 1000
 
 /**
  * 锦标赛奖励排名
@@ -81,6 +95,16 @@ let scanTimes = 1
 let syncTimes = 1
 
 /**
+ * 进行了多少次扫描Duel任务
+ */
+let scanDuelTimes = 1
+
+/**
+ * 进行了多少次同步Poker任务
+ */
+let scanPokerTimes = 1
+
+/**
  * 扫描下注记录
  */
 cronEvent.on('scanBet', () => {
@@ -119,11 +143,77 @@ cronEvent.on('scanBet', () => {
     }, scanDuration);
 })
 
+/**
+ * 扫描duel下注记录表
+ */
+cronEvent.on("scanDuel", () =>{
+    setInterval(async () => {
+        const scanStartTime = new Date();
+        console.log('scan duel start round:' + scanDuelTimes + ' at ' + activityUtil.formatDate(scanStartTime))
+        const maxDuelLogId = await activity.getMaxDuelLogId()
+        console.log('scan duel param,maxDuelLogId:' + maxDuelLogId + ' startTime:' + startTime + ' endTime:' + endTime)
+        const duelResult = await activity.scanDuelBetLog(maxDuelLogId, startTime, endTime);
+        if (duelResult && duelResult.length != 0) {
+            const userBetLogList = [];
+            duelResult.forEach(record => {
+                if(record.player1){
+                    userBetLogList.push([record.player1, record.id, record.amount, 3])
+                }
+                if(record.player2){
+                    userBetLogList.push([record.player2, record.id, record.amount, 3])
+                }
+                if(record.player3){
+                    userBetLogList.push([record.player3, record.id, record.amount, 3])
+                }
+                if(record.player4){
+                    userBetLogList.push([record.player4, record.id, record.amount, 3])
+                }
+            })
+            // 保存用户下注流水日志信息
+            await activity.saveUserBetLog(userBetLogList)
+        }
+        const scanEndTime = new Date();
+        const costTime = scanEndTime.getTime() - scanStartTime.getTime();
+        console.log('scan duel log complete, round:' + scanDuelTimes + ', at ' + activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
+        scanDuelTimes++
+    }, scanDuelDuration)
+})
+
+/**
+ * 扫描poker下注记录表
+ */
+cronEvent.on("scanPoker", () =>{
+    setInterval(async () => {
+        const scanStartTime = new Date();
+        console.log('scan poker start round:' + scanPokerTimes + ' at ' + activityUtil.formatDate(scanStartTime))
+        const maxPokerLogId = await activity.getMaxPokerLogId()
+        console.log('scan poker param,maxPokerLogId:' + maxPokerLogId + ' startTime:' + startTime + ' endTime:' + endTime)
+        const pokerResult = await activity.scanPokerBetLog(maxPokerLogId, startTime, endTime);
+        if (pokerResult && pokerResult.length != 0) {
+            const userBetLogList = [];
+            pokerResult.forEach(record => {
+                userBetLogList.push([record.addr, record.id, record.amount, 9])
+            })
+            // 保存用户下注流水日志信息
+            await activity.saveUserBetLog(userBetLogList)
+        }
+        const scanEndTime = new Date();
+        const costTime = scanEndTime.getTime() - scanStartTime.getTime();
+        console.log('scan poker log complete, round:' + scanPokerTimes + ', at ' + activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
+        scanPokerTimes++
+    }, scanPokerDuration)
+})
+
 // 同步排名
 cronEvent.on("syncRank", () => {
     setInterval(async () => {
         const scanStartTime = new Date();
         console.log('sync rank start, round:' + syncTimes + ' at ' + activityUtil.formatDate(scanStartTime))
+        const result = await activity.queryTopUserIntegral(top);
+        result.forEach((record, index) => {
+            record.push(activityUtil.getPrize(index))
+        })
+
         const scanEndTime = new Date();
         const costTime = scanEndTime.getTime() - scanStartTime.getTime();
         console.log('sync rank complete, round:' + syncTimes + ', at ' + activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
