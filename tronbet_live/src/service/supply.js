@@ -296,6 +296,7 @@ async function platinusAPI(ctx) {
     let addr = String(params.addr).trim()
     //
     let userInfo = ctx.session.user || ""
+    console.log("ctx.request.body ",ctx.request.body)
     console.log("debug_platinusAPI_user ",userInfo)
     if(userInfo === ''){
         //如果参数中含有地址, 按照之前的老的方式进行签名登录
@@ -346,6 +347,7 @@ async function getBinaryToken(ctx) {
     let currency = params.currency || ''
     //
     let userInfo = ctx.session.user || ""
+    console.log("ctx.request.body ",ctx.request.body)
     console.log("debug_getBinaryToken_user ",userInfo)
     if(userInfo === ''){
         //如果参数中含有地址, 按照之前的老的方式进行签名登录
