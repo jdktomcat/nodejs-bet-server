@@ -295,12 +295,19 @@ async function platinusAPI(ctx) {
     let params = ctx.request.body || {}
     let addr = String(params.addr).trim()
     //
-    const userInfo = ctx.session.user || ""
+    let userInfo = ctx.session.user || ""
     console.log("debug_platinusAPI_user ",userInfo)
     if(userInfo === ''){
         //如果参数中含有地址, 按照之前的老的方式进行签名登录
         if (addr && TronWeb.isAddress(addr)) {
-            return await oldAccount.login(ctx)
+            //先强制登陆
+            await oldAccount.login(ctx)
+            //
+            userInfo = ctx.session.user || ""
+            console.log("debug_platinus_user_new ",userInfo)
+            if(userInfo === ''){
+                return ctx.body = {code: 500, message: "fail", error: "no login"}
+            }
         }else {
             return ctx.body = {code: 500, message: "fail", error: "no login"}
         }
@@ -338,12 +345,19 @@ async function getBinaryToken(ctx) {
     let addr = params.addr || ''
     let currency = params.currency || ''
     //
-    const userInfo = ctx.session.user || ""
+    let userInfo = ctx.session.user || ""
     console.log("debug_getBinaryToken_user ",userInfo)
     if(userInfo === ''){
         //如果参数中含有地址, 按照之前的老的方式进行签名登录
         if (addr && TronWeb.isAddress(addr)) {
-            return await oldAccount.login(ctx)
+            //强制登陆
+            await oldAccount.login(ctx)
+            //
+            userInfo = ctx.session.user || ""
+            console.log("debug_getBinaryToken_user_new ",userInfo)
+            if(userInfo === ''){
+                return ctx.body = {code: 500, message: "fail", error: "no login"}
+            }
         }else {
             return ctx.body = {code: 500, message: "fail", error: "no login"}
         }
