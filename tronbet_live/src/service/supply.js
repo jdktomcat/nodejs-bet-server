@@ -292,11 +292,19 @@ async function allSchedule(ctx) {
  */
 async function platinusAPI(ctx) {
     let params = ctx.request.body || {}
-    let addr = params.addr || ''
+    let addr = String(params.addr).trim()
     //
-    if (addr === '') {
-        return ctx.body = {code: 500, message: "error"}
+    const userInfo = ctx.session.user || ""
+    console.log("debug_platinusAPI_user ",userInfo)
+    //
+    if(userInfo === ''){
+        return ctx.body = {code: 500, message: "fail", error: "no login"}
     }
+    const [addrRaw,currencyRaw] = userInfo.split("_")
+    if(String(addrRaw).trim() !== addr){
+        return ctx.body = {code: 500, message: "fail", error: "no login"}
+    }
+    //
     const tokenRedisKey = 'TRX' + "_platinusToken_" + addr
     let val = await redisUtils.get(tokenRedisKey)
     console.log("platinusAPI_addr: ", addr)
@@ -321,10 +329,17 @@ async function getBinaryToken(ctx) {
     let addr = params.addr || ''
     let currency = params.currency || ''
     //
-    if (addr === '') {
-        return ctx.body = {code: 500, message: "address error"}
+    const userInfo = ctx.session.user || ""
+    console.log("debug_getBinaryToken_user ",userInfo)
+    //
+    if(userInfo === ''){
+        return ctx.body = {code: 500, message: "fail", error: "no login"}
     }
-    if (!['TRX','USDT'].includes(currency)) {
+    const [addrRaw,currencyRaw] = userInfo.split("_")
+    if(String(addrRaw).trim() !== addr){
+        return ctx.body = {code: 500, message: "fail", error: "no login"}
+    }
+    if (!['TRX', 'USDT'].includes(currency)) {
         return ctx.body = {code: 500, message: "currency error"}
     }
     const tokenRedisKey = currency + "_BinaryToken_" + addr
