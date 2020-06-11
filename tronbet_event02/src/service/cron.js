@@ -141,12 +141,12 @@ cronEvent.on('scanBet', () => {
             return
         }
         scanBet = true
-        const scanStartTime = new Date();
+        const scanStartTime = new Date()
         console.log('scan start round:' + scanTimes + ' at ' + activityUtil.formatDate(scanStartTime))
-        let maxLogId = await activity.getMaxBetLogId();
+        let maxLogId = await activity.getMaxBetLogId()
         while (scanBet) {
             console.log('scan param, maxLogId:' + maxLogId + ' startTime:' + startTime + ' endTime:' + endTime + ' limit:' + limit)
-            let result = await activity.scanBetLog(maxLogId, startTime, endTime, limit);
+            let result = await activity.scanBetLog(maxLogId, startTime, endTime, limit)
             if (result && result.length !== 0) {
                 const userIntegralList = [];
                 const userFlightList = [];
@@ -162,7 +162,7 @@ cronEvent.on('scanBet', () => {
                         }
                     }
                     maxLogId = (maxLogId < record.id ? record.id : maxLogId)
-                });
+                })
                 // 保存用户积分信息
                 await activity.saveUserIntegral(userIntegralList)
                 // 保存用户飞行燃料信息
@@ -190,14 +190,14 @@ cronEvent.on("scanDuel", () => {
             return
         }
         scanDuel = true
-        const scanStartTime = new Date();
+        const scanStartTime = new Date()
         console.log('scan duel start round:' + scanDuelTimes + ' at ' + activityUtil.formatDate(scanStartTime))
         let maxDuelLogId = await activity.getMaxDuelLogId()
         while (scanDuel) {
             console.log('scan duel param,maxDuelLogId:' + maxDuelLogId + ' startTime:' + startTime + ' endTime:' + endTime)
-            const duelResult = await activity.scanDuelBetLog(maxDuelLogId, startTime, endTime, limit);
+            const duelResult = await activity.scanDuelBetLog(maxDuelLogId, startTime, endTime, limit)
             if (duelResult && duelResult.length !== 0) {
-                const userBetLogList = [];
+                const userBetLogList = []
                 duelResult.forEach(record => {
                     if (record.player1) {
                         userBetLogList.push([record.player1, record.id, record.amount, 3])
@@ -221,8 +221,8 @@ cronEvent.on("scanDuel", () => {
                 scanDuel = false
             }
         }
-        const scanEndTime = new Date();
-        const costTime = scanEndTime.getTime() - scanStartTime.getTime();
+        const scanEndTime = new Date()
+        const costTime = scanEndTime.getTime() - scanStartTime.getTime()
         console.log('scan duel log complete, round:' + scanDuelTimes + ', at ' + activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
         scanDuelTimes++
     }, scanDuelDuration)
@@ -238,7 +238,7 @@ cronEvent.on("scanPoker", () => {
             return
         }
         scanPoker = true
-        const scanStartTime = new Date();
+        const scanStartTime = new Date()
         console.log('scan poker start round:' + scanPokerTimes + ' at ' + activityUtil.formatDate(scanStartTime))
         let maxPokerLogId = await activity.getMaxPokerLogId()
         while (scanPoker) {
@@ -258,8 +258,8 @@ cronEvent.on("scanPoker", () => {
                 scanPoker = false
             }
         }
-        const scanEndTime = new Date();
-        const costTime = scanEndTime.getTime() - scanStartTime.getTime();
+        const scanEndTime = new Date()
+        const costTime = scanEndTime.getTime() - scanStartTime.getTime()
         console.log('scan poker log complete, round:' + scanPokerTimes + ', at ' + activityUtil.formatDate(scanEndTime) + ', cost:' + costTime + 'ms')
         scanPokerTimes++
     }, scanPokerDuration)
@@ -305,9 +305,9 @@ cronEvent.on('pay', async () => {
  * 开奖
  */
 async function draw() {
-    const result = await activity.queryTopUserIntegral(top);
+    const result = await activity.queryTopUserIntegral(top)
     if (result && result.length !== 0) {
-        const awardUsers = [];
+        const awardUsers = []
         result.forEach((record, index) => {
             awardUsers.push([record.addr, index + 1, record.integral, activityUtil.getPrize(index + 1)])
         })
