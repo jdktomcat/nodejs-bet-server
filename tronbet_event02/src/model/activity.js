@@ -83,12 +83,13 @@ async function setMaxPokerLogId(maxPokerLogId) {
  * @param minBetLogId 最小日志记录标示
  * @param startTime 开始时间
  * @param endTime 结束时间
+ * @param limit 分页处理
  * @returns {Promise<*>}
  */
-async function scanBetLog(minBetLogId, startTime, endTime) {
-    let sql = `select id,addr,amount,ts from tron_bet_event.user_bet_log where id > ? and ` +
-        `ts >= ? AND ts < ?`
-    let result = await db.exec(sql, [minBetLogId, startTime, endTime])
+async function scanBetLog(minBetLogId, startTime, endTime, limit) {
+    let sql = `select id, addr, amount, ts from tron_bet_event.user_bet_log where id > ? and ` +
+        `ts >= ? AND ts < ? order by id limit ?`
+    let result = await db.exec(sql, [minBetLogId, startTime, endTime, limit])
     return result
 }
 
@@ -98,12 +99,13 @@ async function scanBetLog(minBetLogId, startTime, endTime) {
  * @param minDuelLogId 最小日志记录标示
  * @param startTime 开始时间
  * @param endTime 结束时间
+ * @param limit 分页大小
  * @returns {Promise<*>}
  */
-async function scanDuelBetLog(minDuelLogId, startTime, endTime) {
+async function scanDuelBetLog(minDuelLogId, startTime, endTime, limit) {
     let sql = `select room_id as id, player1, player2, player3, player4, amount, createTs from tron_bet_admin.wheel_solo_order where room_id > ? and ` +
-        ` createTs >= ? AND createTs < ?`
-    let result = await db.exec(sql, [minDuelLogId, startTime, endTime])
+        ` createTs >= ? AND createTs < ? order by id limit ?`
+    let result = await db.exec(sql, [minDuelLogId, startTime, endTime, limit])
     return result
 }
 
@@ -113,12 +115,13 @@ async function scanDuelBetLog(minDuelLogId, startTime, endTime) {
  * @param minPokerLogId 最小日志记录标示
  * @param startTime 开始时间
  * @param endTime 结束时间
+ * @param limit 分页大小
  * @returns {Promise<*>}
  */
-async function scanPokerBetLog(minPokerLogId, startTime, endTime) {
+async function scanPokerBetLog(minPokerLogId, startTime, endTime, limit) {
     let sql = `select logId as id, addr, amount  from tronbet_poker_log.poker_revenue_log 
-               where optime > ? and optime >= ? AND createTs < ? AND action > 100 AND cointype = 'TRX'`
-    let result = await db.exec(sql, [minPokerLogId, startTime, endTime])
+               where optime > ? and optime >= ? AND createTs < ? AND action > 100 AND cointype = 'TRX' order by id limit ?`
+    let result = await db.exec(sql, [minPokerLogId, startTime, endTime, limit])
     return result
 }
 
@@ -210,9 +213,31 @@ async function saveAwardUser(dataList) {
     if (!dataList || dataList.length == 0) {
         return
     }
-    let insertSql = "insert into tron_bet_event.award_log(addr,integral,order,prize) values ? ";
+    let insertSql = "insert into tron_bet_event.award_log(addr, integral, order, prize) values ? ";
     let insertResult = await db.query(insertSql, [dataList])
-    console.log("save award user complete,result:" + insertResult)
+    console.log("save award user complete, result:" + insertResult)
+}
+
+/**
+ * 查询待支付奖励
+ *
+ * @returns {Promise<void>}
+ */
+async function queryWaitPayAward() {
+    return await db.exec(`select id, addr, prize from tron_bet_event.award_log where status = 0`)
+}
+
+/**
+ * 标记奖励已支付成功
+ *
+ * @returns {Promise<void>}
+ */
+async function markPayedAward(ids) {
+    if (!ids || ids.length !== 0) {
+        return
+    }
+    const updateResult = await db.query(`update tron_bet_event.award_log set status = 1 where id in ?`, ids)
+    console.log("mark award payed complete,result:" + updateResult)
 }
 
 /**
@@ -273,5 +298,7 @@ module.exports = {
     getPosition,
     getFlightPath,
     flight,
-    saveFlightLog
+    saveFlightLog,
+    queryWaitPayAward,
+    markPayedAward
 }
