@@ -165,7 +165,7 @@ async function flight(data, conn) {
     if (data) {
         return
     }
-    const updateSql = "update tron_bet_event.user_flight set fuel = fuel - ?, plant = ? where addr=?"
+    const updateSql = "update tron_bet_event.user_flight set fuel = fuel - ?, plant = ? where addr = ?"
     const updateResult = await db.execTrans(updateSql, data, conn)
     console.log("save user flight complete,result:" + updateResult)
 }
