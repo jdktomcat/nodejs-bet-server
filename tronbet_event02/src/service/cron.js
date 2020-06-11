@@ -243,9 +243,9 @@ cronEvent.on("scanPoker", () => {
         let maxPokerLogId = await activity.getMaxPokerLogId()
         while (scanPoker) {
             console.log('scan poker param,maxPokerLogId:' + maxPokerLogId + ' startTime:' + startTime + ' endTime:' + endTime)
-            const pokerResult = await activity.scanPokerBetLog(maxPokerLogId, startTime, endTime, limit);
+            const pokerResult = await activity.scanPokerBetLog(maxPokerLogId, startTime, endTime, limit)
             if (pokerResult && pokerResult.length !== 0) {
-                const userBetLogList = [];
+                const userBetLogList = []
                 pokerResult.forEach(record => {
                     userBetLogList.push([record.addr, record.id, record.amount, 9])
                     maxPokerLogId = (maxPokerLogId < record.id ? record.id : maxPokerLogId)
@@ -267,16 +267,14 @@ cronEvent.on("scanPoker", () => {
 
 // 开奖
 cronEvent.on('draw', () => {
-    const championshipEndTime = new Date(config.activity.championship.endTime).getTime();
-    const nowTime = new Date().getTime();
+    const championshipEndTime = new Date(config.activity.championship.endTime).getTime()
+    const nowTime = new Date().getTime()
     if (championshipEndTime > nowTime) {
-        const timeout = championshipEndTime - nowTime + 5000;
+        const timeout = championshipEndTime - nowTime + 5000
         setTimeout(async () => {
             await draw()
         }, timeout)
         console.log('draw will happen at ' + timeout + 'ms!')
-    } else {
-
     }
 })
 

@@ -135,8 +135,8 @@ async function saveUserIntegral(dataList) {
     if (!dataList || dataList.length == 0) {
         return
     }
-    let insertSql = "insert into tron_bet_event.user_integral(addr,integral,bet_log_id) values ? " +
-        " on duplicate key update integral=integral+values(integral),bet_log_id=values(bet_log_id)";
+    let insertSql = "insert into tron_bet_event.user_integral(addr,integral) values ? " +
+        " on duplicate key update integral=integral+values(integral)";
     let insertResult = await db.query(insertSql, [dataList])
     console.log("save user integral complete,result:" + insertResult)
 }
