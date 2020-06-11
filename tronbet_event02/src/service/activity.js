@@ -35,7 +35,8 @@ async function rank(ctx) {
 async function handleMsg(message) {
     console.log('bet info：' + message)
     // 保存记录
-    await activity.saveUserBetLog([JSON.parse(message)])
+    const messageData = JSON.parse(message)
+    await activity.saveUserBetLog([[messageData.add, messageData.order_id, messageData.amount, messageData.bet_type]])
     console.log('bet log info saved！')
 }
 
