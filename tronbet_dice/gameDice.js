@@ -481,6 +481,7 @@ let ACTIVITY_START_TS = config.dice.ACTIVITY_START_TS || 0;
 let ACTIVITY_END_TS = config.dice.ACTIVITY_END_TS || 0;
 function sendGameMsg(addr, order_id, trxAmount) {
     let _now = _.now();
+    console.log('activity start time:' + ACTIVITY_START_TS + ' end time:' + ACTIVITY_END_TS)
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
     // 发送redis消息
     console.log('send dice order to game message,order info:' + JSON.stringify({ addr: addr, order_id: order_id, amount: trxAmount, bet_type: 0}))
