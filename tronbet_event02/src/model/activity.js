@@ -148,10 +148,26 @@ async function saveUserFlight(dataList) {
     if (!dataList || dataList.length == 0) {
         return
     }
-    let insertSql = "insert into tron_bet_event.user_flight(addr,fuel,plant,bet_log_id) values ? " +
-        "on duplicate key update fuel=fuel+values(fuel),bet_log_id=values(bet_log_id)"
+    let insertSql = "insert into tron_bet_event.user_flight(addr,fuel,plant) values ? " +
+        "on duplicate key update fuel=fuel+values(fuel)"
     let insertResult = await db.query(insertSql, [dataList])
     console.log("save user flight complete,result:" + insertResult)
+}
+
+/**
+ * 用户飞行动作保存
+ *
+ * @param data 用户飞行信息
+ * @param conn 数据库连接
+ * @returns {Promise<void>}
+ */
+async function flight(data, conn) {
+    if (data) {
+        return
+    }
+    const updateSql = "update tron_bet_event.user_flight set fuel = fuel - ?, plant = ? where addr=?"
+    const updateResult = await db.execTrans(updateSql, data, conn)
+    console.log("save user flight complete,result:" + updateResult)
 }
 
 /**
@@ -200,6 +216,22 @@ async function saveAwardUser(dataList) {
 }
 
 /**
+ * 保存飞行日志信息
+ *
+ * @param flightLog 飞行日志信息
+ * @param conn 数据库连接
+ * @returns {Promise<void>}
+ */
+async function saveFlightLog(flightLog, conn) {
+    if (!flightLog) {
+        return
+    }
+    const insertSql = "insert into tron_bet_event.flight_log(addr, from_plant, to_plant, reward) values ? ";
+    const insertResult = await db.execTrans(insertSql, flightLog, conn)
+    console.log("save flight log complete, result:" + insertResult)
+}
+
+/**
  * 获取用户位置信息
  *
  * @param addr 用户钱包地址
@@ -239,5 +271,7 @@ module.exports = {
     setMaxDuelLogId,
     setMaxPokerLogId,
     getPosition,
-    getFlightPath
+    getFlightPath,
+    flight,
+    saveFlightLog
 }
