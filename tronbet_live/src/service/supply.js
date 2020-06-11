@@ -8,7 +8,8 @@ const game = require("../service/games");
 const {app} = require('../configs/config')
 const {cpConfigKey, getCpToken} = require('../cp/cpTokenUtils')
 const redisUtils = require('../utils/redisUtil')
-
+const oldAccount = require("./user")
+const TronWeb = require('tronweb')
 //
 async function updateOnlineGameList() {
     let games = await game.parseGames();
@@ -296,6 +297,14 @@ async function platinusAPI(ctx) {
     //
     const userInfo = ctx.session.user || ""
     console.log("debug_platinusAPI_user ",userInfo)
+    if(userInfo === ''){
+        //如果参数中含有地址, 按照之前的老的方式进行签名登录
+        if (addr && TronWeb.isAddress(addr)) {
+            return await oldAccount.login(ctx)
+        }else {
+            return ctx.body = {code: 500, message: "fail", error: "no login"}
+        }
+    }
     //
     if(userInfo === ''){
         return ctx.body = {code: 500, message: "fail", error: "no login"}
@@ -331,6 +340,14 @@ async function getBinaryToken(ctx) {
     //
     const userInfo = ctx.session.user || ""
     console.log("debug_getBinaryToken_user ",userInfo)
+    if(userInfo === ''){
+        //如果参数中含有地址, 按照之前的老的方式进行签名登录
+        if (addr && TronWeb.isAddress(addr)) {
+            return await oldAccount.login(ctx)
+        }else {
+            return ctx.body = {code: 500, message: "fail", error: "no login"}
+        }
+    }
     //
     if(userInfo === ''){
         return ctx.body = {code: 500, message: "fail", error: "no login"}
