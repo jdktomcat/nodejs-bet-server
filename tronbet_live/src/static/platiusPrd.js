@@ -3,7 +3,7 @@ module.exports  = [
         "launchUrl": "https://wink.empiregamings.com/wink/caishensgifts/launch",
         "name": "Caishen's Gifts",
         "gameID": "534",
-        "png": "//https://www.empiregamings.com/img/games/caishensgifts.jpg",
+        "png": "//www.empiregamings.com/img/games/caishensgifts.jpg",
         "category": "slots"
     },
     {
