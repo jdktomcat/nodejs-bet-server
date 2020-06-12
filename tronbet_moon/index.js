@@ -304,7 +304,7 @@ appEvent.on('pending_confirm', () => {
         } catch (error) {
             loggerDefault.error(error);
         }
-        
+
         if (txRet == null) {
             pending_confirm_try = pending_confirm_try + 1;
             if (pending_confirm_try > 20) {
@@ -402,7 +402,7 @@ appEvent.on('award_tx_confirm', (tx_id) => {
         loggerDefault.info("check award_tx_confirm tx :" + tx_id);
         let txRet = null;
         try {
-            txRet = await tronUtil.isTxSuccess(tx_id);   
+            txRet = await tronUtil.isTxSuccess(tx_id);
         } catch (error) {
             loggerDefault.error(error);
         }
@@ -587,22 +587,23 @@ let ACTIVITY_END_TS = config.moon.ACTIVITY_END_TS || 0;
 function sendGameMsg(addr, order_id, trxAmount) {
     let _now = _.now();
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
-    if (trxAmount < 100) return [trxAmount, 0, false];
-    //箱子爆率=投注额^0.527163*0.3%
-    let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 30);
-    if (persent > 9000) persent = 9000;
-    let _r = _.random(0, 10000);
-    let hit = false;
-    if (_r <= persent) {
-        hit = true;
-    }
-    if (hit === true) {
-        let msg = { addr: addr, order_id: order_id, box_num: 1, game_type: _GAME_TYPE };
-        // loggerDefault.info("sendGameMsg", msg);
-        redis.publish("game_message", JSON.stringify(msg));
-        appEvent.emit('activity_info', msg); //**  */
-    }
-    return [trxAmount, persent, hit];
+    redis.publish("game_message", JSON.stringify({ addr: addr, order_id: order_id, amount:trxAmount, game_type: 1 }));
+    // if (trxAmount < 100) return [trxAmount, 0, false];
+    // //箱子爆率=投注额^0.527163*0.3%
+    // let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 30);
+    // if (persent > 9000) persent = 9000;
+    // let _r = _.random(0, 10000);˙
+    // let hit = false;
+    // if (_r <= persent) {
+    //     hit = true;
+    // }
+    // if (hit === true) {
+    //     let msg = { addr: addr, order_id: order_id, box_num: 1, game_type: _GAME_TYPE };
+    //     // loggerDefault.info("sendGameMsg", msg);
+    //     redis.publish("game_message", JSON.stringify(msg));
+    //     appEvent.emit('activity_info', msg); //**  */
+    // }
+    // return [trxAmount, persent, hit];
 }
 
 // let _GAME_TYPE = "moon";
@@ -762,7 +763,7 @@ function work() {
         //     } else if (_now >= crash_info.begin_ts && crash_info.duration === 0) { //爆点为0时，begin_ts === end_ts,duration === 0
         //         appEvent.emit('confirming');
         //     }
-        // } 
+        // }
         else if (crash_info.state === GAME_STATE.RUNNING && _now < crash_info.end_ts) {
             appEvent.emit('keep_running');
         } else if (crash_info.state === GAME_STATE.RUNNING && _now >= crash_info.end_ts) {
