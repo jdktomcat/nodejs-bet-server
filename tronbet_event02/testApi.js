@@ -10,6 +10,8 @@ const activityUtil = require('./src/utils/activityUtil')
 
 const redisUtil = require('./src/utils/redisUtil')
 
+const db = require('./src/utils/dbUtil')
+
 /**
  * 测试保存信息
  * @returns {Promise<void>}
@@ -28,7 +30,8 @@ async function testFormat() {
 
 
 async function main() {
-    const result = await redisUtil.lpush("list-key", ["value1", "value2", "value3", "value4", "value5"])
+    const result = await db.query('insert into learn_base.test_table(id,name) values ? ' +
+        'on duplicate key update name=values(name)',[[[6,'name5']]])
     console.log(result)
     process.exit(0)
 }
