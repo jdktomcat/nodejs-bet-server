@@ -80,6 +80,8 @@ async function addRevenueLog(addr, tableId, no, amount, oldAmount, newAmount, lo
         let sql = 'INSERT INTO poker_revenue_log(addr,tableId,no,amount,oldAmount,newAmount,action,optime)VALUE(?,?,?,?,?,?,?,UNIX_TIMESTAMP())';
         let sqlRet = await db.exec(sql, [addr, tableId, no, amount, oldAmount, newAmount, logtype]);
         if (sqlRet && sqlRet.affectedRows >= 1) {
+            // TODO 发送消息
+            console.log('it should send poker message to activity at here!')
             return true
         } else {
             loggerDefault.error("dbService.addRevenueLog error, addr: %s, tableId: %s, no: %s, amount: %s[%s->%s], action: %s", addr, tableId, no, amount, oldAmount, newAmount, logtype);
@@ -94,7 +96,6 @@ async function addRevenueLog(addr, tableId, no, amount, oldAmount, newAmount, lo
 // logArray = [{addr: 'T...', tableId: xxxx, ...}]
 async function addRevenueArrayLog(logArray) {
     if (!_.isArray(logArray)) { return; }
-
     let sql = 'INSERT INTO poker_revenue_log(addr,tableId,no,amount,oldAmount,newAmount,action,optime) VALUES ?';
     let paramArray = [];
     let optime = stringUtil.getUnixTimeStamp();
@@ -106,11 +107,11 @@ async function addRevenueArrayLog(logArray) {
             if (amount == null || amount === 0) { continue; }
             paramArray.push([addr, tableId, no, amount, oldAmount, newAmount, logtype, optime]);
         }
-
         if (paramArray.length == 0) { return true; }
-
         let sqlRet = await db.query(sql, [paramArray]);
         if (sqlRet && sqlRet.affectedRows >= 1) {
+            // TODO 发送消息
+            console.log('it should send poker message array to activity at here!')
             return true
         } else {
             loggerDefault.error("dbService.addRevenueArrayLog error:", logArray);

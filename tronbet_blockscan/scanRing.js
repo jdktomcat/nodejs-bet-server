@@ -254,6 +254,9 @@ async function saveJoinRoomInfo(info) {
     }
     return false;
   }
+  // TODO 发送消息
+  console.log('it should send duel message to activity at here!')
+  console.log('info:' + JSON.stringify(info))
   return true;
 }
 
