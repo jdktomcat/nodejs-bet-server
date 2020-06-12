@@ -46,7 +46,7 @@ let config = {
     // back_tron_url_full: "https://httpapi.tronex.io",
     // back_tron_url_solidity: "https://httpapi.tronex.io",
     // back_tron_url_event: "https://api.trongrid.io",
-    
+
     defaultPk: prdCfg.operatorDice_pk,
 
     diceOrderAddr: prdCfg.contract.TronBetDice,
@@ -76,6 +76,10 @@ let config = {
     live_staking_dividend: prdCfg.contract.LiveStakingDividend,
     win_pool: prdCfg.contract.WinPool,
     win_dividend: prdCfg.contract.WinDividend
+  },
+  event:{
+    ACTIVITY_START_TS: 1580108400000,//2020-06-10 00:00:00
+    ACTIVITY_END_TS: 1580799600000//2020-06-15 00:00:00
   }
 };
 
