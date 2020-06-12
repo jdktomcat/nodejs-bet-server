@@ -1,5 +1,9 @@
 const db = require('../utils/dbUtil')
 const common = require('../utils/common')
+/**
+ * 配置
+ */
+const config = require('../configs/config')
 
 /**
  * 活动数据访问接口
@@ -8,9 +12,63 @@ const common = require('../utils/common')
 const activity = require('../model/activity')
 
 /**
+ * 活动工具类
+ * @type {*}
+ */
+const activityUtil = require('../utils/activityUtil')
+
+/**
+ * tron工具类
+ * @type {{sendTRX: (function(*=, *=): *), verifySignature: verifySignature, getAccBalance: (function(): number), isTxSuccesssed: isTxSuccesssed, tronExec: (function(*=, *=, *=, *=, *=): *)}}
+ */
+const tronUtil = require('../utils/tronUtil')
+
+/**
  * 星球配置
  */
-const plantConfig = require('../configs/config').activity.flight.plant
+const plantConfig = config.activity.flight.plant
+
+/**
+ * 锦标赛开始时间
+ * @type {number}
+ */
+const championshipStartTime = new Date(config.activity.championship.startTime).getTime()
+
+/**
+ * 锦标赛结束时间
+ * @type {number}
+ */
+const championshipEndTime = new Date(config.activity.championship.endTime).getTime()
+
+/**
+ * 飞行游戏开始时间
+ * @type {number}
+ */
+const flightStartTime = new Date(config.activity.flight.startTime).getTime()
+
+/**
+ * 飞行游戏结束时间
+ * @type {number}
+ */
+const flightEndTime = new Date(config.activity.flight.startTime).getTime()
+
+/**
+ * 燃料汇率
+ * @type {number}
+ */
+const fuelRate = config.activity.flight.rate
+
+/**
+ * 最小下注配置
+ * @type {number}
+ */
+const minMount = config.activity.flight.minAmount;
+
+/**
+ * 锦标赛奖励排名
+ * @type {number}
+ */
+const top = config.activity.championship.top
 
 /**
  * 排名列表接口
@@ -34,9 +92,20 @@ async function rank(ctx) {
  */
 async function handleMsg(message) {
     console.log('bet info：' + message)
-    // 保存记录
+    // save info
     const messageData = JSON.parse(message)
     await activity.saveUserBetLog([[messageData.addr, messageData.order_id, messageData.amount, messageData.bet_type]])
+    // update user integral
+    const nowTime = new Date().getTime()
+    if (nowTime >= championshipStartTime && nowTime < championshipEndTime) {
+        await activity.saveUserIntegral([messageData.addr, activityUtil.calIntegral(nowTime, messageData.amount)])
+    }
+    // update user flight
+    if (nowTime >= flightStartTime && nowTime < flightEndTime) {
+        if (messageData.amount >= minMount) {
+            await activity.saveUserFlight([messageData.addr, messageData.amount * fuelRate, 0])
+        }
+    }
     console.log('bet log info saved！')
 }
 
@@ -131,6 +200,7 @@ async function reset(ctx) {
  * 飞行处理
  *
  * @param addr    用户钱包地址
+ * @param fuel  燃料
  * @param fromPlant 原始星球
  * @param toPlant 目标星球
  * @param reward 奖励
@@ -163,11 +233,53 @@ async function flight(addr, fuel, fromPlant, toPlant, reward) {
     return handleResult
 }
 
+/**
+ * 开奖
+ * @returns {Promise<void>}
+ */
+async function draw() {
+    const result = await activity.queryTopUserIntegral(top)
+    if (result && result.length !== 0) {
+        const awardUsers = []
+        result.forEach((record, index) => {
+            awardUsers.push([record.addr, index + 1, record.integral, activityUtil.getPrize(index + 1)])
+        })
+        await activity.saveAwardUser(awardUsers)
+        console.log("draw success at " + activityUtil.formatDate(new Date()))
+    } else {
+        console.error("draw fail,because there is no user data in database,please checkout the data!!!")
+    }
+}
+
+/**
+ * 开奖支付奖励
+ * @returns {Promise<boolean>}
+ */
+async function pay(){
+    const result = await activity.queryWaitPayAward()
+    if (result && result.length !== 0) {
+        const payed = [];
+        result.forEach(record => {
+            const tx = tronUtil.sendTRX(record.addr, record.prize)
+            if (tx.result) {
+                payed.push([record.id, tx.transaction.txID])
+            } else {
+                console.log('award pay failed, addr:' + record.addr + ' prize:' + record.prize)
+            }
+        })
+        await activity.markPayedAward(payed)
+        return payed.length === result.length
+    }
+    return true
+}
+
 module.exports = {
     rank,
     handleMsg,
     position,
     fire,
     path,
-    reset
+    reset,
+    draw,
+    pay
 }

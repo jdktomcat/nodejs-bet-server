@@ -6,124 +6,10 @@ const db = require('../utils/dbUtil')
 const redisUtil = require("../utils/redisUtil")
 
 /**
- * 最大扫描日志标示
- * @type {string}
- */
-const maxScanBetLogKey = 'scan:bet:log:max:id';
-
-/**
- * 扫描最大duel日志标示
- * @type {string}
- */
-const maxScanDuelLogKey = 'scan:duel:log:max:id'
-
-/**
- * 扫描最大poker日志标示
- * @type {string}
- */
-const maxScanPokerLogKey = 'scan:poker:log:max:id'
-
-/**
  * 锦标赛排名列表键值
  * @type {string}
  */
 const topUserListKey = 'championship:top:integral:order:list'
-
-/**
- * 获取最大下注日志记录标示
- * @returns {Promise<number>}
- */
-async function getMaxBetLogId() {
-    return await redisUtil.get(maxScanBetLogKey)
-}
-
-/**
- * 设置最大下注日志记录标示
- * @param maxBetLogId 最大下注日志标示
- */
-async function setMaxBetLogId(maxBetLogId) {
-    await redisUtil.set(maxScanBetLogKey, maxBetLogId)
-}
-
-/**
- * 获取最大Duel下注日志记录标示
- * @returns {Promise<number>}
- */
-async function getMaxDuelLogId() {
-    return await redisUtil.get(maxScanDuelLogKey)
-}
-
-/**
- * 设置最大Duel下注日志记录标示
- * @param maxDuelLogId 最大duel日志标示
- */
-async function setMaxDuelLogId(maxDuelLogId) {
-    await redisUtil.set(maxScanDuelLogKey, maxDuelLogId)
-}
-
-/**
- * 获取最大Poker下注日志记录标示
- * @returns {Promise<number>}
- */
-async function getMaxPokerLogId() {
-    return await redisUtil.get(maxScanPokerLogKey)
-}
-
-/**
- * 设置最大Poker下注日志记录标示
- * @param maxPokerLogId 最大poker日志标示
- */
-async function setMaxPokerLogId(maxPokerLogId) {
-    await redisUtil.set(maxScanPokerLogKey, maxPokerLogIds)
-}
-
-/**
- * 扫描活动期间下注记录
- *
- * @param minBetLogId 最小日志记录标示
- * @param startTime 开始时间
- * @param endTime 结束时间
- * @param limit 分页处理
- * @returns {Promise<*>}
- */
-async function scanBetLog(minBetLogId, startTime, endTime, limit) {
-    let sql = `select id, addr, amount, ts from tron_bet_event.user_bet_log where id > ? and ` +
-        `ts >= ? AND ts < ? order by id limit ?`
-    let result = await db.exec(sql, [minBetLogId, startTime, endTime, limit])
-    return result
-}
-
-/**
- * 扫描活动期间DuelRing游戏下注记录
- *
- * @param minDuelLogId 最小日志记录标示
- * @param startTime 开始时间
- * @param endTime 结束时间
- * @param limit 分页大小
- * @returns {Promise<*>}
- */
-async function scanDuelBetLog(minDuelLogId, startTime, endTime, limit) {
-    let sql = `select room_id as id, player1, player2, player3, player4, amount, createTs from tron_bet_admin.wheel_solo_order where room_id > ? and ` +
-        ` createTs >= ? AND createTs < ? order by id limit ?`
-    let result = await db.exec(sql, [minDuelLogId, startTime, endTime, limit])
-    return result
-}
-
-/**
- * 扫描活动期间Poker游戏下注记录
- *
- * @param minPokerLogId 最小日志记录标示
- * @param startTime 开始时间
- * @param endTime 结束时间
- * @param limit 分页大小
- * @returns {Promise<*>}
- */
-async function scanPokerBetLog(minPokerLogId, startTime, endTime, limit) {
-    let sql = `select logId as id, addr, amount  from tronbet_poker_log.poker_revenue_log 
-               where optime > ? and optime >= ? AND createTs < ? AND action > 100 AND cointype = 'TRX' order by id limit ?`
-    let result = await db.exec(sql, [minPokerLogId, startTime, endTime, limit])
-    return result
-}
 
 /**
  * 批量保存用户积分信息
@@ -132,7 +18,7 @@ async function scanPokerBetLog(minPokerLogId, startTime, endTime, limit) {
  * @returns {Promise<void>}
  */
 async function saveUserIntegral(dataList) {
-    if (!dataList || dataList.length == 0) {
+    if (!dataList || dataList.length === 0) {
         return
     }
     let insertSql = "insert into tron_bet_event.user_integral(addr,integral) values ? " +
@@ -148,7 +34,7 @@ async function saveUserIntegral(dataList) {
  * @returns {Promise<void>}
  */
 async function saveUserFlight(dataList) {
-    if (!dataList || dataList.length == 0) {
+    if (!dataList || dataList.length === 0) {
         return
     }
     let insertSql = "insert into tron_bet_event.user_flight(addr,fuel,plant) values ? " +
@@ -179,7 +65,7 @@ async function flight(data, conn) {
  * @returns {Promise<void>}
  */
 async function saveUserBetLog(dataList) {
-    if (!dataList || dataList.length == 0) {
+    if (!dataList || dataList.length === 0) {
         return
     }
     let insertSql = "insert into tron_bet_event.user_bet_log(addr, order_id, amount, bet_type) values ? "
@@ -195,7 +81,7 @@ async function saveUserBetLog(dataList) {
  */
 async function queryTopUserIntegral(limit) {
     let result = await redisUtil.lrange(topUserListKey, limit)
-    if (!result || result.length == 0) {
+    if (!result || result.length === 0) {
         const sql = `select addr, integral from tron_bet_event.user_integral order by integral desc limit ?`;
         result = await db.exec(sql, [limit])
         await redisUtil.lpush(topUserListKey, result)
@@ -210,7 +96,7 @@ async function queryTopUserIntegral(limit) {
  * @returns {Promise<void>}
  */
 async function saveAwardUser(dataList) {
-    if (!dataList || dataList.length == 0) {
+    if (!dataList || dataList.length === 0) {
         return
     }
     let insertSql = "insert into tron_bet_event.award_log(addr, integral, order, prize) values ? ";
@@ -232,12 +118,13 @@ async function queryWaitPayAward() {
  *
  * @returns {Promise<void>}
  */
-async function markPayedAward(ids) {
-    if (!ids || ids.length !== 0) {
+async function markPayedAward(datas) {
+    if (!datas || datas.length !== 0) {
         return
     }
-    const updateResult = await db.query(`update tron_bet_event.award_log set status = 1 where id in ?`, ids)
-    console.log("mark award payed complete,result:" + updateResult)
+    const updateResult = await db.query(`insert into tron_bet_event.award_log(id,tx_id) values ? on on duplicate key` +
+        ` update status = 1, tx_id = values(tx_id)`, datas)
+    console.log("mark award payed complete, result:" + updateResult.affectedRows)
 }
 
 /**
@@ -281,20 +168,11 @@ async function getFlightPath(addr) {
  * @type {{insertBatch: insertBatch, getMaxLogId: (function(): number)}}
  */
 module.exports = {
-    getMaxBetLogId,
-    getMaxDuelLogId,
-    getMaxPokerLogId,
-    scanBetLog,
-    scanDuelBetLog,
-    scanPokerBetLog,
     saveUserIntegral,
     saveUserFlight,
     saveAwardUser,
     saveUserBetLog,
     queryTopUserIntegral,
-    setMaxBetLogId,
-    setMaxDuelLogId,
-    setMaxPokerLogId,
     getPosition,
     getFlightPath,
     flight,
