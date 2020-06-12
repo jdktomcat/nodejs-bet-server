@@ -5,6 +5,7 @@ const BigNumber = require('bignumber.js');
 const _ = require('lodash')._;
 const log4js = require('../configs/log4js.config');
 const loggerError = log4js.getLogger('error');
+const loggerDefault = log4js.getLogger('print');
 const tronNodePool = require('./tronNodePool');
 const utilCommon = require('../utils/utilCommon');
 const injectPromise = utilCommon.injectPromise;
@@ -119,9 +120,14 @@ let sendTrx = async (to, val, _privateKey) => {
 
 let getTransactionInfoById = async (tx_id) => {
     let tronWeb = await getTronWeb();
-    if (tronWeb == null) return;
+    if (tronWeb == null) {
+        loggerDefault.info('getTransactionInfoById: null tron node');
+        return;
+    }
     return new Promise((resolve, reject) => {
+        loggerDefault.info('getTransactionInfoById: before gettransactioninfobyid');
         tronWeb.solidityNode.request('walletsolidity/gettransactioninfobyid', { "value": tx_id }, 'post').then((result) => {
+            loggerDefault.info('getTransactionInfoById: after gettransactioninfobyid');
             if (_.isEmpty(result) || _.isEmpty(result.receipt)) {
                 resolve({ ret: "UNKNOWN", data: result });
             } else if (result.receipt.result === "SUCCESS") {
