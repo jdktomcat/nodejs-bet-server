@@ -342,5 +342,19 @@ module.exports  = [
         "gameID": "533",
         "png": "//www.empiregamings.com/img/games/dragonselement.jpg",
         "category": "slots"
+    },
+    {
+        "launchUrl": "https://wink.empiregamings.com/wink/theancientfour/launch",
+        "name": "The Ancient Four",
+        "gameID": "535",
+        "png": "//www.empiregamings.com/img/games/theancientfour.jpg",
+        "category": "slots"
+    },
+    {
+        "launchUrl": "https://wink.empiregamings.com/wink/dragonselement/launch",
+        "name": "Dragon's Element",
+        "gameID": "533",
+        "png": "//www.empiregamings.com/img/games/dragonselement.jpg",
+        "category": "slots"
     }
 ]
