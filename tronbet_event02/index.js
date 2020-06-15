@@ -63,4 +63,9 @@ redis.on("message", async (channel, message) => {
     await activity.handleMsg(message)
 })
 
+process.on('uncaughtException', function (e) {
+    /*处理异常*/
+    console.log('process occurs some exception:' + e.message)
+})
+
 console.log(`the server is start at port ${config.app.http_port}`)
