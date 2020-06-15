@@ -284,7 +284,7 @@ async function saveJoinRoomInfo(info) {
 function sendGameMsg(addr, order_id, trxAmount) {
   const _now = lodash.now();
   if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
-  redisUtils.redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount: trxAmount, game_type: 3}));
+  redisUtil.redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount: trxAmount, game_type: 3}));
 }
 
 
