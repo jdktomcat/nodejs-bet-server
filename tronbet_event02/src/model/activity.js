@@ -100,14 +100,15 @@ async function queryWaitPayAward() {
 /**
  * 标记奖励已支付成功
  *
+ * @param data 标记信息
  * @returns {Promise<void>}
  */
-async function markPayedAward(datas) {
-    if (!datas || datas.length !== 0) {
+async function markPayedAward(data) {
+    if (!data || data.length === 0) {
         return
     }
     const updateResult = await db.query(`insert into tron_bet_event.award_log(id,tx_id) values ? on on duplicate key` +
-        ` update status = 1, tx_id = values(tx_id)`, datas)
+        ` update status = 1, tx_id = values(tx_id)`, data)
     console.log("mark award payed complete, result:" + updateResult.affectedRows)
 }
 
