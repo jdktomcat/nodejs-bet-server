@@ -34,7 +34,6 @@ const plantArray = activity.flight.plant
  */
 function calIntegral(ts, amount) {
     let integral = 0;
-    console.log('calculate integral, ts=' + ts + ' amount=' + amount)
     for (let index = 0; index < stages.length; index++) {
         const stage = stages[index];
         if (ts >= new Date(stage.startTime).getTime() && ts < new Date(stage.endTime).getTime()) {
