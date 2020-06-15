@@ -76,8 +76,7 @@ const top = config.activity.championship.top
  * @returns {Promise<void>}
  */
 async function rank(ctx) {
-    const limit = ctx.query.limit
-    const data = await activity.queryTopUserIntegral(limit)
+    const data = await activity.queryTopUserIntegral(20)
     data.forEach((record, index) => {
         record.prize = activityUtil.getPrize(index + 1)
     })
