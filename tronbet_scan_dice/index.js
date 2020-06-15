@@ -320,7 +320,7 @@ function scanTx(tronWeb, tx, _callback) {
                             let _ver = _.indexOf(TRON_BET_CONTRACT_ADDRESS, event_contract_address);
 
                             let eventCode = hexTopics[0];
-                            if (eventCode === EVENT_CODE_DiceResult || eventCode === EVENT_CODE_SEED || eventCode === EVENT_CODE_SALT || EVENT_CODE_SEED) {
+                            if (eventCode === EVENT_CODE_DiceResult || eventCode === EVENT_CODE_SEED || eventCode === EVENT_CODE_SALT) {
                                 // console.log(eventCode, EVENT_CODE_SEED, EVENT_CODE_SALT, EVENT_CODE_SEED)
                                 let log = {
                                     _type: "bet_result",
