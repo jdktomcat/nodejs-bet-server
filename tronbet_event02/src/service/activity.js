@@ -122,7 +122,7 @@ async function handleMsg(message) {
  * @returns {Promise<void>}
  */
 async function position(ctx) {
-    const addr = ctx.query.addr
+    const addr = ctx.query.addr || ''
     let plant = 0
     let fuel = 0
     let full = false
@@ -143,10 +143,10 @@ async function position(ctx) {
  */
 async function fire(ctx) {
     // 防重机制,添加位置参数
-    const addr = ctx.query.addr
-    const position = ctx.query.position;
-    const result = await activity.getPosition(addr)
+    const addr = ctx.query.addr || ''
+    const position = ctx.query.position || -1;
     let handleResult
+    const result = await activity.getPosition(addr)
     if (result) {
         if (position >= 0 && position < plantConfig.length - 1 && result.plant === position) {
             let reward = await common.getRandomInt(plantConfig[position + 1].minPrize, plantConfig[position + 1].maxPrize)
@@ -171,7 +171,7 @@ async function fire(ctx) {
  * @returns {Promise<void>}
  */
 async function path(ctx) {
-    const addr = ctx.query.addr
+    const addr = ctx.query.addr || ''
     let result = await activity.getFlightPath(addr)
     ctx.body = {code: 200, msg: 'success', data: result}
 }
@@ -183,9 +183,9 @@ async function path(ctx) {
  * @returns {Promise<void>}
  */
 async function reset(ctx) {
-    const addr = ctx.query.addr
+    const addr = ctx.query.addr || ''
     // 防重机制
-    const position = ctx.query.position;
+    const position = ctx.query.position || -1;
     const result = await activity.getPosition(addr)
     let handleResult
     if (result) {
