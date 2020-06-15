@@ -186,7 +186,8 @@ class Service {
             return this.error("balance not enough!")
         }
         let amount = Number(params.sum)
-        if (amount > 1500 * 1e6) {
+        // 改成 10000 单笔
+        if (amount > 10000 * 1e6) {
             return this.error("play amount too large!")
         }
         //
