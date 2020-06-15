@@ -98,12 +98,12 @@ async function handleMsg(message) {
     // update user integral
     const nowTime = new Date().getTime()
     if (nowTime >= championshipStartTime && nowTime < championshipEndTime) {
-        await activity.saveUserIntegral([messageData.addr, activityUtil.calIntegral(nowTime, messageData.amount)])
+        await activity.saveUserIntegral([[messageData.addr, activityUtil.calIntegral(nowTime, messageData.amount)]])
     }
     // update user flight
     if (nowTime >= flightStartTime && nowTime < flightEndTime) {
         if (messageData.amount >= minMount) {
-            await activity.saveUserFlight([messageData.addr, messageData.amount * fuelRate, 0])
+            await activity.saveUserFlight([[messageData.addr, messageData.amount * fuelRate, 0]])
         }
     }
     console.log('bet log info saved！')
