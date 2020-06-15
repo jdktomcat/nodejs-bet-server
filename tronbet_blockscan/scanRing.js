@@ -243,7 +243,6 @@ async function alysisTxs(tx) {
 }
 
 async function saveJoinRoomInfo(info) {
-  console.log('save join room info!')
   let num = info._giftId == 2 ? 100 : 10;
 
   // let sql = "insert into tron_plat_event.chris_block_order(addr, block_id, num, ts) values (?, ?, ?, ?)"
