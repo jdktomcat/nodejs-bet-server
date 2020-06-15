@@ -1,4 +1,4 @@
-const db = require("../src/utils/dbUtil");
+const db = require("../../src/utils/dbUtil");
 
 const rawQuery = async function (sql, params) {
     console.log(sql, params)
