@@ -50,7 +50,7 @@ const flightStartTime = new Date(config.activity.flight.startTime).getTime()
  * 飞行游戏结束时间
  * @type {number}
  */
-const flightEndTime = new Date(config.activity.flight.startTime).getTime()
+const flightEndTime = new Date(config.activity.flight.endTime).getTime()
 
 /**
  * 燃料汇率
