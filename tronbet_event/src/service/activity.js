@@ -31,7 +31,7 @@ const flightStartTime = new Date(config.activity.flight.startTime).getTime()
  * 飞行游戏结束时间
  * @type {number}
  */
-const flightEndTime = new Date(config.activity.flight.startTime).getTime()
+const flightEndTime = new Date(config.activity.flight.endTime).getTime()
 
 /**
  * 燃料汇率
@@ -52,23 +52,28 @@ const minMount = config.activity.flight.minAmount;
  * @returns {Promise<void>}
  */
 async function handleMsg(message) {
-    console.log('event01 bet info：' + message)
-    // 保存记录
+    console.log('bet info：' + message)
+    // save info
     const messageData = JSON.parse(message)
-    await activity.saveUserBetLog([[messageData.addr, messageData.order_id, messageData.amount, messageData.bet_type]])
+    await activity.saveUserBetLog([[messageData.addr, messageData.order_id, messageData.amount, messageData.game_type]])
     // update user integral
     const nowTime = new Date().getTime()
-
     if (nowTime >= championshipStartTime && nowTime < championshipEndTime) {
-        await activity.saveUserIntegral([messageData.addr, activityUtil.calIntegral(nowTime, messageData.amount)])
+        await activity.saveUserIntegral([[messageData.addr, activityUtil.calIntegral(nowTime, messageData.amount)]])
+    } else {
+        console.warn('not in championship period！')
     }
     // update user flight
     if (nowTime >= flightStartTime && nowTime < flightEndTime) {
         if (messageData.amount >= minMount) {
-            await activity.saveUserFlight([messageData.addr, messageData.amount * fuelRate, 0])
+            await activity.saveUserFlight([[messageData.addr, messageData.amount * fuelRate, 0]])
+        } else {
+            console.warn('less than flight min amount!')
         }
+    } else {
+        console.warn('not in flight period!')
+        console.warn('now:' + nowTime + ' start:' + flightStartTime + ' end:' + flightEndTime)
     }
-    console.log('bet log info saved！')
     console.log('bet log info saved！')
 }
 
