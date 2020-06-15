@@ -99,12 +99,18 @@ async function handleMsg(message) {
     const nowTime = new Date().getTime()
     if (nowTime >= championshipStartTime && nowTime < championshipEndTime) {
         await activity.saveUserIntegral([[messageData.addr, activityUtil.calIntegral(nowTime, messageData.amount)]])
+    } else {
+        console.warn('not in championship period！')
     }
     // update user flight
     if (nowTime >= flightStartTime && nowTime < flightEndTime) {
         if (messageData.amount >= minMount) {
             await activity.saveUserFlight([[messageData.addr, messageData.amount * fuelRate, 0]])
+        } else {
+            console.warn('less than flight min amount!')
         }
+    } else {
+        console.warn('not in flight period!')
     }
     console.log('bet log info saved！')
 }
