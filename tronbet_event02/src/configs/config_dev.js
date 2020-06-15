@@ -183,7 +183,7 @@ let config = {
       startTime:'2020-06-15 00:00:00',
       endTime:'2020-06-24 23:59:59',
       minAmount:40,
-      rate:0.0018,
+      rate:0.005,
       plant:[
         {
           id:0,
