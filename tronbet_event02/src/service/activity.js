@@ -111,6 +111,7 @@ async function handleMsg(message) {
         }
     } else {
         console.warn('not in flight period!')
+        console.warn('now:' + nowTime + ' start:' + flightStartTime + ' end:' + flightEndTime)
     }
     console.log('bet log info saved！')
 }
