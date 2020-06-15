@@ -59,7 +59,7 @@ async function saveUserBetLog(dataList) {
     }
     let insertSql = "insert into tron_bet_event.user_bet_log(addr, order_id, amount, bet_type) values ? "
     let insertResult = await db.query(insertSql, [dataList])
-    console.log("save user bet log complete,result:" + insertResult)
+    console.log("save user bet log complete,result:" + insertResult.affectedRows)
 }
 
 /**
