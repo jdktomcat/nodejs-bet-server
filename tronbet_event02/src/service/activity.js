@@ -226,11 +226,12 @@ async function flight(addr, fuel, fromPlant, toPlant, reward) {
             // 分配奖励
             if (reward > 0) {
                 // TODO 调用合约分配奖励
+                console.log('reward addr:' + addr + ' reward:' + reward)
             }
             // 添加飞行日志记录
             await activity.saveFlightLog([[addr, fromPlant, toPlant, reward]], conn)
             conn.commit()
-            handleResult = {code: 200, msg: 'reset success'}
+            handleResult = {code: 200, msg: 'reset success', data: {reward: reward}}
         }
     } catch (error) {
         console.log('reset action occur error,addr:' + addr + ' error:' + error)

@@ -108,7 +108,7 @@ async function markPayedAward(data) {
         return
     }
     const updateResult = await db.query(`insert into tron_bet_event.award_log(id,tx_id) values ? on on duplicate key` +
-        ` update status = 1, tx_id = values(tx_id)`, data)
+        ` update status = 1, tx_id = values(tx_id)`, [data])
     console.log("mark award payed complete, result:" + updateResult.affectedRows)
 }
 
@@ -120,12 +120,12 @@ async function markPayedAward(data) {
  * @returns {Promise<void>}
  */
 async function saveFlightLog(flightLog, conn) {
-    if (!flightLog) {
+    if (!flightLog || flightLog.length === 0) {
         return
     }
-    const insertSql = "insert into tron_bet_event.flight_log(addr, from_plant, to_plant, reward) values ? ";
-    const insertResult = await db.execTrans(insertSql, flightLog, conn)
-    console.log("save flight log complete, result:" + insertResult)
+    const insertSql = `insert into tron_bet_event.flight_log (addr, from_plant, to_plant, reward) values ? `
+    const insertResult = await db.execTrans(insertSql, [flightLog], conn)
+    console.log("save flight log complete, result:" + insertResult.affectedRows)
 }
 
 /**
