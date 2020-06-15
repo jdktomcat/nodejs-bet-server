@@ -202,7 +202,7 @@ class QueryController {
         data.forEach(record => {
             record.clear_balance = record.clear_balance / 1000000
             record.live_balance = record.live_balance / 1000000
-            record.calc_balance = record.calc_balance / 1000000
+            record.cal_balance = record.cal_balance / 1000000
         })
         ctx.body = ctxUtils.success(data)
     }
@@ -216,7 +216,7 @@ class QueryController {
         data.forEach(record => {
             record.clear_balance = record.clear_balance / 1000000
             record.live_balance = record.live_balance / 1000000
-            record.calc_balance = record.calc_balance / 1000000
+            record.cal_balance = record.cal_balance / 1000000
         })
         let fileName = 'clear_log_' + Date.now() + "_" + Math.random().toString(36).substr(2) + '.xls';
         ctxUtils.fileWithData(ctx, data, fileName)
