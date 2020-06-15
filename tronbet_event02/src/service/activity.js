@@ -128,9 +128,9 @@ async function position(ctx) {
     let full = false
     const result = await activity.getPosition(addr)
     if (result && result.length !== 0) {
-        plant = result.plant
-        fuel = result.fuel
-        full = (result.fuel >= activityUtil.calFuel(plant + 1))
+        plant = result[0].plant
+        fuel = result[0].fuel
+        full = (fuel >= activityUtil.calFuel(plant + 1))
     }
     ctx.body = {code: 200, msg: 'success', data: {plant: plant, fuel: fuel, full: full}}
 }
@@ -148,7 +148,7 @@ async function fire(ctx) {
     let handleResult
     const result = await activity.getPosition(addr)
     if (result && result.length !== 0) {
-        if (position >= 0 && position < plantConfig.length - 1 && result.plant === position) {
+        if (position >= 0 && position < plantConfig.length - 1 && result[0].plant === position) {
             let reward = await common.getRandomInt(plantConfig[position + 1].minPrize, plantConfig[position + 1].maxPrize)
             handleResult = await flight(addr, plantConfig[position + 1].fuel, position, position + 1, reward)
         } else {
@@ -189,8 +189,8 @@ async function reset(ctx) {
     const result = await activity.getPosition(addr)
     let handleResult
     if (result && result.length !== 0) {
-        if (position > 0 && result.plant === position) {
-            handleResult = await flight(addr, 0, result.plant, 0, 0)
+        if (position > 0 && result[0].plant === position) {
+            handleResult = await flight(addr, 0, result[0].plant, 0, 0)
         } else {
             handleResult = {
                 code: 1001,
