@@ -127,7 +127,7 @@ async function position(ctx) {
     let fuel = 0
     let full = false
     const result = await activity.getPosition(addr)
-    if (result) {
+    if (result && result.length !== 0) {
         plant = result.plant
         fuel = result.fuel
         full = (result.fuel >= activityUtil.calFuel(plant + 1))
@@ -147,7 +147,7 @@ async function fire(ctx) {
     const position = ctx.query.position || -1;
     let handleResult
     const result = await activity.getPosition(addr)
-    if (result) {
+    if (result && result.length !== 0) {
         if (position >= 0 && position < plantConfig.length - 1 && result.plant === position) {
             let reward = await common.getRandomInt(plantConfig[position + 1].minPrize, plantConfig[position + 1].maxPrize)
             handleResult = await flight(addr, plantConfig[position + 1].fuel, position, position + 1, reward)
@@ -188,7 +188,7 @@ async function reset(ctx) {
     const position = ctx.query.position || -1;
     const result = await activity.getPosition(addr)
     let handleResult
-    if (result) {
+    if (result && result.length !== 0) {
         if (position > 0 && result.plant === position) {
             handleResult = await flight(addr, 0, result.plant, 0, 0)
         } else {
