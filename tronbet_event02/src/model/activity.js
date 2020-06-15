@@ -29,7 +29,7 @@ async function saveUserFlight(dataList) {
     let insertSql = "insert into tron_bet_event.user_flight(addr,fuel,plant) values ? " +
         "on duplicate key update fuel=fuel+values(fuel)"
     let insertResult = await db.query(insertSql, [dataList])
-    console.log("save user flight complete,result:" + insertResult)
+    console.log("save user flight complete,result:" + insertResult.affectedRows)
 }
 
 /**
