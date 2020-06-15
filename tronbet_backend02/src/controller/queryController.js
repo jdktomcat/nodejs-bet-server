@@ -170,6 +170,10 @@ class QueryController {
         const limit = ctx.query.limit
         const count = await BalanceAudit.countBalanceAudit(addr, startDate, endDate)
         const data = await BalanceAudit.getBalanceAuditPage(addr, startDate, endDate, offset, limit)
+        data.forEach(record => {
+            record.live_balance = record.live_balance / 1000000
+            record.calc_balance = record.calc_balance / 1000000
+        })
         ctx.body = ctxUtils.success({count: count.total, list: data})
     }
 
@@ -181,6 +185,10 @@ class QueryController {
         const startDate = ctx.query.startDate
         const endDate = ctx.query.endDate
         const data = await BalanceAudit.getBalanceAuditList(addr, startDate, endDate)
+        data.forEach(record => {
+            record.live_balance = record.live_balance / 1000000
+            record.calc_balance = record.calc_balance / 1000000
+        })
         let fileName = 'balance_audit_' + Date.now() + "_" + Math.random().toString(36).substr(2) + '.xls';
         ctxUtils.fileWithData(ctx, data, fileName)
     }
@@ -191,6 +199,11 @@ class QueryController {
     static async queryClearLog(ctx) {
         const addr = ctx.query.addr
         const data = await BalanceAudit.queryClearLogList(addr)
+        data.forEach(record => {
+            record.clear_balance = record.clear_balance / 1000000
+            record.live_balance = record.live_balance / 1000000
+            record.calc_balance = record.calc_balance / 1000000
+        })
         ctx.body = ctxUtils.success(data)
     }
 
@@ -200,6 +213,11 @@ class QueryController {
     static async downloadClearLog(ctx) {
         const addr = ctx.query.addr
         const data = await BalanceAudit.queryClearLogList(addr)
+        data.forEach(record => {
+            record.clear_balance = record.clear_balance / 1000000
+            record.live_balance = record.live_balance / 1000000
+            record.calc_balance = record.calc_balance / 1000000
+        })
         let fileName = 'clear_log_' + Date.now() + "_" + Math.random().toString(36).substr(2) + '.xls';
         ctxUtils.fileWithData(ctx, data, fileName)
     }
