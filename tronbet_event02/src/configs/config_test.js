@@ -143,120 +143,123 @@ let config = {
     88
   ],
   activity:{
-    startTime:'2020-05-15 00:00:00',
-    endTime:'2020-05-24 23:59:59',
+    startTime:'2020-06-15 00:00:00',
+    endTime:'2020-06-24 23:59:59',
     championship: {
-      startTime:'2020-05-15 00:00:00',
-      endTime:'2020-05-24 23:59:59',
-      top:5,
+      startTime:'2020-06-15 00:00:00',
+      endTime:'2020-06-24 23:59:59',
+      top:20,
       prize:{
-        1:400000,2:200000,3:100000,4:30000,5:30000,
-        6:30000, 7:30000, 8:30000, 9:30000, 10:30000,
-        11:5000, 12:5000, 13:5000, 14:5000, 15:5000,
-        16:5000, 17:5000, 18:5000, 19:5000, 20:5000,
-        21:2500, 22:2500, 23:2500, 24:2500, 25:2500,
-        26:2500, 27:2500, 28:2500, 29:2500, 30:2500,
-        31:1000, 32:1000, 33:1000, 34:1000, 35:1000,
-        36:1000, 37:1000, 38:1000, 39:1000, 40:1000,
-        41:500, 42:500, 43:500, 44:500, 45:500,
-        46:500, 47:500, 48:500, 49:500, 50:500
+        1:200000,
+        2:80000,
+        3:30000,
+        4:15000,
+        5:15000,
+        6:8000,
+        7:8000,
+        8:8000,
+        9:8000,
+        10:8000,
+        11:3000,
+        12:3000,
+        13:3000,
+        14:3000,
+        15:3000,
+        16:1000,
+        17:1000,
+        18:1000,
+        19:1000,
+        20:1000
       },
       stage:[
         {
           name:'第一阶段',
           rate:0.001,
-          startTime:'2020-05-15 00:00:00',
-          endTime:'2020-05-21 23:59:59'
+          startTime:'2020-06-15 00:00:00',
+          endTime:'2020-06-21 23:59:59'
         },
         {
           name:'第二阶段',
           rate:0.002,
-          startTime:'2020-05-22 00:00:00',
-          endTime:'2020-05-23 23:59:59'
+          startTime:'2020-06-22 00:00:00',
+          endTime:'2020-06-23 23:59:59'
         },
         {
           name:'第三阶段',
           rate:0.003,
-          startTime:'2020-05-24 00:00:00',
-          endTime:'2020-05-24 23:59:59'
+          startTime:'2020-06-24 00:00:00',
+          endTime:'2020-06-24 23:59:59'
         }
       ]
     },
     flight:{
       startTime:'2020-06-15 00:00:00',
       endTime:'2020-06-24 23:59:59',
-      minAmount:30,
-      rate:0.004,
+      minAmount:40,
+      rate:0.0018,
       plant:[
         {
           id:0,
           name:'Earth',
-          fuel:20,
-          minPrize:50,
-          maxPrize:200
+          fuel:0,
+          minPrize:0,
+          maxPrize:0
         },
         {
           id:1,
           name:'Moon',
-          fuel:40,
-          minPrize:100,
-          maxPrize:400
+          fuel:10,
+          minPrize:50,
+          maxPrize:500
         },
         {
           id:2,
           name:'Mars',
-          fuel:80,
-          minPrize:200,
-          maxPrize:800
+          fuel:30,
+          minPrize:150,
+          maxPrize:1500
         },
         {
           id:3,
-          name:'Mercury',
-          fuel:160,
-          minPrize:400,
-          maxPrize:1600
+          name:'Jupiter',
+          Fuel:90,
+          minPrize:450,
+          maxPrize:4500
         },
         {
           id:4,
-          name:'Venus',
-          fuel:320,
-          minPrize:800,
-          maxPrize:3200
+          name:'Saturn',
+          fuel:270,
+          minPrize:1350,
+          maxPrize:13500
         },
         {
           id:5,
-          name:'Jupiter',
-          fuel:640,
-          minPrize:1600,
-          maxPrize:6400
+          name:'Uranus',
+          fuel:810,
+          minPrize:4050,
+          maxPrize:40500
         },
         {
           id:6,
-          name:'Saturn',
-          fuel:1280,
-          minPrize:3200,
-          maxPrize:12800
+          name:'Neptune',
+          fuel:2430,
+          minPrize:12150,
+          maxPrize:121500
         },
         {
           id:7,
-          name:'Uranus',
-          fuel:2560,
-          minPrize:6400,
-          maxPrize:25600
+          name:'Venus',
+          fuel:7290,
+          minPrize:36450,
+          maxPrize:364500
         },
         {
           id:8,
-          name:'Uranus',
-          fuel:5120,
-          minPrize:12800,
-          maxPrize:51200
-        },
-        {
-          id:9,
-          name:'Sun',
-          fuel: 10240,
-          minPrize:25600,
-          maxPrize:102400
+          name:'Mercury',
+          Fuel:21870,
+          minPrize:1000000,
+          maxPrize:1000000
         }
       ]
     }

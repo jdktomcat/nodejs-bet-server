@@ -30,8 +30,13 @@ async function testFormat() {
 
 
 async function main() {
-    const result = await db.query('insert into learn_base.test_table(id,name) values ? ' +
-        'on duplicate key update name=values(name)',[[[6,'name5']]])
+    // const result = await db.query('insert into learn_base.test_table(id,name) values ? ' +
+    //     'on duplicate key update name=values(name)',[[[6,'name5']]])
+    const result = await activity.queryTopUserIntegral(10)
+    console.log(result)
+    result.forEach((record, index) => {
+        record.prize = activityUtil.getPrize(index + 1)
+    })
     console.log(result)
     process.exit(0)
 }

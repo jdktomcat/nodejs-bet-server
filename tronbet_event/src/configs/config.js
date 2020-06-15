@@ -67,7 +67,7 @@ let config = {
     suitPrices: { 3: 6, 5: 10, 7: 50, 10: 300 },
 
     suitScore: { 3: 4, 5: 16, 7: 100, 10: 1000 },
-    
+
     // goodPrices: [2.7, 2.7, 2.7, 10, 10, 43, 43, 132, 132, 132],
     goodPrices: [1, 1, 1, 2, 2, 5, 5, 10, 10, 10],
 
@@ -95,7 +95,7 @@ let config = {
     //   20925
     // ]
   },
-  
+
   // 机器人玩家
   robots:[
     "TDMbZZamUSBQxqibxPKKJuLL9uUtoDze9F",
@@ -225,6 +225,130 @@ let config = {
   //   100,
   //   100
   // ]
+  ,
+  activity:{
+    startTime:'2020-06-15 00:00:00',
+    endTime:'2020-06-24 23:59:59',
+    championship: {
+      startTime:'2020-06-15 00:00:00',
+      endTime:'2020-06-24 23:59:59',
+      top:20,
+      prize:{
+        1:200000,
+        2:80000,
+        3:30000,
+        4:15000,
+        5:15000,
+        6:8000,
+        7:8000,
+        8:8000,
+        9:8000,
+        10:8000,
+        11:3000,
+        12:3000,
+        13:3000,
+        14:3000,
+        15:3000,
+        16:1000,
+        17:1000,
+        18:1000,
+        19:1000,
+        20:1000
+      },
+      stage:[
+        {
+          name:'第一阶段',
+          rate:0.001,
+          startTime:'2020-06-15 00:00:00',
+          endTime:'2020-06-21 23:59:59'
+        },
+        {
+          name:'第二阶段',
+          rate:0.002,
+          startTime:'2020-06-22 00:00:00',
+          endTime:'2020-06-23 23:59:59'
+        },
+        {
+          name:'第三阶段',
+          rate:0.003,
+          startTime:'2020-06-24 00:00:00',
+          endTime:'2020-06-24 23:59:59'
+        }
+      ]
+    },
+    flight:{
+      startTime:'2020-06-15 00:00:00',
+      endTime:'2020-06-24 23:59:59',
+      minAmount:40,
+      rate:0.0018,
+      plant:[
+        {
+          id:0,
+          name:'Earth',
+          fuel:0,
+          minPrize:0,
+          maxPrize:0
+        },
+        {
+          id:1,
+          name:'Moon',
+          fuel:10,
+          minPrize:50,
+          maxPrize:500
+        },
+        {
+          id:2,
+          name:'Mars',
+          fuel:30,
+          minPrize:150,
+          maxPrize:1500
+        },
+        {
+          id:3,
+          name:'Jupiter',
+          Fuel:90,
+          minPrize:450,
+          maxPrize:4500
+        },
+        {
+          id:4,
+          name:'Saturn',
+          fuel:270,
+          minPrize:1350,
+          maxPrize:13500
+        },
+        {
+          id:5,
+          name:'Uranus',
+          fuel:810,
+          minPrize:4050,
+          maxPrize:40500
+        },
+        {
+          id:6,
+          name:'Neptune',
+          fuel:2430,
+          minPrize:12150,
+          maxPrize:121500
+        },
+        {
+          id:7,
+          name:'Venus',
+          fuel:7290,
+          minPrize:36450,
+          maxPrize:364500
+        },
+        {
+          id:8,
+          name:'Mercury',
+          Fuel:21870,
+          minPrize:1000000,
+          maxPrize:1000000
+        }
+      ]
+    }
+  }
+
 
 };
 
