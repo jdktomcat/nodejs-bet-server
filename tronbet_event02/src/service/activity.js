@@ -93,7 +93,7 @@ async function handleMsg(message) {
     console.log('bet info：' + message)
     // save info
     const messageData = JSON.parse(message)
-    await activity.saveUserBetLog([[messageData.addr, messageData.order_id, messageData.amount, messageData.bet_type]])
+    await activity.saveUserBetLog([[messageData.addr, messageData.order_id, messageData.amount, messageData.game_type]])
     // update user integral
     const nowTime = new Date().getTime()
     if (nowTime >= championshipStartTime && nowTime < championshipEndTime) {
