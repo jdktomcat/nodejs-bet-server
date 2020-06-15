@@ -40,7 +40,7 @@ async function saveUserFlight(dataList) {
  * @returns {Promise<void>}
  */
 async function flight(data, conn) {
-    if (data) {
+    if (!data) {
         return
     }
     const updateSql = "update tron_bet_event.user_flight set fuel = fuel - ?, plant = ? where addr = ?"
@@ -123,8 +123,8 @@ async function saveFlightLog(flightLog, conn) {
     if (!flightLog || flightLog.length === 0) {
         return
     }
-    const insertSql = `insert into tron_bet_event.flight_log (addr, from_plant, to_plant, reward) values ? `
-    const insertResult = await db.execTrans(insertSql, [flightLog], conn)
+    const insertSql = `insert into tron_bet_event.flight_log (addr, from_plant, to_plant, reward) values (?, ?, ?, ?)`
+    const insertResult = await db.execTrans(insertSql, flightLog, conn)
     console.log("save flight log complete, result:" + insertResult.affectedRows)
 }
 

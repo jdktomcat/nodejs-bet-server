@@ -144,11 +144,11 @@ async function position(ctx) {
 async function fire(ctx) {
     // 防重机制,添加位置参数
     const addr = ctx.query.addr || ''
-    const position = ctx.query.position || -1;
+    const position = parseInt(ctx.query.position || '-1')
     let handleResult
     const result = await activity.getPosition(addr)
     if (result && result.length !== 0) {
-        if (position >= 0 && position < plantConfig.length - 1 && result[0].plant == position) {
+        if (position >= 0 && position < plantConfig.length - 1 && result[0].plant === position) {
             let reward = await common.getRandomInt(plantConfig[position + 1].minPrize, plantConfig[position + 1].maxPrize)
             handleResult = await flight(addr, plantConfig[position + 1].fuel, position, position + 1, reward)
         } else {
@@ -185,7 +185,7 @@ async function path(ctx) {
 async function reset(ctx) {
     const addr = ctx.query.addr || ''
     // 防重机制
-    const position = ctx.query.position || -1;
+    const position = parseInt(ctx.query.position || '-1')
     const result = await activity.getPosition(addr)
     let handleResult
     if (result && result.length !== 0) {
@@ -229,7 +229,7 @@ async function flight(addr, fuel, fromPlant, toPlant, reward) {
                 console.log('reward addr:' + addr + ' reward:' + reward)
             }
             // 添加飞行日志记录
-            await activity.saveFlightLog([[addr, fromPlant, toPlant, reward]], conn)
+            await activity.saveFlightLog([addr, fromPlant, toPlant, reward], conn)
             conn.commit()
             handleResult = {code: 200, msg: 'reset success', data: {reward: reward}}
         }
