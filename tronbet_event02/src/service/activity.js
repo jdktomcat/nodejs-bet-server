@@ -79,7 +79,7 @@ async function rank(ctx) {
     const limit = ctx.query.limit
     const data = await activity.queryTopUserIntegral(limit)
     data.forEach((record, index) => {
-        record.push(activityUtil.getPrize(index))
+        record.prize = activityUtil.getPrize(index + 1)
     })
     ctx.body = {code: 200, msg: "success", data: data}
 }
@@ -118,13 +118,15 @@ async function handleMsg(message) {
 async function position(ctx) {
     const addr = ctx.query.addr
     let plant = 0
+    let fuel = 0
     let full = false
     const result = await activity.getPosition(addr)
     if (result) {
         plant = result.plant
+        fuel = result.fuel
         full = (result.fuel >= activityUtil.calFuel(plant + 1))
     }
-    ctx.body = {code: 200, msg: 'success', data: {plant: plant, full: full}}
+    ctx.body = {code: 200, msg: 'success', data: {plant: plant, fuel: fuel, full: full}}
 }
 
 /**
@@ -255,7 +257,7 @@ async function draw() {
  * 开奖支付奖励
  * @returns {Promise<boolean>}
  */
-async function pay(){
+async function pay() {
     const result = await activity.queryWaitPayAward()
     if (result && result.length !== 0) {
         const payed = [];

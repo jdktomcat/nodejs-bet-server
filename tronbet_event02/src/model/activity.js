@@ -1,15 +1,4 @@
 const db = require('../utils/dbUtil')
-/**
- * redis
- * @type {RedisClient}
- */
-const redisUtil = require("../utils/redisUtil")
-
-/**
- * 锦标赛排名列表键值
- * @type {string}
- */
-const topUserListKey = 'championship:top:integral:order:list'
 
 /**
  * 批量保存用户积分信息
@@ -80,13 +69,8 @@ async function saveUserBetLog(dataList) {
  * @returns {Promise<void>}
  */
 async function queryTopUserIntegral(limit) {
-    let result = await redisUtil.lrange(topUserListKey, limit)
-    if (!result || result.length === 0) {
-        const sql = `select addr, integral from tron_bet_event.user_integral order by integral desc limit ?`;
-        result = await db.exec(sql, [limit])
-        await redisUtil.lpush(topUserListKey, result)
-    }
-    return result
+    const sql = `select addr,integral from tron_bet_event.user_integral order by integral desc limit ?`;
+    return await db.exec(sql, [limit])
 }
 
 /**
