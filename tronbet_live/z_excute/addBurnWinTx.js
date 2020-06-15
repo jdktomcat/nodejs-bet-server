@@ -1,4 +1,4 @@
-const db = require("./src/utils/dbUtil");
+const db = require("../src/utils/dbUtil");
 
 async function insertDB(info) {
   let sql =
