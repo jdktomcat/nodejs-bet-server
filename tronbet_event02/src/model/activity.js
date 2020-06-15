@@ -83,7 +83,7 @@ async function saveAwardUser(dataList) {
     if (!dataList || dataList.length === 0) {
         return
     }
-    let insertSql = "insert into tron_bet_event.award_log(addr, integral, order, prize) values ? ";
+    let insertSql = 'insert into tron_bet_event.award_log (`addr`, `order`, `integral`, `prize`) values ? '
     let insertResult = await db.query(insertSql, [dataList])
     console.log("save award user complete, result:" + insertResult)
 }
