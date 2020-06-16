@@ -223,14 +223,17 @@ async function flight(addr, fuel, fromPlant, toPlant, reward) {
             conn.beginTransaction()
             // 更新保存用户飞行信息
             await activity.flight([fuel, toPlant, addr], conn)
+            // 添加飞行日志记录
+            const insertId = await activity.saveFlightLog([addr, fromPlant, toPlant, reward], conn)
             // 分配奖励
             if (reward > 0) {
                 // 调用合约分配奖励
-                await tronUtil.sendWin(addr, reward)
+                await tronUtil.sendWin(addr, reward, insertId => {
+                    activity.makeRewardPayedStatus(insertId)
+                })
                 console.log('flight reward addr:' + addr + ' reward:' + reward)
             }
-            // 添加飞行日志记录
-            await activity.saveFlightLog([addr, fromPlant, toPlant, reward], conn)
+
             conn.commit()
             handleResult = {code: 200, msg: 'fire success', data: {reward: reward}}
         }

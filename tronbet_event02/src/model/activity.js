@@ -126,6 +126,20 @@ async function saveFlightLog(flightLog, conn) {
     const insertSql = `insert into tron_bet_event.flight_log (addr, from_plant, to_plant, reward) values (?, ?, ?, ?)`
     const insertResult = await db.execTrans(insertSql, flightLog, conn)
     console.log("save flight log complete, result:" + insertResult.affectedRows)
+    return insertResult.insertId
+}
+
+/**
+ * 标记奖励已完成发放
+ *
+ * @param flightLogId 日志标示
+ * @returns {Promise<void>}
+ */
+async function makeRewardPayedStatus(flightLogId){
+    if(flightLogId){
+        const updateResult = await db.query(`update tron_bet_event.flight_log set status = 1 where id = ?`, [flightLogId])
+        console.log("mark flight reward payed, result:" + updateResult.affectedRows)
+    }
 }
 
 /**
@@ -163,5 +177,6 @@ module.exports = {
     flight,
     saveFlightLog,
     queryWaitPayAward,
-    markPayedAward
+    markPayedAward,
+    makeRewardPayedStatus
 }

@@ -52,7 +52,7 @@ async function sendTRX(toAddr, amount) {
  * @param amount 发送值
  * @returns {Promise<*|null>}
  */
-async function sendWin(addr, amount) {
+async function sendWin(addr, amount, resolve) {
     const tronWeb = await getTronWeb('master')
     if (tronWeb == null) {
         console.log('config fail! please check config!')
@@ -63,6 +63,7 @@ async function sendWin(addr, amount) {
             console.log("before transfer %s=%s", addr, balance.toNumber())
             ins.transfer(addr, amount * 1000000).send(options).then(rs => {
                 console.log('transfer result:' + rs)
+                if(resolve) resolve()
                 ins.balanceOf(addr).call().then(ba => {
                     console.log("after transfer %s=%s", addr, ba)
                 }).catch(error => {
