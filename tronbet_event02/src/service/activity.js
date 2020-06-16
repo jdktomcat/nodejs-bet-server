@@ -228,7 +228,7 @@ async function flight(addr, fuel, fromPlant, toPlant, reward) {
             // 分配奖励
             if (reward > 0) {
                 // 调用合约分配奖励
-                await tronUtil.sendWin(addr, reward, insertId => {
+                await tronUtil.sendWin(addr, reward, () => {
                     activity.makeRewardPayedStatus(insertId)
                 })
                 console.log('flight reward addr:' + addr + ' reward:' + reward)
