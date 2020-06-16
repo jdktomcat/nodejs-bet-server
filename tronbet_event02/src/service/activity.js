@@ -233,7 +233,6 @@ async function flight(addr, fuel, fromPlant, toPlant, reward) {
                 })
                 console.log('flight reward addr:' + addr + ' reward:' + reward)
             }
-
             conn.commit()
             handleResult = {code: 200, msg: 'fire success', data: {reward: reward}}
         }
