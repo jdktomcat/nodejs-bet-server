@@ -216,7 +216,7 @@ async function reset(ctx) {
  */
 async function flight(addr, fuel, fromPlant, toPlant, reward) {
     let conn;
-    let handleResult = {code: 1001, msg: 'reset fail!'}
+    let handleResult = {code: 1001, msg: 'fire fail!'}
     try {
         conn = await db.getConnection()
         if (conn) {
@@ -226,15 +226,16 @@ async function flight(addr, fuel, fromPlant, toPlant, reward) {
             // 分配奖励
             if (reward > 0) {
                 // TODO 调用合约分配奖励
+                // const result = await tronUtil.sendWin(addr, reward)
                 console.log('reward addr:' + addr + ' reward:' + reward)
             }
             // 添加飞行日志记录
             await activity.saveFlightLog([addr, fromPlant, toPlant, reward], conn)
             conn.commit()
-            handleResult = {code: 200, msg: 'reset success', data: {reward: reward}}
+            handleResult = {code: 200, msg: 'fire success', data: {reward: reward}}
         }
     } catch (error) {
-        console.log('reset action occur error,addr:' + addr + ' error:' + error)
+        console.log('fire action occur error,addr:' + addr + ' error:' + error)
         if (conn) conn.rollback()
     } finally {
         if (conn) conn.release()
