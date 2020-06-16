@@ -5,7 +5,7 @@ const Log = Common.Log;
 
 const main = (async function() {
     Log("declan set game start!");
-    await SetBalance.AddBalanceAndBalanceOffset("TV1JGKUpA8eZ9g69gFxViDzYRTEcLdsVwf", 6585385958);
+    await SetBalance.SetBalance("TBqMEQWtqTR9qBMfnP1NWAwukfkX54E7DQ", 0);
 })().then(() => {
     Log("declan set game end!");
     process.exit(0);
