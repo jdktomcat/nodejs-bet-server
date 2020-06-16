@@ -227,7 +227,7 @@ async function flight(addr, fuel, fromPlant, toPlant, reward) {
             if (reward > 0) {
                 // 调用合约分配奖励
                 await tronUtil.sendWin(addr, reward)
-                console.log('reward addr:' + addr + ' reward:' + reward)
+                console.log('flight reward addr:' + addr + ' reward:' + reward)
             }
             // 添加飞行日志记录
             await activity.saveFlightLog([addr, fromPlant, toPlant, reward], conn)
