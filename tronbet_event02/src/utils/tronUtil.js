@@ -63,12 +63,14 @@ async function sendWin(addr, amount, resolve) {
             console.log("before transfer %s=%s", addr, balance.toNumber())
             ins.transfer(addr, amount * 1000000).send(options).then(rs => {
                 console.log('transfer result:' + rs)
-                if(resolve) resolve()
+                if (resolve) resolve()
                 ins.balanceOf(addr).call().then(ba => {
                     console.log("after transfer %s=%s", addr, ba)
                 }).catch(error => {
                     console.log(error)
                 })
+            }).catch(error => {
+                console.log(error)
             })
         }).catch(error => {
             console.log(error)
