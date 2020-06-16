@@ -225,8 +225,8 @@ async function flight(addr, fuel, fromPlant, toPlant, reward) {
             await activity.flight([fuel, toPlant, addr], conn)
             // 分配奖励
             if (reward > 0) {
-                // TODO 调用合约分配奖励
-                // const result = await tronUtil.sendWin(addr, reward)
+                // 调用合约分配奖励
+                await tronUtil.sendWin(addr, reward)
                 console.log('reward addr:' + addr + ' reward:' + reward)
             }
             // 添加飞行日志记录
