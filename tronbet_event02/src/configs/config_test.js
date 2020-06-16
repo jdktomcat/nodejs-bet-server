@@ -40,6 +40,9 @@ let config = {
     // 发奖的私钥 对应的公钥
     payPKHex: "TYmLSP22fzNNHozSXN6ANQF97zp8rhRP7K",
 
+    // 发放win合约
+    winToken:prdCfg.contract.WinToken,
+
     masterFullNode: prdCfg.master_full,
     masterSolidityNode: prdCfg.master_solidity,
     masterEventNode: prdCfg.master_event,
