@@ -222,7 +222,7 @@ let config = {
         {
           id:3,
           name:'Jupiter',
-          Fuel:90,
+          fuel:90,
           minPrize:450,
           maxPrize:4500
         },
@@ -257,7 +257,7 @@ let config = {
         {
           id:8,
           name:'Mercury',
-          Fuel:21870,
+          fuel:21870,
           minPrize:1000000,
           maxPrize:1000000
         }
