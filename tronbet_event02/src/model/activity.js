@@ -168,16 +168,11 @@ async function getFlightPath(addr) {
  * @returns {Promise<void>}
  */
 async function clear() {
-    const clearBetLogResult = await db.query(`truncate user_bet_log`)
-    console.log('clear bet log success,' + clearBetLogResult.affectedRows+' rows')
-    const clearFlightLogResult = await db.query(`truncate flight_log`)
-    console.log('clear flight log success,' + clearFlightLogResult.affectedRows+' rows')
-    const clearAwardLogResult = await db.query(`truncate award_log`)
-    console.log('clear award log success,' + clearAwardLogResult.affectedRows+' rows')
-    const clearFlightResult = await db.query(`truncate user_flight`)
-    console.log('clear flight success,' + clearFlightResult.affectedRows+' rows')
-    const clearIntegralResult = await db.query(`truncate user_integral`)
-    console.log('clear integral success,' + clearIntegralResult.affectedRows+' rows')
+    await db.query(`truncate user_bet_log`)
+    await db.query(`truncate flight_log`)
+    await db.query(`truncate award_log`)
+    await db.query(`truncate user_flight`)
+    await db.query(`truncate user_integral`)
 }
 
 /**
