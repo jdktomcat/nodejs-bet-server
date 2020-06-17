@@ -71,6 +71,12 @@ const minMount = config.activity.flight.minAmount;
 const top = config.activity.championship.top
 
 /**
+ * 管理接口口令
+ * @type {string}
+ */
+const adminToken = 'winkreadv9l4k2lHgeqlwinkXK3e2Ve6j4'
+
+/**
  * 排名列表接口
  * @param ctx 请求上下文
  * @returns {Promise<void>}
@@ -174,6 +180,41 @@ async function path(ctx) {
     const addr = ctx.query.addr || ''
     let result = await activity.getFlightPath(addr)
     ctx.body = {code: 200, msg: 'success', data: result}
+}
+
+/**
+ * 手动开奖逻辑
+ * @param ctx 请求
+ * @returns {Promise<void>}
+ */
+async function handleDraw(ctx) {
+    const token = ctx.query.token
+    if (adminToken === token) {
+        await draw()
+        ctx.body = {code: 200, msg: 'draw success'}
+    } else {
+        ctx.body = {code: 1001, msg: 'you are not certified！'}
+    }
+}
+
+/**
+ * 手动发放奖励
+ *
+ * @param ctx 请求
+ * @returns {Promise<void>}
+ */
+async function handlePay(ctx) {
+    const token = ctx.query.token
+    if (adminToken === token) {
+        const payAll = await pay()
+        if (payAll) {
+            ctx.body = {code: 200, msg: 'pay all success'}
+        } else {
+            ctx.body = {code: 200, msg: 'pay part success,some fail,please check log and find the error!'}
+        }
+    } else {
+        ctx.body = {code: 1001, msg: 'you are not certified！'}
+    }
 }
 
 /**
@@ -293,5 +334,7 @@ module.exports = {
     path,
     reset,
     draw,
-    pay
+    pay,
+    handleDraw,
+    handlePay
 }

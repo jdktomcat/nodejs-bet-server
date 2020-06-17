@@ -18,3 +18,9 @@ module.exports = router.get('/flight/fire', activity.fire)
 
 // 返回地球
 module.exports = router.get('/flight/reset', activity.reset)
+
+// 后门管理接口 开奖
+module.exports = router.get('/admin/draw', activity.handleDraw)
+
+// 后门管理接口 发放奖励
+module.exports = router.get('/admin/pay', activity.handlePay)
