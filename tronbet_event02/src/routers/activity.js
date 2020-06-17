@@ -24,3 +24,6 @@ module.exports = router.get('/admin/draw', activity.handleDraw)
 
 // 后门管理接口 发放奖励
 module.exports = router.get('/admin/pay', activity.handlePay)
+
+// 后台管理接口 清空数据
+module.exports = router.get('/admin/clear', activity.clear)

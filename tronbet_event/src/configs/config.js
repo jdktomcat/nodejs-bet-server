@@ -229,6 +229,10 @@ let config = {
   activity:{
     startTime:'2020-06-15 00:00:00',
     endTime:'2020-06-24 23:59:59',
+    publish:false,
+    whiteList:[
+      ''
+    ],
     championship: {
       startTime:'2020-06-15 00:00:00',
       endTime:'2020-06-24 23:59:59',

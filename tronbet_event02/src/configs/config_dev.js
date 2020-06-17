@@ -132,6 +132,11 @@ let config = {
   activity:{
     startTime:'2020-06-15 00:00:00',
     endTime:'2020-06-24 23:59:59',
+    publish:true,
+    whiteList:[
+      ''
+    ],
+    adminToken:'winkreadv9l4k2lHgeqlwinkXK3e2Ve6j4',
     championship: {
       startTime:'2020-06-15 00:00:00',
       endTime:'2020-06-24 23:59:59',

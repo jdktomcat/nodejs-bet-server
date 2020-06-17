@@ -74,7 +74,20 @@ const top = config.activity.championship.top
  * 管理接口口令
  * @type {string}
  */
-const adminToken = 'winkreadv9l4k2lHgeqlwinkXK3e2Ve6j4'
+const adminToken = config.activity.adminToken
+
+/**
+ * 活动是否发布
+ *
+ * @type {boolean}
+ */
+const publish = config.activity.publish
+
+/**
+ * 白名单
+ * @type {[string]}
+ */
+const whiteList = config.activity.whiteList
 
 /**
  * 排名列表接口
@@ -99,6 +112,10 @@ async function handleMsg(message) {
     console.log('bet info：' + message)
     // save info
     const messageData = JSON.parse(message)
+    if (!publish && whiteList.indexOf(messageData.addr) == -1) {
+        console.log('activity has not publish and addr:[%s] is not in whitelist', messageData.addr)
+        return
+    }
     await activity.saveUserBetLog([[messageData.addr, messageData.order_id, messageData.amount, messageData.game_type]])
     // update user integral
     const nowTime = new Date().getTime()
@@ -326,6 +343,22 @@ async function pay() {
     return true
 }
 
+/**
+ * 清空数据
+ *
+ * @param ctx 请求信息
+ * @returns {Promise<void>}
+ */
+async function clear(ctx) {
+    const token = ctx.query.token
+    if (adminToken === token) {
+        await activity.clear()
+        ctx.body = {code: 200, msg: 'clear activity data success'}
+    } else {
+        ctx.body = {code: 1001, msg: 'you are not certified！'}
+    }
+}
+
 module.exports = {
     rank,
     handleMsg,
@@ -336,5 +369,6 @@ module.exports = {
     draw,
     pay,
     handleDraw,
-    handlePay
+    handlePay,
+    clear
 }

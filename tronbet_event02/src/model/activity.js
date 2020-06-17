@@ -83,8 +83,8 @@ async function saveAwardUser(dataList) {
     if (!dataList || dataList.length === 0) {
         return
     }
-    let insertSql = 'insert into tron_bet_event.award_log (`addr`, `order`, `integral`, `prize`) values ? '+
-                    'on duplicate key update addr=values(addr), integral=values(integral), prize=values(prize), status=0'
+    let insertSql = 'insert into tron_bet_event.award_log (`addr`, `order`, `integral`, `prize`) values ? ' +
+        'on duplicate key update addr=values(addr), integral=values(integral), prize=values(prize), status=0'
     let insertResult = await db.query(insertSql, [dataList])
     console.log("save award user complete, result:" + insertResult)
 }
@@ -136,8 +136,8 @@ async function saveFlightLog(flightLog, conn) {
  * @param flightLogId 日志标示
  * @returns {Promise<void>}
  */
-async function makeRewardPayedStatus(flightLogId){
-    if(flightLogId){
+async function makeRewardPayedStatus(flightLogId) {
+    if (flightLogId) {
         const updateResult = await db.query(`update tron_bet_event.flight_log set status = 1 where id = ?`, [flightLogId])
         console.log("mark flight reward payed, result:" + updateResult.affectedRows)
     }
@@ -164,6 +164,23 @@ async function getFlightPath(addr) {
 }
 
 /**
+ * 清空数据
+ * @returns {Promise<void>}
+ */
+async function clear() {
+    const clearBetLogResult = await db.query(`truncate user_bet_log`)
+    console.log('clear bet log success,' + clearBetLogResult.affectedRows+' rows')
+    const clearFlightLogResult = await db.query(`truncate flight_log`)
+    console.log('clear flight log success,' + clearFlightLogResult.affectedRows+' rows')
+    const clearAwardLogResult = await db.query(`truncate award_log`)
+    console.log('clear award log success,' + clearAwardLogResult.affectedRows+' rows')
+    const clearFlightResult = await db.query(`truncate user_flight`)
+    console.log('clear flight success,' + clearFlightResult.affectedRows+' rows')
+    const clearIntegralResult = await db.query(`truncate user_integral`)
+    console.log('clear integral success,' + clearIntegralResult.affectedRows+' rows')
+}
+
+/**
  * 对外开放接口
  * @type {{insertBatch: insertBatch, getMaxLogId: (function(): number)}}
  */
@@ -179,5 +196,6 @@ module.exports = {
     saveFlightLog,
     queryWaitPayAward,
     markPayedAward,
-    makeRewardPayedStatus
+    makeRewardPayedStatus,
+    clear
 }
