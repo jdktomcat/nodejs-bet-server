@@ -119,7 +119,41 @@ async function saveDB(blockInfo) {
                                 p.mentor = _mentor;
                             }
                         } else {
-                            playersThisBlock.set(_addr, { total: _amount, payout: _payout, referral: _referralAmount, play_times: 1, win_times: (_payout > 0 ? 1 : 0), mentor: _mentor });
+                            playersThisBlock.set(_addr, {
+                                total: _amount,
+                                payout: _payout,
+                                referral: _referralAmount,
+                                play_times: 1,
+                                win_times: (_payout > 0 ? 1 : 0),
+                                mentor: _mentor
+                            });
+                        }
+                    } else if(log._type === "bet_mine_result"){
+                        // 扫雷下注信息解析保存
+                        //日志数据入库
+                        const insertSQL = 'insert into mine_event_log ' +
+                            '(tx_id, addr, mentor_addr, mentor_rate, amount, win_amount, order_id, order_state, order_ts, order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width) ' +
+                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                        const params = [tx_id, log.addr, log.mentor_addr, log.mentor_rate, log.amount, log.win_amount,
+                                        log.order_id, log.order_state, log.order_ts, log.order_block_height, log.order_finish_block_height,
+                                        log.mode, log.mine_region_height, log.mine_region_width]
+                        await db.execTrans(insertSQL, params, conn);
+
+                        // 统计当前区块玩家数据
+                        let playerInfo = playersThisBlock.get(addr);
+                        if (playerInfo) {
+                            playerInfo.total = (new BigNumber(playerInfo.total)).plus(log.amount).toString();
+                            playerInfo.payout = (new BigNumber(playerInfo.payout)).plus(log.amount).toString();
+                            playerInfo.play_times = playerInfo.play_times + 1;
+                            playerInfo.win_times = playerInfo.win_times + (log.win_amount > 0 ? 1 : 0);
+                        } else {
+                            playersThisBlock.set(addr, {
+                                total: log.amount,
+                                payout: log.amount,
+                                play_times: 1,
+                                win_times: (log.mode > 0 ? 1 : 0),
+                                mentor: log.mentor_addr
+                            })
                         }
                     } else if (log._type === "ante_transfer_log") {
                         //转账数据入库

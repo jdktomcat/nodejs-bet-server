@@ -1,6 +1,6 @@
 module.exports = {
-  
-  // 活动发奖的私钥 
+
+  // 活动发奖的私钥
   event_pk: '',
   // 活动发奖的私钥 对应的公钥
   event_pk_hex: '',
@@ -22,6 +22,9 @@ module.exports = {
     TronBetDiceStaker: '41aef3746e20c2a49b70c2c32b4f343548f428e7f1',
     TronBetStakerPlus: '414f92846c191c774d761f3949f9794288b3b9a995',
     TronBetDiceOraclize: '4163f9f14d5319b7f8822e7771aea45b49e85bb35e',
+    // 扫雷下注配置合约
+    TronBetMineOraclize: '',
+
     TronBetMoonLogic: '415ee4096bad59e4656447af5420e09ef35f1e94ec',
     TronBetMoonOraclize: '417df10519e630f46071ff0569494d03b83d8289ca',
     TronBetRingLogic: '413bc99b02c0b3d02475faa97a04e44543603ad2c6',
