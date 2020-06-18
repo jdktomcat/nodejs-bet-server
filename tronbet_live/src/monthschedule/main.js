@@ -52,7 +52,7 @@ const getMonth = function () {
 
 const main = function () {
     const schedule = require('node-schedule');
-    const a1 = schedule.scheduleJob('25 * * * *', async function () {
+    const a1 = schedule.scheduleJob('27 * * * *', async function () {
         console.log(new Date(), "test_month_schedule")
         const {startDate, endDate} = getMonth()
         await coinspaidData()
