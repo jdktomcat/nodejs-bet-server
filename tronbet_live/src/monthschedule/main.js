@@ -19,7 +19,7 @@ const coinspaidData = async function () {
     const p = {
         mail: mail,
         attachments: attachments,
-        title: "coinspaidData"
+        title: "充值提现"
     }
     await sendMail(p)
     deleteExcel(attachments)
@@ -33,6 +33,7 @@ const financialData = async function (startDate, endDate) {
         title: "financialData"
     }
     await sendMail(p)
+    deleteExcel(attachments)
 }
 
 const financialDivData = async function (startDate, endDate) {
@@ -43,6 +44,7 @@ const financialDivData = async function (startDate, endDate) {
         title: "financialDivData"
     }
     await sendMail(p)
+    deleteExcel(attachments)
 }
 
 const getMonth = function () {
@@ -63,13 +65,13 @@ const getMonth = function () {
 
 const main = function () {
     const schedule = require('node-schedule');
-    const a1 = schedule.scheduleJob('42 * * * *', async function () {
+    const a1 = schedule.scheduleJob('7 * * * *', async function () {
         console.log(new Date(), "test_month_schedule")
         const {startDate, endDate} = getMonth()
         console.log(startDate, endDate)
         await coinspaidData()
-        // await financialData(startDate, endDate)
-        // await financialDivData(startDate, endDate)
+        await financialData(startDate, endDate)
+        await financialDivData(startDate, endDate)
     })
 }
 
