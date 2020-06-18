@@ -3,12 +3,15 @@ const {sendMail} = require("./mailUtils")
 const coinspaid = require("./coinspaid1")
 const financial = require("./financial1")
 const financialDiv = require("./financialDiv1")
-const mail = ['andrew.li@tron.network', 'jason.zhang@tron.network']
+const mail = [
+    'andrew.li@tron.network',
+    'jason.zhang@tron.network',
+    'gordon.huang@tron.network'
+]
 
 const deleteExcel = function (attachments) {
     for (let e of attachments) {
         const p = e.path
-        console.log("e.path___>", e.path)
         fs.unlinkSync(p)
     }
 }
@@ -64,7 +67,8 @@ const getMonth = function () {
 
 const main = function () {
     const schedule = require('node-schedule');
-    const a1 = schedule.scheduleJob('48 * * * *', async function () {
+    // 每个月1号6点（14点）自动触发
+    const a1 = schedule.scheduleJob('0 6 1 * *', async function () {
         console.log(new Date(), "test_month_schedule")
         const {startDate, endDate} = getMonth()
         console.log(startDate, endDate)
