@@ -14,7 +14,6 @@ const deleteExcel = function (attachments) {
 }
 
 const coinspaidData = async function () {
-    console.log("debug,", __dirname)
     const attachments = await coinspaid()
     const p = {
         mail: mail,
@@ -30,7 +29,7 @@ const financialData = async function (startDate, endDate) {
     const p = {
         mail: mail,
         attachments: attachments,
-        title: "financialData"
+        title: "live流水"
     }
     await sendMail(p)
     deleteExcel(attachments)
@@ -41,7 +40,7 @@ const financialDivData = async function (startDate, endDate) {
     const p = {
         mail: mail,
         attachments: attachments,
-        title: "financialDivData"
+        title: "live_usdt_divide"
     }
     await sendMail(p)
     deleteExcel(attachments)
@@ -65,7 +64,7 @@ const getMonth = function () {
 
 const main = function () {
     const schedule = require('node-schedule');
-    const a1 = schedule.scheduleJob('38 * * * *', async function () {
+    const a1 = schedule.scheduleJob('48 * * * *', async function () {
         console.log(new Date(), "test_month_schedule")
         const {startDate, endDate} = getMonth()
         console.log(startDate, endDate)
