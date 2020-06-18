@@ -172,8 +172,15 @@ async function fire(ctx) {
     const result = await activity.getPosition(addr)
     if (result && result.length !== 0) {
         if (position >= 0 && position < plantConfig.length - 1 && result[0].plant === position) {
-            let reward = await common.getRandomInt(plantConfig[position + 1].minPrize, plantConfig[position + 1].maxPrize)
-            handleResult = await flight(addr, plantConfig[position + 1].fuel, position, position + 1, reward)
+            if (result[0].fuel >= plantConfig[position + 1].fuel) {
+                let reward = await common.getRandomInt(plantConfig[position + 1].minPrize, plantConfig[position + 1].maxPrize)
+                handleResult = await flight(addr, plantConfig[position + 1].fuel, position, position + 1, reward)
+            } else {
+                handleResult = {
+                    code: 1001,
+                    msg: 'Error! Fuel is not enough!'
+                }
+            }
         } else {
             handleResult = {
                 code: 1001,
