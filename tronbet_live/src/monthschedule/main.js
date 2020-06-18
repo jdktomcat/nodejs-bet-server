@@ -65,7 +65,7 @@ const getMonth = function () {
 
 const main = function () {
     const schedule = require('node-schedule');
-    const a1 = schedule.scheduleJob('7 * * * *', async function () {
+    const a1 = schedule.scheduleJob('38 * * * *', async function () {
         console.log(new Date(), "test_month_schedule")
         const {startDate, endDate} = getMonth()
         console.log(startDate, endDate)

@@ -1,5 +1,5 @@
 const db = require('../utils/dbUtil')
-
+const new_cp = require("./new_cp")
 const rawSql = async function (sql, params) {
     console.log(sql)
     console.log(params)
@@ -426,7 +426,11 @@ const task = async function (startDate, endDate) {
         attachments.push(attachmentObj)
     }
 
+    // 加入新cp
+    const new_cp_attachments = await new_cp(startDate, endDate)
+    attachments = attachments.concat(new_cp_attachments)
 
+    //
     console.log("last attachments is", attachments)
     // await sendMail(attachments)
     // //
