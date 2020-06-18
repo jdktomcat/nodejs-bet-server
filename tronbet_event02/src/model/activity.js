@@ -160,7 +160,7 @@ async function getPosition(addr) {
  * @returns {Promise<void>}
  */
 async function getFlightPath(addr) {
-    return await db.exec(`select addr, to_plant as plant,reward as mine from tron_bet_event.flight_log where addr = ?`, [addr])
+    return await db.exec(`select addr, to_plant as plant, reward as mine from tron_bet_event.flight_log where addr = ? order by id desc limit 30`, [addr])
 }
 
 /**

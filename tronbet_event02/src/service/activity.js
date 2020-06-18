@@ -202,7 +202,12 @@ async function fire(ctx) {
  */
 async function path(ctx) {
     const addr = ctx.query.addr || ''
-    let result = await activity.getFlightPath(addr)
+    const result = await activity.getFlightPath(addr)
+    result.forEach(record => {
+        if(plantConfig[record.plant]){
+            record.fuel = plantConfig[record.plant].fuel
+        }
+    })
     ctx.body = {code: 200, msg: 'success', data: result}
 }
 
