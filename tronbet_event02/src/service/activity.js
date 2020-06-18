@@ -112,7 +112,7 @@ async function handleMsg(message) {
     console.log('bet info：' + message)
     // save info
     const messageData = JSON.parse(message)
-    if (!publish && whiteList.indexOf(messageData.addr) == -1) {
+    if (!publish && whiteList.indexOf(messageData.addr) === -1) {
         console.log('activity has not publish and addr:[%s] is not in whitelist', messageData.addr)
         return
     }
