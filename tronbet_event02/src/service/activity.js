@@ -110,7 +110,7 @@ async function rank(ctx) {
     const data = {}
     if(personal && personal.length === 1){
         personal[0].prize = activityUtil.getPrize(personal[0].order)
-        data.personal = personal[0]
+        data.personal = personal
     }
     const rank = await activity.queryTopUserIntegral(20)
     rank.forEach((record, index) => {
