@@ -17,6 +17,7 @@ const BEGIN_BLOCK_NUMBER = config.tronConfig.beginBlockNumber;
 const RANDOM_CONTRACT_ADDRESS = config.tronConfig.RANDOM_CONTRACT_ADDRESS;
 // 扫雷游戏下注合约地址
 const MINE_CONTRACT_ADDRESS = config.tronConfig.MINE_CONTRACT_ADDRESS;
+const ZEROS = '0000000000000000000000000000000000000000000000000000000000000000';
 
 const TRON_BET_CONTRACT_ADDRESS = config.tronConfig.TRON_BET_CONTRACT_ADDRESS;
 const DICE_DIVIDENDS_CONTRACT_ADDRESS = config.tronConfig.DICE_DIVIDENDS_CONTRACT_ADDRESS;
@@ -612,27 +613,24 @@ function scanTx(tronWeb, tx, _callback) {
                     if (logs && _.isArray(logs) && !_.isEmpty(logs)) {
                         let iLogs = res.logs;
                         for (let _log of logs) {
-                            let event_contract_address = "41" + _log.address;
-                            let hexTopics = _log.topics
+                            let hexTopics = _log.topics;
                             let hexData = _log.data;
                             let eventCode = hexTopics[0];
                             if (eventCode === EVENT_CODE_MineResult) {
-
-                                let log = {
-                                    // TODO 具体内容解析
+                                hexData=hexData.substring(2);
+                                hexData=ZEROS.substring(0, 64 - hexData.length) + hexData;
+                                let log={
                                     _type: "bet_mine_result",
-                                    _ver: _.indexOf(TRON_BET_CONTRACT_ADDRESS, event_contract_address),
-                                    _orderId: hexStringToBigNumber(hexTopics[1]).toNumber(),
-                                    _bettor: hexStringToTronAddress(hexTopics[2].substr(24, 40)),
-                                    _mentor: hexStringToTronAddress(hexTopics[3].substr(24, 40)),
-
-                                    _number: hexStringToBigNumber(hexData.substr(0, 64)).toNumber(),
-                                    _direction: hexStringToBigNumber(hexData.substr(64, 64)).toNumber(),
-                                    _amount: hexStringToBigNumber(hexData.substr(128, 64)).toNumber(),
-                                    _roll: hexStringToBigNumber(hexData.substr(192, 64)).toNumber(),
-                                    _winAmount: hexStringToBigNumber(hexData.substr(256, 64)).toNumber(),
-                                    _referralAmount: hexStringToBigNumber(hexData.substr(320, 64)).toNumber(),
-                                }
+                                    addr: "41" + _log.address,
+                                    amount: parseInt(hexData.substring(24,40),16),
+                                    order_id:parseInt(hexData.substring(40,48),16),
+                                    order_state: parseInt(hexData.substring(62,64),16),
+                                    order_block_height:parseInt(hexData.substring(0,8),16),
+                                    order_finish_block_height: parseInt(hexData.substring(48,56),16),
+                                    mode: parseInt(hexData.substring(56,58),16),
+                                    mine_region_height: parseInt(hexData.substring(58,60),16),
+                                    mine_region_width: parseInt(hexData.substring(60,62),16)
+                                };
                                 iLogs.push(log);
                             }
                         }

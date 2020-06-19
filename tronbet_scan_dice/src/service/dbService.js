@@ -132,11 +132,10 @@ async function saveDB(blockInfo) {
                         // 扫雷下注信息解析保存
                         //日志数据入库
                         const insertSQL = 'insert into mine_event_log ' +
-                            '(tx_id, addr, mentor_addr, mentor_rate, amount, win_amount, order_id, order_state, order_ts, order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width) ' +
-                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-                        const params = [tx_id, log.addr, log.mentor_addr, log.mentor_rate, log.amount, log.win_amount,
-                                        log.order_id, log.order_state, log.order_ts, log.order_block_height, log.order_finish_block_height,
-                                        log.mode, log.mine_region_height, log.mine_region_width]
+                            '(tx_id, addr, amount, win_amount, order_id, order_state, order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width) ' +
+                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                        const params = [tx_id, log.addr, log.amount, log.order_id, log.order_state, log.order_block_height,
+                                        log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width]
                         await db.execTrans(insertSQL, params, conn);
 
                         // 统计当前区块玩家数据
@@ -145,14 +144,11 @@ async function saveDB(blockInfo) {
                             playerInfo.total = (new BigNumber(playerInfo.total)).plus(log.amount).toString();
                             playerInfo.payout = (new BigNumber(playerInfo.payout)).plus(log.amount).toString();
                             playerInfo.play_times = playerInfo.play_times + 1;
-                            playerInfo.win_times = playerInfo.win_times + (log.win_amount > 0 ? 1 : 0);
                         } else {
                             playersThisBlock.set(addr, {
                                 total: log.amount,
                                 payout: log.amount,
-                                play_times: 1,
-                                win_times: (log.mode > 0 ? 1 : 0),
-                                mentor: log.mentor_addr
+                                play_times: 1
                             })
                         }
                     } else if (log._type === "ante_transfer_log") {
