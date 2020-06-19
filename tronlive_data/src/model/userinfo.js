@@ -16,16 +16,37 @@ async function getLastTs(){
     return res[0].ts || 0
 }
 
+
 async function updateBetInfo(round, addr, amount, win, ts, conn){
     let sql = "insert into live_bet_info(round, addr, amount, win, ts) values(?,?,?,?,?) ON DUPLICATE KEY UPDATE amount = amount + ?, win = win + ?, ts = ?"
     return await db.execTrans(sql, [round, addr, amount * 1e6, win * 1e6, ts, amount * 1e6, win * 1e6, ts], conn)
 }
 
 async function getAllLiveBetData(startTs, endTs) {
-    let sql = `select addr, currency, sum(amount) amount, sum(win) win from (select addr, currency, sum(amount) amount, sum(win) win from (select addr, currency, case action when 'bet' then Amount else 0 end as amount, case action when 'result' then Amount else 0 end as win from live_action_log_v2 where ts >= ? and ts < ? and txStatus = 1) a group by addr, currency
+    let sql = `
+    select addr, currency, sum(amount) amount, sum(win) win 
+    from (
+    
+    select addr, currency, sum(amount) amount, sum(win) win from (select addr, currency, case action when 'bet' then Amount else 0 end as amount, case action when 'result' then Amount else 0 end as win from live_action_log_v2 where ts >= ? and ts < ? and txStatus = 1) a group by addr, currency
+    
     union all
-    select email addr, currency,sum(amount / 1000000) amount, sum(win / 1000000) win  from swagger_transaction_log where ts >= ? and ts < ? and status = 1 group by email, currency) a group by addr, currency;`
-    let res = await db.exec(sql, [startTs, endTs, startTs - 600000, endTs - 600000])
+    
+    select email addr, currency,sum(amount / 1000000) amount, sum(win / 1000000) win  from swagger_transaction_log where ts >= ? and ts < ? and status = 1 group by email, currency
+    
+    union all
+
+    select addr, currency,sum(amount / 1000000) amount, sum(win / 1000000) win  from platipus_transaction_log where ts >= ? and ts < ? and status = 2 group by addr, currency
+    
+    ) a group by addr, currency
+    `
+    let res = await db.exec(sql, [
+        startTs, 
+        endTs, 
+        startTs - 600000, 
+        endTs - 600000,
+        startTs,
+        endTs,
+    ])
     return res
 }
 
