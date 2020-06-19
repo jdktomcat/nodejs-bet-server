@@ -112,7 +112,7 @@ async function rank(ctx) {
     rank.forEach((record, index) => {
         record.prize = activityUtil.getPrize(index + 1)
     })
-    ctx.body = {code: 200, msg: "success", data: {rank: data, personal: personal}}
+    ctx.body = {code: 200, msg: "success", data: {rank: rank, personal: personal}}
 }
 
 /**
