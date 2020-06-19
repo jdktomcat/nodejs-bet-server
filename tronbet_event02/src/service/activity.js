@@ -182,27 +182,34 @@ async function fire(ctx) {
     const addr = ctx.query.addr || ''
     const position = parseInt(ctx.query.position || '-1')
     let handleResult
-    const result = await activity.getPosition(addr)
-    if (result && result.length !== 0) {
-        if (position >= 0 && position < plantConfig.length - 1 && result[0].plant === position) {
-            if (result[0].fuel >= plantConfig[position + 1].fuel) {
-                let reward = await common.getRandomInt(plantConfig[position + 1].minPrize, plantConfig[position + 1].maxPrize)
-                handleResult = await flight(addr, plantConfig[position + 1].fuel, position, position + 1, reward)
+    if (new Date().getTime() < flightEndTime) {
+        handleResult = {
+            code: 1001,
+            msg: 'Error! Flight activity has closed!'
+        }
+    } else {
+        const result = await activity.getPosition(addr)
+        if (result && result.length !== 0) {
+            if (position >= 0 && position < plantConfig.length - 1 && result[0].plant === position) {
+                if (result[0].fuel >= plantConfig[position + 1].fuel) {
+                    let reward = await common.getRandomInt(plantConfig[position + 1].minPrize, plantConfig[position + 1].maxPrize)
+                    handleResult = await flight(addr, plantConfig[position + 1].fuel, position, position + 1, reward)
+                } else {
+                    handleResult = {
+                        code: 1001,
+                        msg: 'Error! Fuel is not enough!'
+                    }
+                }
             } else {
                 handleResult = {
                     code: 1001,
-                    msg: 'Error! Fuel is not enough!'
+                    msg: 'Error! request param position:' + position +
+                        ' does not match current server position,please flush and check again!'
                 }
             }
         } else {
-            handleResult = {
-                code: 1001,
-                msg: 'Error! request param position:' + position +
-                    ' does not match current server position,please flush and check again!'
-            }
+            handleResult = {code: 1001, msg: 'Error! request param addr:' + addr + ' have no bet data'}
         }
-    } else {
-        handleResult = {code: 1001, msg: 'Error! request param addr:' + addr + ' have no bet data'}
     }
     ctx.body = handleResult
 }
@@ -269,20 +276,27 @@ async function reset(ctx) {
     const addr = ctx.query.addr || ''
     // 防重机制
     const position = parseInt(ctx.query.position || '-1')
-    const result = await activity.getPosition(addr)
     let handleResult
-    if (result && result.length !== 0) {
-        if (position > 0 && result[0].plant === position) {
-            handleResult = await flight(addr, 0, result[0].plant, 0, 0)
-        } else {
-            handleResult = {
-                code: 1001,
-                msg: 'Error! request param position:' + position +
-                    ' does not match current server position,please flush and check again!'
-            }
+    if (new Date().getTime() < flightEndTime) {
+        handleResult = {
+            code: 1001,
+            msg: 'Error! Flight activity has closed!'
         }
-    } else {
-        handleResult = {code: 1001, msg: 'Error! request param addr:' + addr + ' have no bet data'}
+    }else{
+        const result = await activity.getPosition(addr)
+        if (result && result.length !== 0) {
+            if (position > 0 && result[0].plant === position) {
+                handleResult = await flight(addr, 0, result[0].plant, 0, 0)
+            } else {
+                handleResult = {
+                    code: 1001,
+                    msg: 'Error! request param position:' + position +
+                        ' does not match current server position,please flush and check again!'
+                }
+            }
+        } else {
+            handleResult = {code: 1001, msg: 'Error! request param addr:' + addr + ' have no bet data'}
+        }
     }
     ctx.body = handleResult
 }
