@@ -95,11 +95,13 @@ const whiteList = config.activity.whiteList
  * @returns {Promise<void>}
  */
 async function rank(ctx) {
-    const data = await activity.queryTopUserIntegral(20)
-    data.forEach((record, index) => {
+    const addr = ctx.query.addr || ''
+    const personal = await activity.fetchIntegral(addr)
+    const rank = await activity.queryTopUserIntegral(20)
+    rank.forEach((record, index) => {
         record.prize = activityUtil.getPrize(index + 1)
     })
-    ctx.body = {code: 200, msg: "success", data: data}
+    ctx.body = {code: 200, msg: "success", data: {rank: data, personal: personal}}
 }
 
 /**
@@ -204,7 +206,7 @@ async function path(ctx) {
     const addr = ctx.query.addr || ''
     const result = await activity.getFlightPath(addr)
     result.forEach(record => {
-        if(plantConfig[record.plant]){
+        if (plantConfig[record.plant]) {
             record.fuel = plantConfig[record.plant].fuel
         }
     })

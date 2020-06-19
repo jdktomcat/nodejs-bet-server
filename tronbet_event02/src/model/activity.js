@@ -74,6 +74,25 @@ async function queryTopUserIntegral(limit) {
 }
 
 /**
+ * 获取用户积分信息
+ *
+ * @param addr 用户钱包地址
+ * @returns {Promise<void>}
+ */
+async function fetchIntegral(addr) {
+    const sql = `SELECT addr, integral, rownum as 'order' from (
+                    SELECT addr, integral, 
+                        CASE WHEN @rowtotal = obj.integral THEN @rownum 
+                             WHEN @rowtotal := obj.integral THEN @rownum := @rownum + 1 
+                             WHEN @rowtotal = 0 THEN @rownum := @rownum + 1 
+                        END AS rownum
+                    FROM (SELECT addr, integral FROM user_integral ORDER BY integral DESC) AS obj,
+                         (SELECT @rownum := 0, @rowtotal := NULL) AS total
+                  ) res where addr = ?`;
+    return await db.exec(sql, [addr ? addr : ''])
+}
+
+/**
  * 批量保存中奖用户信息
  *
  * @param dataList 中奖用户信息列表
@@ -192,5 +211,6 @@ module.exports = {
     queryWaitPayAward,
     markPayedAward,
     makeRewardPayedStatus,
-    clear
+    clear,
+    fetchIntegral
 }
