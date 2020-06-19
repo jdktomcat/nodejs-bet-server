@@ -39,10 +39,10 @@ let config = {
     secretKey: prdCfg.Binary.secretKey,
   },
   event:{
-    // 2020-06-15 00:00:00
-    ACTIVITY_START_TS: 1592150400000,
-    // 2020-06-16 23:59:59
-    ACTIVITY_END_TS: 1592323199000
+    // 2020-06-22 00:00:00
+    ACTIVITY_START_TS: 1592755200000,
+    // 2020-06-28 23:59:59
+    ACTIVITY_END_TS: 1593359999000
   },
   addition:{
     START_TS: 1590836400000, //'2020-05-30 19:00:00'
