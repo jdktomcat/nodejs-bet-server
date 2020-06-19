@@ -4,6 +4,9 @@
 const router = require('koa-router')()
 const activity = require('../service/activity')
 
+// 活动信息
+module.exports = router.get('/championship/info', activity.info)
+
 // 排名
 module.exports = router.get('/championship/rank', activity.rank)
 

@@ -90,6 +90,16 @@ const publish = config.activity.publish
 const whiteList = config.activity.whiteList
 
 /**
+ * 锦标赛信息接口
+ * @param ctx 请求上下文
+ * @returns {Promise<void>}
+ */
+async function info(ctx) {
+    const timeout = championshipEndTime - new Date().getTime()
+    ctx.body = {code: 200, msg: "success", data: {timeout: timeout}}
+}
+
+/**
  * 排名列表接口
  * @param ctx 请求上下文
  * @returns {Promise<void>}
@@ -374,6 +384,7 @@ async function clear(ctx) {
 }
 
 module.exports = {
+    info,
     rank,
     handleMsg,
     position,
