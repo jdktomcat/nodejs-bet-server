@@ -46,6 +46,19 @@ const fuelRate = config.activity.flight.rate
 const minMount = config.activity.flight.minAmount;
 
 /**
+ * 活动是否发布
+ *
+ * @type {boolean}
+ */
+const publish = config.activity.publish
+
+/**
+ * 白名单
+ * @type {[string]}
+ */
+const whiteList = config.activity.whiteList
+
+/**
  * 处理下注订单信息
  *
  * @param message 下注订单信息
@@ -55,6 +68,10 @@ async function handleMsg(message) {
     console.log('bet info：' + message)
     // save info
     const messageData = JSON.parse(message)
+    if (!publish && whiteList.indexOf(messageData.addr) === -1) {
+        console.log('activity has not publish and addr:[%s] is not in whitelist', messageData.addr)
+        return
+    }
     await activity.saveUserBetLog([[messageData.addr, messageData.order_id, messageData.amount, messageData.game_type]])
     // update user integral
     const nowTime = new Date().getTime()

@@ -6,12 +6,12 @@ const db = require('../utils/dbUtil')
  * @returns {Promise<void>}
  */
 async function saveUserBetLog(dataList) {
-    if (!dataList || dataList.length == 0) {
+    if (!dataList || dataList.length === 0) {
         return
     }
     let insertSql = "insert into tron_bet_event.user_bet_log(addr, order_id, amount, bet_type) values ? "
     let insertResult = await db.query(insertSql, [dataList])
-    console.log("save user bet log complete,result:" + insertResult)
+    console.log("save user bet log complete,result:" + insertResult.affectedRows)
 }
 
 /**
@@ -27,7 +27,7 @@ async function saveUserIntegral(dataList) {
     let insertSql = "insert into tron_bet_event.user_integral(addr,integral) values ? " +
         " on duplicate key update integral=integral+values(integral)";
     let insertResult = await db.query(insertSql, [dataList])
-    console.log("save user integral complete,result:" + insertResult)
+    console.log("save user integral complete,result:" + insertResult.affectedRows)
 }
 
 /**
@@ -43,10 +43,8 @@ async function saveUserFlight(dataList) {
     let insertSql = "insert into tron_bet_event.user_flight(addr,fuel,plant) values ? " +
         "on duplicate key update fuel=fuel+values(fuel)"
     let insertResult = await db.query(insertSql, [dataList])
-    console.log("save user flight complete,result:" + insertResult)
+    console.log("save user flight complete,result:" + insertResult.affectedRows)
 }
-
-
 
 module.exports = {
     saveUserBetLog,

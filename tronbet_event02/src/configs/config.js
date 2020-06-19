@@ -141,16 +141,16 @@ let config = {
     88
   ],
   activity:{
-    startTime:'2020-06-15 00:00:00',
-    endTime:'2020-06-24 23:59:59',
+    startTime:'2020-06-22 00:00:00',
+    endTime:'2020-06-28 23:59:59',
     publish:false,
     whiteList:[
       ''
     ],
     adminToken:'winkreadv9l4k2lHgeqlwinkXK3e2Ve6j4',
     championship: {
-      startTime:'2020-06-15 00:00:00',
-      endTime:'2020-06-24 23:59:59',
+      startTime:'2020-06-22 00:00:00',
+      endTime:'2020-06-28 23:59:59',
       top:20,
       prize:{
         1:200000,
@@ -178,26 +178,26 @@ let config = {
         {
           name:'第一阶段',
           rate:0.001,
-          startTime:'2020-06-15 00:00:00',
-          endTime:'2020-06-21 23:59:59'
+          startTime:'2020-06-22 00:00:00',
+          endTime:'2020-06-24 23:59:59'
         },
         {
           name:'第二阶段',
           rate:0.002,
-          startTime:'2020-06-22 00:00:00',
-          endTime:'2020-06-23 23:59:59'
+          startTime:'2020-06-25 00:00:00',
+          endTime:'2020-06-26 23:59:59'
         },
         {
           name:'第三阶段',
           rate:0.003,
-          startTime:'2020-06-24 00:00:00',
-          endTime:'2020-06-24 23:59:59'
+          startTime:'2020-06-27 00:00:00',
+          endTime:'2020-06-28 23:59:59'
         }
       ]
     },
     flight:{
-      startTime:'2020-06-15 00:00:00',
-      endTime:'2020-06-24 23:59:59',
+      startTime:'2020-06-22 00:00:00',
+      endTime:'2020-06-26 23:59:59',
       minAmount:40,
       rate:0.005,
       plant:[
