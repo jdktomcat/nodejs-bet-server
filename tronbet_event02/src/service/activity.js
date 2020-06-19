@@ -107,12 +107,17 @@ async function info(ctx) {
 async function rank(ctx) {
     const addr = ctx.query.addr || ''
     const personal = await activity.fetchIntegral(addr)
-    personal.prize = activityUtil.getPrize(personal.order)
+    const data = {}
+    if(personal && personal.length === 1){
+        personal[0].prize = activityUtil.getPrize(personal[0].order)
+        data.personal = personal[0]
+    }
     const rank = await activity.queryTopUserIntegral(20)
     rank.forEach((record, index) => {
         record.prize = activityUtil.getPrize(index + 1)
     })
-    ctx.body = {code: 200, msg: "success", data: {rank: rank, personal: personal}}
+    data.rank = rank
+    ctx.body = {code: 200, msg: "success", data: data}
 }
 
 /**
