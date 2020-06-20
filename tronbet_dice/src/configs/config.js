@@ -113,7 +113,7 @@ let config = {
 
     MANAGER_LIST: [{ addr: 'TGKpnHx8RrnmFdJ27Cc4aqV7CH329RqFs5', name: 'Admin_SOON', pwd: 'sam', img: 20001 }, { addr: 'TYGVyrQsqVtTYLBsSGEnH8YX3J88WZKJt1', name: 'Ben_MOD', pwd: 'ben', img: 20002 }, { addr: 'TMUDXGz5n8DgyuKt9Ww6VGg417kh36Jgoh', name: 'Simeon_MOD', pwd: 'simeon' }, { addr: 'TDPNfUMA3Uux6DT3DzoxBLWuUKhNa7bGhY', name: 'Crika_MOD', pwd: 'crika' }],
 
-    ACTIVITY_START_TS: 1592755200000,//2020-06-22 00:00:00
+    ACTIVITY_START_TS: 1592582400000,//2020-06-22 00:00:00
     ACTIVITY_END_TS: 1593359999000,//2020-06-28 23:59:59
 
   },
