@@ -15,6 +15,10 @@ const loggerError = log4js.getLogger('error');
 const config = require('./src/configs/config');
 const BEGIN_BLOCK_NUMBER = config.tronConfig.beginBlockNumber;
 const RANDOM_CONTRACT_ADDRESS = config.tronConfig.RANDOM_CONTRACT_ADDRESS;
+// 扫雷游戏下注合约地址
+const MINE_CONTRACT_ADDRESS = config.tronConfig.MINE_CONTRACT_ADDRESS;
+const ZEROS = '0000000000000000000000000000000000000000000000000000000000000000';
+
 const TRON_BET_CONTRACT_ADDRESS = config.tronConfig.TRON_BET_CONTRACT_ADDRESS;
 const DICE_DIVIDENDS_CONTRACT_ADDRESS = config.tronConfig.DICE_DIVIDENDS_CONTRACT_ADDRESS;
 const WIN_DIVIDENDS_CONTRACT_ADDRESS = config.tronConfig.WIN_DIVIDENDS_CONTRACT_ADDRESS;
@@ -23,6 +27,9 @@ const tronNodePool = require('./src/service/tronNodePool');
 const getTronWeb = tronNodePool.getTronWeb;
 
 const EVENT_CODE_DiceResult = sha3.keccak256("DiceResult(uint256,address,address,uint64,uint64,uint256,uint64,uint256,uint256)");
+
+// 新增扫雷游戏下注结果
+const EVENT_CODE_MineResult = sha3.keccak256("MineResult(uint256,address,address,uint256,uint64,uint256,uint256,uint256)");
 
 const EVENT_CODE_SEED = sha3.keccak256("importSeedFromThird(address,uint256)");
 const EVENT_CODE_SALT = sha3.keccak256("importSeedFromThirdSalt(address,uint256,uint256)");
@@ -239,9 +246,6 @@ function scanTx(tronWeb, tx, _callback) {
     let txID = tx.txID;
     let raw_data = tx.raw_data;
     let contract = raw_data.contract;
-    let fee_limit = raw_data.fee_limit;
-    let timestamp = raw_data.timestamp;
-    // let _status = tx.ret[0].contractRet;
     let res = null;
     for (let _contract of contract) {
         let type = _contract.type;
@@ -461,7 +465,7 @@ function scanTx(tronWeb, tx, _callback) {
                 });
             } else if (contract_address === WIN_DIVIDENDS_CONTRACT_ADDRESS) {  //WIN分红合约
                 console.log("*** About WIN_DIVIDENDS_CONTRACT_ADDRESS!!!", txID);
-                tronWeb.solidityNode.request('walletsolidity/gettransactioninfobyid', { "value": txID }, 'post').then((txInfo) => {
+                tronWeb.solidityNode.request('walletsolidity/gettransactioninfobyid', {"value": txID}, 'post').then((txInfo) => {
                     if (_.isEmpty(txInfo)) {
                         _callback("Maybe node is asyncing!", null);
                         return;
@@ -564,6 +568,72 @@ function scanTx(tronWeb, tx, _callback) {
                     _callback("WTF! walletsolidity/gettransactioninfobyid/" + txID, null);
                     return;
                 });
+            } else if(contract_address === MINE_CONTRACT_ADDRESS){ // 扫雷游戏下注合约地址
+                tronWeb.solidityNode.request('walletsolidity/gettransactioninfobyid', { "value": txID }, 'post').then((txInfo) => {
+                    if (_.isEmpty(txInfo)) {
+                        _callback("Maybe node is asyncing!", null);
+                        return;
+                    }
+                    let receipt = txInfo.receipt;
+                    if (receipt == null) {
+                        receipt = {
+                            origin_energy_usage: 0, //能源消耗 1trx = 100usage
+                            energy_usage_total: 0, //能源总消耗 1trx = 100usage
+                            energy_fee: 0, //能量花费 1trx = 100usage
+                            net_fee: 0, //带宽花费 1trx = 100usage
+                            net_usage: 0, //带宽消耗 1trx = 100usage
+                            result: "REVERT"
+                        }
+                    }
+                    let logs = txInfo.log;
+                    res = {
+                        state: TX_STATE.ATTENTION, //** 必须设置为关联状态 TX_STATE.ATTENTION */
+                        txID: txID, //交易编号
+                        fee: txInfo.fee, //总花费(单位:sun)
+                        blockNumber: txInfo.blockNumber,//区块号
+                        blockTimeStamp: txInfo.blockTimeStamp,//区块时间戳
+                        owner_address: TronWeb.address.fromHex(owner_address), //发起人地址
+                        contract_address: TronWeb.address.fromHex(txInfo.contract_address), //合约地址
+                        call_value: call_value,//交易额
+                        origin_energy_usage: receipt.origin_energy_usage || 0, //能源消耗 1trx = 100usage
+                        energy_usage_total: receipt.energy_usage_total || 0, //能源总消耗 1trx = 100usage
+                        energy_fee: receipt.energy_fee || 0, //能量花费 1trx = 100usage
+                        net_fee: receipt.net_fee || 0, //带宽花费 1trx = 100usage
+                        net_usage: receipt.net_usage || 0, //带宽消耗 1trx = 100usage
+                        result: receipt.result,  //执行结果 SUCCESS/REVERT
+                        logs: []
+                    }
+                    if (txInfo.resMessage) {
+                        res.resMessage = hextoString(txInfo.resMessage);
+                        loggerDefault.warn("resMessage:" + res.resMessage + "; tx_id:" + txID);
+                    }
+                    if (logs && _.isArray(logs) && !_.isEmpty(logs)) {
+                        let iLogs = res.logs;
+                        for (let _log of logs) {
+                            let hexTopics = _log.topics;
+                            let hexData = _log.data;
+                            let eventCode = hexTopics[0];
+                            if (eventCode === EVENT_CODE_MineResult) {
+                                // 解析对应的order信息
+                                let log={
+                                    _type: "bet_mine_result",
+                                    addr: TronWeb.address.fromHex("41" + _log.address),
+                                    mentor_addr: hexStringToTronAddress(hexTopics[3].substr(24, 40)),
+                                    mentor_rate: hexStringToBigNumber(hexData.substr(0, 64)).toNumber(),
+                                    win_amount: hexStringToBigNumber(hexData.substr(64, 64)).toNumber()
+                                };
+                                getOrderDetail(log, hexTopics[1])
+                                iLogs.push(log);
+                            }
+                        }
+                    }
+                    _callback(null, res);
+                    return;
+                }).catch((e) => {
+                    loggerError.error("WTF! walletsolidity/gettransactioninfobyid", txID, e);
+                    _callback("WTF! walletsolidity/gettransactioninfobyid/" + txID, null);
+                    return;
+                });
             } else {
                 _callback(null, { state: TX_STATE.IGNORE, txID: txID });
                 return;
@@ -613,4 +683,22 @@ function hexStringToBigNumber(_hexStr) {
 
 async function SaveDB(_block_info) {
     return await dbService.saveDB(_block_info);
+}
+
+/**
+ * 解析对应的订单信息
+ * @param log 信息
+ * @param order 订单
+ */
+function getOrderDetail(log, order){
+    order = ZEROS.substring(0, 64 - order.length) + order
+    log.amount = parseInt(order.substring(24, 40),16)
+    log.order_id = parseInt(order.substring(40, 48),16)
+    log.order_state = parseInt(order.substring(62, 64),16)
+    log.order_ts = new Date(parseInt(order.substring(8, 24),16) * 1000)
+    log.order_block_height = parseInt(order.substring(0, 8),16)
+    log.order_finish_block_height = parseInt(order.substring(48, 56),16)
+    log.mode = parseInt(order.substring(56, 58),16)
+    log.mine_region_height = parseInt(order.substring(60, 62),16)
+    log.mine_region_width = parseInt(order.substring(58, 60),16)
 }
