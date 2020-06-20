@@ -29,7 +29,7 @@ const getTronWeb = tronNodePool.getTronWeb;
 const EVENT_CODE_DiceResult = sha3.keccak256("DiceResult(uint256,address,address,uint64,uint64,uint256,uint64,uint256,uint256)");
 
 // 新增扫雷游戏下注结果
-const EVENT_CODE_MineResult = sha3.keccak256("MineResult(uint256,address,address,uint64,uint64,uint256,uint64,uint256,uint256)");
+const EVENT_CODE_MineResult = sha3.keccak256("MineResult(uint256,address,address,uint256,uint64,uint256,uint256,uint256)");
 
 const EVENT_CODE_SEED = sha3.keccak256("importSeedFromThird(address,uint256)");
 const EVENT_CODE_SALT = sha3.keccak256("importSeedFromThirdSalt(address,uint256,uint256)");
@@ -246,9 +246,6 @@ function scanTx(tronWeb, tx, _callback) {
     let txID = tx.txID;
     let raw_data = tx.raw_data;
     let contract = raw_data.contract;
-    let fee_limit = raw_data.fee_limit;
-    let timestamp = raw_data.timestamp;
-    // let _status = tx.ret[0].contractRet;
     let res = null;
     for (let _contract of contract) {
         let type = _contract.type;
@@ -617,20 +614,15 @@ function scanTx(tronWeb, tx, _callback) {
                             let hexData = _log.data;
                             let eventCode = hexTopics[0];
                             if (eventCode === EVENT_CODE_MineResult) {
-                                hexData=hexData.substring(2);
-                                hexData=ZEROS.substring(0, 64 - hexData.length) + hexData;
+                                // 解析对应的order信息
                                 let log={
                                     _type: "bet_mine_result",
                                     addr: "41" + _log.address,
-                                    amount: parseInt(hexData.substring(24,40),16),
-                                    order_id:parseInt(hexData.substring(40,48),16),
-                                    order_state: parseInt(hexData.substring(62,64),16),
-                                    order_block_height:parseInt(hexData.substring(0,8),16),
-                                    order_finish_block_height: parseInt(hexData.substring(48,56),16),
-                                    mode: parseInt(hexData.substring(56,58),16),
-                                    mine_region_height: parseInt(hexData.substring(58,60),16),
-                                    mine_region_width: parseInt(hexData.substring(60,62),16)
+                                    mentor_addr: hexStringToTronAddress(hexTopics[3].substr(24, 40)),
+                                    mentor_rate: hexStringToBigNumber(hexData.substr(0, 64)).toNumber(),
+                                    win_amount: hexStringToBigNumber(hexData.substr(64, 64)).toNumber()
                                 };
+                                getOrderDetail(log, hexTopics[1])
                                 iLogs.push(log);
                             }
                         }
@@ -691,4 +683,22 @@ function hexStringToBigNumber(_hexStr) {
 
 async function SaveDB(_block_info) {
     return await dbService.saveDB(_block_info);
+}
+
+/**
+ * 解析对应的订单信息
+ * @param log 信息
+ * @param order 订单
+ */
+function getOrderDetail(log, order){
+    order = ZEROS.substring(0, 64 - order.length) + order
+    log.amount = parseInt(order.substring(24, 40),16)
+    log.order_id = parseInt(order.substring(40, 48),16)
+    log.order_state = parseInt(order.substring(62, 64),16)
+    log.order_ts = parseInt(order.substring(8, 24),16)
+    log.order_block_height = parseInt(order.substring(0, 8),16)
+    log.order_finish_block_height = parseInt(order.substring(48, 56),16)
+    log.mode = parseInt(order.substring(56, 58),16)
+    log.mine_region_height = parseInt(order.substring(60, 62),16)
+    log.mine_region_width = parseInt(order.substring(58, 60),16)
 }

@@ -133,26 +133,28 @@ async function saveDB(blockInfo) {
                         // 扫雷下注信息解析保存
                         //日志数据入库
                         const insertSQL = 'insert into mine_event_log ' +
-                            '(tx_id, addr, amount, win_amount, order_id, order_state, order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width) ' +
-                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-                        const params = [tx_id, log.addr, log.amount, log.order_id, log.order_state, log.order_block_height,
+                            '(tx_id, addr, amount, win_amount, mentor_addr, mentor_rate, order_id, order_state, order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width) ' +
+                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                        const params = [tx_id, log.addr, log.amount, log.win_amount, log.mentor_addr,
+                            log.mentor_rate, log.order_id, log.order_state, log.order_ts, log.order_block_height,
                             log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width]
                         await db.execTrans(insertSQL, params, conn);
-
                         // 发送信息
-                        sendGameMsg(log.addr,log.amount,log.order_id);
-
+                        sendGameMsg(log.addr, log.order_id, log.amount);
                         // 统计当前区块玩家数据
-                        let playerInfo = playersThisBlock.get(addr);
+                        let playerInfo = playersThisBlock.get(log.addr);
                         if (playerInfo) {
                             playerInfo.total = (new BigNumber(playerInfo.total)).plus(log.amount).toString();
                             playerInfo.payout = (new BigNumber(playerInfo.payout)).plus(log.amount).toString();
                             playerInfo.play_times = playerInfo.play_times + 1;
+                            playerInfo.win_times = playerInfo.win_times + (log.win_amount > 0 ? 1 : 0);
+                            playerInfo.mentor = log.mentor_addr;
                         } else {
                             playersThisBlock.set(addr, {
                                 total: log.amount,
                                 payout: log.amount,
-                                play_times: 1
+                                play_times: 1,
+                                win_times: (log.win_amount > 0 ? 1 : 0)
                             })
                         }
                     } else if (log._type === "ante_transfer_log") {
@@ -277,6 +279,7 @@ const ACTIVITY_END_TS = config.event.ACTIVITY_END_TS || 0
 const sendGameMsg = function (addr, order_id, trxAmount) {
     let _now = _.now();
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
+    console.log('发送消息：'+JSON.stringify({addr: addr, order_id: order_id, amount: trxAmount, game_type: 10}))
     redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount: trxAmount, game_type: 10}));
 }
 

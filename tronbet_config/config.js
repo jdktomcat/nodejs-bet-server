@@ -23,7 +23,7 @@ module.exports = {
     TronBetStakerPlus: '414f92846c191c774d761f3949f9794288b3b9a995',
     TronBetDiceOraclize: '4163f9f14d5319b7f8822e7771aea45b49e85bb35e',
     // 扫雷下注配置合约
-    TronBetMineOraclize: '4166edfc0b97fa9dd3e54491f489735b0b5039077b',
+    TronBetMineOraclize: '4134721ff799bce28a7e122c60c83487b78283a52c',
 
     TronBetMoonLogic: '415ee4096bad59e4656447af5420e09ef35f1e94ec',
     TronBetMoonOraclize: '417df10519e630f46071ff0569494d03b83d8289ca',
