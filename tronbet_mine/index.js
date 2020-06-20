@@ -4,29 +4,11 @@ const config = require('./src/configs/config');
 const log4js = require('./src/configs/log4js.config');
 const sha3 = require('js-sha3');
 
-//
-/*
-var app = require('express')();
-var http = require('http').Server(app);
-let io = require('socket.io')(http);
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
-});
-app.get('/socket.io/socket.io.js', function(req, res){
-  res.sendFile(__dirname + '/socket.io/socket.io.js');
-});
-http.listen(3000, function(){
-  console.log('listening on *:3000');
-});
-*/
-//
-
 const loggerDefault = log4js.getLogger('default');
 const loggerError = log4js.getLogger('error');
 
 const tronNodePool = require('./src/service/tronNodePool');
 const tronSerivce= require('./src/service/tronService');
-const tronUtil = require('./src/utils/tronUtil');
 
 const events = require('events');
 const Redis=require("ioredis");
@@ -44,7 +26,7 @@ const MINE_GAME_ORACLE_END_GAME='gameEnd';
 const MINE_GAME_CANCEL_MIND='cancleMine';
 
 //用户登陆签名允许的最大时间偏差值
-const USER_LOGIN_TIME_DEVIATION=30*1000;
+const USER_LOGIN_TIME_DEVIATION=3*60*1000;
 
 const USER_LOGIN_TIME_INVALID=1000;
 const USER_LOGIN_SIGN_INVALID=1001;
@@ -57,6 +39,9 @@ const USER_ORDER_STATUS_IS_NOT_USER_READY=1007;
 const SERVER_SEND_START_GAME_TX_FAILURE=1008;
 const SERVER_SEND_CANCEL_GAME_TX_FAILURE=1009;
 const SERVER_SEND_END_GAME_TX_FAILURE=1010;
+const USER_MINE_STEP_TIME_IS_OUT=10061;
+const USER_TIME_LIFE_TIME_IS_OUT=10062;
+
 const SUCCESS=0;
 const SERVER_BUSY=999;
 const NOT_PASS=998;
@@ -64,6 +49,7 @@ const REDIS_GAME_DATA_NOT_RIGHT=997;
 const REDIS_GAME_DATA_NOT_EXIST=996;
 const NET_BUSY=995;
 const STORE_BUSY=994;
+const USER_GAME_DATA_NOT_FOUND=993;
 
 
 const MAIN_MINE_GAME_GET_ORDER_RESULT='getOrderResult';
@@ -76,6 +62,8 @@ const TOKEN_EXPIRE='tokenExpire';
 const MINE_RESULT='userMineResult';
 const QUIT_MINE_RESULT='quitMineResult';
 const QUERY_GAME_DATA_RESULT='queryGameDataResult';
+const IS_TIME_OUT_RESULT='isTimeOutResult';
+const QUERY_USER_LOGS_RESULT='queryUserLogsResult';
 
 
 const ZEROS="00000000000000000000000000000000000000";//用来把长度不足的字符串前面进行补0使用
@@ -95,9 +83,9 @@ const LATEST_GAME_INFO='LATEST:';
 const USER_LOG='player:logs';
 
 const RETRY_TIME=0;
-const GAME_LIFE_TIME=60*60*24*1000;//游戏从下单到被强制结束的时间秒
-const GAME_STEP_TIME=60*30*1000;//游戏每一步的时间
-const TOKEN_EXPIRE_TIME=60*60*24*1000;
+const GAME_LIFE_TIME=5*60*1000;//游戏从下单到被强制结束的时间秒
+const GAME_STEP_TIME=60*1000;//游戏每一步的时间
+const TOKEN_EXPIRE_TIME=5*60*1000;
 
 
 const GAME_MODEL_NORMAL=0x01;//普通模式
@@ -181,6 +169,228 @@ function socketConnected(newSocket){
 	newSocket.on('userMine',userMine.bind(newSocket));//用户挖雷了
 	newSocket.on('quitMine',quitMine.bind(newSocket));//用户结束扫雷
 	newSocket.on('queryGameData',queryGameData.bind(newSocket));//查询游戏信息
+	newSocket.on('isTimeOut',isTimeOut.bind(newSocket));//判断是否超时，超时会直接结束游戏，所以需要传递token
+	newSocket.on('queryUserLogs',queryUserLogs.bind(newSocket));//查询用户的游戏记录(最后10条)，从redis中获取
+}
+
+
+/*
+ * 查询用户游戏记录
+ */
+function queryUserLogs(data){
+	console.log("queryUserLogs....");
+	let tw=getTronWeb();	
+	let socket=this;
+	let result={};
+	let addr=data.addr;
+	if(!tw.isAddress(addr)){
+		console.log("用户使用不正确的地址[%s]进行[queryUserLogs]",addr);
+		return;	
+	}
+	redis.get(MINE_REDIS_PREFIX+LATEST_GAME_INFO+addr,function(err,info){
+		if(err){
+			console.log("获取Redis失败[%s][queryUserLogs]",addr);
+			result.errorCode=STORE_BUSY;
+			socket.emit(QUERY_USER_LOGS_RESULT,result);	
+			return;
+		}
+		let userLatestRedisInfo;						
+		if(!info){//用户没有玩过游戏，自然也不存在什么超时了
+			result.errorCode=USER_GAME_DATA_NOT_FOUND;	
+			socket.emit(QUERY_USER_LOGS_RESULT,result);	
+			return;
+		}
+		userLatestRedisInfo=JSON.parse(info);
+		let lastOrderNo=parseInt(userLatestRedisInfo.order.orderNo);//一般不会出现异常 
+		//获取最近9条已经完结的日志，有可能会没有那么多
+		let orderIdList=[];
+		for(var i=lastOrderNo-1;i>0;i--){
+			if(orderIdList.length>=9){
+				break;
+			}
+			orderIdList.push(i);
+		}
+		let userLogList=[];//返回给客户端的用户
+		let win=userLatestRedisInfo.gameResult===1;//通过计算
+		let close=userLatestRedisInfo.gameStatus==ORDER_STATUS_CLOSE;
+
+		//用户的挖雷记录
+		let userSteps=[];
+		//已经显示的地雷
+		let mines=[];
+		for(var i=31;i>0;i--){
+			if(userLatestRedisInfo.mineSteps[i]==0){
+				break;
+			}
+			userSteps.push(userLatestRedisInfo.mineSteps[i]);
+			mines.push(userLatestRedisInfo.mines[i]);
+		}
+		//如果游戏已经结束了，那么可以显示所有的地雷给用户看
+		let allMines=[]
+		if(userLatestRedisInfo.gameStatus===ORDER_STATUS_CLOSE){
+			for(var i=31;i>0;i--){
+				if(userLatestRedisInfo.mines[i]!=0){
+					allMines.push(userLatestRedisInfo.mines[i]);
+				}
+			}
+		}
+		if(userLatestRedisInfo.gameStatus!==ORDER_STATUS_CLOSE){
+			userLatestRedisInfo.salt="0x"+userLatestRedisInfo.salt;
+			userLogList.push({
+				"id":userLatestRedisInfo.order.orderNo,
+				"bet":userLatestRedisInfo.order.orderAmount,
+				"blockNo":userLatestRedisInfo.order.orderBlockH,
+				"now":userLatestRedisInfo.mineHash,
+				"payout":0,//需要计算出来 win 计算出来 lose 0
+				"now":userLatestRedisInfo.mineHash,//当前mineHash
+				"result":close?allMines:mines,//已关闭显示所有的地雷，未关闭显示用户挖的地雷
+				"userSteps":userSteps,
+				"mines":mines,
+				"allMines":close?allMines:[],
+				"salt":close?userLatestRedisInfo.salt:'',
+				"gameResult":userLatestRedisInfo.gameResult
+			});
+		}else{
+			orderIdList.push(userLatestRedisInfo.order.orderNo);
+		}
+		console.log(JSON.stringify(orderIdList));
+		//console.log(JSON.stringify(userLogList));
+		if(orderIdList.length>0){ 
+			redis.hmget(MINE_REDIS_PREFIX+USER_LOG+addr,orderIdList,function(err,rs){
+				if(err){
+					console.log("获取Redis失败[%s][queryUserLogs]=orderNos=[%s]",addr,JSON.stringify(orderIdList));
+					console.log(err);
+					result.errorCode=STORE_BUSY;
+					socket.emit(QUERY_USER_LOGS_RESULT,result);	
+					return;
+				}//只有完结的才会在这里显示，可以全部列出
+				for(var index=0;index<rs.length;index++){
+					if(rs[index]==null){
+						continue;
+					}
+					let tmpInfo=JSON.parse(rs[index]);
+					tmpInfo.salt="0x"+tmpInfo.salt;
+					win=tmpInfo.gameResult===1;//通过计算
+					close=tmpInfo.gameStatus==ORDER_STATUS_CLOSE;
+					//用户挖的地方
+					let userSteps=[];
+					//已经显示的地雷
+					let mines=[];
+					for( var i=31;i<0;i--){
+						if(tmpInfo.mineSteps[i]==0){
+							break;
+						}
+						userSteps.push(tmpInfo.mineSteps[i]);
+						mines.push(tmpInfo.mines[i]);
+					}
+					//如果游戏已经结束了，那么可以显示所有的地雷给用户看
+					allMines=[]
+					if(tmpInfo.gameStatus===ORDER_STATUS_CLOSE){
+						for(var i=31;i>0;i--){
+							if(tmpInfo.mines[i]!=0){
+								allMines.push(tmpInfo.mines[i]);
+							}
+						}
+					}
+					userLogList.push({
+						"id":tmpInfo.order.orderNo,
+						"bet":tmpInfo.order.orderAmount,
+						"blockNo":tmpInfo.order.orderBlockH,
+						"now":tmpInfo.mineHash,
+						"payout":tmpInfo.winAmount,//需要计算出来 win 计算出来 lose 0
+						"now":tmpInfo.mineHash,//当前mineHash
+						"result":close?allMines:mines,//已关闭显示所有的地雷，未关闭显示用户挖的地雷
+						"userSteps":userSteps,
+						"mines":mines,
+						"allMines":close?allMines:[],
+						"salt":tmpInfo.salt,
+						"gameResult":tmpInfo.gameResult
+					});
+					//console.log(JSON.stringify(userLogList));
+				}
+				console.log(JSON.stringify(userLogList));
+				result.errorCode=SUCCESS;
+				result.data=userLogList;
+				socket.emit(QUERY_USER_LOGS_RESULT,result);
+				return;
+			});
+		}
+
+	});
+	
+	
+	
+}
+
+/*
+ * 判断是否超时
+ */
+function isTimeOut(data){
+	let tw=getTronWeb();	
+	let socket=this;
+	let result={};
+	let addr=data.addr;
+	if(!tw.isAddress(addr)){
+		console.log("用户使用不正确的地址[%s]进行[isTimeOut]",addr);
+		return;	
+	}
+	redis.get(MINE_REDIS_PREFIX+LATEST_GAME_INFO+addr,function(err,info){
+		if(err){
+			console.log("获取Redis失败[%s][isTimeOut]",addr);
+			result.errorCode=SERVER_BUSY;
+			socket.emit(IS_TIME_OUT_RESULT,result);	
+			return;
+		}
+		let userLatestRedisInfo;						
+		if(!info){//用户没有玩过游戏，自然也不存在什么超时了
+			result.errorCode=USER_GAME_DATA_NOT_FOUND;	
+			socket.emit(IS_TIME_OUT_RESULT,result);	
+			return;
+		}
+		userLatestRedisInfo=JSON.parse(info);
+		let _now=new Date().getTime();
+		let lastTs=userLatestRedisInfo.lastTs;
+		let startTime=userLatestRedisInfo.order.orderBlockT.toNumber()*1000;//有可能异常
+
+		result.data={};
+		result.data.order=info.order;
+		result.data.userSteps=[];
+		result.data.mines=[];
+		result.data.mineHash=userLatestRedisInfo.mineHash;
+		result.data.gameStatus=userLatestRedisInfo.gameStatus;
+		result.data.gameResult=userLatestRedisInfo.gameResult;
+		result.data.addr=addr;
+		result.data.errorCode=SUCCESS;
+		result.lastTs=userLatestRedisInfo.lastTs;//提交时间
+		for(var i=31;i>0;i--){
+			if(userLatestRedisInfo.mineSteps[i]==0){
+				break;
+			}
+			result.data.userSteps.push(userLatestRedisInfo.mineSteps[i]);
+			result.data.mines.push(userLatestRedisInfo.mines[i]);
+		}
+		result.data.allMines=[]
+		if(userLatestRedisInfo.gameStatus===ORDER_STATUS_CLOSE){//
+			for(var i=31;i>0;i--){
+				if(userLatestRedisInfo.mines[i]!=0){
+					result.data.allMines.push(userLatestRedisInfo.mines[i]);
+				}
+			}
+		}
+		if(_now>lastTs+GAME_STEP_TIME){//步时超时
+			result.errorCode=USER_MINE_STEP_TIME_IS_OUT;
+			socket.emit(IS_TIME_OUT_RESULT,result);	
+			return;
+		}else if(_now>startTime+GAME_LIFE_TIME){//局时超时
+			result.errorCode=USER_TIME_LIFE_TIME_IS_OUT;
+			socket.emit(IS_TIME_OUT_RESULT,result);	
+			return;
+		}
+		socket.emit(IS_TIME_OUT_RESULT,result);	
+		return;
+	});
+
+
 }
 
 /*
@@ -242,6 +452,14 @@ function queryGameData(data){
 				}
 				result.data.userSteps.push(userLatestRedisInfo.mineSteps[i]);
 				result.data.mines.push(userLatestRedisInfo.mines[i]);
+			}
+			result.data.allMines=[]
+			if(userLatestRedisInfo.gameStatus===ORDER_STATUS_CLOSE){//
+				for(var i=31;i>0;i--){
+					if(userLatestRedisInfo.mines[i]!=0){
+						result.data.allMines.push(userLatestRedisInfo.mines[i]);
+					}
+				}
 			}
 			result.errorCode=SUCCESS;
 			socket.emit(QUERY_GAME_DATA_RESULT,result);
@@ -360,7 +578,7 @@ function userMine(data){
 			return;
 		}
 		if(rs.orderStatus!=ORDER_STATUS_SERVER_READY){
-			result.errorCode=NOT_PASS;
+			result.errorCode=ORDER_STATUS_IS_NOT_ALLOW_TO_MIND;
 			socket.emit(MINE_RESULT,result);	
 			console.log("订单状态异常，服务器没有成功开始游戏[交易失败]:%s",data.addr);
 			return;
@@ -552,6 +770,10 @@ function startNewGame(data){
 		}
 		if(rs.orderStatus==ORDER_STATUS_USER_READY){//USER_READY
 			startGame(socket,addr,rs,START_NEW_GAME_RESULT);//开始游戏
+		}else if(rs.orderStatus==ORDER_STATUS_SERVER_READY){
+			result.errorCode=SUCCESS;
+			socket.emit(START_NEW_GAME_RESULT,result);	
+			return;
 		}else{
 			let result={};
 			result.errorCode=USER_ORDER_STATUS_IS_NOT_USER_READY;
@@ -867,7 +1089,7 @@ function generateMines(height,width){
  *
  * 1.将用户扫雷步骤，盐值，雷的信息等等调用oracle 
  */
-async function endGame(socket,addr,userLatestRedisInfo,eventName){
+async function endGame(socket,addr,userLatestRedisInfo,eventName,errorCode){
 	userLatestRedisInfo.gameStatus=ORDER_STATUS_CLOSE;//
 	let result={};
 	//没有成功不需要修改数据
@@ -925,6 +1147,14 @@ async function endGame(socket,addr,userLatestRedisInfo,eventName){
 				}
 				result.data.userSteps.push(userLatestRedisInfo.mineSteps[i]);
 				result.data.mines.push(userLatestRedisInfo.mines[i]);
+			}
+			result.data.allMines=[]
+			if(userLatestRedisInfo.gameStatus===ORDER_STATUS_CLOSE){
+				for(var i=31;i>0;i--){
+					if(userLatestRedisInfo.mines[i]!=0){
+						result.data.allMines.push(userLatestRedisInfo.mines[i]);
+					}
+				}
 			}
 			socketEmit(socket,addr,eventName,result);//[mark]
 			return;
@@ -1049,9 +1279,10 @@ async function initCheckOrders(){
 			param.push(addr);
 		}
 		let start=new Date().getTime();
-
+		console.log(JSON.stringify(param));
 		tronSerivce.query(tronNodePool,config.contract[MAIN_MINE_GAME],
 			MAIN_MINE_GAME_GET_ORDERS_BY_MINERS,[param],3,function(err,rs){
+
 			let end=new Date().getTime();
 			//console.log("根据地址列表，获取订单详情列表耗时:[%s]",end-start);
 			//console.log("[%s]",JSON.stringify(rs));
@@ -1082,25 +1313,33 @@ async function initCheckOrders(){
 							userLatestRedisInfo=JSON.parse(info);
 						}
 						userLatestRedisInfo.order=resultInfo;//更新订单信息
-						//如果我们没有监控到订单完结，但是订单还是完结了，那么用户重新下订单，下单成功，然后发送消息给我们
-						//我们会让游戏开始，并重新更新覆盖userLatestRedisInfo
+						//这里获取的状态一定是用户最新的状态,但如果数据太多了，也有一定的可能出现异常　
 						if(resultInfo.orderStatus==ORDER_STATUS_CLOSE){
 							if(PENDING_ORDERS[addr]==ORDER_STATUS_CLOSE){//我们监听了ORDER_STATUS_CLOSE事件
 								let result={};
 								result.errorCode=SUCCESS;
 								result.data=userLatestRedisInfo;
-								delete PENDING_ORDERS[addr];//已经完结，无论如何删除掉
 								if(socket){
-									console.log("emit:%s",JSON.stringify(result));
 									socket.emit(GAME_OVER,result);
 								}
 							}
+							delete PENDING_ORDERS[addr];
+							console.log("地址[%s]游戏结束");
 							userLatestRedisInfo.gameStatus=ORDER_STATUS_CLOSE;
-							///console.log("Redis wirte:%s",JSON.stringify(userLatestRedisInfo));
-							redis.set(MINE_REDIS_PREFIX+LATEST_GAME_INFO+addr, 
-								JSON.stringify(userLatestRedisInfo),function(err,rs){
-								if(!err){
-									delete PENDING_ORDERS[addr];//已经完结，无论如何删除掉
+							//成功或者失败，都没有办法了
+							redis.set(MINE_REDIS_PREFIX+LATEST_GAME_INFO+addr, JSON.stringify(userLatestRedisInfo),function(err,rd){
+								if(err){
+									console.log("机器人更新结束订单异常,存储最新信息");
+									console.log(err);
+								}
+							});
+							redis.hset(MINE_REDIS_PREFIX+USER_LOG+addr,resultInfo.orderNo,JSON.stringify(userLatestRedisInfo),
+							function(err,rd){
+								console.log(MINE_REDIS_PREFIX+USER_LOG+addr);
+								console.log(resultInfo.orderNo);
+								if(err){
+									console.log("机器人更新结束订单异常,存储用户日记");
+									console.log(err);
 								}
 							});
 						}else if(resultInfo.orderStatus==ORDER_STATUS_SERVER_READY){
@@ -1136,7 +1375,7 @@ async function initCheckOrders(){
 				initCheckOrders();//任何异常将导致此函数不再被调用
 			}
 		});
-	},500);
+	},1600);
 }
 
 /*
