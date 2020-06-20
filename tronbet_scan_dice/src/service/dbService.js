@@ -16,6 +16,7 @@ const redis = require('ioredis').createClient(
 );
 
 let DICE_PLAYERS = new Map();
+
 async function init() {
     try {
         let sql = "select user_id,addr from dice_players";
@@ -128,15 +129,18 @@ async function saveDB(blockInfo) {
                                 mentor: _mentor
                             });
                         }
-                    } else if(log._type === "bet_mine_result"){
+                    } else if (log._type === "bet_mine_result") {
                         // 扫雷下注信息解析保存
                         //日志数据入库
                         const insertSQL = 'insert into mine_event_log ' +
                             '(tx_id, addr, amount, win_amount, order_id, order_state, order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width) ' +
                             " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                         const params = [tx_id, log.addr, log.amount, log.order_id, log.order_state, log.order_block_height,
-                                        log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width]
+                            log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width]
                         await db.execTrans(insertSQL, params, conn);
+
+                        // 发送信息
+                        sendGameMsg(log.addr,log.amount,log.order_id);
 
                         // 统计当前区块玩家数据
                         let playerInfo = playersThisBlock.get(addr);
@@ -232,7 +236,7 @@ async function saveDB(blockInfo) {
         let preBlock = await db.execTrans("SELECT * from dice_block order by block_num desc limit 1;", null, conn);
         preBlock = preBlock[0];
         if (preBlock == null) {
-            preBlock = { block_num: 0, all_bet_sun: 0, all_payout_sun: 0, all_play_times: 0, all_win_times: 0 }
+            preBlock = {block_num: 0, all_bet_sun: 0, all_payout_sun: 0, all_play_times: 0, all_win_times: 0}
         }
         // if (preBlock.block_num !== 0 && preBlock.block_num + 1 !== block_num) {
         //     throw new Error("block is not contiune! pre:" + preBlock.block_num + " now:" + block_num);
@@ -262,6 +266,31 @@ async function saveDB(blockInfo) {
 async function getMaxBlockNum() {
     let preBlock = await db.exec("SELECT * from dice_block order by block_num desc limit 1;", null, null);
     return preBlock[0] ? preBlock[0].block_num : 0;
+}
+
+/**
+ * 活动配置
+ * @type {*|number}
+ */
+const ACTIVITY_START_TS = config.event.ACTIVITY_START_TS || 0
+const ACTIVITY_END_TS = config.event.ACTIVITY_END_TS || 0
+const sendGameMsg = function (addr, order_id, trxAmount) {
+    let _now = _.now();
+    if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
+    redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount: trxAmount, game_type: 10}));
+}
+
+const sendMsgToClient = function (ctx, errno, errmsg, data) {
+    data = data || {};
+    let params = ctx.request.body;
+    let result = {
+        ReturnCode: errno,
+        ApiVersion: params.ApiVersion || "",
+        Request: params.Request || "",
+        Message: errmsg,
+        ...data
+    };
+    ctx.body = result;
 }
 
 

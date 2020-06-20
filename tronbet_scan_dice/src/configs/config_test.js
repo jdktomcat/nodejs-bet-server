@@ -51,6 +51,12 @@ let config = {
     WIN_DIVIDENDS_CONTRACT_ADDRESS: prdCfg.contract.TronBetDividerPlus, //
     // 扫雷游戏下注合约地址
     MINE_CONTRACT_ADDRESS: prdCfg.contract.TronBetMineOraclize
+  },
+  event:{
+    // 2020-06-22 00:00:00
+    ACTIVITY_START_TS: 1592582400000,
+    // 2020-06-28 23:59:59
+    ACTIVITY_END_TS: 1593359999000
   }
 };
 
