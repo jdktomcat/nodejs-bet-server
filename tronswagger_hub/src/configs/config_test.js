@@ -49,8 +49,10 @@ let config = {
     privetKey: prdCfg.swaghub.privetKey
   },
   event:{
-    ACTIVITY_START_TS: 1579996800000,//2020-01-26 00:00:00;
-    ACTIVITY_END_TS: 1580774400000,//2020-02-04 00:00:00;
+    // 2020-06-15 00:00:00
+    ACTIVITY_START_TS: 1592150400000,
+    // 2020-06-16 23:59:59
+    ACTIVITY_END_TS: 1592323199000
   }
 };
 

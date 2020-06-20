@@ -100,7 +100,7 @@ function getRandomSeed() {
 //             //             }
 //             //         }
 //             //    }
-//             // } 
+//             // }
 //             // else if (lastpayOpenTimes > 2e6 && lastpayOpenTimes <= 10e6 && indeedOpenTimes == payOpenTimes) {
 //             //     let luckNum = luckNums[2]
 //             //     console.log('lastpayOpenTimes, luckNum, payOpenTimes', lastpayOpenTimes, luckNum, payOpenTimes)
@@ -153,7 +153,7 @@ function getRandomSeed() {
 //     // }
 
 //     result = (await openMultiBox(openNum))
-    
+
 //     if (joker101.length == 1) {
 //         result =  [...result, ...joker101]
 //     }
@@ -335,5 +335,6 @@ module.exports = {
     lotteryFree,
     isWardTrx,
     randomMulti,
-    randomBMW
+    randomBMW,
+    getRandomInt
 }

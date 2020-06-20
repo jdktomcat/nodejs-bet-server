@@ -146,7 +146,7 @@ function randomString(range) {
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
         'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
         '-'];
-  
+
     for (let i = 0; i < range; i++) {
       pos = Math.round(Math.random() * (arr.length - 1));
       str += arr[pos];
@@ -170,7 +170,7 @@ appEvent.on('player_in', (addr, bet, multi) => {
         return;
     }
 
-    
+
     if (!_.isNumber(bet) || _.isNaN(bet) || !_.isNumber(multi) || _.isNaN(multi) || _.isEmpty(addr)) return;
 
     console.log(">>>player_in", addr, bet, multi);
@@ -223,7 +223,7 @@ appEvent.on('stop_accepting', () =>{
                 NoticeSettling('START_ROLL')
                 return;
             }
-            
+
             let txRet = await tronWheel.stopAcceptBeting();
             console.log(txRet)
             if (txRet.result === true) {
@@ -311,7 +311,7 @@ appEvent.on('settling', () => {
                     loggerDefault.info("state changed to next step -> award confirm\r\n");
                     appEvent.emit('award_confirm');
                     return;
-                }  
+                }
             }
 
             // if (_round > betInfo.round && _blockState == 2) {
@@ -420,7 +420,7 @@ appEvent.on('award_confirm', () => {
                 } else {
                     appEvent.emit("award_confirm");
                 }
-                
+
             }
         } catch (error) {
             loggerError.error(error);
@@ -552,7 +552,7 @@ async function newRound(round) {
         betInfo.roundState = lastRound.roundState
         betInfo.round = lastRound.round
         betInfo.lastRound = lastRound.lastRound
-    
+
         betInfo.salt = lastRound.salt
         betInfo.luckyNum = lastRound.luckyNum
         betInfo.hash = lastRound.hash
@@ -589,7 +589,7 @@ async function appStart() {
             betInfo.roundState = lastRound.roundState
             betInfo.round = lastRound.round
             betInfo.lastRound = lastRound.lastRound
-        
+
             betInfo.salt = lastRound.salt
             betInfo.luckyNum = lastRound.luckyNum
             betInfo.hash = lastRound.hash
@@ -775,7 +775,7 @@ io.on('connection', function (socket) {
             p.cashed_out = (p.cashed_out + 0.0002).toFixed(2);
             p.profit = (p.profit + 0.0002).toFixed(2);
         }
-        
+
         socket.emit("round_log_ret", {
             roundInfo,
             playerInfo
@@ -801,7 +801,7 @@ async function refreshPlayerInfo(isAddExp) {
         let lv = getLv(exp);
         console.log('lv---------------------lv', lv, exp)
         // await hset("player:info:" + addr, "lv", lv);
-        // await hset("player:info:" + addr, "ts", _now);        
+        // await hset("player:info:" + addr, "ts", _now);
 
         if (item.multi == 2) {
             bet2X.push(item)
@@ -929,32 +929,32 @@ async function main() {
 
 main()
 
-
-let _GAME_TYPE = "ring";
 let ACTIVITY_START_TS = conf.wheel.ACTIVITY_START_TS || 0;
 let ACTIVITY_END_TS = conf.wheel.ACTIVITY_END_TS || 0;
 function sendGameMsg(addr, order_id, trxAmount, index) {
     console.log('-------------------------------sendGameMsg---------------------------------------')
-    trxAmount = trxAmount
+    // trxAmount = trxAmount
     let _now = _.now();
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
-    if (trxAmount < 100) return [trxAmount, 0, false];
-    //箱子爆率=投注额^0.527163*0.3%
-    let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 30);
-    if (persent > 9000) persent = 9000;
-    let _r = _.random(0, 10000);
-    let hit = false;
-    if (_r <= persent) {
-        hit = true;
-    }
-    if (hit === true) {
-        let tmp_order =  order_id * 10000000 + index
-        let msg = { addr: addr, order_id: tmp_order, box_num: 1, game_type: _GAME_TYPE };
-        // loggerDefault.info("sendGameMsg", msg);
-        redis.publish("game_message", JSON.stringify(msg));
-        appEvent.emit('activity_info', msg); //**  */
-    }
-    return [trxAmount, persent, hit];
+    redis.publish("game_message", JSON.stringify({ addr: addr, order_id: order_id * 10000000 + index, amount: trxAmount, game_type: 2 }))
+
+    // if (trxAmount < 100) return [trxAmount, 0, false];
+    // //箱子爆率=投注额^0.527163*0.3%
+    // let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 30);
+    // if (persent > 9000) persent = 9000;
+    // let _r = _.random(0, 10000);
+    // let hit = false;
+    // if (_r <= persent) {
+    //     hit = true;
+    // }
+    // if (hit === true) {
+    //     let tmp_order =  order_id * 10000000 + index
+    //     let msg = { addr: addr, order_id: tmp_order, box_num: 1, game_type: _GAME_TYPE };
+    //     // loggerDefault.info("sendGameMsg", msg);
+    //     redis.publish("game_message", JSON.stringify(msg));
+    //     appEvent.emit('activity_info', msg); //**  */
+    // }
+    // return [trxAmount, persent, hit];
 }
 
 appEvent.on('activity_info', (msg) => {
