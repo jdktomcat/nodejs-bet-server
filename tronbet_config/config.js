@@ -1,6 +1,6 @@
 module.exports = {
-  
-  // 活动发奖的私钥 
+
+  // 活动发奖的私钥
   event_pk: '',
   // 活动发奖的私钥 对应的公钥
   event_pk_hex: '',
@@ -95,6 +95,7 @@ module.exports = {
 
     tronbet_backend02: 18056,
     tronbet_event01: 18058,
+    tronbet_event02: 18058,
 
     tronlive_emserver: 18060,
     tronbet_live: 18066,

@@ -71,6 +71,12 @@ let config = {
     live_staking_dividend: '',
     win_pool: '',
     win_dividend: ''
+  },
+  event:{
+    // 2020-06-15 00:00:00
+    ACTIVITY_START_TS: 1592150400000,
+    // 2020-06-16 23:59:59
+    ACTIVITY_END_TS: 1592323199000
   }
 };
 

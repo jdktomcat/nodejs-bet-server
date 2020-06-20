@@ -7,6 +7,7 @@ const TronWeb = require('tronweb');
 const moment = require('moment');
 const sha3 = require('js-sha3');
 const BigNumber = require('bignumber.js');
+const redisUtil = require('./src/utils/redisUtil')
 
 var pvpAddr = conf.tronConfig.pvp_bet_addr;
 var pvpLogic = conf.tronConfig.pvp_logic_addr;
@@ -18,6 +19,20 @@ const RingPvpResult = sha3.keccak256('RingPvpResult(uint256,uint256,uint256,addr
 const RingPvpCancel = sha3.keccak256('RingPvpCancel(uint256,uint256,address,address,address,address,uint256)');
 
 const scanBlocknumFileName = 'scanRing.blocknum';
+
+const lodash = require('lodash')._
+
+/**
+ * 活动开始时间
+ * @type {number}
+ */
+const ACTIVITY_START_TS = conf.event.ACTIVITY_START_TS || 0;
+
+/**
+ * 活动结束时间
+ * @type {number}
+ */
+const ACTIVITY_END_TS = conf.event.ACTIVITY_END_TS || 0;
 
 async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -254,8 +269,23 @@ async function saveJoinRoomInfo(info) {
     }
     return false;
   }
+  sendGameMsg(info._playerAddr, info._roomId+''+info._seatIndex, info._trxAmount);
   return true;
 }
+
+/**
+ * 发送消息
+ *
+ * @param addr 钱包地址
+ * @param order_id 房间标示
+ * @param trxAmount 下注金额
+ */
+function sendGameMsg(addr, order_id, trxAmount) {
+  const _now = lodash.now();
+  if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
+  redisUtil.redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount: trxAmount / 1000000, game_type: 3}));
+}
+
 
 async function saveRoomCancelInfo(info) {
   let player = 'player' + (info._seatIndex + 1);

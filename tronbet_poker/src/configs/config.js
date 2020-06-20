@@ -96,6 +96,12 @@ let config = {
     feeRate: [0.1, 0.08, 0.075, 0.05, 0.025], //抽成比例
     SNG_RESET_CD: 60000, //SNG 牌桌重置CD(毫秒)
     SNG_BB_LV_CD: 180000 //SNG 升盲CD(毫秒)
+  },
+  event:{
+    // 2020-06-22 00:00:00
+    ACTIVITY_START_TS: 1592582400000,
+    // 2020-06-28 23:59:59
+    ACTIVITY_END_TS: 1593359999000
   }
 };
 
