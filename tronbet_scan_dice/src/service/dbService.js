@@ -6,6 +6,8 @@ const log4js = require('../configs/log4js.config');
 const loggerDefault = log4js.getLogger('print');
 const loggerError = log4js.getLogger('error');
 
+const MINE_REDIS_PREFIX_KEY='MINE:USER:player:logs';
+
 const redis = require('ioredis').createClient(
     {
         host: config.redisConfig.host,
@@ -16,6 +18,7 @@ const redis = require('ioredis').createClient(
 );
 
 let DICE_PLAYERS = new Map();
+
 async function init() {
     try {
         let sql = "select user_id,addr from dice_players";
@@ -119,7 +122,54 @@ async function saveDB(blockInfo) {
                                 p.mentor = _mentor;
                             }
                         } else {
-                            playersThisBlock.set(_addr, { total: _amount, payout: _payout, referral: _referralAmount, play_times: 1, win_times: (_payout > 0 ? 1 : 0), mentor: _mentor });
+                            playersThisBlock.set(_addr, {
+                                total: _amount,
+                                payout: _payout,
+                                referral: _referralAmount,
+                                play_times: 1,
+                                win_times: (_payout > 0 ? 1 : 0),
+                                mentor: _mentor
+                            });
+                        }
+                    } else if (log._type === "bet_mine_result") {
+                        // 扫雷下注信息解析保存
+                        //日志数据入库
+                        const insertSQL = 'insert into mine_event_log ' +
+                            '(tx_id, addr, amount, win_amount, mentor_addr, mentor_rate, order_id, order_state, order_ts, ' +
+                            ' order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width) ' +
+                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                        const params = [tx_id, log.addr, log.amount, log.win_amount, log.mentor_addr,
+                            log.mentor_rate, log.order_id, log.order_state, log.order_ts, log.order_block_height,
+                            log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width]
+                        await db.execTrans(insertSQL, params, conn);
+                        if(log.win_amount > 0){
+                            let userMineContent = await redis.hget(MINE_REDIS_PREFIX_KEY+log.addr, log.order_id)
+                            if(userMineContent && userMineContent.length !== 0){
+                                let userMineObject = JSON.parse(userMineContent)
+                                userMineObject.winAmount = log.win_amount
+                                userMineContent = JSON.stringify(userMineObject)
+                                await redis.hset(MINE_REDIS_PREFIX_KEY + log.addr, log.order_id, userMineContent)
+                                console.log('update user:%s win amount:%s', log.addr, log.win_amount)
+                            }
+                        }
+
+                        // 发送信息
+                        sendGameMsg(log.addr, log.order_id, log.amount);
+                        // 统计当前区块玩家数据
+                        let playerInfo = playersThisBlock.get(log.addr);
+                        if (playerInfo) {
+                            playerInfo.total = (new BigNumber(playerInfo.total)).plus(log.amount).toString();
+                            playerInfo.payout = (new BigNumber(playerInfo.payout)).plus(log.amount).toString();
+                            playerInfo.play_times = playerInfo.play_times + 1;
+                            playerInfo.win_times = playerInfo.win_times + (log.win_amount > 0 ? 1 : 0);
+                            playerInfo.mentor = log.mentor_addr;
+                        } else {
+                            playersThisBlock.set(log.addr, {
+                                total: log.amount,
+                                payout: log.amount,
+                                play_times: 1,
+                                win_times: (log.win_amount > 0 ? 1 : 0)
+                            })
                         }
                     } else if (log._type === "ante_transfer_log") {
                         //转账数据入库
@@ -202,7 +252,7 @@ async function saveDB(blockInfo) {
         let preBlock = await db.execTrans("SELECT * from dice_block order by block_num desc limit 1;", null, conn);
         preBlock = preBlock[0];
         if (preBlock == null) {
-            preBlock = { block_num: 0, all_bet_sun: 0, all_payout_sun: 0, all_play_times: 0, all_win_times: 0 }
+            preBlock = {block_num: 0, all_bet_sun: 0, all_payout_sun: 0, all_play_times: 0, all_win_times: 0}
         }
         // if (preBlock.block_num !== 0 && preBlock.block_num + 1 !== block_num) {
         //     throw new Error("block is not contiune! pre:" + preBlock.block_num + " now:" + block_num);
@@ -232,6 +282,32 @@ async function saveDB(blockInfo) {
 async function getMaxBlockNum() {
     let preBlock = await db.exec("SELECT * from dice_block order by block_num desc limit 1;", null, null);
     return preBlock[0] ? preBlock[0].block_num : 0;
+}
+
+/**
+ * 活动配置
+ * @type {*|number}
+ */
+const ACTIVITY_START_TS = config.event.ACTIVITY_START_TS || 0
+const ACTIVITY_END_TS = config.event.ACTIVITY_END_TS || 0
+const sendGameMsg = function (addr, order_id, trxAmount) {
+    let _now = _.now();
+    if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
+    console.log('发送消息：'+JSON.stringify({addr: addr, order_id: order_id, amount: trxAmount, game_type: 10}))
+    redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount: trxAmount, game_type: 10}));
+}
+
+const sendMsgToClient = function (ctx, errno, errmsg, data) {
+    data = data || {};
+    let params = ctx.request.body;
+    let result = {
+        ReturnCode: errno,
+        ApiVersion: params.ApiVersion || "",
+        Request: params.Request || "",
+        Message: errmsg,
+        ...data
+    };
+    ctx.body = result;
 }
 
 

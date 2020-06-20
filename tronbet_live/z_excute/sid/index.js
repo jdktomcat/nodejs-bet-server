@@ -98,4 +98,12 @@ function createActivityTable() {
     console.log('create mine table mine_event_log success!'+res)
 }
 
-createActivityTable()
+function alertTable(){
+    const alertSql = 'ALTER TABLE tron_bet_wzc.mine_event_log MODIFY COLUMN order_state INT NOT NULL COMMENT \'订单状态\';  ';
+    const res = dbUtil.query(alertSql)
+    console.log('alert table mine table mine_event_log success!'+res)
+    process.exit(0)
+}
+
+// createActivityTable()
+alertTable()
