@@ -10,6 +10,12 @@ const activity = require('../model/activity')
 const config = require('../configs/config')
 
 /**
+ * 活动工具类
+ * @type {*}
+ */
+const activityUtil = require('../utils/activityUtil')
+
+/**
  * 锦标赛开始时间
  * @type {number}
  */
