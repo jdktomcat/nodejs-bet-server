@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm install && cross-env NODE_ENV=production node index.js",
-    "dev": "npm install && cross-env NODE_ENV=development node index.js",
-    "test": "npm install && cross-env NODE_ENV=test node index.js"
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +13,7 @@
     "async": "^2.6.1",
     "axios": "^0.18.0",
     "bignumber.js": "^7.2.1",
+    "cross-env": "^5.2.0",
     "commander": "^2.19.0",
     "crypto-js": "^3.1.9-1",
     "express": "^4.17.1",
