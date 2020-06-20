@@ -48,7 +48,9 @@ let config = {
     // TronBetDiceDivider
     DICE_DIVIDENDS_CONTRACT_ADDRESS: prdCfg.contract.TronBetDiceDivider, //dice分红合约地址
     // TronBetDividerPlus
-    WIN_DIVIDENDS_CONTRACT_ADDRESS: prdCfg.contract.TronBetDividerPlus //win分红合约地址
+    WIN_DIVIDENDS_CONTRACT_ADDRESS: prdCfg.contract.TronBetDividerPlus, //win分红合约地址
+    // 扫雷游戏下注合约地址
+    MINE_CONTRACT_ADDRESS: prdCfg.contract.TronBetMineOraclize
   }
 };
 
