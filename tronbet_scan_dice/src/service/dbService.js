@@ -133,8 +133,9 @@ async function saveDB(blockInfo) {
                         // 扫雷下注信息解析保存
                         //日志数据入库
                         const insertSQL = 'insert into mine_event_log ' +
-                            '(tx_id, addr, amount, win_amount, mentor_addr, mentor_rate, order_id, order_state, order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width) ' +
-                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                            '(tx_id, addr, amount, win_amount, mentor_addr, mentor_rate, order_id, order_state, order_ts, ' +
+                            ' order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width) ' +
+                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                         const params = [tx_id, log.addr, log.amount, log.win_amount, log.mentor_addr,
                             log.mentor_rate, log.order_id, log.order_state, log.order_ts, log.order_block_height,
                             log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width]
