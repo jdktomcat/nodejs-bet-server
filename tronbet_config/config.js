@@ -55,6 +55,10 @@ module.exports = {
     TronBetDice20: '41f44697c352fc12b15718147f625b97720b21c41e',
     TronBetDiceOraclize20: '418ae25f03b57abc538e0c92f7923a95b0252bde81',
 
+    TronBetMine:'4104ebe53e2970ed41afeb880c9eb48f97335d8807',
+    TronBetMineOracle:'4134721ff799bce28a7e122c60c83487b78283a52c',
+
+
     WinTokenBase58Check: 'TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7',
     TronBetPoolPlusBase58Check: 'TQp7pBWhEYiTUs6B1YBpWrmnjf5QjT1gXH',
     BttTokenId: 1002000,
@@ -98,6 +102,7 @@ module.exports = {
 
     tronlive_emserver: 18060,
     tronbet_live: 18066,
+    tronbet_mine:17001,
 
     tronsport_teckserver: 18068,
     tronswagger_hub: 18069,
