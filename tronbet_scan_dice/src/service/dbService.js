@@ -150,7 +150,7 @@ async function saveDB(blockInfo) {
                             playerInfo.win_times = playerInfo.win_times + (log.win_amount > 0 ? 1 : 0);
                             playerInfo.mentor = log.mentor_addr;
                         } else {
-                            playersThisBlock.set(addr, {
+                            playersThisBlock.set(log.addr, {
                                 total: log.amount,
                                 payout: log.amount,
                                 play_times: 1,
