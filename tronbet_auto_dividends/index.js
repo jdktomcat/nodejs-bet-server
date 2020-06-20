@@ -141,21 +141,17 @@ async function action() {
     } else {
         loggerDefault.info("奖池余额:" + balance / 1e6 + " TRX");
     }
-
     isBusy = true;
     hadSendIndex = 0;
     ignore_ts = 0;
-
     if (test_trx > 0) {
         balance = test_trx * 1e6;
         console.warn("测试分红 TRX = " + test_trx);
     }
-
     // if (process.env.NODE_ENV !== 'production') {
     //     loggerDefault.info("非生产环境！退出程序！");
     //     process.exit(0);
     // }
-
     loggerDefault.info("LOL!!! Action !!! balance: " + balance / 1e6 + " TRX");
     //开始本轮分红/锁定
     tronSrv.commitTransaction(dividends_addr, "createDivide(uint256)", 20000000, 0, [{ type: "uint256", value: balance }], defaultPK, (err, res) => {

@@ -99,3 +99,6 @@ create table `years_lottery_log`(
     txId char(64),
     ts bigint
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+

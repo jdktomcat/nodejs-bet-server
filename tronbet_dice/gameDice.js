@@ -482,24 +482,25 @@ let ACTIVITY_END_TS = config.dice.ACTIVITY_END_TS || 0;
 function sendGameMsg(addr, order_id, trxAmount) {
     let _now = _.now();
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
-
-    if (trxAmount < 100) return [trxAmount, 0, false];
-    //箱子爆率=投注额^0.527163*0.3%
-    //箱子爆率=投注额^0.495424251*0.3%
-    let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 30);
-    if (persent > 9000) persent = 9000;
-    let _r = _.random(0, 10000);
-    let hit = false;
-    if (_r <= persent) {
-        hit = true;
-    }
-    if (hit === true) {
-        let msg = { addr: addr, order_id: order_id, box_num: 1, game_type: _GAME_TYPE };
+    // 发送redis消息
+    redis.publish("game_message", JSON.stringify({ addr: addr, order_id: order_id, amount: trxAmount, game_type: 0}));
+    // if (trxAmount < 100) return [trxAmount, 0, false];
+    // //箱子爆率=投注额^0.527163*0.3%
+    // //箱子爆率=投注额^0.495424251*0.3%
+    // let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 30);
+    // if (persent > 9000) persent = 9000;
+    // let _r = _.random(0, 10000);
+    // let hit = false;
+    // if (_r <= persent) {
+    //     hit = true;
+    // }
+    // if (hit === true) {
+    //     let msg = { addr: addr, order_id: order_id, amount: trxAmount, bet_type: 0};
         // loggerDefault.info("sendGameMsg", msg);
-        redis.publish("game_message", JSON.stringify(msg));
-        appEvent.emit('activity_info', msg); //**  */
-    }
-    return [trxAmount, persent, hit];
+        // redis.publish("game_message", JSON.stringify({ addr: addr, order_id: order_id, amount: trxAmount, bet_type: 0}));
+        // appEvent.emit('activity_info', msg); //**  */
+    // }
+    // return [trxAmount, persent, hit];
 }
 
 // let _GAME_TYPE = "dice";
