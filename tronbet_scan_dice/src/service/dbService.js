@@ -6,6 +6,8 @@ const log4js = require('../configs/log4js.config');
 const loggerDefault = log4js.getLogger('print');
 const loggerError = log4js.getLogger('error');
 
+const MINE_REDIS_PREFIX_KEY='MINE:USER:player:logs';
+
 const redis = require('ioredis').createClient(
     {
         host: config.redisConfig.host,
@@ -140,6 +142,17 @@ async function saveDB(blockInfo) {
                             log.mentor_rate, log.order_id, log.order_state, log.order_ts, log.order_block_height,
                             log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width]
                         await db.execTrans(insertSQL, params, conn);
+                        if(log.win_amount > 0){
+                            let userMineContent = redis.hget(MINE_REDIS_PREFIX_KEY+log.addr, log.order_id)
+                            if(userMineContent && userMineContent.length !== 0){
+                                let userMineObject = JSON.parse(userMineContent)
+                                userMineObject.winAmount = log.win_amount
+                                userMineContent = JSON.stringify(userMineObject)
+                                redis.hset(MINE_REDIS_PREFIX_KEY + log.addr, log.order_id, userMineContent)
+                                console.log('update user:%s win amount:%s', log.addr, log.win_amount)
+                            }
+                        }
+
                         // 发送信息
                         sendGameMsg(log.addr, log.order_id, log.amount);
                         // 统计当前区块玩家数据
