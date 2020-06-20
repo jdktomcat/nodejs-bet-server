@@ -143,12 +143,12 @@ async function saveDB(blockInfo) {
                             log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width]
                         await db.execTrans(insertSQL, params, conn);
                         if(log.win_amount > 0){
-                            let userMineContent = redis.hget(MINE_REDIS_PREFIX_KEY+log.addr, log.order_id)
+                            let userMineContent = await redis.hget(MINE_REDIS_PREFIX_KEY+log.addr, log.order_id)
                             if(userMineContent && userMineContent.length !== 0){
                                 let userMineObject = JSON.parse(userMineContent)
                                 userMineObject.winAmount = log.win_amount
                                 userMineContent = JSON.stringify(userMineObject)
-                                redis.hset(MINE_REDIS_PREFIX_KEY + log.addr, log.order_id, userMineContent)
+                                await redis.hset(MINE_REDIS_PREFIX_KEY + log.addr, log.order_id, userMineContent)
                                 console.log('update user:%s win amount:%s', log.addr, log.win_amount)
                             }
                         }
