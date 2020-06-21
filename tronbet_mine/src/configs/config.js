@@ -23,5 +23,6 @@ try {
 }
 
 config= Object.assign(config, require(appConfigFileLocation));
+console.log(JSON.stringify(config));
 
 module.exports = config;
