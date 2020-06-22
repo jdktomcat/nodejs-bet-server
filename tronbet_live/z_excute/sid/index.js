@@ -135,4 +135,4 @@ async function fixActivityData() {
 }
 
 // createActivityTable()
-fixActivityData()
+// fixActivityData()
