@@ -105,12 +105,14 @@ function alertTable() {
     process.exit(0)
 }
 
+
 /**
  * 修复异常金额
  * @returns {Promise<void>}
  */
 async function fixActivityData() {
-    const updateBetLogSql = 'update tron_bet_event.user_bet_log set amount = amount / 1000000 where bet_type = 7 and ts >= "2020-06-22 00:00:00" and ts < "2020-06-22 04:05:00" '
+
+    const updateBetLogSql = 'update tron_bet_event.user_bet_log set amount = amount / 1000000 where bet_type = 7 and ts >= "2020-06-22 04:05:00" and ts < "2020-06-22 04:06:00" '
     const updateBetLogResult = await dbUtil.query(updateBetLogSql)
     console.log('fix bet log affected rows:')
     console.log(updateBetLogResult.affectedRows)
