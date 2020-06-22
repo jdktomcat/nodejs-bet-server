@@ -4,6 +4,9 @@ const config = require('./src/configs/config');
 const log4js = require('./src/configs/log4js.config');
 const sha3 = require('js-sha3');
 
+config.TronBetMine='41c20bd63ec6c8c95ca76c556b55a2ed9bc35b7fe4';
+config.MINE_GAME_ORACLE='418551f6953131568c1739fd043a98602601d9c0e2';
+
 const loggerDefault = log4js.getLogger('default');
 const loggerError = log4js.getLogger('error');
 
@@ -949,7 +952,10 @@ function processLastGameResult(socket,data,order){
 			}
 			userLatestRedisInfo=JSON.parse(info);//正在进行中的游戏数据
 			if(info){
-				if(beforeGaming){//服务器没有掉线,lastTs是游戏开始时间或者用户最新提交的扫雷时间
+				//如果订单已经被关闭了，不能判定用户输了，只能endGame
+				if(rs.orderStatus==ORDER_STATUS_SERVER_READY && userLatestRedisInfo.gameStatus==ORDER_STATUS_CLOSE){
+					endGame(socket,data.addr,userLatestRedisInfo,LAST_GAME_RESULT);	
+				}else if(beforeGaming){//服务器没有掉线,lastTs是游戏开始时间或者用户最新提交的扫雷时间
 					if(_now>userLatestRedisInfo.lastTs+GAME_STEP_TIME){//游戏结束，玩家扫雷失败
 						console.log("玩家[%s]扫雷超时:%s",data.addr,userLatestRedisInfo.lastTs);
 						processUserLose(socket,data.addr,LAST_GAME_RESULT);
