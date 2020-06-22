@@ -953,7 +953,7 @@ function processLastGameResult(socket,data,order){
 			userLatestRedisInfo=JSON.parse(info);//正在进行中的游戏数据
 			if(info){
 				//如果订单已经被关闭了，不能判定用户输了，只能endGame
-				if(rs.orderStatus==ORDER_STATUS_SERVER_READY && userLatestRedisInfo.gameStatus==ORDER_STATUS_CLOSE){
+				if(order.orderStatus==ORDER_STATUS_SERVER_READY && userLatestRedisInfo.gameStatus==ORDER_STATUS_CLOSE){
 					endGame(socket,data.addr,userLatestRedisInfo,LAST_GAME_RESULT);	
 				}else if(beforeGaming){//服务器没有掉线,lastTs是游戏开始时间或者用户最新提交的扫雷时间
 					if(_now>userLatestRedisInfo.lastTs+GAME_STEP_TIME){//游戏结束，玩家扫雷失败
