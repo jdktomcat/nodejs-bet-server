@@ -10,7 +10,6 @@ let config = {
     clearLog: true, //启动日志清理
     port: 18070
   },
-
   mysqlConfig: {
     //wzc本机测试
     db_host: '127.0.0.1',
@@ -18,6 +17,13 @@ let config = {
     db_name: 'tronbet_poker_log',
     db_user: 'root',
     db_pwd: '123456'
+  },
+
+  redisConfig: {
+    host: '127.0.0.1',
+    port: 6379,
+    db: 1,
+    pwd: ''
   },
   mongoConfig: {
     //wzc本机测试
