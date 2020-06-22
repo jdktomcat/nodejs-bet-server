@@ -193,7 +193,7 @@ async function bet(ctx) {
     let addAmount = amount * multi
     //
     if(String(account[0].email).trim() === 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj'){
-        if(amount / 1000000 > 5000){
+        if(amount / 1000000 > 1000){
             console.log(String(account[0].email).trim() + "bet_amount" + amount / 1000000 + "TRX")
             return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN', request_uuid: params.request_uuid,})
         }
