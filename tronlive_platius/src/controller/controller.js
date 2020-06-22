@@ -57,6 +57,8 @@ class apiCall {
             }
             await service.execBet(info)
             const result = await service.getRs(info)
+            // 触发活动
+            service.sendGameMsg(info.addr, info.transaction_id, info.amount, info.currency);
             return await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {
             console.log(new Date(), ' platinus bet error : ', e)
@@ -87,8 +89,6 @@ class apiCall {
                 return await service.sendMsgToClient(ctx, 1011, 'the tx_id is close!');
             }
             const result = await service.getRs(info)
-            // 触发活动
-            service.sendGameMsg(info.addr, Date.now(), info.amount, info.currency);
             await service.sendMsgToClient(ctx, 0, "Success", result);
         } catch (e) {
             console.log(new Date(), ' platinus result error : ', e)
