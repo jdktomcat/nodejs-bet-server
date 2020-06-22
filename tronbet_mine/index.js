@@ -775,10 +775,12 @@ function startNewGame(data){
 			startGame(socket,addr,rs,START_NEW_GAME_RESULT);//开始游戏
 		}else if(rs.orderStatus==ORDER_STATUS_SERVER_READY){
 			result.errorCode=SUCCESS;
+			result.order=rs;
 			socket.emit(START_NEW_GAME_RESULT,result);	
 			return;
 		}else{
 			let result={};
+			result.order=rs;
 			result.errorCode=USER_ORDER_STATUS_IS_NOT_USER_READY;
 			socket.emit(START_NEW_GAME_RESULT,result);	
 			console.log(JSON.stringify(rs));
@@ -1071,6 +1073,7 @@ async function startGame(socket,addr,gameOrder,eventName){
 			//通知用户已经交易已经发送成功了
 			//这里游戏启动交易有可能也会失败的,前端一样要进行处理
 			result.errorCode=SUCCESS;// 不能提供hash是因为这个hash并不一定准确，如果成功了,GAME_START 开始
+			result.order=gameOrder;
 			socketEmit(socket,addr,eventName,result);//[mark]
 			return;
 		});
