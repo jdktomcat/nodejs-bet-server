@@ -2,6 +2,11 @@ const config = require('../configs/config')
 const {sequelize, rawQuery, updateQuery} = require('../utils/mysqlUtils')
 const _ = require('lodash')._
 const jwt = require('jsonwebtoken');
+
+const resdisUtils = require("../utils/redisUtil");
+const ACTIVITY_START_TS = config.event.ACTIVITY_START_TS || 0;
+const ACTIVITY_END_TS = config.event.ACTIVITY_END_TS || 0;
+
 const statusDict = {
     'refund': 'refund',
     'buy': 'buy',
@@ -16,6 +21,13 @@ const kindDict = {
 const expirationTypeDict = {
     1: 'turbo',
     2: 'binary',
+}
+
+
+const sendGameMsg = function (addr, order_id, trxAmount, currency) {
+    let _now = _.now();
+    if (currency !== "TRX" || _now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
+    resdisUtils.redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount:trxAmount / 1000000, game_type: 8}));
 }
 
 
@@ -89,6 +101,9 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
             expirationTypeDict[params.expiration_type] || ''
         ]
         await updateQuery(sql, sqlParam, t)
+
+        // 发送消息
+        sendGameMsg(params.addr, params.transaction_id, params.amount, params.currency)
     })
 }
 
