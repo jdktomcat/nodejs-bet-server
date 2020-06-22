@@ -116,7 +116,7 @@ let ACTIVITY_END_TS = config.event.ACTIVITY_END_TS || 0;
 function sendGameMsg(addr, order_id, trxAmount, currency) {
     let _now = _.now();
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS || currency !== 'TRX') return;
-    redisUtils.redis.publish("game_message", JSON.stringify({ addr: addr, order_id: order_id, amount: trxAmount / 1000000, game_type: 6 }));
+    redisUtil.redis.publish("game_message", JSON.stringify({ addr: addr, order_id: order_id, amount: trxAmount / 1000000, game_type: 6 }));
 }
 
 async function userRefund(params) {
