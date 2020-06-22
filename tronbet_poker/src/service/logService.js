@@ -9,6 +9,8 @@ const REVENUE_OPTYPE = commonEnum.REVENUE_OPTYPE;
 
 const conf = require('../configs/config')
 
+const redisUtils = require('../common/redisUtil')
+
 
 /**
  * 活动开始时间

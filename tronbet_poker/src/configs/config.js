@@ -24,6 +24,12 @@ let config = {
     db_user: prdCfg.mysql.user,
     db_pwd: prdCfg.mysql.pwd
   },
+  redisConfig: {
+    host: '127.0.0.1',
+    port: 6379,
+    db: 1,
+    pwd: ''
+  },
   mongoConfig: {
     host: prdCfg.mongo.host,
     port: prdCfg.mongo.port,
