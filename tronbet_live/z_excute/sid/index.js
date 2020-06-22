@@ -105,5 +105,34 @@ function alertTable(){
     process.exit(0)
 }
 
+async function fixActivityData() {
+    const querySQL = 'select addr, sum(amount) as amount from `tron_bet_event`.`user_bet_log` where bet_type = 7 and ts < "2020-06-22 04:05:00" group by addr '
+    const queryData = await dbUtil.exec(querySQL)
+    if(queryData && queryData.length !== 0){
+        const updateFlightData = []
+        const updateIntegralData = []
+        queryData.forEach(record => {
+            updateIntegralData.push([record.addr, record.amount * 0.999999 * 0.001])
+            updateFlightData.push([record.addr, record.amount * 0.999999 * 0.005, 0])
+        })
+        console.log('fix integral detail:')
+        console.log(updateIntegralData)
+        console.log('fix flight detail:')
+        console.log(updateFlightData)
+        const insertIntegralSql = "insert into tron_bet_event.user_integral(addr, integral) values ? " +
+            " on duplicate key update integral=integral-values(integral)"
+        const updateIntegralResult = await dbUtil.query(insertIntegralSql, [updateIntegralData])
+        console.log('fix integral affected rows:')
+        console.log(updateIntegralResult.affectedRows)
+
+        const insertFlightSql = "insert into tron_bet_event.user_flight(addr, fuel, plant) values ? " +
+            "on duplicate key update fuel=fuel - values(fuel)"
+        const updateFlightResult = await dbUtil.query(insertFlightSql, [updateFlightData])
+        console.log('fix flight affected rows:')
+        console.log(updateFlightResult.affectedRows)
+    }
+    process.exit(0)
+}
+
 // createActivityTable()
-alertTable()
+fixActivityData()
