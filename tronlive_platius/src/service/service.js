@@ -13,7 +13,7 @@ let ACTIVITY_END_TS = config.event.ACTIVITY_END_TS || 0;
 const sendGameMsg = function (addr, order_id, trxAmount, currency) {
     let _now = _.now();
     if (currency !== "TRX" || _now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
-    resdisUtils.redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount:trxAmount, game_type: 7}));
+    resdisUtils.redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount:trxAmount / 1000000, game_type: 7}));
     // if (currency !== "TRX" && currency !== "USDT") {
     //     return;
     // }
