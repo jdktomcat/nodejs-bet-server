@@ -300,7 +300,7 @@ function queryUserLogs(data){
 						"bet":tmpInfo.order.orderAmount,
 						"blockNo":tmpInfo.order.orderBlockH,
 						"now":tmpInfo.mineHash,
-						"payout":tmpInfo.order,//需要计算出来 win 计算出来 lose 0
+						"payout":tmpInfo.order.winAmount,//需要计算出来 win 计算出来 lose 0
 						"now":tmpInfo.mineHash,//当前mineHash
 						"result":close?allMines:mines,//已关闭显示所有的地雷，未关闭显示用户挖的地雷
 						"userSteps":userSteps,
