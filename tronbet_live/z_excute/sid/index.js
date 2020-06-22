@@ -111,12 +111,8 @@ function alertTable() {
  * @returns {Promise<void>}
  */
 async function fixActivityData() {
-
-    const updateBetLogSql = 'update tron_bet_event.user_bet_log set amount = amount / 1000000 where bet_type = 7 and ts >= "2020-06-22 04:05:00" and ts < "2020-06-22 04:06:00" '
-    const updateBetLogResult = await dbUtil.query(updateBetLogSql)
-    console.log('fix bet log affected rows:')
-    console.log(updateBetLogResult.affectedRows)
-
+    await dbUtil.query(`truncate tron_bet_event.user_flight`)
+    await dbUtil.query(`truncate tron_bet_event.user_integral`)
     const querySQL = 'select addr, sum(amount) as amount from `tron_bet_event`.`user_bet_log` where ts >= "2020-06-22 00:00:00" group by addr '
     const queryData = await dbUtil.exec(querySQL)
     if (queryData && queryData.length !== 0) {
