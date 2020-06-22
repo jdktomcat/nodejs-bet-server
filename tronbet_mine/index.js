@@ -4,8 +4,8 @@ const config = require('./src/configs/config');
 const log4js = require('./src/configs/log4js.config');
 const sha3 = require('js-sha3');
 
-config.TronBetMine='41c20bd63ec6c8c95ca76c556b55a2ed9bc35b7fe4';
-config.TronBetMineOracle='418551f6953131568c1739fd043a98602601d9c0e2';
+config.contract["TronBetMine"]='41c20bd63ec6c8c95ca76c556b55a2ed9bc35b7fe4';
+config.contract["TronBetMineOracle"]='418551f6953131568c1739fd043a98602601d9c0e2';
 
 const loggerDefault = log4js.getLogger('default');
 const loggerError = log4js.getLogger('error');
