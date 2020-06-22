@@ -3,6 +3,7 @@ const {rawQuery, updateQuery, sequelize} = require('../utils/mysqlUtils');
 const redisUtil = require('../utils/redisUtil');
 const _ = require('lodash')._;
 const tranStatus = require('../configs/config').tranStatus;
+const config = require('../configs/config');
 
 async function getUserByKey(key) {
     let sql = 'select * from live_account where userKey = ? limit 1';
@@ -70,6 +71,9 @@ async function userBet(tsp, blp) {
                 t
             );
 
+            // send game msg
+            sendGameMsg(tsp.addr, tsp.betslipId, tsp.amount, tsp.currency)
+
             let betLogSql =
                 'insert into sports_bet_detail_log(addr, transactionId, betslipId, currency, sumAmount, types, betK, betId, sportId, eventId, tournamentId, \
                     categoryId, live, competitorName, outcomeName, scheduled, odds) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
@@ -105,6 +109,14 @@ async function userBet(tsp, blp) {
     }
     // unlock key
     await freeLockTxByKey(key)
+}
+
+let ACTIVITY_START_TS = config.event.ACTIVITY_START_TS || 0;
+let ACTIVITY_END_TS = config.event.ACTIVITY_END_TS || 0;
+function sendGameMsg(addr, order_id, trxAmount, currency) {
+    let _now = _.now();
+    if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS || currency !== 'TRX') return;
+    redisUtils.redis.publish("game_message", JSON.stringify({ addr: addr, order_id: order_id, amount: trxAmount / 1000000, game_type: 6 }));
 }
 
 async function userRefund(params) {

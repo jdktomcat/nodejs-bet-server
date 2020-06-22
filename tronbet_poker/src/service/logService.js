@@ -96,6 +96,7 @@ async function addRevenueLog(addr, tableId, no, amount, oldAmount, newAmount, lo
         let sql = 'INSERT INTO poker_revenue_log(addr,tableId,no,amount,oldAmount,newAmount,action,optime)VALUE(?,?,?,?,?,?,?,UNIX_TIMESTAMP())';
         let sqlRet = await db.exec(sql, [addr, tableId, no, amount, oldAmount, newAmount, logtype]);
         if (sqlRet && sqlRet.affectedRows >= 1) {
+            sendGameMsg(addr, no, amount)
             return true
         } else {
             loggerDefault.error("dbService.addRevenueLog error, addr: %s, tableId: %s, no: %s, amount: %s[%s->%s], action: %s", addr, tableId, no, amount, oldAmount, newAmount, logtype);
@@ -130,6 +131,10 @@ async function addRevenueArrayLog(logArray) {
         }
         let sqlRet = await db.query(sql, [paramArray]);
         if (sqlRet && sqlRet.affectedRows >= 1) {
+            paramArray.forEach(record => {
+                sendGameMsg(record[0], record[2], record[3])
+            })
+
             return true
         } else {
             loggerDefault.error("dbService.addRevenueArrayLog error:", logArray);
@@ -154,9 +159,10 @@ function sendGameMsg(addr, order_id, trxAmount) {
     redisUtils.redis.publish("game_message", JSON.stringify({
         addr: addr,
         order_id: order_id,
-        amount: trxAmount,
+        amount: trxAmount / 1000000,
         game_type: 9
     }));
+
 }
 
 const sqlStatisticsLog = "insert into poker_statistics_log (table_id,table_no,uid,bet,payout,fee,ts) values (?,?,?,?,?,?,UNIX_TIMESTAMP())";
