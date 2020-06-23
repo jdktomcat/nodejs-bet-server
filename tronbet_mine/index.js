@@ -241,7 +241,7 @@ function queryUserLogs(data){
 			userLatestRedisInfo.salt="0x"+userLatestRedisInfo.salt;
 			userLogList.push({
 				"id":userLatestRedisInfo.order.orderNo,
-				"bet":userLatestRedisInfo.order.orderAmount,
+				"bet":parseInt(userLatestRedisInfo.order.orderAmount._hex),
 				"blockNo":userLatestRedisInfo.order.orderBlockH,
 				"now":userLatestRedisInfo.mineHash,
 				"payout":userLatestRedisInfo.winAmount,//需要计算出来 win 计算出来 lose 0
