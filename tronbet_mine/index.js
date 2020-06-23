@@ -4,9 +4,6 @@ const config = require('./src/configs/config');
 const log4js = require('./src/configs/log4js.config');
 const sha3 = require('js-sha3');
 
-//config.contract["TronBetMine"]='41e494f74468e5c3960504e9dc684d67d421e08c35';
-//config.contract["TronBetMineOracle"]='41f5fc441b8b5187b66ec29313a50e498483005d31';
-
 const loggerDefault = log4js.getLogger('default');
 const loggerError = log4js.getLogger('error');
 
@@ -86,9 +83,9 @@ const LATEST_GAME_INFO='LATEST:';
 const USER_LOG='player:logs';
 
 const RETRY_TIME=0;
-const GAME_LIFE_TIME=5*60*1000;//游戏从下单到被强制结束的时间秒
-const GAME_STEP_TIME=60*1000;//游戏每一步的时间
-const TOKEN_EXPIRE_TIME=5*60*1000;
+const GAME_LIFE_TIME=24*60*60*1000;//游戏从下单到被强制结束的时间(毫秒)
+const GAME_STEP_TIME=30*60*1000;//游戏每一步的时间(步时)
+const TOKEN_EXPIRE_TIME=24*60*60*1000;//token 失效时间
 
 
 const GAME_MODEL_NORMAL=0x01;//普通模式
@@ -257,7 +254,6 @@ function queryUserLogs(data){
 			orderIdList.push(userLatestRedisInfo.order.orderNo);
 		}
 		console.log(JSON.stringify(orderIdList));
-		//console.log(JSON.stringify(userLogList));
 		if(orderIdList.length>0){ 
 			redis.hmget(MINE_REDIS_PREFIX+USER_LOG+addr,orderIdList,function(err,rs){
 				if(err){
