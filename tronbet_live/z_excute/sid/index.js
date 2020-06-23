@@ -152,20 +152,20 @@ async function fixMinData() {
         const updateFlightData = []
         const updateIntegralData = []
         queryData.forEach(record => {
-            updateIntegralData.push([record.addr, record.amount * 0.999])
-            updateFlightData.push([record.addr, record.amount * 0.995, 0])
+            updateIntegralData.push([record.addr, record.amount * 0.999 * 0.001])
+            updateFlightData.push([record.addr, record.amount * 0.995 * 0.005, 0])
         })
         console.log('fix integral detail:')
         console.log(updateIntegralData)
         console.log('fix flight detail:')
         console.log(updateFlightData)
         const insertIntegralSql = "insert into tron_bet_event.user_integral(addr, integral) values ? " +
-            " on duplicate key update integral=integral-values(integral)"
+            " on duplicate key update integral=values(integral)"
         const updateIntegralResult = await dbUtil.query(insertIntegralSql, [updateIntegralData])
         console.log('fix integral affected rows:')
         console.log(updateIntegralResult.affectedRows)
         const insertFlightSql = "insert into tron_bet_event.user_flight(addr, fuel, plant) values ? " +
-            "on duplicate key update fuel=fuel-values(fuel)"
+            "on duplicate key update fuel=values(fuel)"
         const updateFlightResult = await dbUtil.query(insertFlightSql, [updateFlightData])
         console.log('fix flight affected rows:')
         console.log(updateFlightResult.affectedRows)
