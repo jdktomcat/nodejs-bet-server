@@ -19,7 +19,6 @@ const digestType = 'RSA-SHA256';
 const publicKey  = conf.swaghub.swagPublick
 const privateKey = conf.swaghub.privetKey
 const geoip = require('geoip-lite')
-const {cpConfigKey, getCpToken} = require('../cp/cpTokenUtils')
 // init with default keypair and digest type
 const hmCrypto = HmCrypto(digestType, privateKey, publicKey);
 
@@ -502,7 +501,7 @@ async function getEMSessionId(ctx) {
         name : user[0].nickName,
         img : user[0].head
     }
-    console.log("debug_emObject ",o)
+    // console.log("debug_emObject ",o)
     return await common.sendMsgToClient(ctx, 0, '',o)
 
 }
