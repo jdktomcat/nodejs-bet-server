@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-	GAME_MANAGER:'a7d1450b24ce774e8efd5f7dfb4ad7239b2ad000ac002dbe3aee48cbb60f0ed7',
+	GAME_MANAGER:'c09bf74d10bb6bc270571e2920c954c1ba889eb898e7f5f6c1bfcf60651e9a10',
 	TronWeb:{
 		nodes:['master','slave'],//TronWeb 节点
 		GAME_MANAGER_PK:'',

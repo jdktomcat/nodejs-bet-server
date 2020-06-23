@@ -4,8 +4,8 @@ const config = require('./src/configs/config');
 const log4js = require('./src/configs/log4js.config');
 const sha3 = require('js-sha3');
 
-config.contract["TronBetMine"]='41c20bd63ec6c8c95ca76c556b55a2ed9bc35b7fe4';
-config.contract["TronBetMineOracle"]='418551f6953131568c1739fd043a98602601d9c0e2';
+config.contract["TronBetMine"]='416a0cc56661d198fc8f97a1b4932fd5a58977f60b';
+config.contract["TronBetMineOracle"]='41e0e940d16e9171d5504ebecb3e0811241ca2a159';
 
 const loggerDefault = log4js.getLogger('default');
 const loggerError = log4js.getLogger('error');
@@ -44,6 +44,7 @@ const SERVER_SEND_CANCEL_GAME_TX_FAILURE=1009;
 const SERVER_SEND_END_GAME_TX_FAILURE=1010;
 const USER_MINE_STEP_TIME_IS_OUT=10061;
 const USER_TIME_LIFE_TIME_IS_OUT=10062;
+const TOKEN_EXPIRE=9999;
 
 const SUCCESS=0;
 const SERVER_BUSY=999;
@@ -61,7 +62,6 @@ const START_NEW_GAME_RESULT='startNewGameResult';
 const LAST_GAME_RESULT="lastGameResult";
 const GAME_OVER='gameOver';
 const GAME_START='gameStart';
-const TOKEN_EXPIRE='tokenExpire';
 const MINE_RESULT='userMineResult';
 const QUIT_MINE_RESULT='quitMineResult';
 const QUERY_GAME_DATA_RESULT='queryGameDataResult';
@@ -486,7 +486,7 @@ function quitMine(data){
 	let addr=data.addr;
 	let socket=this;
 	let orderNo=data.orderNo;
-	if(!processUserToken(socket,addr,token)){
+	if(!processUserToken(socket,addr,token,QUIT_MINE_RESULT)){
 		return;
 	}
 	let result={};
@@ -567,7 +567,7 @@ function userMine(data){
 	let addr=data.addr;
 	let socket=this;
 	let orderNo=data.orderNo;
-	if(!processUserToken(socket,addr,token)){
+	if(!processUserToken(socket,addr,token,MINE_RESULT)){
 		return;
 	}
 	let result={};
@@ -757,7 +757,7 @@ function startNewGame(data){
 	let token=data.token;
 	let addr=data.addr;
 	let socket=this;
-	if(!processUserToken(socket,addr,token)){
+	if(!processUserToken(socket,addr,token,START_NEW_GAME_RESULT)){
 		return;
 	}
 	let result={};
@@ -775,10 +775,12 @@ function startNewGame(data){
 			startGame(socket,addr,rs,START_NEW_GAME_RESULT);//开始游戏
 		}else if(rs.orderStatus==ORDER_STATUS_SERVER_READY){
 			result.errorCode=SUCCESS;
+			result.order=rs;
 			socket.emit(START_NEW_GAME_RESULT,result);	
 			return;
 		}else{
 			let result={};
+			result.order=rs;
 			result.errorCode=USER_ORDER_STATUS_IS_NOT_USER_READY;
 			socket.emit(START_NEW_GAME_RESULT,result);	
 			console.log(JSON.stringify(rs));
@@ -1071,6 +1073,7 @@ async function startGame(socket,addr,gameOrder,eventName){
 			//通知用户已经交易已经发送成功了
 			//这里游戏启动交易有可能也会失败的,前端一样要进行处理
 			result.errorCode=SUCCESS;// 不能提供hash是因为这个hash并不一定准确，如果成功了,GAME_START 开始
+			result.order=gameOrder;
 			socketEmit(socket,addr,eventName,result);//[mark]
 			return;
 		});
@@ -1445,17 +1448,18 @@ function registerToken(addr){
 
  * 检查用户的token
  */
-function processUserToken(socket,addr,token){
+function processUserToken(socket,addr,token,eventName){
 	let result={};
+	result.errorCode=TOKEN_EXPIRE;
 	if(UserTokenMap[addr] && UserTokenMap[addr]==token){//存在且不为空
 		if(new Date().getTime()>UserLastOpTimeMap[addr]+TOKEN_EXPIRE_TIME){//token 超时
-			socket.emit(TOKEN_EXPIRE,result);
+			socket.emit(eventName,result);
 			return false;
 		}
 		UserLastOpTimeMap[addr]=new Date().getTime();//更新用户最新登陆信息
 		return true;
 	}
-	socket.emit(TOKEN_EXPIRE,result);
+	socket.emit(eventName,result);
 	return false;
 }
 
