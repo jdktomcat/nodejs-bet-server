@@ -617,7 +617,7 @@ function scanTx(tronWeb, tx, _callback) {
                                 // 解析对应的order信息
                                 let log={
                                     _type: "bet_mine_result",
-                                    addr: TronWeb.address.fromHex("41" + _log.address),
+                                    addr: hexStringToTronAddress(hexTopics[2].substr(24, 40)),
                                     mentor_addr: hexStringToTronAddress(hexTopics[3].substr(24, 40)),
                                     mentor_rate: hexStringToBigNumber(hexData.substr(0, 64)).toNumber(),
                                     win_amount: hexStringToBigNumber(hexData.substr(64, 64)).toNumber()
