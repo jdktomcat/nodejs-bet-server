@@ -623,6 +623,7 @@ function scanTx(tronWeb, tx, _callback) {
                                     win_amount: hexStringToBigNumber(hexData.substr(64, 64)).toNumber()
                                 };
                                 getOrderDetail(log, hexTopics[1])
+                                console.log('++++++++++:' + log.addr)
                                 iLogs.push(log);
                             }
                         }
