@@ -163,7 +163,7 @@ async function GetAccount(ctx) {
   result.City = "";
   result.Country = "";
   result.Currency = user[0].currency;
-  result.SessionId = user[0].SessionId;
+  result.SessionId = SessionId;
   result.UserName = user[0].nickName || user[0].email;
   result.FirstName = "";
   result.LastName = "";
