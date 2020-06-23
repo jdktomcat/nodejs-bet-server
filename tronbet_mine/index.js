@@ -14,6 +14,7 @@ const events = require('events');
 const Redis=require("ioredis");
 const appDataEvent = new events.EventEmitter();
 
+
 const gameDesc="扫雷游戏";
 
 //合约相关数据
@@ -91,6 +92,8 @@ const TOKEN_EXPIRE_TIME=24*60*60*1000;//token 失效时间
 const GAME_MODEL_NORMAL=0x01;//普通模式
 const GAME_MODEL_HERO=0x02;//英雄模式
 
+console.log(config.contract[MINE_GAME_ORACLE]);
+console.log(config.contract[MAIN_MINE_GAME]);
 
 /*
  * 每次启动的时候PRE_SALT 都会不一样，不可以预测的前缀
