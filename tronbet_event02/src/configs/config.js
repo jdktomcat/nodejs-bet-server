@@ -141,16 +141,16 @@ let config = {
     88
   ],
   activity:{
-    startTime:'2020-06-20 00:00:00',
+    startTime:'2020-06-22 00:00:00',
     endTime:'2020-06-28 23:59:59',
-    publish:false,
+    publish:true,
     whiteList:[
       'TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP',
       'TQDVxtM13hDabkQqQ5zSJCjM3d9zsCte7N'
     ],
     adminToken:'winkreadv9l4k2lHgeqlwinkXK3e2Ve6j4',
     championship: {
-      startTime:'2020-06-20 00:00:00',
+      startTime:'2020-06-22 00:00:00',
       endTime:'2020-06-28 23:59:59',
       top:20,
       prize:{
@@ -179,7 +179,7 @@ let config = {
         {
           name:'第一阶段',
           rate:0.001,
-          startTime:'2020-06-20 00:00:00',
+          startTime:'2020-06-22 00:00:00',
           endTime:'2020-06-24 23:59:59'
         },
         {
@@ -197,7 +197,7 @@ let config = {
       ]
     },
     flight:{
-      startTime:'2020-06-20 00:00:00',
+      startTime:'2020-06-22 00:00:00',
       endTime:'2020-06-26 23:59:59',
       minAmount:40,
       rate:0.005,

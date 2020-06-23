@@ -19,7 +19,7 @@ function createActivityTable() {
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='中奖纪录表';"
 
     let res = dbUtil.query(sql)
-    console.log('create activity table award_log success!'+res)
+    console.log('create activity table award_log success!' + res)
     sql = "CREATE TABLE IF NOT EXISTS `tron_bet_event`.`flight_log` (\n" +
         "  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '飞行日志标示',\n" +
         "  `addr` varchar(100) NOT NULL COMMENT '用户钱包地址',\n" +
@@ -31,7 +31,7 @@ function createActivityTable() {
         "  PRIMARY KEY (`id`)\n" +
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='飞行日志表';"
     res = dbUtil.query(sql)
-    console.log('create activity table flight_log success!'+res)
+    console.log('create activity table flight_log success!' + res)
 
     sql = "CREATE TABLE IF NOT EXISTS `tron_bet_event`.`user_bet_log` (\n" +
         "  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键标示',\n" +
@@ -46,7 +46,7 @@ function createActivityTable() {
         "  KEY `user_bet_log_ts_IDX` (`ts`) USING BTREE\n" +
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户下注表';"
     res = dbUtil.query(sql)
-    console.log('create activity table user_bet_log success!'+res)
+    console.log('create activity table user_bet_log success!' + res)
 
     sql = "CREATE TABLE IF NOT EXISTS `tron_bet_event`.`user_flight` (\n" +
         "  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '标示',\n" +
@@ -59,7 +59,7 @@ function createActivityTable() {
         "  UNIQUE KEY `flight_user_info__addr_UN` (`addr`)\n" +
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='飞行用户信息表';"
     res = dbUtil.query(sql)
-    console.log('create activity table user_flight success!'+res)
+    console.log('create activity table user_flight success!' + res)
 
     sql = "CREATE TABLE IF NOT EXISTS `tron_bet_event`.`user_integral` (\n" +
         "  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '标示',\n" +
@@ -71,7 +71,7 @@ function createActivityTable() {
         "  UNIQUE KEY `user_integral_addr_IDX` (`addr`) USING BTREE\n" +
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='锦标赛用户积分表';"
     res = dbUtil.query(sql)
-    console.log('create activity table user_integral success!'+res)
+    console.log('create activity table user_integral success!' + res)
 
     sql = "CREATE TABLE IF NOT EXISTS `tron_bet_wzc`.`mine_event_log` (\n" +
         "  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '标示',\n" +
@@ -95,15 +95,52 @@ function createActivityTable() {
         ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='扫雷游戏日志流水表';"
 
     res = dbUtil.query(sql)
-    console.log('create mine table mine_event_log success!'+res)
+    console.log('create mine table mine_event_log success!' + res)
 }
 
-function alertTable(){
+function alertTable() {
     const alertSql = 'ALTER TABLE tron_bet_wzc.mine_event_log MODIFY COLUMN order_state INT NOT NULL COMMENT \'订单状态\';  ';
     const res = dbUtil.query(alertSql)
-    console.log('alert table mine table mine_event_log success!'+res)
+    console.log('alert table mine table mine_event_log success!' + res)
+    process.exit(0)
+}
+
+
+/**
+ * 修复异常金额
+ * @returns {Promise<void>}
+ */
+async function fixActivityData() {
+    await dbUtil.query(`truncate tron_bet_event.user_flight`)
+    await dbUtil.query(`truncate tron_bet_event.user_integral`)
+    const querySQL = 'select addr, sum(amount) as amount from `tron_bet_event`.`user_bet_log` where ts >= "2020-06-22 00:00:00" group by addr '
+    const queryData = await dbUtil.exec(querySQL)
+    if (queryData && queryData.length !== 0) {
+        const updateFlightData = []
+        const updateIntegralData = []
+        queryData.forEach(record => {
+            updateIntegralData.push([record.addr, record.amount * 0.001])
+            updateFlightData.push([record.addr, record.amount * 0.005, 0])
+        })
+        console.log('fix integral detail:')
+        console.log(updateIntegralData)
+        console.log('fix flight detail:')
+        console.log(updateFlightData)
+        const insertIntegralSql = "insert into tron_bet_event.user_integral(addr, integral) values ? " +
+            " on duplicate key update integral=values(integral)"
+        const updateIntegralResult = await dbUtil.query(insertIntegralSql, [updateIntegralData])
+        console.log('fix integral affected rows:')
+        console.log(updateIntegralResult.affectedRows)
+
+        const insertFlightSql = "insert into tron_bet_event.user_flight(addr, fuel, plant) values ? " +
+            "on duplicate key update fuel=values(fuel)"
+        const updateFlightResult = await dbUtil.query(insertFlightSql, [updateFlightData])
+        console.log('fix flight affected rows:')
+        console.log(updateFlightResult.affectedRows)
+    }
     process.exit(0)
 }
 
 // createActivityTable()
-alertTable()
+fixActivityData()
+

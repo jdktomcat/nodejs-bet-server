@@ -187,7 +187,7 @@ async function fire(ctx) {
     const addr = ctx.query.addr || ''
     const position = parseInt(ctx.query.position || '-1')
     let handleResult
-    if (new Date().getTime() < flightEndTime) {
+    if (new Date().getTime() > flightEndTime) {
         handleResult = {
             code: 1001,
             msg: 'Error! Flight activity has closed!'
@@ -282,7 +282,7 @@ async function reset(ctx) {
     // 防重机制
     const position = parseInt(ctx.query.position || '-1')
     let handleResult
-    if (new Date().getTime() < flightEndTime) {
+    if (new Date().getTime() > flightEndTime) {
         handleResult = {
             code: 1001,
             msg: 'Error! Flight activity has closed!'

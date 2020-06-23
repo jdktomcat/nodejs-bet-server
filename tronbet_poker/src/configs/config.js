@@ -24,6 +24,12 @@ let config = {
     db_user: prdCfg.mysql.user,
     db_pwd: prdCfg.mysql.pwd
   },
+  redisConfig: {
+    host: '127.0.0.1',
+    port: 6379,
+    db: 1,
+    pwd: ''
+  },
   mongoConfig: {
     host: prdCfg.mongo.host,
     port: prdCfg.mongo.port,
@@ -101,7 +107,7 @@ let config = {
     // 2020-06-22 00:00:00
     ACTIVITY_START_TS: 1592582400000,
     // 2020-06-28 23:59:59
-    ACTIVITY_END_TS: 1593359999000
+    ACTIVITY_END_TS: 1592784000000
   }
 };
 

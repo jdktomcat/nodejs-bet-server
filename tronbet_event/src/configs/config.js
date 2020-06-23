@@ -12,7 +12,7 @@ let config = {
   env: "dev",
   debug: false,
   app: {
-    http_port: prdCfg.port.tronbet_event01,
+    http_port: prdCfg.port.tronbet_event02,
     logPath: path.resolve(__dirname, "../../logs"),
     log: true, //开启日志,
     startTs: 1580108400000,//Mon Jan 27 2020 15:00:00
@@ -227,15 +227,15 @@ let config = {
   // ]
   ,
   activity:{
-    startTime:'2020-06-20 00:00:00',
+    startTime:'2020-06-22 00:00:00',
     endTime:'2020-06-28 23:59:59',
-    publish:false,
+    publish:true,
     whiteList:[
       'TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP',
       'TQDVxtM13hDabkQqQ5zSJCjM3d9zsCte7N'
     ],
     championship: {
-      startTime:'2020-06-20 00:00:00',
+      startTime:'2020-06-22 00:00:00',
       endTime:'2020-06-28 23:59:59',
       top:20,
       prize:{
@@ -264,7 +264,7 @@ let config = {
         {
           name:'第一阶段',
           rate:0.001,
-          startTime:'2020-06-20 00:00:00',
+          startTime:'2020-06-22 00:00:00',
           endTime:'2020-06-24 23:59:59'
         },
         {
@@ -282,7 +282,7 @@ let config = {
       ]
     },
     flight:{
-      startTime:'2020-06-20 00:00:00',
+      startTime:'2020-06-22 00:00:00',
       endTime:'2020-06-26 23:59:59',
       minAmount:40,
       rate:0.005,
