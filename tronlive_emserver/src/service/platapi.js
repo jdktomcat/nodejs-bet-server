@@ -104,10 +104,7 @@ function getAccountId(idStr) {
 }
 
 async function getRealAddr(SessionId) {
-  //
-  console.log("debug---> ",SessionId)
   let [addr,now] = SessionId.split("_")
-  console.log("debug --- > addr",addr)
   let key = addr + "_SESSIONID"
   try {
     console.log("debug --- > key",key)
@@ -152,7 +149,7 @@ async function GetAccount(ctx) {
   }
   const addr = sessionArray[0]
   //
-  let user = await usermodel.getAccountBySessionId(SessionId);
+  let user = await usermodel.getAccountBySessionId(addr);
 
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
@@ -202,7 +199,7 @@ async function GetBalance(ctx) {
   }
   const addr = sessionArray[0]
   //
-  let user = await usermodel.getAccountBySessionId(SessionId);
+  let user = await usermodel.getAccountBySessionId(addr);
 
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
@@ -293,7 +290,7 @@ async function Wager(ctx) {
   }
   const addr = sessionArray[0]
   //
-  let user = await usermodel.getAccountBySessionId(SessionId);
+  let user = await usermodel.getAccountBySessionId(addr);
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
   }
@@ -430,7 +427,7 @@ async function Result(ctx) {
   }
   const addr = sessionArray[0]
   //
-  let user = await usermodel.getAccountBySessionId(SessionId);
+  let user = await usermodel.getAccountBySessionId(addr);
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
   }
