@@ -304,7 +304,7 @@ const sendGameMsg = function (addr, order_id, trxAmount) {
     let _now = _.now();
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
     console.log('发送消息：'+JSON.stringify({addr: addr, order_id: order_id, amount: trxAmount, game_type: 10}))
-    redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount: trxAmount, game_type: 10}));
+    redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount: trxAmount / 1000000, game_type: 10}));
 }
 
 const sendMsgToClient = function (ctx, errno, errmsg, data) {
