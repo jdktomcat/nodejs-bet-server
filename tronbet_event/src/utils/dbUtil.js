@@ -16,6 +16,15 @@ const pool = mysql.createPool({
 const promisePool = pool.promise();
 
 var db = {};
+
+/**
+ *  执行查询where in(?) [[]], 使用array 替换？
+ */
+db.query = async function (sql, param) {
+    let ret = await promisePool.query(sql, param);
+    return ret[0];
+}
+
 //执行单条sql语句
 db.exec = async function (sql, param) {
     let ret = await promisePool.execute(sql, param); //return [rows, fields]; [0]=>rows

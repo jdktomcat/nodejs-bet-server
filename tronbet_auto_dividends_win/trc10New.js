@@ -116,9 +116,12 @@ async function withdraw(tokenID, tokenName, poolAddr, round) {
 }
 
 appEvent.on('checkTx', (tx, tokenID, tokenName, poolAddr, round) => {
+    loggerDefault.info("on checkTx tx:", tx);
     let t = setTimeout(async () => {
+        loggerDefault.info("exec checkTx tx:", tx);
         clearTimeout(t);
         let txInfo = await tronSrv.getTransactionInfoById(tx);
+        loggerDefault.info("checkTx txInfo:", txInfo);
         if (txInfo.ret === "UNKNOWN") {
             loggerDefault.info("withdrawTxID: " + tx + " state === UNKNOWN");
             appEvent.emit('checkTx', tx, tokenID, tokenName, poolAddr, round);

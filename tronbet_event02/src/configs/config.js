@@ -12,7 +12,7 @@ let config = {
   env: "dev",
   debug: false,
   app: {
-    http_port: prdCfg.port.tronbet_event01,
+    http_port: prdCfg.port.tronbet_event02,
     logPath: path.resolve(__dirname, "../../logs"),
     log: true, //开启日志,
     startTs: 1580108400000,//Mon Jan 27 2020 15:00:00
@@ -42,6 +42,9 @@ let config = {
     // payPKHex: "TYmLSP22fzNNHozSXN6ANQF97zp8rhRP7K",
     payPKHex: prdCfg.event_pk_hex,
 
+    // 发放win合约
+    winToken:prdCfg.contract.WinToken,
+
     masterFullNode: prdCfg.master_full,
     masterSolidityNode: prdCfg.master_solidity,
     masterEventNode: prdCfg.master_event,
@@ -67,7 +70,7 @@ let config = {
     suitPrices: { 3: 6, 5: 10, 7: 50, 10: 300 },
 
     suitScore: { 3: 4, 5: 16, 7: 100, 10: 1000 },
-    
+
     // goodPrices: [2.7, 2.7, 2.7, 10, 10, 43, 43, 132, 132, 132],
     goodPrices: [1, 1, 1, 2, 2, 5, 5, 10, 10, 10],
 
@@ -83,17 +86,6 @@ let config = {
       1000,
       60000,
     ]
-    // lotteryRate: [
-    //   40000,
-    //   40000,
-    //   400000,
-    //   20000,
-    //   200000,
-    //   10000,
-    //   20925,
-    //   20925,
-    //   20925
-    // ]
   },
   // 日排行奖励配置
   rewards: [
@@ -147,60 +139,135 @@ let config = {
     88,
     88,
     88
-  ]
-  // rewards: [
-  //   160000,
-  //   80000,
-  //   40000,
-  //   20000,
-  //   10000,
-  //   7000,
-  //   5000,
-  //   4000,
-  //   3000,
-  //   2000,
-  //   1000,
-  //   1000,
-  //   1000,
-  //   1000,
-  //   1000,
-  //   800,
-  //   800,
-  //   800,
-  //   800,
-  //   800,
-  //   600,
-  //   600,
-  //   600,
-  //   600,
-  //   600,
-  //   500,
-  //   500,
-  //   500,
-  //   500,
-  //   500,
-  //   400,
-  //   400,
-  //   400,
-  //   400,
-  //   400,
-  //   300,
-  //   300,
-  //   300,
-  //   300,
-  //   300,
-  //   100,
-  //   100,
-  //   100,
-  //   100,
-  //   100,
-  //   100,
-  //   100,
-  //   100,
-  //   100,
-  //   100
-  // ]
-
+  ],
+  activity:{
+    startTime:'2020-06-22 00:00:00',
+    endTime:'2020-06-28 23:59:59',
+    publish:true,
+    whiteList:[
+      'TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP',
+      'TQDVxtM13hDabkQqQ5zSJCjM3d9zsCte7N'
+    ],
+    adminToken:'winkreadv9l4k2lHgeqlwinkXK3e2Ve6j4',
+    championship: {
+      startTime:'2020-06-22 00:00:00',
+      endTime:'2020-06-28 23:59:59',
+      top:20,
+      prize:{
+        1:200000,
+        2:80000,
+        3:30000,
+        4:15000,
+        5:15000,
+        6:8000,
+        7:8000,
+        8:8000,
+        9:8000,
+        10:8000,
+        11:3000,
+        12:3000,
+        13:3000,
+        14:3000,
+        15:3000,
+        16:1000,
+        17:1000,
+        18:1000,
+        19:1000,
+        20:1000
+      },
+      stage:[
+        {
+          name:'第一阶段',
+          rate:0.001,
+          startTime:'2020-06-22 00:00:00',
+          endTime:'2020-06-24 23:59:59'
+        },
+        {
+          name:'第二阶段',
+          rate:0.002,
+          startTime:'2020-06-25 00:00:00',
+          endTime:'2020-06-26 23:59:59'
+        },
+        {
+          name:'第三阶段',
+          rate:0.003,
+          startTime:'2020-06-27 00:00:00',
+          endTime:'2020-06-28 23:59:59'
+        }
+      ]
+    },
+    flight:{
+      startTime:'2020-06-22 00:00:00',
+      endTime:'2020-06-26 23:59:59',
+      minAmount:40,
+      rate:0.005,
+      plant:[
+        {
+          id:0,
+          name:'Earth',
+          fuel:0,
+          minPrize:0,
+          maxPrize:0
+        },
+        {
+          id:1,
+          name:'Moon',
+          fuel:10,
+          minPrize:50,
+          maxPrize:500
+        },
+        {
+          id:2,
+          name:'Mars',
+          fuel:30,
+          minPrize:150,
+          maxPrize:1500
+        },
+        {
+          id:3,
+          name:'Jupiter',
+          fuel:90,
+          minPrize:450,
+          maxPrize:4500
+        },
+        {
+          id:4,
+          name:'Saturn',
+          fuel:270,
+          minPrize:1350,
+          maxPrize:13500
+        },
+        {
+          id:5,
+          name:'Uranus',
+          fuel:810,
+          minPrize:4050,
+          maxPrize:40500
+        },
+        {
+          id:6,
+          name:'Neptune',
+          fuel:2430,
+          minPrize:12150,
+          maxPrize:121500
+        },
+        {
+          id:7,
+          name:'Venus',
+          fuel:7290,
+          minPrize:36450,
+          maxPrize:364500
+        },
+        {
+          id:8,
+          name:'Mercury',
+          fuel:21870,
+          minPrize:1000000,
+          maxPrize:1000000
+        }
+      ]
+    }
+  }
 };
 
 if (
@@ -223,7 +290,7 @@ if (
   //开发环境
   config = Object.assign(config, require("./config_dev.js"));
 } else {
-  config = Object.assign(config, require("./config_dev.js"));
+  config = Object.assign(config, require("./config_test.js"));
 }
 
 module.exports = config;

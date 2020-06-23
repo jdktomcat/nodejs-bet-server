@@ -20,6 +20,7 @@ let config = {
     host: '127.0.0.1',
     port: 6379,
     db: 0,
+    db1: 1,
     pwd: ''
   },
   tronConfig: {
@@ -44,6 +45,12 @@ let config = {
     DICE_DIVIDENDS_CONTRACT_ADDRESS: '41aa74b0d0645c842221ac68dc9dc4a4f3db6c6729', //dice分红合约地址
     // TronBetDividerPlus
     WIN_DIVIDENDS_CONTRACT_ADDRESS: '41d62d73db3c046df77484938506797665024f215b' //win分红合约地址
+  },
+  event:{
+    // 2020-06-22 00:00:00
+    ACTIVITY_START_TS: 1592582400000,
+    // 2020-06-28 23:59:59
+    ACTIVITY_END_TS: 1593359999000
   }
 };
 

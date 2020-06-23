@@ -15,35 +15,38 @@ let ACTIVITY_END_TS = config.event.ACTIVITY_END_TS || 0;
 function sendGameMsg(addr, order_id, trxAmount, currency) {
     let _now = _.now();
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
-
-    if(currency !== 'TRX' && currency !== 'USDT'){
-        return;
+    if(currency !== 'TRX'){
+      return;
     }
-
-    if(currency === 'TRX' && trxAmount < 100){
-        return [trxAmount, 0, false];
-    }
-
-    if(currency === 'USDT' && trxAmount < 10){
-        return [trxAmount, 0, false];
-    }
-
-    //箱子爆率=投注额^0.527163*0.3%
-    //箱子爆率=投注额^0.495424251*0.3%
-    let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 30);
-    if (persent > 9000) persent = 9000;
-    let _r = _.random(0, 10000);
-    let hit = false;
-    if (_r <= persent) {
-        hit = true;
-    }
-    if (hit === true) {
-        let msg = { addr: addr, order_id: order_id, box_num: 1, game_type: _GAME_TYPE };
-        // loggerDefault.info("sendGameMsg", msg);
-        redisUtils.redis.publish("game_message", JSON.stringify(msg));
-        // appEvent.emit('activity_info', msg); //**  */
-    }
-    return [trxAmount, persent, hit];
+    redisUtils.redis.publish("game_message", JSON.stringify({ addr: addr, order_id: order_id, amount: trxAmount, game_type: 6 }));
+    // if(currency !== 'TRX' && currency !== 'USDT'){
+    //     return;
+    // }
+    //
+    // if(currency === 'TRX' && trxAmount < 100){
+    //     return [trxAmount, 0, false];
+    // }
+    //
+    // if(currency === 'USDT' && trxAmount < 10){
+    //     return [trxAmount, 0, false];
+    // }
+    //
+    // //箱子爆率=投注额^0.527163*0.3%
+    // //箱子爆率=投注额^0.495424251*0.3%
+    // let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 30);
+    // if (persent > 9000) persent = 9000;
+    // let _r = _.random(0, 10000);
+    // let hit = false;
+    // if (_r <= persent) {
+    //     hit = true;
+    // }
+    // if (hit === true) {
+    //     let msg = { addr: addr, order_id: order_id, box_num: 1, game_type: _GAME_TYPE };
+    //     // loggerDefault.info("sendGameMsg", msg);
+    //     redisUtils.redis.publish("game_message", JSON.stringify(msg));
+    //     // appEvent.emit('activity_info', msg); //**  */
+    // }
+    // return [trxAmount, persent, hit];
 }
 
 function sendSuccessMessage2Client(ctx, httpcode, data) {
@@ -70,7 +73,7 @@ function toCpAmount(currency, amount) {
   if(currency == 'BNB') {
       return amount / 1000
   } else {
-      return amount 
+      return amount
   }
 }
 
@@ -78,7 +81,7 @@ function fromCpAmount(currency, amount) {
   if(currency == 'BNB') {
       return amount * 1000
   } else {
-      return amount 
+      return amount
   }
 }
 
@@ -240,13 +243,13 @@ async function betMake(ctx) {
       transactionParams.adAmount = trxAmount;
     }
 
-    // sport 开挖矿倍率活动 
+    // sport 开挖矿倍率活动
     let _now = _.now();
     if (_now > config.addition.START_TS && _now < config.addition.END_TS){
       // let multi = await getAddition("all")
       console.log("adAmount", config.addition.RATE, transactionParams.adAmount);
       transactionParams.adAmount = transactionParams.adAmount * config.addition.RATE
-      console.log("adAmount", config.addition.RATE, transactionParams.adAmount);    
+      console.log("adAmount", config.addition.RATE, transactionParams.adAmount);
     }
 
     // let conn = null;
@@ -465,7 +468,7 @@ async function betWin(ctx) {
 
     // 状态在取消, 输赢的状态下, 是不能再次调用win的奖励的
     if (transaction[0].status == tranStatus.win) {
-      let newBalance = await userinfo.getUserBalance(transactionParams.addr, transactionParams.currency);
+      let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
       let result = {
         id: datas.transaction.id,
         ext_transaction_id: datas.transaction.id,

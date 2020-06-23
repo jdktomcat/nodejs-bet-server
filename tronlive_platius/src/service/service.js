@@ -12,39 +12,39 @@ let ACTIVITY_END_TS = config.event.ACTIVITY_END_TS || 0;
 
 const sendGameMsg = function (addr, order_id, trxAmount, currency) {
     let _now = _.now();
-    if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
-
-    if (currency !== "TRX" && currency !== "USDT") {
-        return;
-    }
-
-    if (currency === "TRX" && trxAmount < 100) {
-        return [trxAmount, 0, false];
-    }
-
-    if (currency === "USDT" && trxAmount < 10) {
-        return [trxAmount, 0, false];
-    }
-
-    //箱子爆率=投注额^0.527163*0.3%
-    //箱子爆率=投注额^0.495424251*0.3%
-    let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 30);
-    if (persent > 9000) persent = 9000;
-    let _r = _.random(0, 10000);
-    let hit = false;
-    if (_r <= persent) {
-        hit = true;
-    }
-    if (hit === true) {
-        let msg = {
-            addr: addr,
-            order_id: order_id,
-            box_num: 1,
-            game_type: _GAME_TYPE
-        };
-        resdisUtils.redis.publish("game_message", JSON.stringify(msg));
-    }
-    return [trxAmount, persent, hit];
+    if (currency !== "TRX" || _now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) return;
+    resdisUtils.redis.publish("game_message", JSON.stringify({addr: addr, order_id: order_id, amount:trxAmount / 1000000, game_type: 7}));
+    // if (currency !== "TRX" && currency !== "USDT") {
+    //     return;
+    // }
+    //
+    // if (currency === "TRX" && trxAmount < 100) {
+    //     return [trxAmount, 0, false];
+    // }
+    //
+    // if (currency === "USDT" && trxAmount < 10) {
+    //     return [trxAmount, 0, false];
+    // }
+    //
+    // //箱子爆率=投注额^0.527163*0.3%
+    // //箱子爆率=投注额^0.495424251*0.3%
+    // let persent = Math.floor(Math.pow(trxAmount, 0.495424251) * 30);
+    // if (persent > 9000) persent = 9000;
+    // let _r = _.random(0, 10000);
+    // let hit = false;
+    // if (_r <= persent) {
+    //     hit = true;
+    // }
+    // if (hit === true) {
+    //     let msg = {
+    //         addr: addr,
+    //         order_id: order_id,
+    //         box_num: 1,
+    //         game_type: _GAME_TYPE
+    //     };
+    //     resdisUtils.redis.publish("game_message", JSON.stringify(msg));
+    // }
+    // return [trxAmount, persent, hit];
 }
 
 const sendMsgToClient = function (ctx, errno, errmsg, data) {

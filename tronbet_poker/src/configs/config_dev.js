@@ -10,7 +10,6 @@ let config = {
     clearLog: true, //启动日志清理
     port: 18070
   },
-
   mysqlConfig: {
     //wzc本机测试
     db_host: '127.0.0.1',
@@ -18,6 +17,13 @@ let config = {
     db_name: 'tronbet_poker_log',
     db_user: 'root',
     db_pwd: '123456'
+  },
+
+  redisConfig: {
+    host: '127.0.0.1',
+    port: 6379,
+    db: 1,
+    pwd: ''
   },
   mongoConfig: {
     //wzc本机测试
@@ -95,6 +101,12 @@ let config = {
     feeRate: [0.1, 0.08, 0.075, 0.05, 0.025], //抽成比例
     SNG_RESET_CD: 60000, //SNG 牌桌重置CD(毫秒)
     SNG_BB_LV_CD: 60000 //SNG 升盲CD(毫秒)
+  },
+  event:{
+    // 2020-06-15 00:00:00
+    ACTIVITY_START_TS: 1592150400000,
+    // 2020-06-16 23:59:59
+    ACTIVITY_END_TS: 1592323199000
   }
 };
 
