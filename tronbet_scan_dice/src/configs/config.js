@@ -45,7 +45,7 @@ let config = {
 
     RANDOM_CONTRACT_ADDRESS: prdCfg.contract.TronBetDiceOraclize,
     // 扫雷游戏下注合约地址
-    MINE_CONTRACT_ADDRESS: prdCfg.contract.TronBetMineOraclize,
+    MINE_CONTRACT_ADDRESS: prdCfg.contract.TronBetMineOracle,
 
     TRON_BET_CONTRACT_ADDRESS: ['', '', '', prdCfg.contract.TronBetDice], //用来判断dice事件版本
     DICE_DIVIDENDS_CONTRACT_ADDRESS: prdCfg.contract.TronBetDiceDivider, //dice分红合约地址
