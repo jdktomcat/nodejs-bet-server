@@ -461,41 +461,36 @@ async function getBalance(ctx) {
 
 async function getEMSessionId(ctx) {
     //
-    let params = ctx.request.body
-    let authToken = params.authToken
+    let params = ctx.request.body;
+    let signature = params.sign;
+    let addr = params.addr;
 
-    if (!authToken) {
-        return oldAccount.login(ctx)
+    if (!TronWeb.isAddress(addr) || signature == null) {
+        return await common.sendMsgToClient(ctx, 1002, 'tron address error!!!');
     }
-    //getCpToken
-
-    let userPreView = await redisUtils.get(authToken)
-    if (!userPreView) {
-        return common.sendMsgToClient(ctx, 401, 'not authed account')
-    }
-
-    let email = userPreView
-    let user = await userinfo.getUserByEmail(email)
+    let user = await userinfo.getUserByEmail(addr)
     if (_.isEmpty(user)) {
         return common.sendMsgToClient(ctx, 2006, 'invalid account')
     }
+    // EM只有TRX
+    // let currency = 'TRX'
     //
-    let currency = user[0].currency
-    //
-    const emRedisKey = email + "_em_key_" + currency
+    const emRedisKey = addr + "_SESSIONID"
     let emCache = await redisUtils.get(emRedisKey)
+    //
     if (emCache === null) {
         try {
-            let val = getCpToken(email,cpConfigKey.EveryMatrix,currency)
-            await redisUtils.set(emRedisKey, val)
-            await redisUtils.expire(emRedisKey, 24 * 3600) // 设置过期时间为1天
+            const now = Date.now()
+            const session_id = `${addr}_${now}`
+            await redisUtils.set(emRedisKey, session_id)
+            await redisUtils.expire(emRedisKey, 2 * 24 * 3600) // 设置过期时间为2天
             emCache = await redisUtils.get(emRedisKey)
         } catch (e) {
             return ctx.body = {code: 500, message: "fail", error: e.toString()}
         }
     }
     const o = {
-        sessionId : `${emCache}_${currency}`,
+        sessionId : emCache,
         launchUrl : '',
         lv : 1,
         name : user[0].nickName,

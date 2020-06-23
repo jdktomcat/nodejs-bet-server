@@ -51,12 +51,9 @@ async function getTransactionById(TransactionId) {
 
 
 async function getAccountBySessionId(sessionId) {
-    const {error,info} = await tokenParse(sessionId)
-    if(error){
-        return []
-    }
-    const addr = info.addr
-    const currency = info.currency
+    const addr = sessionId
+    // em只有 TRX
+    const currency = 'TRX'
     let sql = "select t1.*  from live_account as t1 left join live_balance as t2 on t1.uid = t2.uid where t1.uid = t2.uid and t2.addr = ? and t2.currency = ?"
     let res = await rawQuery(sql, [addr,currency])
     return res

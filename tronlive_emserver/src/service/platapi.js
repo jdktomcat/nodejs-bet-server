@@ -103,18 +103,22 @@ function getAccountId(idStr) {
   }
 }
 
-// function getRealSessionId(SessionId) {
-//   try {
-//     let result = SessionId;
-//     let tmp = result.split("_");
-//     if (tmp.length >= 2) {
-//       result = tmp[0];
-//     }
-//     return result;
-//   } catch (error) {
-//     return SessionId;
-//   }
-// }
+async function getRealAddr(SessionId) {
+  //
+  let [addr,now] = SessionId.split("_")
+  let key = addr + "_SESSIONID"
+  try {
+    let emCache = await resdisUtils.get(key)
+    if(emCache === SessionId){
+      return [addr]
+    }else {
+      return []
+    }
+  } catch (error) {
+    console.log("getRealSessionId: ",error)
+    return []
+  }
+}
 
 //GetAccount
 async function GetAccount(ctx) {
@@ -138,6 +142,13 @@ async function GetAccount(ctx) {
 
   let now = new Date().getTime();
 
+  //
+  const sessionArray = await getRealAddr(SessionId)
+  if (sessionArray.length === 0) {
+    return await sendMsgToClient(ctx, 103, "User not found");
+  }
+  const addr = sessionArray[0]
+  //
   let user = await usermodel.getAccountBySessionId(SessionId);
 
   if (_.isEmpty(user)) {
@@ -181,6 +192,13 @@ async function GetBalance(ctx) {
     return await sendMsgToClient(ctx, 103, "User not found");
   }
 
+  //
+  const sessionArray = await getRealAddr(SessionId)
+  if (sessionArray.length === 0) {
+    return await sendMsgToClient(ctx, 103, "User not found");
+  }
+  const addr = sessionArray[0]
+  //
   let user = await usermodel.getAccountBySessionId(SessionId);
 
   if (_.isEmpty(user)) {
@@ -265,6 +283,13 @@ async function Wager(ctx) {
   let multi = await getAdditionByGameId(EMGameId);
   let addAmount = Amount * multi;
 
+  //
+  const sessionArray = await getRealAddr(SessionId)
+  if (sessionArray.length === 0) {
+    return await sendMsgToClient(ctx, 103, "User not found");
+  }
+  const addr = sessionArray[0]
+  //
   let user = await usermodel.getAccountBySessionId(SessionId);
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
@@ -395,6 +420,13 @@ async function Result(ctx) {
     return await sendMsgToClient(ctx, 101, "auth failed");
   }
 
+  //
+  const sessionArray = await getRealAddr(SessionId)
+  if (sessionArray.length === 0) {
+    return await sendMsgToClient(ctx, 103, "User not found");
+  }
+  const addr = sessionArray[0]
+  //
   let user = await usermodel.getAccountBySessionId(SessionId);
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
