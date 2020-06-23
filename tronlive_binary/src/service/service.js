@@ -252,7 +252,7 @@ class Service {
         await usermodel.close(sqlParam)
         const balanceInfo = await usermodel.getBalance(sqlParam)
         // activity
-        sendGameMsg(sqlParam.addr, Date.now(), sqlParam.amount, sqlParam.currency);
+        // sendGameMsg(sqlParam.addr, Date.now(), sqlParam.amount, sqlParam.currency);
         return this.success(balanceInfo)
     }
 
