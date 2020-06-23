@@ -1,6 +1,5 @@
 const {sequelize, rawQuery, updateQuery} = require('../utils/mysqlUtils')
 const _ = require('lodash')._
-const tokenParse = require("./../utils/tokenParse")
 
 async function userAction(AccountId, RoundId, EMGameId, GPGameId, GPId, TransactionId, RoundStatus, Amount, Device, txId, action, AddsAmount, uid, currency) {
     //update balance

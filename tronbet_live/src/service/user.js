@@ -83,9 +83,6 @@ async function login(ctx) {
   // 设置默认的货币, 设置为TRX
   let currency = user[0].currency;
 
-  //记录session  ,切开em和hub88的session
-  ctx.session.user = addr + "_" + currency;
-
   let lanuchOptions = {
     sessionId: `${sessionId}_${currency}`,
     launchUrl: '',
@@ -95,7 +92,6 @@ async function login(ctx) {
     name: _name,
     img: data.data.img
   };
-  console.log("lanuchOptions is ",lanuchOptions)
   return await common.sendMsgToClient(ctx, 0, '', lanuchOptions);
 }
 
