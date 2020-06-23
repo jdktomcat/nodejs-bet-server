@@ -105,9 +105,12 @@ function getAccountId(idStr) {
 
 async function getRealAddr(SessionId) {
   //
+  console.log("debug---> ",SessionId)
   let [addr,now] = SessionId.split("_")
+  console.log("debug --- > addr",addr)
   let key = addr + "_SESSIONID"
   try {
+    console.log("debug --- > key",key)
     let emCache = await resdisUtils.get(key)
     if(emCache === SessionId){
       return [addr]
