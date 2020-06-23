@@ -8,7 +8,7 @@ const loggerDefault = log4js.getLogger('default');
 const loggerError = log4js.getLogger('error');
 const evnets = require('events');
 const appEvent = new evnets.EventEmitter();
-const defaultPk = config.GAME_MANAGER;
+const defaultPk = config.operatorMine_pk;
 
 const HTTP_TIME_OUT = config.TronWeb.HTTP_TIME_OUT;
 const SCAN_NODE_INTERVAL = config.TronWeb.SCAN_NODE_INTERVAL;

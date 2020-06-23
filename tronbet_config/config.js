@@ -4,6 +4,9 @@ module.exports = {
   event_pk: '',
   // 活动发奖的私钥 对应的公钥
   event_pk_hex: '',
+  
+  //扫雷游戏的私钥
+  operatorMine_pk: '',
 
   // 操作Dice游戏相关的私钥 && 用于直接转账的私钥, 如排行榜奖励
   operatorDice_pk: '',
@@ -22,8 +25,6 @@ module.exports = {
     TronBetDiceStaker: '41aef3746e20c2a49b70c2c32b4f343548f428e7f1',
     TronBetStakerPlus: '414f92846c191c774d761f3949f9794288b3b9a995',
     TronBetDiceOraclize: '4163f9f14d5319b7f8822e7771aea45b49e85bb35e',
-    // 扫雷下注配置合约
-    TronBetMineOraclize: '41e0e940d16e9171d5504ebecb3e0811241ca2a159',
 
     TronBetMoonLogic: '415ee4096bad59e4656447af5420e09ef35f1e94ec',
     TronBetMoonOraclize: '417df10519e630f46071ff0569494d03b83d8289ca',
@@ -58,8 +59,12 @@ module.exports = {
     TronBetDice20: '41f44697c352fc12b15718147f625b97720b21c41e',
     TronBetDiceOraclize20: '418ae25f03b57abc538e0c92f7923a95b0252bde81',
 
-    TronBetMine:'4104ebe53e2970ed41afeb880c9eb48f97335d8807',
-    TronBetMineOracle:'4134721ff799bce28a7e122c60c83487b78283a52c',
+    TronBetMine:'41e494f74468e5c3960504e9dc684d67d421e08c35',//TWoqX8MhU6K32shRBKzfzTFsQpkETyXGMA
+    TronBetMineOracle:'41f5fc441b8b5187b66ec29313a50e498483005d31',//TYPrkoucmCiRHcvNo2CFqQxfGyZ4Bbt8zs
+    TronBetMinerHero:'418b08544c7d4d8a6416ecc6d20a7acc6d32606892',//TNeLuTDSevF83awPCAHj2Hif5qy9HnQ8hi
+    TronBetMinerHeroPool:'417e6116fdf4bf49f742ef17e8d1ad91b0e8581376',//TMVST9YNUGKgaAkZKjmDFrrV3xYFsD65Gi
+    TronBetMinerNormal:'41fc0184d8993d843de9ca47ca2b974509f4e60002',//TYwh6wKaa9g2EM9RscQyMaiBy4aw5fNr8R
+    
 
 
     WinTokenBase58Check: 'TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7',
