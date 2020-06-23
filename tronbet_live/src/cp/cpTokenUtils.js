@@ -26,7 +26,6 @@ function decrypt(message) {
 const cpConfigKey = {
     'Platinus': config.Platinus.secretKey,
     'Binary': config.Binary.secretKey,
-    'EveryMatrix': 'emTokenExpire',
 }
 
 
@@ -45,12 +44,6 @@ const getCpToken = function (addr, secretKey,currency = null) {
         })
         return token
     }else if(secretKey === cpConfigKey.Binary){
-        //
-        const obj = Date.now() + "-" + addr + '-' + currency
-        const s = encrypt(obj)
-        const s2 = encodeURIComponent(s)
-        return s2
-    }else if(secretKey === cpConfigKey.EveryMatrix){
         //
         const obj = Date.now() + "-" + addr + '-' + currency
         const s = encrypt(obj)
