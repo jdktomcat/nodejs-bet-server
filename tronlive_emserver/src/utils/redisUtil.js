@@ -65,9 +65,9 @@ function redisDel(key) {
 }
 
 
-function get(key, field) {
+function get(key) {
     return new Promise((resolve, reject) => {
-        redis.get(key, field, (err, ret) => {
+        redis.get(key, (err, ret) => {
             if (err) reject(err);
             resolve(ret);
         });
