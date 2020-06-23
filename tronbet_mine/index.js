@@ -266,6 +266,8 @@ function queryUserLogs(data){
 					socket.emit(QUERY_USER_LOGS_RESULT,result);	
 					return;
 				}//只有完结的才会在这里显示，可以全部列出
+				console.log(rs);
+				console.log(JSON.stringify(rs));
 				for(var index=0;index<rs.length;index++){
 					if(rs[index]==null){
 						continue;
@@ -579,6 +581,12 @@ function userMine(data){
 			console.log("服务器异常，查询用户订单出错:%s",data.addr);
 			return;
 		}
+		/*
+		 * 即使在挖雷的过程，比如已经挖了一个了，但是交易依然有可能回滚，即用户的订单状态又变成了0x01
+		 * 这种情况可能是因为交易在区块里面的顺序是 0x01状态的改变在0x02 之后，因为先更新为0x02是无法成功的
+		 * 只有在0x01执行之后才能成功，所以交易被回滚了
+		 * 需要告知客户端已经被revet掉的交易么？
+		 */
 		if(rs.orderStatus!=ORDER_STATUS_SERVER_READY){
 			result.errorCode=ORDER_STATUS_IS_NOT_ALLOW_TO_MIND;
 			socket.emit(MINE_RESULT,result);	
