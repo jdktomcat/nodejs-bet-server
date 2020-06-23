@@ -613,6 +613,8 @@ async function GetTransactionStatus(ctx) {
 async function All(ctx) {
   let params = ctx.request.body;
   let Request = params.Request || "";
+  console.log("params",params)
+  console.log("Request",Request)
 
   if (Request === "GetAccount" || Request === "getaccount") {
     return GetAccount(ctx);
