@@ -569,6 +569,7 @@ function scanTx(tronWeb, tx, _callback) {
                     return;
                 });
             } else if(contract_address === MINE_CONTRACT_ADDRESS){ // 扫雷游戏下注合约地址
+                console.log('===========:' + contract_address+' =====:' + MINE_CONTRACT_ADDRESS)
                 tronWeb.solidityNode.request('walletsolidity/gettransactioninfobyid', { "value": txID }, 'post').then((txInfo) => {
                     if (_.isEmpty(txInfo)) {
                         _callback("Maybe node is asyncing!", null);
@@ -613,6 +614,7 @@ function scanTx(tronWeb, tx, _callback) {
                             let hexTopics = _log.topics;
                             let hexData = _log.data;
                             let eventCode = hexTopics[0];
+                            console.log('>>>>>>>>>>>:' + eventCode+' >>>>>>' + EVENT_CODE_MineResult)
                             if (eventCode === EVENT_CODE_MineResult) {
                                 // 解析对应的order信息
                                 let log={
