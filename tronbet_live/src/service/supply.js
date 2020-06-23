@@ -10,6 +10,8 @@ const {cpConfigKey, getCpToken} = require('../cp/cpTokenUtils')
 const redisUtils = require('../utils/redisUtil')
 const oldAccount = require("./user")
 const TronWeb = require('tronweb')
+const common = require('../utils/common')
+const tronUtils = require('../utils/tronUtil')
 //
 async function updateOnlineGameList() {
     let games = await game.parseGames();
@@ -292,34 +294,17 @@ async function allSchedule(ctx) {
  * schedule all
  */
 async function platinusAPI(ctx) {
-    let params = ctx.request.body || {}
-    let addr = String(params.addr).trim()
+    let params = ctx.request.body;
+    let signature = params.sign;
+    let addr = params.addr;
     //
-    let userInfo = ctx.session.user || ""
-    console.log("ctx.request.body ",ctx.request.body)
-    console.log("debug_platinusAPI_user ",userInfo)
-    if(userInfo === ''){
-        //如果参数中含有地址, 按照之前的老的方式进行签名登录
-        if (addr && TronWeb.isAddress(addr)) {
-            //先强制登陆
-            await oldAccount.login(ctx)
-            //
-            userInfo = ctx.session.user || ""
-            console.log("debug_platinus_user_new ",userInfo)
-            if(userInfo === ''){
-                return ctx.body = {code: 500, message: "fail", error: "no login"}
-            }
-        }else {
-            return ctx.body = {code: 500, message: "fail", error: "no login"}
-        }
+    if (!TronWeb.isAddress(addr) || signature == null) {
+        return await common.sendMsgToClient(ctx, 1002, 'tron address error!!!');
     }
-    //
-    if(userInfo === ''){
-        return ctx.body = {code: 500, message: "fail", error: "no login"}
-    }
-    const [addrRaw,currencyRaw] = userInfo.split("_")
-    if(String(addrRaw).trim() !== addr){
-        return ctx.body = {code: 500, message: "fail", error: "no login"}
+    //签名校验
+    let signResult = await tronUtils.verifySignature(signature, addr);
+    if (!signResult) {
+        return await common.sendMsgToClient(ctx, 1002, 'sign verify failed!!!!!!!!!');
     }
     //
     const tokenRedisKey = 'TRX' + "_platinusToken_" + addr
@@ -343,34 +328,17 @@ async function platinusAPI(ctx) {
 
 async function getBinaryToken(ctx) {
     let params = ctx.request.body || {}
-    let addr = params.addr || ''
     let currency = params.currency || ''
+    let signature = params.sign;
+    let addr = params.addr;
     //
-    let userInfo = ctx.session.user || ""
-    console.log("ctx.request.body ",ctx.request.body)
-    console.log("debug_getBinaryToken_user ",userInfo)
-    if(userInfo === ''){
-        //如果参数中含有地址, 按照之前的老的方式进行签名登录
-        if (addr && TronWeb.isAddress(addr)) {
-            //强制登陆
-            await oldAccount.login(ctx)
-            //
-            userInfo = ctx.session.user || ""
-            console.log("debug_getBinaryToken_user_new ",userInfo)
-            if(userInfo === ''){
-                return ctx.body = {code: 500, message: "fail", error: "no login"}
-            }
-        }else {
-            return ctx.body = {code: 500, message: "fail", error: "no login"}
-        }
+    if (!TronWeb.isAddress(addr) || signature == null) {
+        return await common.sendMsgToClient(ctx, 1002, 'tron address error!!!');
     }
-    //
-    if(userInfo === ''){
-        return ctx.body = {code: 500, message: "fail", error: "no login"}
-    }
-    const [addrRaw,currencyRaw] = userInfo.split("_")
-    if(String(addrRaw).trim() !== addr){
-        return ctx.body = {code: 500, message: "fail", error: "no login"}
+    //签名校验
+    let signResult = await tronUtils.verifySignature(signature, addr);
+    if (!signResult) {
+        return await common.sendMsgToClient(ctx, 1002, 'sign verify failed!!!!!!!!!');
     }
     if (!['TRX', 'USDT'].includes(currency)) {
         return ctx.body = {code: 500, message: "currency error"}
@@ -380,13 +348,11 @@ async function getBinaryToken(ctx) {
     console.log("tokenRedisKey: ", tokenRedisKey)
     console.log("BinaryToken_addr: ", addr)
     console.log("BinaryToken_token: ", val)
-
     if (val === null) {
         try {
             const token = getCpToken(addr, cpConfigKey.Binary, currency)
             await redisUtils.set(tokenRedisKey, token)
-            await redisUtils.expire(tokenRedisKey, 24 * 3600) // 设置过期时间为3天
-            // await redisUtils.expire(tokenRedisKey, 3 * 24 * 3600) // 设置过期时间为3天
+            await redisUtils.expire(tokenRedisKey, 24 * 3600) // 设置过期时间为1天
             val = await redisUtils.get(tokenRedisKey)
         } catch (e) {
             return ctx.body = {code: 500, message: "fail", error: e.toString()}

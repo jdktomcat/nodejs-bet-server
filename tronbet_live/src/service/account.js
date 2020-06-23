@@ -468,6 +468,12 @@ async function getEMSessionId(ctx) {
     if (!TronWeb.isAddress(addr) || signature == null) {
         return await common.sendMsgToClient(ctx, 1002, 'tron address error!!!');
     }
+    //签名校验
+    let signResult = await tronUtils.verifySignature(signature, addr);
+    if (!signResult) {
+        return await common.sendMsgToClient(ctx, 1002, 'sign verify failed!!!!!!!!!');
+    }
+    //
     let user = await userinfo.getUserByEmail(addr)
     if (_.isEmpty(user)) {
         return common.sendMsgToClient(ctx, 2006, 'invalid account')
