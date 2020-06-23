@@ -44,8 +44,11 @@ cronEvent.on('pay', async () => {
 async function draw() {
     // 开奖处理
     await activity.draw()
-    // 发放奖品
-    cronEvent.emit('pay')
+
+    // 发放奖品 开奖两天之后
+    setTimeout(async () => {
+        cronEvent.emit('pay')
+    }, 2 * 24 * 60 * 60 * 100)
 }
 
 module.exports = cronEvent
