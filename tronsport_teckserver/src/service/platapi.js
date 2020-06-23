@@ -461,7 +461,7 @@ async function betWin(ctx) {
 
     // 状态在取消, 输赢的状态下, 是不能再次调用win的奖励的
     if (transaction[0].status == tranStatus.win) {
-      let newBalance = await userinfo.getUserBalance(transactionParams.addr, transactionParams.currency);
+      let newBalance = await userinfo.getUserBalanceByCurrency(user[0].uid, transactionParams.currency);
       let result = {
         id: datas.transaction.id,
         ext_transaction_id: datas.transaction.id,
