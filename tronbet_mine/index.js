@@ -837,14 +837,15 @@ async function userLogin(data){
 	let tw=getTronWeb();	
 	let socket=this;
 	let result={};
-	//这里需要存储一下socket的信息
-	Map_addr_socket[data.addr] = socket.id;
-	Map_socket_addr[socket.id] = data.addr;
 
 	if(!tw.isAddress(data.addr)){
 		console.log("用户使用不正确的地址[%s]进行登陆",data.addr);
 		return;	
 	}
+	//这里需要存储一下socket的信息
+	Map_addr_socket[data.addr] = socket.id;
+	Map_socket_addr[socket.id] = data.addr;
+
 	let _now=new Date().getTime();
 	if((_now<data.time && _now <data.time-USER_LOGIN_TIME_DEVIATION)||_now>data.time+USER_LOGIN_TIME_DEVIATION){
 		result.errorCode=USER_LOGIN_TIME_INVALID;
@@ -1465,6 +1466,9 @@ function processUserToken(socket,addr,token,eventName){
 			return false;
 		}
 		UserLastOpTimeMap[addr]=new Date().getTime();//更新用户最新登陆信息
+		//每次都更新一下信息
+		Map_addr_socket[addr] = socket.id;
+		Map_socket_addr[socket.id] = addr;
 		return true;
 	}
 	socket.emit(eventName,result);
