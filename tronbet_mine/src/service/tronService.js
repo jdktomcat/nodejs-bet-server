@@ -1,4 +1,7 @@
 let contractInsMap={};//合约地址=>合约实例
+let txArg={
+	feeLimit:1000*1e6
+};
 
 /*
  * 查询合约
@@ -39,7 +42,7 @@ function execute(tronNodePool,contractAddr,funcName,args,repeatTime,callback){
 		if(err){
 			callback(err,null);
 		}else{
-			ins.methods[funcName](...args).send().then((rs)=>{
+			ins.methods[funcName](...args).send(txArg).then((rs)=>{
 				callback(null,rs);
 			}).catch((e)=>{
 				console.log(e);
