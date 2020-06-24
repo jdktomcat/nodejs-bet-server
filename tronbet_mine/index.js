@@ -270,14 +270,11 @@ function queryUserLogs(data){
 					if(rs[index]==null){
 						continue;
 					}
-					//console.log(rs[index]);
 					let tmpInfo=JSON.parse(rs[index]);
-					//console.log(tmpInfo);
 					tmpInfo.salt="0x"+tmpInfo.salt;
 					win=(tmpInfo.gameResult===1?true:false);//通过计算
 					close=(tmpInfo.gameStatus==ORDER_STATUS_CLOSE?true:false);
 					tmpInfo.mineSteps=Object.values(tmpInfo.mineSteps);
-					console.log(tmpInfo.mineSteps);
 					//用户挖的地方
 					let userSteps=[];
 					//已经显示的地雷
@@ -312,9 +309,7 @@ function queryUserLogs(data){
 						"salt":tmpInfo.salt,
 						"gameResult":tmpInfo.gameResult
 					});
-					//console.log(JSON.stringify(userLogList));
 				}
-				console.log(JSON.stringify(userLogList));
 				result.errorCode=SUCCESS;
 				result.data=userLogList;
 				socket.emit(QUERY_USER_LOGS_RESULT,result);
