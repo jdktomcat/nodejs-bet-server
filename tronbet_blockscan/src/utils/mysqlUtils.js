@@ -23,6 +23,7 @@ const sequelize = new Sequelize(database, username, password, {
 
 
 const rawQuery = async function (sql, params, transaction = null) {
+    console.log(sql,params)
     const a = await sequelize.query(
         sql,
         {
@@ -36,7 +37,7 @@ const rawQuery = async function (sql, params, transaction = null) {
 
 
 const updateQuery = async function (sql, params, transaction = null) {
-    console.log("params: ",params)
+    console.log(sql,params)
     const a = await sequelize.query(
         sql,
         {
@@ -59,6 +60,5 @@ const initSeq = function () {
     }
 }
 initSeq()
-
 
 module.exports = o
