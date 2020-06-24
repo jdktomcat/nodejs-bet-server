@@ -65,4 +65,14 @@ function redisDel(key) {
 }
 
 
-module.exports = {hget, hset, hincrby, hdel, hgetall, redisDel, redis}
+function get(key) {
+    return new Promise((resolve, reject) => {
+        redis.get(key, (err, ret) => {
+            if (err) reject(err);
+            resolve(ret);
+        });
+    })
+}
+
+
+module.exports = {hget, hset, hincrby, hdel, hgetall, redisDel, get, redis}

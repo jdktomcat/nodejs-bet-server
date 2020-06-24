@@ -30,7 +30,7 @@ async function login(ctx) {
   if (!signResult) {
     return await common.sendMsgToClient(ctx, 1002, 'sign verify failed!!!!!!!!!');
   }
-
+  console.log("enter_user_login")
   let _name = await redisUtils.hget(redisUserKeyPrefix + addr, 'name');
   if (!_name) {
     _name = await tronUtils.getAccountName(addr);
@@ -60,13 +60,17 @@ async function login(ctx) {
 
   //登录日志记录
   await usermodel.userLoginLog(addr);
-
-  let sessionId = common.getRandomSeed(40);
-
+  //
+  // 666 混淆一下 真实id
+  let tmpSessionId = String(Number(user[0].uid) + 666)
+  let tmpSessionLength = 40 - tmpSessionId.length
+  //
+  let sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
+  console.log("debug_sessionId is ",sessionId)
   try {
     await usermodel.updateSessionId(addr, sessionId);
   } catch (error) {
-    sessionId = common.getRandomSeed(40);
+    sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
     await usermodel.updateSessionId(addr, sessionId);
   }
   await redisUtils.hset(redisUserKeyPrefix + addr, 'sessionId', sessionId);
@@ -566,12 +570,15 @@ async function getKey(ctx) {
   //登录日志记录
   await usermodel.userLoginLog(addr);
 
-  let key = common.getRandomSeed(48);
+  // 999 混淆一下uid
+  let uid = String(Number(user[0].uid) + 999)
+  let randomLength = 48 - uid.length
+  let key = common.getRandomSeed(randomLength) + uid
 
   try {
     await usermodel.updateUserKey(addr, key);
   } catch (error) {
-    key = common.getRandomSeed(48);
+    key = common.getRandomSeed(randomLength) + uid
     await usermodel.updateUserKey(addr, key);
   }
   await redisUtils.hset(redisUserKeyPrefix + addr, 'userKey', key);

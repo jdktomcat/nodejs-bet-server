@@ -103,16 +103,20 @@ function getAccountId(idStr) {
   }
 }
 
-function getRealSessionId(SessionId) {
+async function getRealAddr(SessionId) {
+  let [addr,now] = SessionId.split("_")
+  let key = addr + "_SESSIONID"
   try {
-    let result = SessionId;
-    let tmp = result.split("_");
-    if (tmp.length >= 2) {
-      result = tmp[0];
+    console.log("debug --- > key",key)
+    let emCache = await resdisUtils.get(key)
+    if(emCache === SessionId){
+      return [addr]
+    }else {
+      return []
     }
-    return result;
   } catch (error) {
-    return SessionId;
+    console.log("getRealSessionId: ",error)
+    return []
   }
 }
 
@@ -138,7 +142,14 @@ async function GetAccount(ctx) {
 
   let now = new Date().getTime();
 
-  let user = await usermodel.getAccountBySessionId(getRealSessionId(SessionId));
+  //
+  const sessionArray = await getRealAddr(SessionId)
+  if (sessionArray.length === 0) {
+    return await sendMsgToClient(ctx, 103, "User not found");
+  }
+  const addr = sessionArray[0]
+  //
+  let user = await usermodel.getAccountBySessionId(addr);
 
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
@@ -152,7 +163,7 @@ async function GetAccount(ctx) {
   result.City = "";
   result.Country = "";
   result.Currency = user[0].currency;
-  result.SessionId = user[0].SessionId;
+  result.SessionId = SessionId;
   result.UserName = user[0].nickName || user[0].email;
   result.FirstName = "";
   result.LastName = "";
@@ -181,7 +192,14 @@ async function GetBalance(ctx) {
     return await sendMsgToClient(ctx, 103, "User not found");
   }
 
-  let user = await usermodel.getAccountBySessionId(getRealSessionId(SessionId));
+  //
+  const sessionArray = await getRealAddr(SessionId)
+  if (sessionArray.length === 0) {
+    return await sendMsgToClient(ctx, 103, "User not found");
+  }
+  const addr = sessionArray[0]
+  //
+  let user = await usermodel.getAccountBySessionId(addr);
 
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
@@ -265,7 +283,14 @@ async function Wager(ctx) {
   let multi = await getAdditionByGameId(EMGameId);
   let addAmount = Amount * multi;
 
-  let user = await usermodel.getAccountBySessionId(getRealSessionId(SessionId));
+  //
+  const sessionArray = await getRealAddr(SessionId)
+  if (sessionArray.length === 0) {
+    return await sendMsgToClient(ctx, 103, "User not found");
+  }
+  const addr = sessionArray[0]
+  //
+  let user = await usermodel.getAccountBySessionId(addr);
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
   }
@@ -395,7 +420,14 @@ async function Result(ctx) {
     return await sendMsgToClient(ctx, 101, "auth failed");
   }
 
-  let user = await usermodel.getAccountBySessionId(getRealSessionId(SessionId));
+  //
+  const sessionArray = await getRealAddr(SessionId)
+  if (sessionArray.length === 0) {
+    return await sendMsgToClient(ctx, 103, "User not found");
+  }
+  const addr = sessionArray[0]
+  //
+  let user = await usermodel.getAccountBySessionId(addr);
   if (_.isEmpty(user)) {
     return await sendMsgToClient(ctx, 103, "User not found");
   }
@@ -581,6 +613,8 @@ async function GetTransactionStatus(ctx) {
 async function All(ctx) {
   let params = ctx.request.body;
   let Request = params.Request || "";
+  console.log("params",params)
+  console.log("Request",Request)
 
   if (Request === "GetAccount" || Request === "getaccount") {
     return GetAccount(ctx);
