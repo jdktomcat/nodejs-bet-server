@@ -7,6 +7,8 @@ const sha3 = require('js-sha3');
 const TronWeb = require('tronweb');
 const moment = require('moment');
 const BigNumber = require('bignumber.js');
+// 更新用orm
+const {sequelize, rawQuery, updateQuery} = require('./src/utils/mysqlUtils')
 
 const EVENT_LIVE_USER_TRC20_TRANSFER = sha3.keccak256('Transfer(address,address,uint256)');
 const EVENT_LIVE_USER_TRC20_WITHDRAW = sha3.keccak256('LivePayWithdrawTrc20(uint256,address,address,uint256)');
@@ -197,58 +199,98 @@ async function alysisTxs(tx) {
 }
 
 async function saveLiveUserRechargeLog(info) {
-  let accountSql = 'select uid from tron_live.live_account where email = ?';
-  let sql = 'insert into tron_live.live_cb_deposit_log(uid, currency, addr, amount, txId, ts) values (?, ?, ?, ?, ?, ?)';
-  let sql2 =
-    'insert into tron_live.live_balance(uid, addr, currency, tag, balance) values (?,?,?,?,?) on DUPLICATE KEY UPDATE addr = ?, tag = ?, balance = balance + ?;';
-  let conn = null;
-  try {
-    let res = await db.query(accountSql, [info._fromAddr]);
+  // let accountSql = 'select uid from tron_live.live_account where email = ?';
+  // let sql = 'insert into tron_live.live_cb_deposit_log(uid, currency, addr, amount, txId, ts) values (?, ?, ?, ?, ?, ?)';
+  // let sql2 =
+  //   'insert into tron_live.live_balance(uid, addr, currency, tag, balance) values (?,?,?,?,?) on DUPLICATE KEY UPDATE addr = ?, tag = ?, balance = balance + ?;';
+  // let conn = null;
+  // try {
+  //   let res = await db.query(accountSql, [info._fromAddr]);
+  //   let uid = -1;
+  //   if (_.isEmpty(res)) {
+  //     let user = await userRegister(info._fromAddr, info._currency);
+  //     uid = user[0].uid;
+  //   } else {
+  //     uid = res[0].uid;
+  //   }
+  //   conn = await db.getConnection();
+  //   if (conn == null) {
+  //     throw new Error('conn is null !!!');
+  //   }
+  //   conn.beginTransaction();
+  //   await db.execTrans(sql, [uid, info._currency, info._fromAddr, info._amount, info._txId, info._ts], conn);
+  //   await db.execTrans(sql2, [uid, info._fromAddr, info._currency, '', info._amount, info._fromAddr, '', info._amount], conn);
+  //   conn.commit();
+  // } catch (e) {
+  //   console.log(e);
+  //   if (conn) conn.rollback();
+  //   if (e.code == 'ER_DUP_ENTRY') return true;
+  //   return false;
+  // } finally {
+  //   if (conn) conn.release();
+  // }
+  // return true;
+  /**
+   * new version
+   */
+  return await sequelize.transaction(async (t) => {
+    //
+    let accountSql = 'select uid from tron_live.live_account where email = ?';
+    let sql = 'insert into tron_live.live_cb_deposit_log(uid, currency, addr, amount, txId, ts) values (?, ?, ?, ?, ?, ?)';
+    let sql2 =
+        'insert into tron_live.live_balance(uid, addr, currency, tag, balance) values (?,?,?,?,?) on DUPLICATE KEY UPDATE addr = ?, tag = ?, balance = balance + ?;';
+    //t
+    let res = await rawQuery(accountSql, [info._fromAddr], t);
     let uid = -1;
     if (_.isEmpty(res)) {
-      let user = await userRegister(info._fromAddr, info._currency);
+      // let user = await userRegister(info._fromAddr, info._currency);
+      let tmp1_sql = 'insert into tron_live.live_account(email, currency) values (?, ?)';
+      await updateQuery(tmp1_sql, [info._fromAddr, info._currency], t);
+      //
+      let tmp1_uidSql = 'select * from tron_live.live_account where email = ?';
+      let user = await rawQuery(tmp1_uidSql, [info._fromAddr], t);
       uid = user[0].uid;
     } else {
       uid = res[0].uid;
     }
-    conn = await db.getConnection();
-    if (conn == null) {
-      throw new Error('conn is null !!!');
-    }
-    conn.beginTransaction();
-    await db.execTrans(sql, [uid, info._currency, info._fromAddr, info._amount, info._txId, info._ts], conn);
-    await db.execTrans(sql2, [uid, info._fromAddr, info._currency, '', info._amount, info._fromAddr, '', info._amount], conn);
-    conn.commit();
-  } catch (e) {
-    console.log(e);
-    if (conn) conn.rollback();
-    if (e.code == 'ER_DUP_ENTRY') return true;
-    return false;
-  } finally {
-    if (conn) conn.release();
-  }
-  return true;
+    //
+    await updateQuery(sql, [uid, info._currency, info._fromAddr, info._amount, info._txId, info._ts], t);
+    await updateQuery(sql2, [uid, info._fromAddr, info._currency, '', info._amount, info._fromAddr, '', info._amount], t);
+    //
+    return true
+  }).catch(e => {
+    console.log("saveLiveUserRechargeLogTRC20_error:" + e.toString())
+    return false
+  })
 }
 
-async function userRegister(addr, currency) {
-  let sql = 'insert into tron_live.live_account(email, currency) values (?, ?)';
-  let res = await db.exec(sql, [addr, currency]);
-
-  let uidSql = 'select * from tron_live.live_account where email = ?';
-  let user = await db.exec(uidSql, [addr]);
-  return user;
-}
+// async function userRegister(addr, currency) {
+//   let sql = 'insert into tron_live.live_account(email, currency) values (?, ?)';
+//   let res = await db.exec(sql, [addr, currency]);
+//
+//   let uidSql = 'select * from tron_live.live_account where email = ?';
+//   let user = await db.exec(uidSql, [addr]);
+//   return user;
+// }
 
 async function saveLiveUserWithdrawLog(info) {
-  try {
+  // try {
+  //   let sql = 'update tron_live.live_cb_withdraw_log set status = 1, txId = ? where addr = ? and orderId = ?';
+  //   let res = await db.query(sql, [info._tx_id, info._fromAddr, info._orderId]);
+  // } catch (error) {
+  //   console.log(error);
+  //   return false;
+  // }
+  // return true;
+  //
+  return await sequelize.transaction(async (t) => {
     let sql = 'update tron_live.live_cb_withdraw_log set status = 1, txId = ? where addr = ? and orderId = ?';
-    let res = await db.query(sql, [info._tx_id, info._fromAddr, info._orderId]);
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-
-  return true;
+    await updateQuery(sql, [info._tx_id, info._fromAddr, info._orderId], t);
+    return true
+  }).catch(e => {
+    console.log("saveLiveUserWithdrawLogTRC20_error:" + e.toString())
+    return false
+  })
 }
 
 function hexStringToTronAddress1(_hexStr) {
