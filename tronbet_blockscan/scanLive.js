@@ -246,7 +246,7 @@ async function saveLiveUserRechargeLog(info) {
       await updateQuery(sql2, [uid, info._fromAddr, 'TRX', '', info._amount, info._fromAddr, '', info._amount], t);
       return true
     }).catch(e => {
-      console.log("saveLiveUserWithdrawLog_error:" + e.toString())
+      console.log("saveLiveUserRechargeLog_error:" + e.toString())
       return false
     })
 }
