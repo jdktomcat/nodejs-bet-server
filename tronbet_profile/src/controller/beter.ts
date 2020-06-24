@@ -350,6 +350,33 @@ export default class extends Base {
             data  : final,
             total : total
         })
+        // 扫雷游戏统计
+    } else if(game == 6){
+        if (result == 1) {
+            where = " and win_amount > 0 "
+        } else if (result == 2) {
+            where = " and win_amount = 0 "
+        }
+        let dataSql = "select order_id, addr, amount / 1000000 amount, win_amount / 1000000 win, tx_id as hash, ts from tron_bet_wzc.mine_event_log where addr = '{0}' {1} order by order_id desc limit {2}, 20"
+        dataSql = dataSql.replace('{0}', addr)
+        dataSql = dataSql.replace('{1}', where)
+        dataSql = dataSql.replace('{2}', start.toString())
+        console.log('personal data center of mine query sql:' + dataSql)
+        let totalSql = "select count(1) total_count from tron_bet_wzc.mine_event_log where addr = '{0}' {1}"
+        totalSql = totalSql.replace('{0}', addr)
+        totalSql = totalSql.replace('{1}', where)
+        console.log('personal data center of mine total count sql:' + totalSql)
+        let final = await tmodel.query(dataSql)
+        let total = await tmodel.query(totalSql)
+        if (think.isEmpty(total)) {
+            total = 0
+        } else {
+            total = total[0].total_count
+        }
+        return this.success({
+            data  : final,
+            total : total
+        })
     }
   }
 }
