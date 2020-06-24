@@ -301,6 +301,8 @@ function queryUserLogs(data){
 					userLogList.push({
 						"id":tmpInfo.order.orderNo,
 						"full":tmpInfo,
+						"full_mineSteps":tmpInfo.mineSteps,
+						"full_[mineSteps]":tmpInfo["mineSteps"],
 						"bet":tmpInfo.order.orderAmount,
 						"blockNo":tmpInfo.order.orderBlockH,
 						"now":tmpInfo.mineHash,
