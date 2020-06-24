@@ -270,12 +270,14 @@ function queryUserLogs(data){
 					if(rs[index]==null){
 						continue;
 					}
-					console.log(rs[index]);
+					//console.log(rs[index]);
 					let tmpInfo=JSON.parse(rs[index]);
-					console.log(tmpInfo);
+					console.log(tmpInfo.userSteps);
+					console.log(tmpInfo.mines);
 					tmpInfo.salt="0x"+tmpInfo.salt;
 					win=tmpInfo.gameResult===1;//通过计算
 					close=tmpInfo.gameStatus==ORDER_STATUS_CLOSE;
+					tmpInfo.mineSteps=Object.values(tmpInfo.mineSteps);
 					//用户挖的地方
 					let userSteps=[];
 					//已经显示的地雷
