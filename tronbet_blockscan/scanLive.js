@@ -221,7 +221,7 @@ async function saveLiveUserRechargeLog(info) {
     // return true;
     //
     //
-    await sequelize.transaction(async (t) => {
+    return await sequelize.transaction(async (t) => {
       let accountSql = 'select uid from tron_live.live_account where email = ?';
       let sql = 'insert into tron_live.live_cb_deposit_log(uid, currency, addr, amount, txId, ts) values (?, ?, ?, ?, ?, ?)';
       let sql2 =
@@ -230,7 +230,14 @@ async function saveLiveUserRechargeLog(info) {
       let res = await rawQuery(accountSql, [info._fromAddr],t);
       let uid = -1;
       if (_.isEmpty(res)) {
-        let user = await userRegister(info._fromAddr);
+        // let user = await userRegister(info._fromAddr);
+        // 把userRegister抄过来，公用一个事务
+        let tmp1_sql = 'insert into tron_live.live_account(email, currency) values (?, ?)';
+        await updateQuery(tmp1_sql, [info._fromAddr, 'TRX'], t);
+        //
+        let tmp1_uidSql = 'select * from tron_live.live_account where email = ?';
+        let user = await rawQuery(tmp1_uidSql, [info._fromAddr], t);
+        //
         uid = user[0].uid;
       } else {
         uid = res[0].uid;
@@ -242,25 +249,6 @@ async function saveLiveUserRechargeLog(info) {
       console.log("saveLiveUserWithdrawLog_error:" + e.toString())
       return false
     })
-
-}
-
-async function userRegister(addr) {
-    // let sql = 'insert into tron_live.live_account(email, currency) values (?, ?)';
-    // let res = await db.exec(sql, [addr, 'TRX']);
-    //
-    // let uidSql = 'select * from tron_live.live_account where email = ?';
-    // let user = await db.exec(uidSql, [addr]);
-    //
-    const o = await sequelize.transaction(async (t) => {
-        let sql = 'insert into tron_live.live_account(email, currency) values (?, ?)';
-        let res = await updateQuery(sql, [addr, 'TRX'], t);
-        //
-        let uidSql = 'select * from tron_live.live_account where email = ?';
-        let user = await rawQuery(uidSql, [addr], t);
-        return user
-    })
-    return o;
 }
 
 async function saveLiveUserWithdrawLog(info) {
@@ -273,7 +261,7 @@ async function saveLiveUserWithdrawLog(info) {
     // }
     // return true;
     //
-    await sequelize.transaction(async (t) => {
+    return await sequelize.transaction(async (t) => {
         let sql = 'update tron_live.live_cb_withdraw_log set status = 1, txId = ? where addr = ? and orderId = ?';
         await updateQuery(sql, [info._tx_id, info._fromAddr, info._orderId], t);
         return true
