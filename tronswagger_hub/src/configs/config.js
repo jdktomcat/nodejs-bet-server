@@ -58,8 +58,6 @@ let config = {
   blackList:[
       'TE5TW1foNEY6w8NJ21DWdDRZrSAN3Tm2Wf',
       'TD9LS5xgVgcEBKhSLYSq2KeGcgHUQtMYZG',
-      // for test
-      'TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP'
   ]
 };
 // wallet url
