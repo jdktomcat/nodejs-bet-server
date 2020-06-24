@@ -272,8 +272,7 @@ function queryUserLogs(data){
 					}
 					//console.log(rs[index]);
 					let tmpInfo=JSON.parse(rs[index]);
-					console.log(tmpInfo.userSteps);
-					console.log(tmpInfo.mines);
+					console.log(tmpInfo);
 					tmpInfo.salt="0x"+tmpInfo.salt;
 					win=tmpInfo.gameResult===1;//通过计算
 					close=tmpInfo.gameStatus==ORDER_STATUS_CLOSE;
