@@ -202,6 +202,14 @@ async function bet(ctx) {
             return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN', request_uuid: params.request_uuid,})
         }
     }
+    // blackList filter
+    const blackList = config.blackList
+    if(blackList.includes(String(account[0].email).trim())){
+        //在黑名单
+        console.log(String(account[0].email).trim() + "bet_amount" + amount / 1000000 + "TRX")
+        return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN', request_uuid: params.request_uuid,})
+    }
+    //
     console.log(new Date().toJSON() + " addr@" + account[0].email + "@balance@bet@" + amount / 1e6 + "@TRX")
     await userinfo.userBet(transactionId, account[0].uid, account[0].email, round, is_free, game_id, currency, bet, amount, addAmount)
     // 触发活动
