@@ -54,7 +54,13 @@ let config = {
     ACTIVITY_START_TS: 1592582400000,
     // 2020-06-28 23:59:59
     ACTIVITY_END_TS: 1593359999000
-  }
+  },
+  blackList:[
+      'TE5TW1foNEY6w8NJ21DWdDRZrSAN3Tm2Wf',
+      'TD9LS5xgVgcEBKhSLYSq2KeGcgHUQtMYZG',
+      // for test
+      'TXdWwzoq74BKUQx4JeEYnUs41EdGpyZKbP'
+  ]
 };
 // wallet url
 config.live_wallet_url = 'http://127.0.0.1:18074'
