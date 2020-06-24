@@ -266,13 +266,13 @@ function queryUserLogs(data){
 					socket.emit(QUERY_USER_LOGS_RESULT,result);	
 					return;
 				}//只有完结的才会在这里显示，可以全部列出
-				console.log(rs);
-				console.log(JSON.stringify(rs));
 				for(var index=0;index<rs.length;index++){
 					if(rs[index]==null){
 						continue;
 					}
+					console.log(rs[index]);
 					let tmpInfo=JSON.parse(rs[index]);
+					console.log(tmpInfo);
 					tmpInfo.salt="0x"+tmpInfo.salt;
 					win=tmpInfo.gameResult===1;//通过计算
 					close=tmpInfo.gameStatus==ORDER_STATUS_CLOSE;
@@ -837,12 +837,17 @@ async function userLogin(data){
 	let tw=getTronWeb();	
 	let socket=this;
 	let result={};
+
 	if(!tw.isAddress(data.addr)){
 		console.log("用户使用不正确的地址[%s]进行登陆",data.addr);
 		return;	
 	}
+	//这里需要存储一下socket的信息
+	Map_addr_socket[data.addr] = socket.id;
+	Map_socket_addr[socket.id] = data.addr;
+
 	let _now=new Date().getTime();
-	if(_now<data.time||_now>data.time+USER_LOGIN_TIME_DEVIATION){
+	if((_now<data.time && _now <data.time-USER_LOGIN_TIME_DEVIATION)||_now>data.time+USER_LOGIN_TIME_DEVIATION){
 		result.errorCode=USER_LOGIN_TIME_INVALID;
 		socket.emit(USER_LOGIN_RESULT,result);	
 		return;
@@ -897,10 +902,7 @@ function doLoginInSucesss(socket,data){
 		}
 		//用户有正在进行中的游戏，让客户端恢复游戏，然后等待服务器返回游戏结果.
 
-		//这里需要存储一下socket的信息
-		Map_addr_socket[data.addr] = socket.id;
-		Map_socket_addr[socket.id] = data.addr;
-
+		
 		result.token=registerToken(data.addr);//登陆成功统一返回token
 		//UserLastOpTimeMap[data.addr];
 		result.data={};
@@ -1464,6 +1466,9 @@ function processUserToken(socket,addr,token,eventName){
 			return false;
 		}
 		UserLastOpTimeMap[addr]=new Date().getTime();//更新用户最新登陆信息
+		//每次都更新一下信息
+		Map_addr_socket[addr] = socket.id;
+		Map_socket_addr[socket.id] = addr;
 		return true;
 	}
 	socket.emit(eventName,result);
