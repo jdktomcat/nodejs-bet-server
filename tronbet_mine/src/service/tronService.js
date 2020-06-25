@@ -1,6 +1,6 @@
 let contractInsMap={};//合约地址=>合约实例
 let txArg={
-	feeLimit:1000*1e6
+	feeLimit:10*1e6
 };
 
 /*
