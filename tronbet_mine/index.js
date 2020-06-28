@@ -14,6 +14,7 @@ const events = require('events');
 const Redis=require("ioredis");
 const appDataEvent = new events.EventEmitter();
 
+
 const gameDesc="扫雷游戏";
 
 //合约相关数据
@@ -91,6 +92,8 @@ const TOKEN_EXPIRE_TIME=24*60*60*1000;//token 失效时间
 const GAME_MODEL_NORMAL=0x01;//普通模式
 const GAME_MODEL_HERO=0x02;//英雄模式
 
+console.log(config.contract[MINE_GAME_ORACLE]);
+console.log(config.contract[MAIN_MINE_GAME]);
 
 /*
  * 每次启动的时候PRE_SALT 都会不一样，不可以预测的前缀
@@ -269,13 +272,14 @@ function queryUserLogs(data){
 					}
 					let tmpInfo=JSON.parse(rs[index]);
 					tmpInfo.salt="0x"+tmpInfo.salt;
-					win=tmpInfo.gameResult===1;//通过计算
-					close=tmpInfo.gameStatus==ORDER_STATUS_CLOSE;
+					win=(tmpInfo.gameResult===1?true:false);//通过计算
+					close=(tmpInfo.gameStatus==ORDER_STATUS_CLOSE?true:false);
+					tmpInfo.mineSteps=Object.values(tmpInfo.mineSteps);
 					//用户挖的地方
 					let userSteps=[];
 					//已经显示的地雷
 					let mines=[];
-					for( var i=31;i<0;i--){
+					for( var i=31;i>0;i--){
 						if(tmpInfo.mineSteps[i]==0){
 							break;
 						}
@@ -305,9 +309,7 @@ function queryUserLogs(data){
 						"salt":tmpInfo.salt,
 						"gameResult":tmpInfo.gameResult
 					});
-					//console.log(JSON.stringify(userLogList));
 				}
-				console.log(JSON.stringify(userLogList));
 				result.errorCode=SUCCESS;
 				result.data=userLogList;
 				socket.emit(QUERY_USER_LOGS_RESULT,result);
@@ -576,6 +578,12 @@ function userMine(data){
 			console.log("服务器异常，查询用户订单出错:%s",data.addr);
 			return;
 		}
+		/*
+		 * 即使在挖雷的过程，比如已经挖了一个了，但是交易依然有可能回滚，即用户的订单状态又变成了0x01
+		 * 这种情况可能是因为交易在区块里面的顺序是 0x01状态的改变在0x02 之后，因为先更新为0x02是无法成功的
+		 * 只有在0x01执行之后才能成功，所以交易被回滚了
+		 * 需要告知客户端已经被revet掉的交易么？
+		 */
 		if(rs.orderStatus!=ORDER_STATUS_SERVER_READY){
 			result.errorCode=ORDER_STATUS_IS_NOT_ALLOW_TO_MIND;
 			socket.emit(MINE_RESULT,result);	
@@ -826,12 +834,17 @@ async function userLogin(data){
 	let tw=getTronWeb();	
 	let socket=this;
 	let result={};
+
 	if(!tw.isAddress(data.addr)){
 		console.log("用户使用不正确的地址[%s]进行登陆",data.addr);
 		return;	
 	}
+	//这里需要存储一下socket的信息
+	Map_addr_socket[data.addr] = socket.id;
+	Map_socket_addr[socket.id] = data.addr;
+
 	let _now=new Date().getTime();
-	if(_now<data.time||_now>data.time+USER_LOGIN_TIME_DEVIATION){
+	if((_now<data.time && _now <data.time-USER_LOGIN_TIME_DEVIATION)||_now>data.time+USER_LOGIN_TIME_DEVIATION){
 		result.errorCode=USER_LOGIN_TIME_INVALID;
 		socket.emit(USER_LOGIN_RESULT,result);	
 		return;
@@ -886,10 +899,7 @@ function doLoginInSucesss(socket,data){
 		}
 		//用户有正在进行中的游戏，让客户端恢复游戏，然后等待服务器返回游戏结果.
 
-		//这里需要存储一下socket的信息
-		Map_addr_socket[data.addr] = socket.id;
-		Map_socket_addr[socket.id] = data.addr;
-
+		
 		result.token=registerToken(data.addr);//登陆成功统一返回token
 		//UserLastOpTimeMap[data.addr];
 		result.data={};
@@ -1453,6 +1463,9 @@ function processUserToken(socket,addr,token,eventName){
 			return false;
 		}
 		UserLastOpTimeMap[addr]=new Date().getTime();//更新用户最新登陆信息
+		//每次都更新一下信息
+		Map_addr_socket[addr] = socket.id;
+		Map_socket_addr[socket.id] = addr;
 		return true;
 	}
 	socket.emit(eventName,result);

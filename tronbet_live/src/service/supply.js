@@ -8,7 +8,10 @@ const game = require("../service/games");
 const {app} = require('../configs/config')
 const {cpConfigKey, getCpToken} = require('../cp/cpTokenUtils')
 const redisUtils = require('../utils/redisUtil')
-
+const oldAccount = require("./user")
+const TronWeb = require('tronweb')
+const common = require('../utils/common')
+const tronUtils = require('../utils/tronUtil')
 //
 async function updateOnlineGameList() {
     let games = await game.parseGames();
@@ -291,12 +294,19 @@ async function allSchedule(ctx) {
  * schedule all
  */
 async function platinusAPI(ctx) {
-    let params = ctx.request.body || {}
-    let addr = params.addr || ''
+    let params = ctx.request.body;
+    let signature = params.sign;
+    let addr = params.addr;
     //
-    if (addr === '') {
-        return ctx.body = {code: 500, message: "error"}
+    if (!TronWeb.isAddress(addr) || signature == null) {
+        return await common.sendMsgToClient(ctx, 1002, 'tron address error!!!');
     }
+    //签名校验
+    let signResult = await tronUtils.verifySignature(signature, addr);
+    if (!signResult) {
+        return await common.sendMsgToClient(ctx, 1002, 'sign verify failed!!!!!!!!!');
+    }
+    //
     const tokenRedisKey = 'TRX' + "_platinusToken_" + addr
     let val = await redisUtils.get(tokenRedisKey)
     console.log("platinusAPI_addr: ", addr)
@@ -318,13 +328,19 @@ async function platinusAPI(ctx) {
 
 async function getBinaryToken(ctx) {
     let params = ctx.request.body || {}
-    let addr = params.addr || ''
     let currency = params.currency || ''
+    let signature = params.sign;
+    let addr = params.addr;
     //
-    if (addr === '') {
-        return ctx.body = {code: 500, message: "address error"}
+    if (!TronWeb.isAddress(addr) || signature == null) {
+        return await common.sendMsgToClient(ctx, 1002, 'tron address error!!!');
     }
-    if (!['TRX','USDT'].includes(currency)) {
+    //签名校验
+    let signResult = await tronUtils.verifySignature(signature, addr);
+    if (!signResult) {
+        return await common.sendMsgToClient(ctx, 1002, 'sign verify failed!!!!!!!!!');
+    }
+    if (!['TRX', 'USDT'].includes(currency)) {
         return ctx.body = {code: 500, message: "currency error"}
     }
     const tokenRedisKey = currency + "_BinaryToken_" + addr
@@ -332,13 +348,11 @@ async function getBinaryToken(ctx) {
     console.log("tokenRedisKey: ", tokenRedisKey)
     console.log("BinaryToken_addr: ", addr)
     console.log("BinaryToken_token: ", val)
-
     if (val === null) {
         try {
             const token = getCpToken(addr, cpConfigKey.Binary, currency)
             await redisUtils.set(tokenRedisKey, token)
-            await redisUtils.expire(tokenRedisKey, 24 * 3600) // 设置过期时间为3天
-            // await redisUtils.expire(tokenRedisKey, 3 * 24 * 3600) // 设置过期时间为3天
+            await redisUtils.expire(tokenRedisKey, 24 * 3600) // 设置过期时间为1天
             val = await redisUtils.get(tokenRedisKey)
         } catch (e) {
             return ctx.body = {code: 500, message: "fail", error: e.toString()}

@@ -19,7 +19,6 @@ const digestType = 'RSA-SHA256';
 const publicKey  = conf.swaghub.swagPublick
 const privateKey = conf.swaghub.privetKey
 const geoip = require('geoip-lite')
-
 // init with default keypair and digest type
 const hmCrypto = HmCrypto(digestType, privateKey, publicKey);
 
@@ -175,11 +174,15 @@ async function userLogin(ctx) {
 
     let sessionId = uid[0].sessionId
     if (!sessionId || sessionId.length > 40) {
+        // 666 混淆一下 真实id
+        let tmpSessionId = String(Number(uid[0].uid) + 666)
+        let tmpSessionLength = 40 - tmpSessionId.length
+        console.log("debug_sessionId is ",sessionId)
+        //
+        sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
         try {
-            sessionId = common.getRandomSeed(40)
             await userinfo.updateSessionId(uid[0].email, sessionId)
         } catch (error) {
-            sessionId = common.getRandomSeed(40)
             await userinfo.updateSessionId(uid[0].email, sessionId)
         }
 
@@ -456,46 +459,50 @@ async function getBalance(ctx) {
 }
 
 async function getEMSessionId(ctx) {
-    let params = ctx.request.body
-    let authToken = params.authToken
+    //
+    let params = ctx.request.body;
+    let signature = params.sign;
+    let addr = params.addr;
 
-    if (!authToken) {
-        return oldAccount.login(ctx)
+    if (!TronWeb.isAddress(addr) || signature == null) {
+        return await common.sendMsgToClient(ctx, 1002, 'tron address error!!!');
     }
-
-    let userPreView = await redisUtils.get(authToken)
-    if (!userPreView) {
-        return common.sendMsgToClient(ctx, 401, 'not authed account')
+    //签名校验
+    let signResult = await tronUtils.verifySignature(signature, addr);
+    if (!signResult) {
+        return await common.sendMsgToClient(ctx, 1002, 'sign verify failed!!!!!!!!!');
     }
-
-    let email = userPreView
-    let user = await userinfo.getUserByEmail(email)
+    //
+    let user = await userinfo.getUserByEmail(addr)
     if (_.isEmpty(user)) {
         return common.sendMsgToClient(ctx, 2006, 'invalid account')
     }
-
-    let sessionId = user[0].sessionId
-    if(!sessionId || sessionId.length > 40) {
-        sessionId = common.getRandomSeed(40)
+    // EM只有TRX
+    // let currency = 'TRX'
+    //
+    const emRedisKey = addr + "_SESSIONID"
+    let emCache = await redisUtils.get(emRedisKey)
+    //
+    if (emCache === null) {
         try {
-            await userinfo.updateSessionId(email, sessionId)
-        } catch (error) {
-            sessionId = common.getRandomSeed(40)
-            await userinfo.updateSessionId(email, sessionId)
+            const now = Date.now()
+            const session_id = `${addr}_${now}`
+            await redisUtils.set(emRedisKey, session_id)
+            await redisUtils.expire(emRedisKey, 2 * 24 * 3600) // 设置过期时间为2天
+            emCache = await redisUtils.get(emRedisKey)
+        } catch (e) {
+            return ctx.body = {code: 500, message: "fail", error: e.toString()}
         }
     }
-
-    // let currency = await redisUtils.hget('liveCurrency', '' + user[0].uid)
-    // let cipherSessionId = common.cipher(sessionId + '|' + currency)
-    let currency = user[0].currency
-
-    return await common.sendMsgToClient(ctx, 0, '', {
-        sessionId : `${sessionId}_${currency}`,
+    const o = {
+        sessionId : emCache,
         launchUrl : '',
         lv : 1,
         name : user[0].nickName,
         img : user[0].head
-    })
+    }
+    // console.log("debug_emObject ",o)
+    return await common.sendMsgToClient(ctx, 0, '',o)
 
 }
 
@@ -517,12 +524,14 @@ async function getSportsKey(ctx) {
     if (_.isEmpty(user)) {
         return common.sendMsgToClient(ctx, 2006, 'invalid account')
     }
-
-    let sportskey = common.getRandomSeed(48)
+    // 999 混淆一下uid
+    let uid = String(Number(user[0].uid) + 999)
+    let randomLength = 48 - uid.length
+    let sportskey = common.getRandomSeed(randomLength) + uid
     try {
         await userinfo.updateUserKey(email, sportskey)
     } catch (error) {
-        sportskey = common.getRandomSeed(48)
+        sportskey = common.getRandomSeed(randomLength) + uid
         await userinfo.updateUserKey(email, sportskey)
     }
 
@@ -781,12 +790,16 @@ async function getLanchUrl(ctx) {
     }
 
     let sessionId = user[0].sessionId
+    //
     if(!sessionId || sessionId.length > 40) {
-        sessionId = common.getRandomSeed(40)
+        // 333 混淆一下 真实id
+        let tmpSessionId = String(Number(user[0].uid) + 333)
+        let tmpSessionLength = 40 - tmpSessionId.length
+        //
+        sessionId = common.getRandomSeed(tmpSessionLength) + tmpSessionId
         try {
             await userinfo.updateSessionId(email, sessionId)
         } catch (error) {
-            sessionId = common.getRandomSeed(40)
             await userinfo.updateSessionId(email, sessionId)
         }
     }
