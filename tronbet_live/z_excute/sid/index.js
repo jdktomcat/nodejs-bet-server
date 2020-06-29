@@ -110,12 +110,13 @@ async function alertTable() {
     process.exit(0)
 }
 
-async function updateAwardStatus(){
+async function updateAwardStatus() {
     const updateSql = `update tron_bet_event.award_log set status = 1`
     const res = await dbUtil.query(updateSql)
-}   console.log('update table award log status success!')
+    console.log('update table award log status success!')
     console.log(res)
     process.exit(0)
+}
 /**
  * 修复异常金额
  * @returns {Promise<void>}
@@ -181,7 +182,7 @@ async function fixMinData() {
     //     const insertFlightSql = "insert into tron_bet_event.user_flight(addr, fuel, plant) values ? " +
     //         "on duplicate key update fuel=values(fuel)"
     //     const updateFlightResult = await dbUtil.query(insertFlightSql, [updateFlightData])
-    //     console.log('fix flight affected rows:')
+    //     console.log('fix 更新奖励发放状态 2020-06-29flight affected rows:')
     //     console.log(updateFlightResult.affectedRows)
     // }
     process.exit(0)
