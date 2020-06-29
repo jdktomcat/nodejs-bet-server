@@ -110,12 +110,13 @@ async function alertTable() {
     process.exit(0)
 }
 
-async function updateAwardStatus(){
+async function updateAwardStatus() {
     const updateSql = `update tron_bet_event.award_log set status = 1`
     const res = await dbUtil.query(updateSql)
-}   console.log('update table award log status success!')
+    console.log('update table award log status success!')
     console.log(res)
     process.exit(0)
+}
 /**
  * 修复异常金额
  * @returns {Promise<void>}
