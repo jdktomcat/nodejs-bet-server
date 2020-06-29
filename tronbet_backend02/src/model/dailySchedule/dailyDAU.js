@@ -34,6 +34,16 @@ const DauSql = `
         
         union all
         
+        SELECT
+            distinct addr  as addr
+        FROM
+            tron_bet_wzc.mine_event_log
+        WHERE
+            AND ts >= ?
+            AND ts < ? 
+            
+        union all
+        
         select
             distinct addr  as addr
         from
@@ -90,9 +100,9 @@ const getAll = async function (startDate, endDate) {
         start, end,
         start, end,
         start, end,
+        start, end,
     ]
-    const t = await raw(sql, params)
-    return t
+    return await raw(sql, params)
 }
 
 

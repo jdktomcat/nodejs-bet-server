@@ -26,6 +26,36 @@ const getMoon = async function (startDate, endDate) {
     return t
 }
 
+/**
+ * 统计扫雷游戏
+ *
+ * @param startDate 开始时间
+ * @param endDate 结束时间
+ * @returns {Promise<*>}
+ */
+const getMine = async function(startDate, endDate){
+    const sql = `
+            SELECT
+            from_unixtime(ts / 1000,'%Y-%m-%d') as day,
+            count(distinct addr) as dau,
+            count(1) as count,
+            sum(amount) / 1000000 as all_amount,
+            sum(win_amount) / 1000000  as all_win,
+            (sum(amount) - sum(win_amount)) / 1000000 as balance
+        FROM
+            tron_bet_wzc.mine_event_log
+        WHERE
+            ts >= ?
+            AND ts < ?
+            group by from_unixtime(ts / 1000,'%Y-%m-%d')
+    `
+    const params = [
+        newUtcTime(startDate).getTime(),
+        newUtcTime(endDate).getTime()
+    ]
+    return await raw(sql, params)
+}
+
 const getRing = async function (startDate, endDate) {
     const sql = `
         SELECT
@@ -266,6 +296,7 @@ class DailyTransaction{
             "dice": getDiceData,
             "moon": getMoon,
             "ring": getRing,
+            "mine": getMine,
             "duel": getDuel,
             "em": getEM,
             "hub88": getHub88,

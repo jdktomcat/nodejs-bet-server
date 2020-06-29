@@ -101,6 +101,41 @@ const getRing = async function (startDate, endDate) {
     return ccc1
 }
 
+/**
+ * 统计扫雷每日流水
+ * @param startDate 开始时间
+ * @param endDate 结束时间
+ * @returns {Promise<{balance: (*|number), count: (*|number), all_win: number, all_amount: number}>}
+ */
+const getMine = async function (startDate, endDate) {
+    const sql = `
+            SELECT
+            count(1) as count,
+            sum(amount) / 1000000 as all_amount,
+            sum(win_amount) / 1000000  as all_win,
+            (sum(amount) - sum(win_amount)) / 1000000  as balance
+        FROM
+            tron_bet_wzc.mine_event_log
+        WHERE
+            ts >= ?
+            AND ts < ?
+    `
+    const result = await raw(sql, [newUtcTime(startDate).getTime(), newUtcTime(endDate).getTime()])
+    let count = 0, all_amount = 0, all_win = 0, balance = 0
+    if (result && result.length === 1 && result[0]) {
+        if(result[0].count) count = result[0].count;
+        if(result[0].all_amount) all_amount = result[0].all_amount
+        if(result[0].all_win) all_win = result[0].all_win
+        if(result[0].balance) balance = result[0].balance
+    }
+    return  {
+        count: count,
+        all_amount: all_amount,
+        all_win: all_win,
+        balance: balance,
+    }
+}
+
 const getDuel = async function (startDate, endDate) {
     // const sql = `
     // SELECT
@@ -306,11 +341,12 @@ const getPoker = async function (startDate, endDate) {
 
 class DailyAmount {
 
-    static async getData(startDate,endDate) {
+    static async getData(startDate, endDate) {
         const typeDict = {
             "dice": getDice,
             "moon": getMoon,
             "ring": getRing,
+            "mine": getMine,
             "em": getEM,
             "hub88": getHub88,
             "platius": getPlatius,
@@ -325,8 +361,8 @@ class DailyAmount {
         }
         for (let e of keys) {
             const tmp = await typeDict[e](startDate, endDate)
-            console.log(e,tmp)
-            Object.keys(o).forEach(k=>{
+            console.log(e, tmp)
+            Object.keys(o).forEach(k => {
                 o[k] = o[k] + Number(tmp[k])
             })
         }
