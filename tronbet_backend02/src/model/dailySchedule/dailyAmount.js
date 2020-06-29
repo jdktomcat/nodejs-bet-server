@@ -120,7 +120,7 @@ const getMine = async function (startDate, endDate) {
             ts >= ?
             AND ts < ?
     `
-    const result = await raw(sql, [newUtcTime(startDate).getTime(), newUtcTime(endDate).getTime()])
+    const result = await raw(sql, [startDate + ' 00:00:00', endDate + ' 23:59:59'])
     let count = 0, all_amount = 0, all_win = 0, balance = 0
     if (result && result.length === 1 && result[0]) {
         if(result[0].count) count = result[0].count;

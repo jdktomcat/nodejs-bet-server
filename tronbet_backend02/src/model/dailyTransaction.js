@@ -36,7 +36,7 @@ const getMoon = async function (startDate, endDate) {
 const getMine = async function(startDate, endDate){
     const sql = `
             SELECT
-            from_unixtime(ts / 1000,'%Y-%m-%d') as day,
+            DATE_FORMAT(ts,'%Y-%m-%d') as day,
             count(distinct addr) as dau,
             count(1) as count,
             sum(amount) / 1000000 as all_amount,
@@ -47,12 +47,9 @@ const getMine = async function(startDate, endDate){
         WHERE
             ts >= ?
             AND ts < ?
-            group by from_unixtime(ts / 1000,'%Y-%m-%d')
+            group by DATE_FORMAT(ts,'%Y-%m-%d')
     `
-    const params = [
-        newUtcTime(startDate).getTime(),
-        newUtcTime(endDate).getTime()
-    ]
+    const params = [startDate + ' 00:00:00',endDate + '23:59:59']
     return await raw(sql, params)
 }
 
