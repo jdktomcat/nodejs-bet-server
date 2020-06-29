@@ -182,7 +182,7 @@ async function fixMinData() {
     //     const insertFlightSql = "insert into tron_bet_event.user_flight(addr, fuel, plant) values ? " +
     //         "on duplicate key update fuel=values(fuel)"
     //     const updateFlightResult = await dbUtil.query(insertFlightSql, [updateFlightData])
-    //     console.log('fix flight affected rows:')
+    //     console.log('fix 更新奖励发放状态 2020-06-29flight affected rows:')
     //     console.log(updateFlightResult.affectedRows)
     // }
     process.exit(0)
