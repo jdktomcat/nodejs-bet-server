@@ -99,9 +99,13 @@ function createActivityTable() {
 }
 
 function alertTable() {
-    const alertSql = 'ALTER TABLE tron_bet_wzc.mine_event_log MODIFY COLUMN order_state INT NOT NULL COMMENT \'订单状态\';  ';
+    // const alertSql = 'ALTER TABLE tron_bet_wzc.mine_event_log MODIFY COLUMN order_state INT NOT NULL COMMENT \'订单状态\';  ';
+    // const res = dbUtil.query(alertSql)
+    // console.log('alert table mine table mine_event_log success!' + res)
+    // process.exit(0)
+    const alertSql = `ALTER TABLE tron_bet_event.award_log ADD tx_id varchar(100) NULL COMMENT '支付交易标示' AFTER status;`
     const res = dbUtil.query(alertSql)
-    console.log('alert table mine table mine_event_log success!' + res)
+    console.log('alert table award log table award_log success!' + res)
     process.exit(0)
 }
 
@@ -177,6 +181,8 @@ async function fixMinData() {
     process.exit(0)
 }
 
+
+
 // createActivityTable()
-fixMinData()
+alertTable()
 
