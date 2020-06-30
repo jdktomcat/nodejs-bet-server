@@ -3,7 +3,7 @@ let pool;
 let promisePool;
 
 var db = {};
-db.init(config){
+db.init = async function(config){
 	pool = mysql.createPool({
 	    host:config.mysql['host'],
 	    port:config.mysql['port'],
