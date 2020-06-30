@@ -48,7 +48,7 @@ let config = {
     slaveSolidityNode: prdCfg.slave_solidity,
     slaveEventNode: prdCfg.slave_event,
     // 发放win合约
-    winToken:prdCfg.contract.WinToken,
+    winToken:'41b6637187b89b39f736bcd9c753a946f25b132552',
   },
   //
   boxConf: {

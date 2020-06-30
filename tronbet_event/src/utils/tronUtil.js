@@ -56,17 +56,22 @@ async function sendWin(addr, amount) {
         return null
     }
     //
-    tronConfig.winToken
-    console.log("tronConfig.winToken is ",tronConfig.winToken)
+    console.log("tronConfig.winToken is ", tronConfig.winToken)
     const ins = await tronWeb.contract().at(tronConfig.winToken)
     //
-    const options = {feeLimit: 1000 * 1e6, shouldPollResponse: true}
-    const balance = await ins.balanceOf(addr).call()
-    console.log("balance is ",balance)
-    const rs = await ins.transfer(addr, amount * 1000000).send(options)
-    console.log("rs is ",rs)
-    return rs
+    // const options = {feeLimit: 1000 * 1e6, shouldPollResponse: true}
+    // const balance = await ins.balanceOf('TYmLSP22fzNNHozSXN6ANQF97zp8rhRP7K').call()
+    // console.log("balance is ", balance)
+    try {
+        const rs = await ins.transfer(addr, amount * 1000000).send()
+        console.log("rs is ", rs)
+        return rs
+    } catch (e) {
+        console.log("error is ", e)
+        return ''
+    }
 }
+
 
 async function verifySignature(signature, address) {
     //return true

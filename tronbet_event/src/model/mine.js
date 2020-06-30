@@ -23,15 +23,12 @@ const sendWin = async function (addr, amount) {
     let insertSql = "insert into tron_bet_event.mine_send_log(addr, amount, currency, tx_id, ts) values (?,?,?,?,?)"
     await updateQuery(insertSql, [addr, amount, 'WIN', '', Date.now()])
     let tx = await tronUtils.sendWin(addr, amount)
-    if (tx.result !== true) {
-        return ''
-    } else {
-        const id = tx.transaction.txID
-        console.log("win id is ", id)
-        //
-        let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ?"
-        await updateQuery(updateSql, [id, addr])
-    }
+    //
+    const id = tx
+    console.log("win id is ", id)
+    //
+    let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ?"
+    await updateQuery(updateSql, [id, addr])
 }
 
 // {
@@ -57,7 +54,7 @@ async function saveActivityData(message) {
                 await updateQuery(insertSql, [addr, amount, currency, k, boxNum, Date.now()], t)
             }
             let sql1 = "select * from tron_bet_event.mine_box_count where addr = ? and type = ?"
-            let r1 = await rawQuery(sql1, [addr,k], t)
+            let r1 = await rawQuery(sql1, [addr, k], t)
             if (r1.length === 0) {
                 let sql2 = "insert into tron_bet_event.mine_box_count(addr,type,boxNum) values (?, ?,?)"
                 await updateQuery(sql2, [addr, k, boxNum], t)
