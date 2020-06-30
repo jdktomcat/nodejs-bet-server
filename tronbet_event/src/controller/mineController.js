@@ -1,6 +1,6 @@
 const model = require("./../model/mine")
 const tronUtils = require("./../utils/tronUtil");
-const notDebug = false
+const notDebug = true
 
 class mineController {
 
