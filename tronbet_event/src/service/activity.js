@@ -70,34 +70,52 @@ const whiteList = config.activity.whiteList
  * @param message 下注订单信息
  * @returns {Promise<void>}
  */
+const mine = require("./../model/mine")
 async function handleMsg(message) {
     console.log('bet info：' + message)
-    // save info
-    const messageData = JSON.parse(message)
-    if (!publish && whiteList.indexOf(messageData.addr) === -1) {
-        console.log('activity has not publish and addr:[%s] is not in whitelist', messageData.addr)
-        return
+    const now = Date.now()
+    if(now < new Date("2020-07-09").getTime()){
+        // save info
+        const messageData = JSON.parse(message)
+        await mine.saveActivityData(messageData)
     }
-    await activity.saveUserBetLog([[messageData.addr, messageData.order_id, messageData.amount, messageData.game_type]])
-    // update user integral
-    const nowTime = new Date().getTime()
-    if (nowTime >= championshipStartTime && nowTime < championshipEndTime) {
-        await activity.saveUserIntegral([[messageData.addr, activityUtil.calIntegral(nowTime, messageData.amount)]])
-    } else {
-        console.warn('not in championship period！')
-    }
-    // update user flight
-    if (nowTime >= flightStartTime && nowTime < flightEndTime) {
-        if (messageData.amount >= minMount) {
-            await activity.saveUserFlight([[messageData.addr, messageData.amount * fuelRate, 0]])
-        } else {
-            console.warn('less than flight min amount!')
-        }
-    } else {
-        console.warn('not in flight period!')
-        console.warn('now:' + nowTime + ' start:' + flightStartTime + ' end:' + flightEndTime)
-    }
-    console.log('bet log info saved！')
+    /**
+     *  addr : 'abc'
+     *  box : {
+     *      normal : 2,
+     *      silver : 10,
+     *      gorden : 0,
+     *  }
+     */
+    // insert
+
+
+    // // save info
+    // const messageData = JSON.parse(message)
+    // if (!publish && whiteList.indexOf(messageData.addr) === -1) {
+    //     console.log('activity has not publish and addr:[%s] is not in whitelist', messageData.addr)
+    //     return
+    // }
+    // await activity.saveUserBetLog([[messageData.addr, messageData.order_id, messageData.amount, messageData.game_type]])
+    // // update user integral
+    // const nowTime = new Date().getTime()
+    // if (nowTime >= championshipStartTime && nowTime < championshipEndTime) {
+    //     await activity.saveUserIntegral([[messageData.addr, activityUtil.calIntegral(nowTime, messageData.amount)]])
+    // } else {
+    //     console.warn('not in championship period！')
+    // }
+    // // update user flight
+    // if (nowTime >= flightStartTime && nowTime < flightEndTime) {
+    //     if (messageData.amount >= minMount) {
+    //         await activity.saveUserFlight([[messageData.addr, messageData.amount * fuelRate, 0]])
+    //     } else {
+    //         console.warn('less than flight min amount!')
+    //     }
+    // } else {
+    //     console.warn('not in flight period!')
+    //     console.warn('now:' + nowTime + ' start:' + flightStartTime + ' end:' + flightEndTime)
+    // }
+    // console.log('bet log info saved！')
 }
 
 module.exports = {

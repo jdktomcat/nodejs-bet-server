@@ -46,8 +46,11 @@ let config = {
 
     slaveFullNode: prdCfg.slave_full,
     slaveSolidityNode: prdCfg.slave_solidity,
-    slaveEventNode: prdCfg.slave_event
+    slaveEventNode: prdCfg.slave_event,
+    // 发放win合约
+    winToken:prdCfg.contract.WinToken,
   },
+  //
   boxConf: {
     // 10 种牌 越来越难得 就是这个逻辑
     goodsRate: [
