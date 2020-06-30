@@ -1428,7 +1428,7 @@ async function initCheckOrders(){
 /*
  * 刷新USDT对TRX的价格
  */
-function refreshPrice(){
+async function refreshPrice(){
 	setTimeout(() => {
 		let sql="select count from TRX_USD order by tid desc limit 1";	
 		let res=await db.query(sql,[]);
