@@ -1432,10 +1432,10 @@ async function refreshPrice(){
 	setTimeout(async () => {
 		let sql="select count from TRX_USD order by tid desc limit 1";	
 		let res=await db.query(sql,[]);
-		console.log(res);
 		if(res){
 			exchangeMap['usdt']=res[0].price;
 		}
+		console.log(JSON.stringify(exchangeMap));
 		refreshPrice();
 	},3000);
 }
