@@ -1431,7 +1431,7 @@ async function initCheckOrders(){
 function refreshPrice(){
 	setTimeout(() => {
 		let sql="select count from TRX_USD order by tid desc limit 1";	
-		let res=db.query(sql,);
+		let res=db.query(sql,[]);
 		console.log(res);
 		if(res){
 			exchangeMap['usdt']=res[0].price;

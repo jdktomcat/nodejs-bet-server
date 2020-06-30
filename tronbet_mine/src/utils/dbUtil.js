@@ -29,6 +29,7 @@ db.exec = async function (sql, param) {
  */
 db.query = async function (sql, param) {
     let ret = await promisePool.query(sql, param);
+    console.log(ret);
     return ret[0];
 }
 
