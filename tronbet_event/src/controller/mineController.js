@@ -21,6 +21,7 @@ class mineController {
     }
 
     static async queryBoxNum(ctx) {
+        console.log("ctx.body ",ctx.body)
         const {addr} = ctx.body || {}
         const data = await model.queryBoxNum(addr)
         return ctx.body = {code: 200, data: data, message: "success"}
