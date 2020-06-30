@@ -301,12 +301,7 @@ const exchangeCard = async function (type, addr) {
     })
 }
 
-async function sellCard(type, addr, letter, sign) {
-    //签名校验
-    let signResult = await tronUtils.verifySignature(sign, addr);
-    if (!signResult) {
-        //
-    }
+async function sellCard(type, addr, letter) {
     await sequelize.transaction(async (t) => {
         const sql1 = `select * from tron_bet_event.mine_letter where addr = ?`
         const data1 = await rawQuery(sql1, [addr], t)

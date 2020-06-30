@@ -88,14 +88,14 @@ class mineController {
      *         2 所有字母
      */
     static async sellCard(ctx) {
-        const {addr, type, sign} = ctx.request.body || {}
+        const {addr, type, sign, letter} = ctx.request.body || {}
         //签名校验
         let signResult = await tronUtils.verifySignature(sign, addr);
         if (notDebug && !signResult) {
             return ctx.body = {code: 500, message: 'identify error!', data: []}
         }
         try {
-            const data = await model.openMineBox(type, addr)
+            const data = await model.sellCard(type, addr, letter)
             return ctx.body = {code: 200, data: data, message: "success"}
         } catch (e) {
             return ctx.body = {code: 500, message: e.toString(), data: []}
