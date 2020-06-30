@@ -4,6 +4,22 @@ const notDebug = false
 
 class mineController {
 
+    static async test(ctx) {
+        const {addr} = ctx.request.query || {}
+        const a = {
+            addr: addr,   //地址
+            currency: 'TRX',//币种
+            amount: 1000,//
+            box: {
+                normal: 3000,
+                silver: 2000,
+                gorden: 1000
+            }
+        }
+        const data = await model.saveActivityData(a)
+        return ctx.body = {code: 200, data: data, message: "success"}
+    }
+
     static async queryBoxNum(ctx) {
         const {addr} = ctx.body || {}
         const data = await model.queryBoxNum(addr)
