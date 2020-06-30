@@ -108,6 +108,8 @@ module.exports = {
     tronbet_event01: 18058,
     tronbet_event02: 18058,
 
+    tronbet_mine:17001,
+
 
     tronlive_emserver: 18060,
     tronlive_platinus: 18072,
