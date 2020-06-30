@@ -2,7 +2,7 @@ const {openProductRateSchedule} = require("./productRateSchedule")
 const liveTrxStart = require("./liveTrxStart")
 const liveUsdtStart = require("./liveUsdtStart")
 const liveBalanceAudit = require("./liveBalanceAudit")
-const liveScanReload = require("./liveScanReload")
+// const liveScanReload = require("./liveScanReload")
 const monthSchedule = require("./../monthschedule/main")
 
 const main = async function () {
@@ -11,7 +11,7 @@ const main = async function () {
     await liveUsdtStart()
     await liveBalanceAudit()
     // 扫描
-    liveScanReload()
+    // liveScanReload()
     //
     monthSchedule()
 }
