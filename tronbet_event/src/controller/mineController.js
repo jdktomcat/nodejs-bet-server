@@ -39,6 +39,12 @@ class mineController {
         return ctx.body = {code: 200, data: data, message: "success"}
     }
 
+    static async queryHeroList(ctx) {
+        const {addr} = ctx.request.body || {}
+        const data = await model.queryHeroList()
+        return ctx.body = {code: 200, data: data, message: "success"}
+    }
+
     /**
      * type : normal,silver,gorden
      */

@@ -106,6 +106,16 @@ const querySendLogs = async function (addr) {
     return r1
 }
 
+
+/**
+ * 排行榜
+ */
+const queryHeroList = async function () {
+    let sql1 = "select addr,sum(boxNum) as boxNum from tron_bet_event.mine_box where type = 'hero' group by addr order by sum(boxNum) desc"
+    let r1 = await rawQuery(sql1, [])
+    return r1
+}
+
 // 开宝箱 （单个卡片价格0.374TRX）
 // 卡片     权重     概率     价值
 // D     2000     12.90%     0.05
@@ -453,5 +463,5 @@ module.exports = {
     //
     sellCard,
     //
-    oneTypeBoxRate
+    queryHeroList
 }
