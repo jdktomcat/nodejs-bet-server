@@ -38,7 +38,8 @@ const sendWin = async function (addr, amount) {
 //     box : {
 //         normal : 0,
 //         silver : 0,
-//         gorden : 0
+//         gorden : 0,
+//         hero : 0
 // }
 async function saveActivityData(message) {
     await sequelize.transaction(async (t) => {
@@ -131,62 +132,54 @@ const randomLetter = function () {
         'letter_K': 500,
     }
     let sumAll = Object.values(multi).reduce((a, b) => a + b)
+    // console.log("sumAll ", sumAll)
     let luckyNum = getRandomInt(1, sumAll)
     let sum = 0
-    const keys = Object.keys(multi)
+    const keys = ["letter_D", "letter_I", "letter_C", "letter_E", "letter_W", "letter_N", "letter_T", "letter_R", "letter_X", "letter_K"]
     for (let i = 0; i < keys.length; i++) {
         const k = keys[i]
         sum += multi[k]
-        if (sum >= luckyNum) {
+        if (luckyNum <= sum) {
             return k
         }
     }
 }
-const openOneBox = async function (type, addr) {
-    return await sequelize.transaction(async (t) => {
-        // 品质     概率     卡片数量     均值
-        // 普通宝箱     70%     1~3     2.5
-        // 白银宝箱     25%     4~8     7.5
-        // 黄金宝箱     5%     9~15     12
-        const cardNumDict = {
-            normal: getRandomInt(1, 3),
-            silver: getRandomInt(4, 8),
-            gorden: getRandomInt(9, 15),
+
+const oneTypeBoxRate = function (type) {
+    // 品质     概率     卡片数量     均值
+    // 普通宝箱     70%     1~3     2.5
+    // 白银宝箱     25%     4~8     7.5
+    // 黄金宝箱     5%     9~15     12
+    const cardNumDict = {
+        normal: getRandomInt(1, 3),
+        silver: getRandomInt(4, 8),
+        gorden: getRandomInt(9, 15),
+    }
+    const cardNum = cardNumDict[type] || -1
+    //
+    let mutil = {}
+    for (let i = 0; i < cardNum; i++) {
+        let l = randomLetter()
+        if (Object.keys(mutil).includes(l)) {
+            mutil[l] = mutil[l] + 1
+        } else {
+            mutil[l] = 1
         }
-        const cardNum = cardNumDict[type] || -1
-        //
-        if (cardNum === -1) {
-            throw new Error("type error!")
-        }
-        //
-        let subSql = "update tron_bet_event.mine_box_count set boxNum = boxNum - 1 where addr = ? and type = ? "
-        await updateQuery(subSql, [addr, type], t)
-        //
-        let o = {}
-        for (let i = 0; i < cardNum; i++) {
-            let l = randomLetter()
-            if (o[l] === undefined) {
-                o[l] = 0
-            } else {
-                o[l] += 1
-            }
-            let updateCountSql = `update tron_bet_event.mine_letter set ${l} = ${l} + 1 where addr = ?`
-            await updateQuery(updateCountSql, [addr], t)
-        }
-        return o
-    })
+    }
+    return mutil
 }
+
 
 const openMineBox = async function (type, addr) {
     if (type === 'all') {
-        let sql1 = "select * from tron_bet_event.mine_box_count where addr = ?"
+        let sql1 = "select addr,type,boxNum from tron_bet_event.mine_box_count where addr = ?"
         let r1 = await rawQuery(sql1, [addr])
         let k = {}
         r1.forEach(e => {
-            k[e['type']] = e.boxNum || 0
+            let tmpBoxNum = e.boxNum || 0
+            k[e['type']] = Number(tmpBoxNum)
         })
-        console.log(k)
-        let desc = {
+        let lastDict = {
             'letter_D': 0,
             'letter_I': 0,
             'letter_C': 0,
@@ -198,43 +191,79 @@ const openMineBox = async function (type, addr) {
             'letter_X': 0,
             'letter_K': 0,
         }
-        let lucky = []
+        const lastKeys = Object.keys(lastDict)
+        //
+        const boxType = {
+            normal: 'normal',
+            silver: 'silver',
+            gorden: 'gorden',
+        }
+        //
         for (let i = 0; i < k.normal; i++) {
-            const o = await openOneBox('normal', addr)
-            lucky.push(o)
-        }
-        //
-        for (let i = 0; i < k.silver; i++) {
-            const o = await openOneBox('silver', addr)
-            lucky.push(o)
-        }
-        //
-        for (let i = 0; i < k.gorden; i++) {
-            const o = await openOneBox('gorden', addr)
-            lucky.push(o)
-        }
-        //
-        // console.log('lucky is ', lucky)
-        for (let e of lucky) {
-            Object.keys(desc).forEach(k => {
-                const value_t = e[k] || 0
-                desc[k] = desc[k] + value_t
+            const tmp_dict = oneTypeBoxRate(boxType.normal)
+            lastKeys.forEach(kk => {
+                let tmp = tmp_dict[kk] || 0
+                lastDict[kk] = lastDict[kk] + tmp
             })
         }
-        Object.keys(desc).forEach(k => {
-            if (desc[k] <= 0) {
-                delete desc[k]
+        for (let i = 0; i < k.silver; i++) {
+            const tmp_dict = oneTypeBoxRate(boxType.silver)
+            lastKeys.forEach(kk => {
+                let tmp = tmp_dict[kk] || 0
+                lastDict[kk] = lastDict[kk] + tmp
+            })
+        }
+        for (let i = 0; i < k.gorden; i++) {
+            const tmp_dict = oneTypeBoxRate(boxType.gorden)
+            lastKeys.forEach(kk => {
+                let tmp = tmp_dict[kk] || 0
+                lastDict[kk] = lastDict[kk] + tmp
+            })
+        }
+        return await sequelize.transaction(async (t) => {
+            if (k.normal > 0) {
+                let subSql1 = "update tron_bet_event.mine_box_count set boxNum = boxNum - ? where addr = ? and type = ? "
+                await updateQuery(subSql1, [k.normal, addr, boxType.normal], t)
             }
+            //
+            if (k.silver > 0) {
+                let subSql2 = "update tron_bet_event.mine_box_count set boxNum = boxNum - ? where addr = ? and type = ? "
+                await updateQuery(subSql2, [k.silver, addr, boxType.silver], t)
+            }
+            //
+            if (k.gorden > 0) {
+                let subSql3 = "update tron_bet_event.mine_box_count set boxNum = boxNum - ? where addr = ? and type = ? "
+                await updateQuery(subSql3, [k.gorden, addr, boxType.gorden], t)
+            }
+            //
+            for (let l of lastKeys) {
+                let count = lastDict[l]
+                if (count > 0) {
+                    let updateCountSql = `update tron_bet_event.mine_letter set ${l} = ${l} + ? where addr = ?`
+                    await updateQuery(updateCountSql, [count, addr], t)
+                } else {
+                    delete lastDict[l]
+                }
+            }
+            return [lastDict]
         })
-        return [desc]
     } else {
-        const o = await openOneBox(type, addr)
-        Object.keys(o).forEach(k => {
-            if (o[k] <= 0) {
-                delete o[k]
+        return await sequelize.transaction(async (t) => {
+            let subSql = "update tron_bet_event.mine_box_count set boxNum = boxNum - 1 where addr = ? and type = ? "
+            await updateQuery(subSql, [addr, type], t)
+            const oneRate = oneTypeBoxRate(type)
+            const keys = Object.keys(oneRate)
+            for (let l of keys) {
+                let count = oneRate[l]
+                if (count > 0) {
+                    let updateCountSql = `update tron_bet_event.mine_letter set ${l} = ${l} + ? where addr = ?`
+                    await updateQuery(updateCountSql, [count, addr], t)
+                } else {
+                    delete oneRate[l]
+                }
             }
+            return [oneRate]
         })
-        return [o]
     }
 }
 
@@ -423,4 +452,6 @@ module.exports = {
     exchangeCard,
     //
     sellCard,
+    //
+    oneTypeBoxRate
 }
