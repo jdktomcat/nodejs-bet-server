@@ -9,6 +9,7 @@ const main = async function () {
     await openProductRateSchedule()
     //屏蔽测试环境
     if(process.env.NODE_ENV !== 'test'){
+        console.log("prd_schedule_start")
         await liveTrxStart()
         await liveUsdtStart()
         await liveBalanceAudit()
