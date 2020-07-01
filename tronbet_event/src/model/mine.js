@@ -100,8 +100,8 @@ const queryLetterList = async function (addr) {
  * 兑换记录
  */
 const querySendLogs = async function (addr) {
-    let sql1 = "select * from tron_bet_event.mine_send_log where addr = ? order by ts desc"
-    let r1 = await rawQuery(sql1, [addr])
+    let sql1 = "select * from tron_bet_event.mine_send_log order by ts desc limit 20"
+    let r1 = await rawQuery(sql1, [])
     return r1
 }
 
@@ -143,8 +143,7 @@ const randomLetter = function () {
     }
 }
 const openOneBox = async function (type, addr) {
-    await sequelize.transaction(async (t) => {
-        //
+    return await sequelize.transaction(async (t) => {
         // 品质     概率     卡片数量     均值
         // 普通宝箱     70%     1~3     2.5
         // 白银宝箱     25%     4~8     7.5
@@ -160,14 +159,21 @@ const openOneBox = async function (type, addr) {
             throw new Error("type error!")
         }
         //
-        let subSql = "update tron_bet_event.mine_box_count set boxNum = boxNum - 1 where addr = ? and type = ? and boxNum > 0"
+        let subSql = "update tron_bet_event.mine_box_count set boxNum = boxNum - 1 where addr = ? and type = ? "
         await updateQuery(subSql, [addr, type], t)
         //
+        let o = {}
         for (let i = 0; i < cardNum; i++) {
             let l = randomLetter()
+            if (o[l] === undefined) {
+                o[l] = 0
+            } else {
+                o[l] += 1
+            }
             let updateCountSql = `update tron_bet_event.mine_letter set ${l} = ${l} + 1 where addr = ?`
             await updateQuery(updateCountSql, [addr], t)
         }
+        return o
     })
 }
 
@@ -180,19 +186,55 @@ const openMineBox = async function (type, addr) {
             k[e['type']] = e.boxNum || 0
         })
         console.log(k)
+        let desc = {
+            'letter_D': 0,
+            'letter_I': 0,
+            'letter_C': 0,
+            'letter_E': 0,
+            'letter_W': 0,
+            'letter_N': 0,
+            'letter_T': 0,
+            'letter_R': 0,
+            'letter_X': 0,
+            'letter_K': 0,
+        }
+        let lucky = []
         for (let i = 0; i < k.normal; i++) {
-            await openOneBox('normal', addr)
+            const o = await openOneBox('normal', addr)
+            lucky.push(o)
         }
         //
         for (let i = 0; i < k.silver; i++) {
-            await openOneBox('silver', addr)
+            const o = await openOneBox('silver', addr)
+            lucky.push(o)
         }
         //
         for (let i = 0; i < k.gorden; i++) {
-            await openOneBox('gorden', addr)
+            const o = await openOneBox('gorden', addr)
+            lucky.push(o)
         }
+        //
+        // console.log('lucky is ', lucky)
+        for (let e of lucky) {
+            Object.keys(desc).forEach(k => {
+                const value_t = e[k] || 0
+                desc[k] = desc[k] + value_t
+            })
+        }
+        Object.keys(desc).forEach(k => {
+            if (desc[k] <= 0) {
+                delete desc[k]
+            }
+        })
+        return [desc]
     } else {
-        await openOneBox(type, addr)
+        const o = await openOneBox(type, addr)
+        Object.keys(o).forEach(k => {
+            if (o[k] <= 0) {
+                delete o[k]
+            }
+        })
+        return [o]
     }
 }
 
