@@ -7,13 +7,14 @@ const monthSchedule = require("./../monthschedule/main")
 
 const main = async function () {
     await openProductRateSchedule()
-    await liveTrxStart()
-    await liveUsdtStart()
-    await liveBalanceAudit()
-    // 扫描
-    // liveScanReload()
-    //
-    monthSchedule()
+    //屏蔽测试环境
+    if(process.env.NODE_ENV !== 'test'){
+        await liveTrxStart()
+        await liveUsdtStart()
+        await liveBalanceAudit()
+        monthSchedule()
+    }
+
 }
 
 module.exports = main
