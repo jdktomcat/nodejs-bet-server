@@ -40,7 +40,10 @@ class mineController {
     }
 
     static async queryHeroList(ctx) {
-        const {addr} = ctx.request.body || {}
+        const addr = ctx.request.query.addr || ''
+        if(addr === ''){
+            return ctx.body = {code: 500, message: 'addr error!', data: []}
+        }
         const data = await model.queryHeroList()
         return ctx.body = {code: 200, data: data, message: "success"}
     }
