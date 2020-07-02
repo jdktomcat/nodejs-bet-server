@@ -1,6 +1,5 @@
 const model = require("./../model/mine")
 const tronUtils = require("./../utils/tronUtil");
-const notDebug = true
 
 class mineController {
 
@@ -40,9 +39,14 @@ class mineController {
     }
 
     static async queryHeroList(ctx) {
-        const addr = ctx.request.query.addr || ''
+        const {addr, sign} = ctx.request.body || {}
         if(addr === ''){
             return ctx.body = {code: 500, message: 'addr error!', data: []}
+        }
+        //签名校验
+        let signResult = await tronUtils.verifySignature(sign, addr);
+        if (!signResult) {
+            return ctx.body = {code: 500, message: 'identify error!', data: []}
         }
         const data = await model.queryHeroList(addr)
         return ctx.body = {code: 200, data: data, message: "success"}
@@ -55,7 +59,7 @@ class mineController {
         const {addr, type, sign} = ctx.request.body || {}
         //签名校验
         let signResult = await tronUtils.verifySignature(sign, addr);
-        if (notDebug && !signResult) {
+        if (!signResult) {
             return ctx.body = {code: 500, message: 'identify error!', data: []}
         }
         try {
@@ -77,7 +81,7 @@ class mineController {
         const {type, addr, sign} = ctx.request.body || {}
         //签名校验
         let signResult = await tronUtils.verifySignature(sign, addr);
-        if (notDebug && !signResult) {
+        if (!signResult) {
             return ctx.body = {code: 500, message: 'identify error!', data: []}
         }
         try {
@@ -100,7 +104,7 @@ class mineController {
         const {addr, type, sign, letter} = ctx.request.body || {}
         //签名校验
         let signResult = await tronUtils.verifySignature(sign, addr);
-        if (notDebug && !signResult) {
+        if (!signResult) {
             return ctx.body = {code: 500, message: 'identify error!', data: []}
         }
         try {
