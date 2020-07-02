@@ -6,29 +6,39 @@ const tronUtils = require("./../utils/tronUtil")
  */
 const sendTRX = async function (addr, amount) {
     //insert 流水
-    let insertSql = "insert into tron_bet_event.mine_send_log(addr, amount, currency, tx_id, ts) values (?,?,?,?,?)"
-    await updateQuery(insertSql, [addr, amount, 'TRX', '', Date.now()])
-    let tx = await tronUtils.sendTRX(addr, amount)
-    if (tx.result !== true) {
-        return ''
-    } else {
-        const id = tx.transaction.txID
-        //
-        let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ?"
-        await updateQuery(updateSql, [id, addr])
+    try {
+        let insertSql = "insert into tron_bet_event.mine_send_log(addr, amount, currency, tx_id, ts) values (?,?,?,?,?)"
+        await updateQuery(insertSql, [addr, amount, 'TRX', '', Date.now()])
+        let tx = await tronUtils.sendTRX(addr, amount)
+        if (tx.result !== true) {
+            return ''
+        } else {
+            const id = tx.transaction.txID
+            //
+            let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ?"
+            await updateQuery(updateSql, [id, addr])
+        }
+    } catch (e) {
+        console.log("sendTRX error is " + e.toString())
+        throw e
     }
 }
 const sendWin = async function (addr, amount) {
-    //insert 流水
-    let insertSql = "insert into tron_bet_event.mine_send_log(addr, amount, currency, tx_id, ts) values (?,?,?,?,?)"
-    await updateQuery(insertSql, [addr, amount, 'WIN', '', Date.now()])
-    let tx = await tronUtils.sendWin(addr, amount)
-    //
-    const id = tx
-    console.log("win id is ", id)
-    //
-    let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ?"
-    await updateQuery(updateSql, [id, addr])
+    try {
+        //insert 流水
+        let insertSql = "insert into tron_bet_event.mine_send_log(addr, amount, currency, tx_id, ts) values (?,?,?,?,?)"
+        await updateQuery(insertSql, [addr, amount, 'WIN', '', Date.now()])
+        let tx = await tronUtils.sendWin(addr, amount)
+        //
+        const id = tx
+        console.log("win id is ", id)
+        //
+        let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ?"
+        await updateQuery(updateSql, [id, addr])
+    } catch (e) {
+        console.log("sendTRX error is " + e.toString())
+        throw e
+    }
 }
 
 // {
@@ -85,7 +95,7 @@ const getRandomInt = function (min, max) {
 }
 
 const queryBoxNum = async function (addr) {
-    let sql1 = "select addr,type,boxNum from tron_bet_event.mine_box_count where addr = ?"
+    let sql1 = "select addr,type,boxNum from tron_bet_event.mine_box_count where addr = ? and type != 'hero' "
     let r1 = await rawQuery(sql1, [addr])
     return r1
 }
