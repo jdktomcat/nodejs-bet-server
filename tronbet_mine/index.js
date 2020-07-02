@@ -1590,6 +1590,8 @@ function sendGameMsg(addr,currency,amount,heroDrapRate) {
  * 这个函数需要返回一个整数
  */
 function getEqualTrxAmount(currency,amount){
+	console.log("currency:%s",currency);
+	console.log("amount:%s",amount);
 	let rate=exchangeMap[currency];
 	if(!rate){
 		return 0;//不支持挖宝箱活动
@@ -1599,7 +1601,9 @@ function getEqualTrxAmount(currency,amount){
 		return 0;
 	}
 	amount=amount/dp;//去掉小数点 
-	return Math.floor((rate*amount));
+	fm=Math.floor((rate*amount));
+	console.log("fm:%s",fm);
+	return fm;
 }
 
 /*
