@@ -131,7 +131,7 @@ const queryHeroList = async function (addr) {
     r1.forEach(k => {
         const addr_row = k.addr || 0
         const tmp = k.amount || 0
-        const tmp2 = tmp / trx_amount
+        const tmp2 = tmp / sum * trx_amount
         const tmp3 = Math.floor(tmp2 * 100) / 100
         k.trx = tmp3 + 'TRX'
         //
