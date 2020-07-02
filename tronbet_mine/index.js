@@ -743,7 +743,7 @@ function processMine(socket,data,order){
 			//通关这列雷 通关进度通关进度增加
 
 			let boxs=sendGameMsg(data.addr,'trx',order.orderAmount,0);//有一定概率获取到宝箱
-			if(boxs && (boxs.boxCount>0){
+			if(boxs && boxs.boxCount>0){
 				userLatestRedisInfo.boxs=boxs;
 			}
 
