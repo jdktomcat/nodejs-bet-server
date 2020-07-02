@@ -54,7 +54,7 @@ async function saveActivityData(message) {
                 // history
                 let insertSql = "insert into tron_bet_event.mine_box(addr, amount,currency,type, boxNum ,ts) values (?, ?,?,?,?,?)"
                 await updateQuery(insertSql, [addr, amount, currency, k, boxNum, Date.now()], t)
-                // 
+                //
                 let sql1 = "select * from tron_bet_event.mine_box_count where addr = ? and type = ?"
                 let r1 = await rawQuery(sql1, [addr, k], t)
                 if (r1.length === 0) {
@@ -386,7 +386,7 @@ const exchangeCard = async function (type, addr) {
     })
 }
 
-async function sellCard(type, addr, letter) {
+async function sellCard(type, addr, letter_array) {
     await sequelize.transaction(async (t) => {
         const sql1 = `select * from tron_bet_event.mine_letter where addr = ?`
         const data1 = await rawQuery(sql1, [addr], t)
@@ -404,29 +404,34 @@ async function sellCard(type, addr, letter) {
                 'letter_X': Number(data1[0].letter_X),
                 'letter_K': Number(data1[0].letter_K),
             }
+            const letterKeys = Object.keys(res)
+            if (!letter_array instanceof Array) {
+                throw new Error("letter_array is not array !")
+            }
             if (type === '1') {
                 //出售单个字母
-                if (Object.keys(res).includes(letter)) {
-                    const winNumber = res[letter] || 0
-                    const sql2 =
-                        `update tron_bet_event.mine_letter 
+                for (let letter of letter_array) {
+                    if (letterKeys.includes(letter)) {
+                        const winNumber = res[letter] || 0
+                        const sql2 =
+                            `update tron_bet_event.mine_letter 
                     set ${letter} = 0
                     where addr = ? `
-                    //
-                    await updateQuery(sql2, [addr], t)
-                    const winSum = Number(winNumber) * 10
-                    //todo send done
-                    if (winSum > 0) {
-                        await sendWin(addr, winSum)
+                        //
+                        await updateQuery(sql2, [addr], t)
+                        const winSum = Number(winNumber) * 10
+                        //todo send done
+                        if (winSum > 0) {
+                            await sendWin(addr, winSum)
+                        }
+                    } else {
+                        throw new Error("fuck letter")
                     }
-                } else {
-                    throw new Error("fuck letter")
                 }
             } else if (type === '2') {
-                //出售单个字母
-                if (Object.keys(res).includes(letter)) {
-                    const sql2 =
-                        `update tron_bet_event.mine_letter 
+                //出售所有字母
+                const sql2 =
+                    `update tron_bet_event.mine_letter 
                     set 
                     letter_D = 0,
                     letter_I = 0,
@@ -439,17 +444,16 @@ async function sellCard(type, addr, letter) {
                     letter_X = 0,
                     letter_K = 0
                     where addr = ? `
-                    await updateQuery(sql2, [addr], t)
-                    //
-                    let sumAll = Object.values(res).reduce((a, b) => a + b)
-                    const winSum = Number(sumAll) * 10
-                    //todo send  done
-                    if (winSum > 0) {
-                        await sendWin(addr, winSum)
-                    }
-                } else {
-                    throw new Error("fuck letter")
+                await updateQuery(sql2, [addr], t)
+                //
+                let sumAll = Object.values(res).reduce((a, b) => a + b)
+                const winSum = Number(sumAll) * 10
+                //todo send  done
+                if (winSum > 0) {
+                    await sendWin(addr, winSum)
                 }
+            } else {
+                throw new Error("fuck letter")
             }
         }
     })
