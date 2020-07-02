@@ -1134,12 +1134,9 @@ function generateMines(height,width){
 	let mines=new Uint8Array(32);
 	let index=31;//最右边是第一个雷
 	for(var i=0;i<width;i++){
-			let mi=Math.floor(Math.random()*height)+1;//地雷的位置
-			if(mi==1){
-				mi++;
-			}
-			mines[index]=mi;
-			index--;
+		let mi=Math.floor(Math.random()*height)+1;//地雷的位置
+		mines[index]=mi;
+		index--;
 	}
 	return mines;
 }
@@ -1595,8 +1592,6 @@ function sendGameMsg(addr,currency,amount,heroDrapRate) {
  * 这个函数需要返回一个整数
  */
 function getEqualTrxAmount(currency,amount){
-	console.log("currency:%s",currency);
-	console.log("amount:%s",amount);
 	let rate=exchangeMap[currency];
 	if(!rate){
 		return 0;//不支持挖宝箱活动
@@ -1648,7 +1643,9 @@ function getTreasures(addr,currency,amount,trxAmount,heroDrapRate){
 			}
 		}
 	}
-	if(heroDrapRate>0 && Math.floor(Math.random()*101)<=heroDrapRate){
+	let hrn=Math.floor(Math.random()*101);
+	console.log("hrn:%s heroDrapRate:%s",hrn,heroDrapRate);
+	if(heroDrapRate>0 && hrn<=heroDrapRate){
 		rs.box.hero=rs.box.hero+1;
 		rs.boxCount=rs.boxCount+1;
 	}
