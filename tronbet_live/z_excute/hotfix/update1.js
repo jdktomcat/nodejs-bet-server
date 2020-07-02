@@ -65,4 +65,12 @@ const test1 = async function(){
     await rawQuery(sql4,[])
 }
 
-module.exports = test1()
+test1().then(()=>{
+    console.log("done!")
+    process.exit(0)
+}).catch(e=>{
+    console.log("error is " + e.toString())
+    process.exit(1)
+})
+
+module.exports = test1
