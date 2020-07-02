@@ -776,6 +776,7 @@ function processMine(socket,data,order){
 					result.data.userSteps.push(userLatestRedisInfo.mineSteps[i]);
 					result.data.mines.push(userLatestRedisInfo.mines[i]);
 				}
+				console.log(result);
 				//提交用户step 给它
 				socket.emit(MINE_RESULT,result);	
 				return;
@@ -1212,6 +1213,7 @@ async function endGame(socket,addr,userLatestRedisInfo,eventName,errorCode){
 					}
 				}
 			}
+			console.log(result);
 			socketEmit(socket,addr,eventName,result);//[mark]
 			return;
 		});
