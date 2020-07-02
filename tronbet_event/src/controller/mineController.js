@@ -11,9 +11,9 @@ class mineController {
             currency: 'TRX',//币种
             amount: 1000,//
             box: {
-                normal: 3000,
-                silver: 2000,
-                gorden: 1000
+                normal: 100,
+                silver: 20,
+                gorden: 2
             }
         }
         const data = await model.saveActivityData(a)
