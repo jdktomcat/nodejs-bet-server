@@ -729,15 +729,17 @@ function processMine(socket,data,order){
 		//判断是否到了终点
 		let mineFieldW=order.mineFieldW;
 		if(data.col==order.mineFieldW){
+
 			//结束游戏，用户通关游戏
-			userLatestRedisInfo.mineSteps[0]=mineFieldW;
-			userLatestRedisInfo.gameResult=GAME_RESULT_WIN;//可以增加赢的金额
-			endGame(socket,data.addr,userLatestRedisInfo,MINE_RESULT);
-			
 			let boxs=sendGameMsg(data.addr,'trx',order.orderAmount,getHeroDropRate(order.mineFieldH,order.mineFieldW,order.gameModel==GAME_MODEL_HERO));//有一定概率获取到宝箱
 			if(boxs && boxs.boxCount>0){
 				userLatestRedisInfo.boxs=boxs;
 			}
+			userLatestRedisInfo.mineSteps[0]=mineFieldW;
+			userLatestRedisInfo.gameResult=GAME_RESULT_WIN;//可以增加赢的金额
+			endGame(socket,data.addr,userLatestRedisInfo,MINE_RESULT);
+			
+
 		}else{
 			//存储到redis里面去，然后返回结果
 			//通关这列雷 通关进度通关进度增加

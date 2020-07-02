@@ -59,7 +59,7 @@ module.exports = {
     TronBetDice20: '4128094fa46cca02c1139495d261b73a846f07e78a',
     TronBetDiceOraclize20: '41281098dbaa7f0f709bd2afc0f8f543ed48a1f34b',
 
-    TronBetMine:'41160af67adaccad61f124485d59f0a33fbb2a86b4',////TWoqX8MhU6K32shRBKzfzTFsQpkETyXGMA
+    TronBetMine:'41160af67adaccad61f124485d59f0a33fbb2a86b4',//TBykzzJbxa3FUbat6ast1zajvQ7Zyz9Nua
     TronBetMineOracle:'41345fce06af0a60ea57c01e7ef35a6d74f19ebdd0',//TEk8ufgEqVEQk2QmvPVTazFkH79WVXXXwd
     TronBetMinerHero:'4134f90e7e64e30ccb56c707ef4ea2616a1af2df89',//TEoJVnqzUsMT5qNbtQqnTxipn6C32QeZrj
     TronBetMinerHeroPool:'412eacb07ac4d468c5be2ad2c70da1151778f8c3c1',//TEDzxYvWhETYopeoYSk1soHQpJmspq1j5v
