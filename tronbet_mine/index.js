@@ -1134,8 +1134,12 @@ function generateMines(height,width){
 	let mines=new Uint8Array(32);
 	let index=31;//最右边是第一个雷
 	for(var i=0;i<width;i++){
-		mines[index]=Math.floor(Math.random()*height)+1;//地雷的位置
-		index--;
+			let mi=Math.floor(Math.random()*height)+1;//地雷的位置
+			if(mi==1){
+				mi++;
+			}
+			mines[index]=mi;
+			index--;
 	}
 	return mines;
 }
