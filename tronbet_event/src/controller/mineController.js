@@ -44,7 +44,7 @@ class mineController {
         if(addr === ''){
             return ctx.body = {code: 500, message: 'addr error!', data: []}
         }
-        const data = await model.queryHeroList()
+        const data = await model.queryHeroList(addr)
         return ctx.body = {code: 200, data: data, message: "success"}
     }
 

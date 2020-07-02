@@ -112,10 +112,40 @@ const querySendLogs = async function (addr) {
 /**
  * 排行榜
  */
-const queryHeroList = async function () {
-    let sql1 = "select addr,sum(boxNum) as boxNum from tron_bet_event.mine_box where type = 'hero' group by addr order by sum(boxNum) desc"
+const queryHeroList = async function (addr) {
+    let sql1 = "select addr,sum(boxNum) as amount from tron_bet_event.mine_box where type = 'hero' group by addr order by sum(boxNum) desc"
     let r1 = await rawQuery(sql1, [])
-    return r1
+    //
+    let sum = 0
+    let self_info = {
+        addr: addr,
+        amount: 0,
+        trx: 0,
+    }
+    r1.forEach(e => {
+        const tmp = e.amount || 0
+        sum += tmp
+    })
+    //
+    const trx_amount = 30 * 10000
+    r1.forEach(k => {
+        const addr_row = k.addr || 0
+        const tmp = k.amount || 0
+        const tmp2 = tmp / trx_amount
+        const tmp3 = Math.floor(tmp2 * 100) / 100
+        k.trx = tmp3 + 'TRX'
+        //
+        if (addr_row === String(addr).trim()) {
+            self_info.amount = tmp
+            self_info.trx = tmp3 + 'TRX'
+        }
+    })
+    const rs = {
+        amount_sum: sum,
+        self_info: self_info,
+        data: r1
+    }
+    return rs
 }
 
 // 开宝箱 （单个卡片价格0.374TRX）
