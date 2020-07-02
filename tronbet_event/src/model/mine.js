@@ -350,6 +350,8 @@ const exchangeCard = async function (type, addr) {
         const sql1 = `select * from tron_bet_event.mine_letter where addr = ?`
         const data1 = await rawQuery(sql1, [addr], t)
         //
+        console.log("data1 is ",data1)
+        console.log("data1.length > 0 is ",data1.length > 0)
         if (data1.length > 0) {
             let res = {
                 'letter_D': Number(data1[0].letter_D),
@@ -363,6 +365,7 @@ const exchangeCard = async function (type, addr) {
                 'letter_X': Number(data1[0].letter_X),
                 'letter_K': Number(data1[0].letter_K),
             }
+            console.log("res is ",res)
             // TRX
             if (type === '1') {
                 if (res.letter_T >= 10 && res.letter_R >= 10 && res.letter_X >= 10) {

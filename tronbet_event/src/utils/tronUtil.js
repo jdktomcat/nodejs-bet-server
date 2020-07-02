@@ -33,7 +33,6 @@ function getTronWeb(node) {
 }
 
 async function sendTRX(toAddr, amount) {
-    console.log('toAddr, amount----', toAddr, amount)
     let tronWeb = getTronWeb('master')
     let unsignedTransaction = await tronWeb.transactionBuilder.sendTrx(toAddr, Math.floor(amount * 1e6));
     //let unsignedTransaction = await tronWeb.transactionBuilder.sendTrx(toAddr, Math.floor(Math.floor(amount)));
