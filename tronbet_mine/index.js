@@ -1569,6 +1569,7 @@ function getHeroDropRate(h,w,heroModel){
  */
 function sendGameMsg(addr,currency,amount,heroDrapRate) {
     let _now = _.now();
+    console.log(ACTIVITY_END_TS);
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) {
 		return false;
     }
