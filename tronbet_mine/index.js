@@ -1622,7 +1622,7 @@ function getTreasures(addr,currency,amount,trxAmount,heroDrapRate){
 	let rs={};
 	rs.addr=addr;
 	rs.currency=currency;
-	rs.amount=amount;
+	rs.amount=amount.toNumber();
 	rs.boxCount=0;//宝箱总数
 	rs.gameType=gameType;
 	rs.box={};
