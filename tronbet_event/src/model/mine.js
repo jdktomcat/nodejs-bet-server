@@ -51,17 +51,19 @@ async function saveActivityData(message) {
             //
             const boxNum = box[k] || 0
             if (boxNum > 0) {
+                // history
                 let insertSql = "insert into tron_bet_event.mine_box(addr, amount,currency,type, boxNum ,ts) values (?, ?,?,?,?,?)"
                 await updateQuery(insertSql, [addr, amount, currency, k, boxNum, Date.now()], t)
-            }
-            let sql1 = "select * from tron_bet_event.mine_box_count where addr = ? and type = ?"
-            let r1 = await rawQuery(sql1, [addr, k], t)
-            if (r1.length === 0) {
-                let sql2 = "insert into tron_bet_event.mine_box_count(addr,type,boxNum) values (?, ?,?)"
-                await updateQuery(sql2, [addr, k, boxNum], t)
-            } else {
-                let sql3 = "update tron_bet_event.mine_box_count set boxNum = boxNum + ? where addr = ? and type = ?"
-                await updateQuery(sql3, [boxNum, addr, k], t)
+                // 
+                let sql1 = "select * from tron_bet_event.mine_box_count where addr = ? and type = ?"
+                let r1 = await rawQuery(sql1, [addr, k], t)
+                if (r1.length === 0) {
+                    let sql2 = "insert into tron_bet_event.mine_box_count(addr,type,boxNum) values (?, ?,?)"
+                    await updateQuery(sql2, [addr, k, boxNum], t)
+                } else {
+                    let sql3 = "update tron_bet_event.mine_box_count set boxNum = boxNum + ? where addr = ? and type = ?"
+                    await updateQuery(sql3, [boxNum, addr, k], t)
+                }
             }
         }
         //
@@ -286,6 +288,23 @@ const openMineBox = async function (type, addr) {
 // 10~50     97.0%
 // 90~1000     2.9%
 // 1000~10000     0.10%）
+const randomTrxNum = function () {
+    // RANDOM TRX
+    const luck = getRandomInt(1, 1000)
+    let randomTRX = 0
+    if (luck <= 1) {
+        // 1000~10000 TRX
+        randomTRX = getRandomInt(1000, 10000)
+    } else if (luck <= 30) {
+        // 90~1000 TRX
+        randomTRX = getRandomInt(90, 1000)
+    } else if (luck <= 1000) {
+        // 10~50 TRX
+        randomTRX = getRandomInt(10, 50)
+    }
+    return randomTRX
+}
+
 const exchangeCard = async function (type, addr) {
     await sequelize.transaction(async (t) => {
         const sql1 = `select * from tron_bet_event.mine_letter where addr = ?`
@@ -356,21 +375,9 @@ const exchangeCard = async function (type, addr) {
                     set letter_W = letter_W - 10,letter_I = letter_I - 10,letter_N = letter_N - 10,letter_K = letter_K - 10
                     where addr = ? `
                     await updateQuery(sql2, [addr], t)
-                    // RANDOM TRX
-                    const luck = getRandomInt(1, 1000)
-                    let randomTRX = 0
-                    if (luck <= 1) {
-                        // 1000~10000 TRX
-                        randomTRX = getRandomInt(1000, 10000)
-                    } else if (luck <= 30) {
-                        // 90~1000 TRX
-                        randomTRX = getRandomInt(90, 1000)
-                    } else if (luck <= 1000) {
-                        // 10~50 TRX
-                        randomTRX = getRandomInt(10, 50)
-                    }
+                    const trxNum = randomTrxNum()
                     //send
-                    await sendTRX(addr, randomTRX)
+                    await sendTRX(addr, trxNum)
                 } else {
                     throw new Error("not enough letter!")
                 }
