@@ -436,7 +436,7 @@ const exchangeCard = async function (type, addr) {
 }
 
 async function sellCard(type, addr, letter_array) {
-    await sequelize.transaction(async (t) => {
+    return await sequelize.transaction(async (t) => {
         const sql1 = `select * from tron_bet_event.mine_letter where addr = ?`
         const data1 = await rawQuery(sql1, [addr], t)
         //
@@ -473,6 +473,7 @@ async function sellCard(type, addr, letter_array) {
                         if (winSum > 0) {
                             await sendWin(addr, winSum)
                         }
+                        return winSum + 'WIN'
                     } else {
                         throw new Error("fuck letter")
                     }
@@ -501,6 +502,7 @@ async function sellCard(type, addr, letter_array) {
                 if (winSum > 0) {
                     await sendWin(addr, winSum)
                 }
+                return winSum + 'WIN'
             } else {
                 throw new Error("fuck letter")
             }
