@@ -9,9 +9,9 @@ const sendLimit = async function (addr) {
     }else {
         let r = row[0]
         let ts = Number(r.ts)
-        // 10秒提现限制
+        // 60秒send限制
         const tmp5Limit = Date.now() - ts
-        if(tmp5Limit <= 10 * 1000){
+        if(tmp5Limit <= 60 * 1000){
             return true
         }else {
             return false
