@@ -8,8 +8,8 @@ module.exports = {
 		HTTP_TIME_OUT: 5000 //node http request 超时时间(ms)
 	},
 	activity:{
-		startTime:1593475200000,
-		endTime:1593561600000
+		startTime:1593820800000,
+		endTime:1594252800000
 	},
 	dbName:'tron_bet_wzc',
 	redisConfig: {

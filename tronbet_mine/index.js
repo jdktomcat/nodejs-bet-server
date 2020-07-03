@@ -1614,7 +1614,8 @@ function getEqualTrxAmount(currency,amount){
  *  box : {
  *      normal : 0,
  *      silver : 0,
- *      gorden : 0
+ *      gorden : 0,
+ *      hero   : 0
  *  }
  */
 function getTreasures(addr,currency,amount,trxAmount,heroDrapRate){
