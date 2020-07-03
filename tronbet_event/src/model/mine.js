@@ -378,6 +378,7 @@ const exchangeCard = async function (type, addr) {
                     await updateQuery(sql2, [addr], t)
                     // send
                     await sendTRX(addr, 10)
+                    return 10 + 'TRX'
                 } else {
                     throw new Error("not enough letter!")
                 }
@@ -393,6 +394,7 @@ const exchangeCard = async function (type, addr) {
                     // send
                     //
                     await sendTRX(addr, 40)
+                    return 40 + 'TRX'
                 } else {
                     throw new Error("not enough letter!")
                 }
@@ -408,6 +410,7 @@ const exchangeCard = async function (type, addr) {
                     // send
                     await sendWin(addr, 5000)
                     //
+                    return 5000 + 'WIN'
                 } else {
                     throw new Error("not enough letter!")
                 }
@@ -423,6 +426,7 @@ const exchangeCard = async function (type, addr) {
                     const trxNum = randomTrxNum()
                     //send
                     await sendTRX(addr, trxNum)
+                    return trxNum + 'TRX'
                 } else {
                     throw new Error("not enough letter!")
                 }
