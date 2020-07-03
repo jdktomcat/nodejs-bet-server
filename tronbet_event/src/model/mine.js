@@ -4,11 +4,11 @@ const tronUtils = require("./../utils/tronUtil")
 /**
  * params amount不需要*1e6
  */
-const sendTRX = async function (addr, amount) {
+const sendTRX = async function (addr, amount, t) {
     //insert 流水
     try {
         let insertSql = "insert into tron_bet_event.mine_send_log(addr, amount, currency, tx_id, ts) values (?,?,?,?,?)"
-        await updateQuery(insertSql, [addr, amount, 'TRX', '', Date.now()])
+        await updateQuery(insertSql, [addr, amount, 'TRX', '', Date.now()], t)
         let tx = await tronUtils.sendTRX(addr, amount)
         if (tx.result !== true) {
             return ''
@@ -16,25 +16,25 @@ const sendTRX = async function (addr, amount) {
             const id = tx.transaction.txID
             //
             let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ?"
-            await updateQuery(updateSql, [id, addr])
+            await updateQuery(updateSql, [id, addr], t)
         }
     } catch (e) {
         console.log("sendTRX error is " + e.toString())
         throw new Error("sendTRX error")
     }
 }
-const sendWin = async function (addr, amount) {
+const sendWin = async function (addr, amount, t) {
     try {
         //insert 流水
         let insertSql = "insert into tron_bet_event.mine_send_log(addr, amount, currency, tx_id, ts) values (?,?,?,?,?)"
-        await updateQuery(insertSql, [addr, amount, 'WIN', '', Date.now()])
+        await updateQuery(insertSql, [addr, amount, 'WIN', '', Date.now()], t)
         let tx = await tronUtils.sendWin(addr, amount)
         //
         const id = tx
         console.log("win id is ", id)
         //
         let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ?"
-        await updateQuery(updateSql, [id, addr])
+        await updateQuery(updateSql, [id, addr], t)
     } catch (e) {
         console.log("sendWin error is " + e.toString())
         throw new Error("sendWin error")
@@ -115,7 +115,7 @@ const queryLetterList = async function (addr) {
 const querySendLogs = async function (addr) {
     let sql1 = "select addr,amount,currency from tron_bet_event.mine_send_log order by ts desc limit 20"
     let r1 = await rawQuery(sql1, [])
-    for(let e of r1){
+    for (let e of r1) {
         const addr_row = e.addr
         const tmp = addr_row.slice(0, 5) + "...." + addr_row.slice(addr_row.length - 5)
         e.addr = tmp
@@ -382,7 +382,7 @@ const exchangeCard = async function (type, addr) {
                     //
                     await updateQuery(sql2, [addr], t)
                     // send
-                    await sendTRX(addr, 10)
+                    await sendTRX(addr, 10, t)
                     return 10 + 'TRX'
                 } else {
                     throw new Error("not enough letter!")
@@ -398,7 +398,7 @@ const exchangeCard = async function (type, addr) {
                     await updateQuery(sql2, [addr], t)
                     // send
                     //
-                    await sendTRX(addr, 40)
+                    await sendTRX(addr, 40, t)
                     return 40 + 'TRX'
                 } else {
                     throw new Error("not enough letter!")
@@ -413,7 +413,7 @@ const exchangeCard = async function (type, addr) {
                     where addr = ? `
                     await updateQuery(sql2, [addr], t)
                     // send
-                    await sendWin(addr, 5000)
+                    await sendWin(addr, 5000, t)
                     //
                     return 5000 + 'WIN'
                 } else {
@@ -430,7 +430,7 @@ const exchangeCard = async function (type, addr) {
                     await updateQuery(sql2, [addr], t)
                     const trxNum = randomTrxNum()
                     //send
-                    await sendTRX(addr, trxNum)
+                    await sendTRX(addr, trxNum, t)
                     return trxNum + 'TRX'
                 } else {
                     throw new Error("not enough letter!")
@@ -478,7 +478,7 @@ async function sellCard(type, addr, letter_array) {
                         //todo send done
                         if (winSum > 0) {
                             all_count = all_count + winSum
-                            await sendWin(addr, winSum)
+                            await sendWin(addr, winSum, t)
                         }
                     } else {
                         throw new Error("fuck letter")
@@ -508,7 +508,7 @@ async function sellCard(type, addr, letter_array) {
                 let winSum = 0
                 if (sumAll > 0) {
                     winSum = Number(sumAll) * 10
-                    await sendWin(addr, winSum)
+                    await sendWin(addr, winSum, t)
                 }
                 return winSum + 'WIN'
             } else {

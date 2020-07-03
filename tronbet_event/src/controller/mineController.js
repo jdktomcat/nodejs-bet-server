@@ -7,6 +7,7 @@ class mineController {
         console.log("ctx.request.body ",ctx.request.body)
         const {addr} = ctx.request.body || {}
         const data = await model.queryBoxNum(addr)
+        console.log("res data is ",data)
         return ctx.body = {code: 200, data: data, message: "success"}
     }
 
@@ -14,6 +15,7 @@ class mineController {
         console.log("ctx.request.body ",ctx.request.body)
         const {addr} = ctx.request.body || {}
         const data = await model.queryLetterList(addr)
+        console.log("res data is ",data)
         return ctx.body = {code: 200, data: data, message: "success"}
     }
 
@@ -21,6 +23,7 @@ class mineController {
         console.log("ctx.request.body ",ctx.request.body)
         const {addr} = ctx.request.body || {}
         const data = await model.querySendLogs(addr)
+        console.log("res data is ",data)
         return ctx.body = {code: 200, data: data, message: "success"}
     }
 
@@ -36,6 +39,7 @@ class mineController {
             return ctx.body = {code: 500, message: 'identify error!', data: []}
         }
         const data = await model.queryHeroList(addr)
+        console.log("res data is ",data)
         return ctx.body = {code: 200, data: data, message: "success"}
     }
 
@@ -52,8 +56,10 @@ class mineController {
         }
         try {
             const data = await model.openMineBox(type, addr)
+            console.log("res data is ",data)
             return ctx.body = {code: 200, data: data, message: "success"}
         } catch (e) {
+            console.log("error is " + e.toString())
             return ctx.body = {code: 500, message: e.toString(), data: []}
         }
     }
@@ -75,12 +81,14 @@ class mineController {
         }
         try {
             const data = await model.exchangeCard(type, addr)
+            console.log("res data is ",data)
             ctx.body = {
                 code: 200,
                 data: data,
                 message: "success"
             }
         } catch (e) {
+            console.log("error is " + e.toString())
             return ctx.body = {code: 500, message: e.toString(), data: []}
         }
     }
@@ -99,8 +107,10 @@ class mineController {
         }
         try {
             const data = await model.sellCard(type, addr, letter)
+            console.log("res data is ",data)
             return ctx.body = {code: 200, data: data, message: "success"}
         } catch (e) {
+            console.log("error is " + e.toString())
             return ctx.body = {code: 500, message: e.toString(), data: []}
         }
     }
