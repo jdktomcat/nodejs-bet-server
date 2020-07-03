@@ -24,6 +24,8 @@ const redisLock = async function (addr) {
 const redisUnLock = async function (addr) {
     let key = addr + '_event_mine'
     await redisUtil.set(key, "0")
+    const val = await redisUtil.get(key)
+    console.log("val end is ", val)
 }
 
 class mineController {
