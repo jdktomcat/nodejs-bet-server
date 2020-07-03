@@ -458,6 +458,7 @@ async function sellCard(type, addr, letter_array) {
                 'letter_X': Number(data1[0].letter_X),
                 'letter_K': Number(data1[0].letter_K),
             }
+            console.log(res)
             const letterKeys = Object.keys(res)
             if (!letter_array instanceof Array) {
                 throw new Error("letter_array is not array !")

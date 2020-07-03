@@ -11,6 +11,26 @@ const redis = require("redis").createClient(
     }
 );
 
+
+function get(key) {
+    return new Promise((resolve, reject) => {
+        redis.get(key, (err, ret) => {
+            if (err) reject(err);
+            resolve(ret);
+        });
+    })
+}
+
+function set(key, value) {
+    return new Promise((resolve, reject) => {
+        redis.set(key, value, (err, ret) => {
+            if (err) reject(err);
+            resolve(ret);
+        });
+    })
+}
+
+
 function hget(key, field) {
     return new Promise((resolve, reject) => {
         redis.hget(key, field, (err, ret) => {
@@ -66,4 +86,4 @@ function redisDel(key) {
 }
 
 
-module.exports = {hget, hset, hincrby, hdel, hgetall, redisDel}
+module.exports = {get,set,hget, hset, hincrby, hdel, hgetall, redisDel}
