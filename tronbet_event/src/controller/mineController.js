@@ -9,14 +9,17 @@ const redisLock = async function (addr) {
     const val = await redisUtil.get(key)
     console.log("val lock is ", val,val === true)
     if (val === true || val === 'true') {
-        await redisUtil.set(key, "lock")
+        await redisUtil.del(key)
     }
-    if (val === null) {
+    //
+    const val2 = await redisUtil.get(key)
+    console.log("val lock2 is ", val2)
+    if (val2 === null) {
         await redisUtil.set(key, "lock")
         await redisUtil.expire(key, 5 * 60) // 设置过期时间为5分钟
         return false
     } else {
-        if (val === 'free') {
+        if (val2 === 'free') {
             return false
         } else {
             return true
