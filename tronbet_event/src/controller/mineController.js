@@ -79,10 +79,6 @@ class mineController {
         if (!signResult) {
             return ctx.body = {code: 500, message: 'identify error!', data: []}
         }
-        const isLock = await model.sendLimit(addr)
-        if (isLock) {
-            return ctx.body = {code: 500, message: 'lock!', data: []}
-        }
         try {
             const data = await model.exchangeCard(type, addr)
             console.log("res data is ", data)
@@ -108,10 +104,6 @@ class mineController {
         let signResult = await tronUtils.verifySignature(sign, addr);
         if (!signResult) {
             return ctx.body = {code: 500, message: 'identify error!', data: []}
-        }
-        const isLock = await model.sendLimit(addr)
-        if (isLock) {
-            return ctx.body = {code: 500, message: 'lock!', data: []}
         }
         try {
             const data = await model.sellCard(type, addr, letter)
