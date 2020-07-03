@@ -55,7 +55,6 @@ async function sendWin(addr, amount) {
         return null
     }
     //
-    console.log("tronConfig.winToken is ", tronConfig.winToken)
     const ins = await tronWeb.contract().at(tronConfig.winToken)
     //
     // const options = {feeLimit: 1000 * 1e6, shouldPollResponse: true}
@@ -67,7 +66,7 @@ async function sendWin(addr, amount) {
         return rs
     } catch (e) {
         console.log("error is ", e)
-        return ''
+        throw new Error("sendWinO error")
     }
 }
 
