@@ -3,22 +3,6 @@ const tronUtils = require("./../utils/tronUtil");
 
 class mineController {
 
-    static async test(ctx) {
-        const {addr} = ctx.request.query || {}
-        const a = {
-            addr: addr,   //地址
-            currency: 'TRX',//币种
-            amount: 1000,//
-            box: {
-                normal: 100,
-                silver: 20,
-                gorden: 2
-            }
-        }
-        const data = await model.saveActivityData(a)
-        return ctx.body = {code: 200, data: data, message: "success"}
-    }
-
     static async queryBoxNum(ctx) {
         console.log("ctx.request.body ",ctx.request.body)
         const {addr} = ctx.request.body || {}

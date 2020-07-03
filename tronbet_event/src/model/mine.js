@@ -113,8 +113,13 @@ const queryLetterList = async function (addr) {
  * 兑换记录
  */
 const querySendLogs = async function (addr) {
-    let sql1 = "select * from tron_bet_event.mine_send_log order by ts desc limit 20"
+    let sql1 = "select addr,amount,currency from tron_bet_event.mine_send_log order by ts desc limit 20"
     let r1 = await rawQuery(sql1, [])
+    for(let e of r1){
+        const addr_row = e.addr
+        const tmp = addr_row.slice(0, 5) + "...." + addr_row.slice(addr_row.length - 5)
+        e.addr = tmp
+    }
     return r1
 }
 
