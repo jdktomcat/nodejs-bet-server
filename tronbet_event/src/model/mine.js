@@ -347,7 +347,7 @@ const randomTrxNum = function () {
 }
 
 const exchangeCard = async function (type, addr) {
-    await sequelize.transaction(async (t) => {
+    return await sequelize.transaction(async (t) => {
         const sql1 = `select * from tron_bet_event.mine_letter where addr = ?`
         const data1 = await rawQuery(sql1, [addr], t)
         //

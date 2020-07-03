@@ -20,25 +20,28 @@ class mineController {
     }
 
     static async queryBoxNum(ctx) {
-        // console.log("ctx.body ",ctx.request.body)
+        console.log("ctx.request.body ",ctx.request.body)
         const {addr} = ctx.request.body || {}
         const data = await model.queryBoxNum(addr)
         return ctx.body = {code: 200, data: data, message: "success"}
     }
 
     static async queryLetterList(ctx) {
+        console.log("ctx.request.body ",ctx.request.body)
         const {addr} = ctx.request.body || {}
         const data = await model.queryLetterList(addr)
         return ctx.body = {code: 200, data: data, message: "success"}
     }
 
     static async querySendLogs(ctx) {
+        console.log("ctx.request.body ",ctx.request.body)
         const {addr} = ctx.request.body || {}
         const data = await model.querySendLogs(addr)
         return ctx.body = {code: 200, data: data, message: "success"}
     }
 
     static async queryHeroList(ctx) {
+        console.log("ctx.request.body ",ctx.request.body)
         const {addr, sign} = ctx.request.body || {}
         if(addr === ''){
             return ctx.body = {code: 500, message: 'addr error!', data: []}
@@ -56,6 +59,7 @@ class mineController {
      * type : normal,silver,gorden
      */
     static async openMineBox(ctx) {
+        console.log("ctx.request.body ",ctx.request.body)
         const {addr, type, sign} = ctx.request.body || {}
         //签名校验
         let signResult = await tronUtils.verifySignature(sign, addr);
@@ -78,6 +82,7 @@ class mineController {
      4: 10*W+10*I+10*N+10*K=10~10000TRX
      */
     static async exchangeCard(ctx) {
+        console.log("ctx.request.body ",ctx.request.body)
         const {type, addr, sign} = ctx.request.body || {}
         //签名校验
         let signResult = await tronUtils.verifySignature(sign, addr);
@@ -101,6 +106,7 @@ class mineController {
      *         2 所有字母
      */
     static async sellCard(ctx) {
+        console.log("ctx.request.body ",ctx.request.body)
         const {addr, type, sign, letter} = ctx.request.body || {}
         //签名校验
         let signResult = await tronUtils.verifySignature(sign, addr);
