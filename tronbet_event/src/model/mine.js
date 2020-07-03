@@ -145,6 +145,7 @@ const queryHeroList = async function (addr) {
         const tmp3 = Math.floor(tmp2 * 100) / 100
         k.trx = tmp3 + 'TRX'
         //
+        k.addr = addr_row.slice(0, 5) + "...." + addr_row.slice(addr_row.length - 6, -1)
         if (addr_row === String(addr).trim()) {
             self_info.amount = tmp
             self_info.trx = tmp3 + 'TRX'
