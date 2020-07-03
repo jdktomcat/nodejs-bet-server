@@ -20,7 +20,7 @@ const sendTRX = async function (addr, amount) {
         }
     } catch (e) {
         console.log("sendTRX error is " + e.toString())
-        throw e
+        throw new Error("sendTRX error")
     }
 }
 const sendWin = async function (addr, amount) {
@@ -36,8 +36,8 @@ const sendWin = async function (addr, amount) {
         let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ?"
         await updateQuery(updateSql, [id, addr])
     } catch (e) {
-        console.log("sendTRX error is " + e.toString())
-        throw e
+        console.log("sendWin error is " + e.toString())
+        throw new Error("sendWin error")
     }
 }
 
