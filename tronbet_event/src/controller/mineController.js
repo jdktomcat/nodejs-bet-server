@@ -7,8 +7,8 @@ const redisUtil = require("./../utils/redisUtil");
 const redisLock = async function (addr) {
     let key = addr + '_event_mine_key'
     const val = await redisUtil.get(key)
-    console.log("val lock is ", val)
-    if (val === true) {
+    console.log("val lock is ", val,val === true)
+    if (val === true || val === 'true') {
         await redisUtil.set(key, "lock")
     }
     if (val === null) {
