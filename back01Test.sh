@@ -4,6 +4,7 @@
 cd tronbet_dice && pm2 start npm --name tronbet_dice -- run test && cd ..
 cd tronbet_moon && pm2 start npm --name tronbet_moon -- run test && cd ..
 cd tronbet_ring && pm2 start npm --name tronbet_ring -- run test && cd ..
+cd tronbet_mine && pm2 start npm --name tronbet_mine -- run start && cd ..
 cd tronbet_backend && pm2 start npm --name tronbet_backend -- run test && cd ..
 cd tronbet_profile && pm2 start npm --name tronbet_profile -- run test && cd ..
 cd tronbet_rank && pm2 start npm --name tronbet_rank -- run test && cd ..

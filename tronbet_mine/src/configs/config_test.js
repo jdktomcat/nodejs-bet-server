@@ -9,7 +9,7 @@ module.exports = {
 	},
 	activity:{
 		startTime:1593475200000,
-		endTime:1593561600000
+		endTime:1596067200000
 	},
 	dbName:'tron_bet_wzc',
 	redisConfig: {
