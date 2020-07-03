@@ -7,23 +7,23 @@ const redisUtil = require("./../utils/redisUtil");
 const redisLock = async function (addr) {
     let key = addr + '_event_mine_key'
     const val = await redisUtil.get(key)
-    console.log("val is ", val)
+    console.log("val lock is ", val)
     if (val === null) {
-        await redisUtil.set(key, "1")
+        await redisUtil.set(key, "2")
         await redisUtil.expire(key, 5 * 60) // 设置过期时间为5分钟
         return false
     } else {
         if (val === '1') {
-            return true
-        } else {
             return false
+        } else {
+            return true
         }
     }
 }
 
 const redisUnLock = async function (addr) {
     let key = addr + '_event_mine'
-    await redisUtil.set(key, "0")
+    await redisUtil.set(key, "1")
     const val = await redisUtil.get(key)
     console.log("val end is ", val)
 }
