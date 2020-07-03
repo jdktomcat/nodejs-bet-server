@@ -145,7 +145,7 @@ const queryHeroList = async function (addr) {
         const tmp3 = Math.floor(tmp2 * 100) / 100
         k.trx = tmp3 + 'TRX'
         //
-        k.addr = addr_row.slice(0, 5) + "...." + addr_row.slice(addr_row.length - 6, -1)
+        k.addr = addr_row.slice(0, 5) + "...." + addr_row.slice(addr_row.length - 5)
         if (addr_row === String(addr).trim()) {
             self_info.amount = tmp
             self_info.trx = tmp3 + 'TRX'
@@ -368,7 +368,7 @@ const exchangeCard = async function (type, addr) {
             if (type === '1') {
                 if (res.letter_T >= 10 && res.letter_R >= 10 && res.letter_X >= 10) {
                     console.log("enter exchange TRX ")
-                    // send 10TRX 
+                    // send 10TRX
                     // database
                     const sql2 =
                         `update tron_bet_event.mine_letter 
@@ -385,7 +385,7 @@ const exchangeCard = async function (type, addr) {
             } else if (type === '2') {
                 if (res.letter_D >= 10 && res.letter_I >= 10 && res.letter_C >= 10 && res.letter_E >= 10) {
                     console.log("enter exchange DICE ")
-                    // send 40TRX 
+                    // send 40TRX
                     const sql2 =
                         `update tron_bet_event.mine_letter 
                     set letter_D = letter_D - 10,letter_I = letter_I - 10,letter_C = letter_C - 10,letter_E = letter_E - 10

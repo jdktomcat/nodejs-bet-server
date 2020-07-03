@@ -74,8 +74,14 @@ const mine = require("./../model/mine")
 async function handleMsg(message) {
     console.log('bet info：' + message)
     const now = Date.now()
-    if(now < new Date("2020-07-09").getTime()){
-        // save info
+    const isStart = now >= new Date("2020-07-04").getTime()
+    const isEnd = now < new Date("2020-07-09").getTime()
+    let isBegin = isStart && isEnd
+    console.log("isBegin ",isBegin)
+    if(process.env.NODE_ENV === "test"){
+        isBegin = isEnd
+    }
+    if(isBegin){
         const messageData = JSON.parse(message)
         await mine.saveActivityData(messageData)
     }
