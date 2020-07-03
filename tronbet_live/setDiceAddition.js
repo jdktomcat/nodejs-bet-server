@@ -36,13 +36,29 @@ async function setDiceRate(gameId, startDate, endDate, rate) {
   return transactionID;
 }
 
-let gameId = [1, 2, 3, 4];
-let startTime = new Date("2020-02-03 09:30:00").getTime() / 1000;
-let endTime = new Date("2020-02-04 09:30:00").getTime() / 1000;
+/**
+ * gameId 1=dice按顺序下去
+ */
+let gameId = [1, 2, 3, 4, 5];
+let startTime = new Date("2020-07-04 00:00:00").getTime() / 1000;
+let endTime = new Date("2020-07-06 00:00:00").getTime() / 1000;
 const rateInit = 10000;
-let rate = 1.5 * rateInit;
+let rate = 1.2 * rateInit;
 
-setDiceRate(gameId[0], startTime, endTime, rate);
+
+// 活动周期：2020-07-04 00:00-2020-07-06 00:00（UTC+0）
+// 倍率：1.2倍
+// setDiceRate(gameId[0], startTime, endTime, rate);
 // setDiceRate(gameId[1], startTime, endTime, rate);
 // setDiceRate(gameId[2], startTime, endTime, rate);
 // setDiceRate(gameId[3], startTime, endTime, rate);
+
+const main = async function () {
+  for(let game of gameId){
+    console.log("game id is ",game)
+    const tx_id = await setDiceRate(game, startTime, endTime, rate);
+    console.log(game,'---->txId is ',tx_id)
+  }
+}
+//excute !
+main()

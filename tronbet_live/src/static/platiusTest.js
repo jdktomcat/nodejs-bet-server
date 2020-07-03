@@ -355,5 +355,12 @@ module.exports  = [
         "gameID": "533",
         "png": "//platipusgaming.com/img/games/dragonselement.jpg",
         "category": "slots"
+    },
+    {
+        "launchUrl": "https://wbg.platipusgaming.com/wink/dajidali/launch",
+        "name": "Da Ji Da Li",
+        "gameID": "537",
+        "png": "//platipusgaming.com/img/games/dajidali.jpg",
+        "category": "slots"
     }
 ]
