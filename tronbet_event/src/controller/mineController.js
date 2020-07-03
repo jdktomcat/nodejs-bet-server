@@ -1,30 +1,5 @@
 const model = require("./../model/mine")
 const tronUtils = require("./../utils/tronUtil");
-const redisUtil = require("./../utils/redisUtil");
-
-// await redisUtils.set(authToken, uid[0].email)
-// await redisUtils.expire(authToken, 604800) // 设置过期时间为10天
-const redisLock = async function (addr) {
-    let key = addr + '_event_mine_key'
-    const val = await redisUtil.get(key)
-    console.log("val is ", val)
-    if (val === null) {
-        await redisUtil.set(key, "1")
-        await redisUtil.expire(key, 5 * 60) // 设置过期时间为5分钟
-        return false
-    } else {
-        if (val === '1') {
-            return true
-        } else {
-            return false
-        }
-    }
-}
-
-const redisUnLock = async function (addr) {
-    let key = addr + '_event_mine'
-    await redisUtil.set(key, "0")
-}
 
 class mineController {
 
@@ -79,18 +54,11 @@ class mineController {
         if (!signResult) {
             return ctx.body = {code: 500, message: 'identify error!', data: []}
         }
-        const isLock = await redisLock(addr)
-        if(isLock){
-            console.log("lock!")
-            return ctx.body = {code: 500, message: 'lock!', data: []}
-        }
         try {
             const data = await model.openMineBox(type, addr)
             console.log("res data is ", data)
-            await redisUnLock(addr)
             return ctx.body = {code: 200, data: data, message: "success"}
         } catch (e) {
-            await redisUnLock(addr)
             console.log("error is " + e.toString())
             return ctx.body = {code: 500, message: e.toString(), data: []}
         }
@@ -111,22 +79,15 @@ class mineController {
         if (!signResult) {
             return ctx.body = {code: 500, message: 'identify error!', data: []}
         }
-        const isLock = await redisLock(addr)
-        if(isLock){
-            console.log("lock!")
-            return ctx.body = {code: 500, message: 'lock!', data: []}
-        }
         try {
             const data = await model.exchangeCard(type, addr)
             console.log("res data is ", data)
-            await redisUnLock(addr)
             ctx.body = {
                 code: 200,
                 data: data,
                 message: "success"
             }
         } catch (e) {
-            await redisUnLock(addr)
             console.log("error is " + e.toString())
             return ctx.body = {code: 500, message: e.toString(), data: []}
         }
@@ -144,19 +105,12 @@ class mineController {
         if (!signResult) {
             return ctx.body = {code: 500, message: 'identify error!', data: []}
         }
-        const isLock = await redisLock(addr)
-        if(isLock){
-            console.log("lock!")
-            return ctx.body = {code: 500, message: 'lock!', data: []}
-        }
         try {
             const data = await model.sellCard(type, addr, letter)
             console.log("res data is ", data)
-            await redisUnLock(addr)
             return ctx.body = {code: 200, data: data, message: "success"}
         } catch (e) {
             console.log("error is " + e.toString())
-            await redisUnLock(addr)
             return ctx.body = {code: 500, message: e.toString(), data: []}
         }
     }

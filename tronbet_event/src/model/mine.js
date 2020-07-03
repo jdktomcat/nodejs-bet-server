@@ -1,6 +1,24 @@
 const {sequelize, rawQuery, updateQuery} = require('../utils/mysqlUtils')
 const tronUtils = require("./../utils/tronUtil")
 
+const sendLimit = async function (addr,t) {
+    let sql = 'select ts from tron_bet_event.mine_send_log where addr = ? order by ts desc limit 1';
+    const row = await rawQuery(sql,[addr],t)
+    if(row.length === 0){
+        return false
+    }else {
+        let r = row[0]
+        let ts = Number(r.ts)
+        // 10秒限制
+        const tmp5Limit = Date.now() - ts
+        if(tmp5Limit <= 10 * 1000){
+            return true
+        }else {
+            return false
+        }
+    }
+}
+
 /**
  * params amount不需要*1e6
  */
@@ -353,6 +371,10 @@ const randomTrxNum = function () {
 
 const exchangeCard = async function (type, addr) {
     return await sequelize.transaction(async (t) => {
+        const isLock = await sendLimit(addr,t)
+        if (isLock) {
+            throw new Error("frequency limit !")
+        }
         const sql1 = `select * from tron_bet_event.mine_letter where addr = ?`
         const data1 = await rawQuery(sql1, [addr], t)
         //
@@ -442,6 +464,11 @@ const exchangeCard = async function (type, addr) {
 
 async function sellCard(type, addr, letter_array) {
     return await sequelize.transaction(async (t) => {
+        const isLock = await sendLimit(addr,t)
+        if (isLock) {
+            throw new Error("frequency limit !")
+        }
+        //
         const sql1 = `select * from tron_bet_event.mine_letter where addr = ?`
         const data1 = await rawQuery(sql1, [addr], t)
         //
@@ -534,5 +561,7 @@ module.exports = {
     //
     sellCard,
     //
-    queryHeroList
+    queryHeroList,
+    //
+    sendLimit
 }
