@@ -1,6 +1,24 @@
 const {sequelize, rawQuery, updateQuery} = require('../utils/mysqlUtils')
 const tronUtils = require("./../utils/tronUtil")
 
+const sendLimit = async function (addr) {
+    let sql = 'select ts from tron_bet_event.mine_send_log where addr = ? order by ts desc limit 1';
+    const row = await rawQuery(sql,[addr])
+    if(row.length === 0){
+        return false
+    }else {
+        let r = row[0]
+        let ts = Number(r.ts)
+        // 10秒提现限制
+        const tmp5Limit = Date.now() - ts
+        if(tmp5Limit <= 10 * 1000){
+            return true
+        }else {
+            return false
+        }
+    }
+}
+
 /**
  * params amount不需要*1e6
  */
@@ -534,5 +552,7 @@ module.exports = {
     //
     sellCard,
     //
-    queryHeroList
+    queryHeroList,
+    //
+    sendLimit
 }
