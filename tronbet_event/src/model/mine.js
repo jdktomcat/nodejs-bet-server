@@ -464,6 +464,7 @@ async function sellCard(type, addr, letter_array) {
             }
             if (type === '1') {
                 //出售单个字母
+                let all_count = 0
                 for (let letter of letter_array) {
                     if (letterKeys.includes(letter)) {
                         const winNumber = res[letter] || 0
@@ -476,13 +477,14 @@ async function sellCard(type, addr, letter_array) {
                         const winSum = Number(winNumber) * 10
                         //todo send done
                         if (winSum > 0) {
+                            all_count = all_count + winSum
                             await sendWin(addr, winSum)
                         }
-                        return winSum + 'WIN'
                     } else {
                         throw new Error("fuck letter")
                     }
                 }
+                return all_count + 'WIN'
             } else if (type === '2') {
                 //出售所有字母
                 const sql2 =
@@ -502,9 +504,10 @@ async function sellCard(type, addr, letter_array) {
                 await updateQuery(sql2, [addr], t)
                 //
                 let sumAll = Object.values(res).reduce((a, b) => a + b)
-                const winSum = Number(sumAll) * 10
                 //todo send  done
-                if (winSum > 0) {
+                let winSum = 0
+                if (sumAll > 0) {
+                    winSum = Number(sumAll) * 10
                     await sendWin(addr, winSum)
                 }
                 return winSum + 'WIN'
