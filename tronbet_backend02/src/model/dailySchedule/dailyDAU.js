@@ -39,7 +39,7 @@ const DauSql = `
         FROM
             tron_bet_wzc.mine_event_log
         WHERE
-            AND ts >= ?
+            ts >= ?
             AND ts < ? 
             
         union all
@@ -96,7 +96,7 @@ const getAll = async function (startDate, endDate) {
         start, end,
         start, end,
         start, end,
-        start, end,
+        startDate + ' 00:00:00', endDate + ' 23:59:59',
         start, end,
         start, end,
         start, end,

@@ -9,6 +9,7 @@ const loggerError = log4js.getLogger('error');
 
 const tronNodePool = require('./src/service/tronNodePool');
 const tronSerivce= require('./src/service/tronService');
+const db=require('./src/utils/dbUtil');
 
 const events = require('events');
 const Redis=require("ioredis");
@@ -16,6 +17,22 @@ const appDataEvent = new events.EventEmitter();
 
 
 const gameDesc="扫雷游戏";
+
+
+//扫雷活动需求
+const gameType='mine';
+const mineTrx=100;//trx的数量，没有小数点 类似100trx这种
+let exchangeMap={
+	"trx":1,
+	"usdt":62.847//默认值
+};
+let decimalPoint={
+	"trx":1000000,
+	"usdt":1000000//需要根据usdt发行的小数点填写
+}
+let ACTIVITY_START_TS = config.activity.startTime;
+let ACTIVITY_END_TS = config.activity.endTime;
+
 
 //合约相关数据
 const MAIN_MINE_GAME='TronBetMine';
@@ -92,9 +109,6 @@ const TOKEN_EXPIRE_TIME=24*60*60*1000;//token 失效时间
 const GAME_MODEL_NORMAL=0x01;//普通模式
 const GAME_MODEL_HERO=0x02;//英雄模式
 
-console.log(config.contract[MINE_GAME_ORACLE]);
-console.log(config.contract[MAIN_MINE_GAME]);
-
 /*
  * 每次启动的时候PRE_SALT 都会不一样，不可以预测的前缀
  */
@@ -122,6 +136,8 @@ init();//进程入口
  */
 async function init() {
 	await initProcessEventHandler();
+	await initDb();
+	await initCurrencyPrice();
 	await initTronWebPool();
 	await initRedis();
 	await initSocketIO();
@@ -132,6 +148,13 @@ async function initTronWebPool(){
 	await tronNodePool.init();
 }
 
+async function initDb(){
+	await db.init(config);
+}
+
+async function initCurrencyPrice(){
+	await refreshPrice();
+}
 
 /*
  * 初始化redis
@@ -325,6 +348,7 @@ function queryUserLogs(data){
 
 /*
  * 判断是否超时
+ * 现在没有使用到
  */
 function isTimeOut(data){
 	let tw=getTronWeb();	
@@ -700,17 +724,31 @@ function processMine(socket,data,order){
 				return;
 			}
 		}
+		//如果用户赢了
 		//通关了这个地雷
 		//判断是否到了终点
 		let mineFieldW=order.mineFieldW;
 		if(data.col==order.mineFieldW){
+
 			//结束游戏，用户通关游戏
+			let boxs=sendGameMsg(data.addr,'trx',order.orderAmount,getHeroDropRate(order.mineFieldH,order.mineFieldW,order.gameModel==GAME_MODEL_HERO));//有一定概率获取到宝箱
+			if(boxs && boxs.boxCount>0){
+				userLatestRedisInfo.boxs=boxs;
+			}
 			userLatestRedisInfo.mineSteps[0]=mineFieldW;
 			userLatestRedisInfo.gameResult=GAME_RESULT_WIN;//可以增加赢的金额
 			endGame(socket,data.addr,userLatestRedisInfo,MINE_RESULT);
+			
+
 		}else{
 			//存储到redis里面去，然后返回结果
 			//通关这列雷 通关进度通关进度增加
+
+			let boxs=sendGameMsg(data.addr,'trx',order.orderAmount,0);//有一定概率获取到宝箱
+			if(boxs && boxs.boxCount>0){
+				userLatestRedisInfo.boxs=boxs;
+			}
+
 			userLatestRedisInfo.mineSteps[0]=userLatestRedisInfo.currStep+1;
 			redis.set(MINE_REDIS_PREFIX+LATEST_GAME_INFO+data.addr,JSON.stringify(userLatestRedisInfo),//存储到redis中去
 				function(err,rs){
@@ -729,6 +767,7 @@ function processMine(socket,data,order){
 				result.data.gameStatus=userLatestRedisInfo.gameStatus;
 				result.data.gameResult=userLatestRedisInfo.gameResult;
 				result.data.addr=data.addr;
+				result.boxs=userLatestRedisInfo.boxs;
 				result.lastTs=userLatestRedisInfo.lastTs;//提交时间
 				for(var i=31;i>0;i--){
 					if(userLatestRedisInfo.mineSteps[i]==0){
@@ -737,6 +776,7 @@ function processMine(socket,data,order){
 					result.data.userSteps.push(userLatestRedisInfo.mineSteps[i]);
 					result.data.mines.push(userLatestRedisInfo.mines[i]);
 				}
+				console.log(result);
 				//提交用户step 给它
 				socket.emit(MINE_RESULT,result);	
 				return;
@@ -1094,7 +1134,8 @@ function generateMines(height,width){
 	let mines=new Uint8Array(32);
 	let index=31;//最右边是第一个雷
 	for(var i=0;i<width;i++){
-		mines[index]=Math.floor(Math.random()*height)+1;//地雷的位置
+		let mi=Math.floor(Math.random()*height)+1;//地雷的位置
+		mines[index]=mi;
 		index--;
 	}
 	return mines;
@@ -1154,6 +1195,8 @@ async function endGame(socket,addr,userLatestRedisInfo,eventName,errorCode){
 			result.data.mineHash=userLatestRedisInfo.mineHash;
 			result.data.gameStatus=userLatestRedisInfo.gameStatus;
 			result.data.gameResult=userLatestRedisInfo.gameResult;
+			result.boxs=userLatestRedisInfo.boxs;
+
 			result.data.addr=addr;
 			result.lastTs=userLatestRedisInfo.lastTs;//提交时间
 			for(var i=31;i>0;i--){
@@ -1171,6 +1214,7 @@ async function endGame(socket,addr,userLatestRedisInfo,eventName,errorCode){
 					}
 				}
 			}
+			console.log(result);
 			socketEmit(socket,addr,eventName,result);//[mark]
 			return;
 		});
@@ -1394,6 +1438,21 @@ async function initCheckOrders(){
 }
 
 /*
+ * 刷新USDT对TRX的价格
+ */
+async function refreshPrice(){
+	setTimeout(async () => {
+		let sql="select count from TRX_USD order by tid desc limit 1";	
+		let res=await db.query(sql,[]);
+		if(res){
+			exchangeMap['usdt']=res[0].count;
+		}
+		console.log(JSON.stringify(exchangeMap));
+		refreshPrice();
+	},3000);
+}
+
+/*
  * 用户离开
  */
 function socketDisconnected(data){
@@ -1489,6 +1548,110 @@ function broadcast(eventName, data) {
     io.emit(eventName, data);
 }
 
+/*
+ * 根据雷区的宽度和高度计算通关的概率
+ */
+function getHeroDropRate(h,w,heroModel){
+        let k=1;//分子,英雄模式分子都是为1
+        let p=1;//分母
+        for(let i=0;i<w;i++){
+                if(!heroModel){
+                        k=k*(h-1);
+                }
+                p=p*h;
+        }
+        return parseInt(100/((100*k)/p));
+}
+
+
+/*
+ * 发送报销中奖消息
+ * 英雄勋章掉落概率 heroDrapRate 百分数 如果为0 不可能掉落 ,可能的数字如 8，12，14，15，16 等等
+ */
+function sendGameMsg(addr,currency,amount,heroDrapRate) {
+    let _now = _.now();
+    console.log(ACTIVITY_END_TS);
+    if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) {
+		return false;
+    }
+    let trxAmount=getEqualTrxAmount(currency,amount);
+    if(!trxAmount && trxAmount<mineTrx){
+	    return false ;//不支持
+    }
+    let treasures=getTreasures(addr,currency,amount,trxAmount,heroDrapRate);
+    if(treasures.boxCount>0){
+    	redis.publish("game_message", JSON.stringify(treasures));
+	return treasures;
+    }
+    return false;
+    
+}
+
+/*
+ * 需要将指定金额的币转化为等额的trx数量，目前只是支持usdt对trx进行转化
+ * 这个函数需要返回一个整数
+ */
+function getEqualTrxAmount(currency,amount){
+	let rate=exchangeMap[currency];
+	if(!rate){
+		return 0;//不支持挖宝箱活动
+	}
+	let dp=decimalPoint[currency];
+	if(!dp){
+		return 0;
+	}
+	amount=amount/dp;//去掉小数点 
+	fm=Math.floor((rate*amount));
+	console.log("fm:%s",fm);
+	return fm;
+}
+
+/*
+ *  addr : ''//地址
+ *  currency:'',//币种
+ *  amount:0,//数量
+ *  boxCount:0,//宝盒的数量
+ *  box : {
+ *      normal : 0,
+ *      silver : 0,
+ *      gorden : 0,
+ *      hero   : 0
+ *  }
+ */
+function getTreasures(addr,currency,amount,trxAmount,heroDrapRate){
+	let rs={};
+	rs.addr=addr;
+	rs.currency=currency;
+	rs.amount=amount.toNumber();
+	rs.boxCount=0;//宝箱总数
+	rs.gameType=gameType;
+	rs.box={};
+	rs.box.normal=0;
+	rs.box.silver=0;
+	rs.box.gorden=0;
+	rs.box.hero=0;
+	let boxCount=Math.floor(trxAmount/mineTrx);//获得宝箱的数量 
+	if(Math.floor(Math.random()*2)==1){//50%的概率成功获取到宝箱
+		rs.boxCount=boxCount;//获取到宝箱，现在需要确定宝箱的颜色
+		for(let i=0;i<boxCount;i++){
+			let rn=Math.floor(Math.random()*101);//出现1～100的数字
+			if(rn<=5){
+				rs.box.gorden=rs.box.gorden+1;//极小概率获取黄金宝箱
+			}else if(rn<=25){
+				rs.box.silver=rs.box.silver+1;//普通概率获取白银宝箱
+			}else{
+				rs.box.normal=rs.box.normal+1;//大概率获取青铜宝箱
+			}
+		}
+	}
+	let hrn=Math.floor(Math.random()*101);
+	console.log("hrn:%s heroDrapRate:%s",hrn,heroDrapRate);
+	if(heroDrapRate>0 && hrn<=heroDrapRate){
+		rs.box.hero=rs.box.hero+1;
+		rs.boxCount=rs.boxCount+1;
+	}
+	return rs;
+}
 
 
 /*

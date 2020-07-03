@@ -356,5 +356,12 @@ module.exports  = [
         "gameID": "533",
         "png": "//www.empiregamings.com/img/games/dragonselement.jpg",
         "category": "slots"
+    },
+    {
+        "launchUrl": "https://wink.empiregamings.com/wink/dajidali/launch",
+        "name": "Da Ji Da Li",
+        "gameID": "537",
+        "png": "//www.empiregamings.com/img/games/dajidali.jpg",
+        "category": "slots"
     }
 ]

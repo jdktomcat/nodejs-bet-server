@@ -6,6 +6,10 @@ module.exports = {
   // 操作Live游戏相关的私钥
   // operatorLive_pk: '93613360520D1FE07910187B0E4A613A2E6F113F973E27C44C5C6053C2D736EE',
   operatorLive_pk: '019E2F9A28B6CC2F5A2B17EAC0C6118916803D7EDCDE3993240E196F0AACAA8B',
+
+  //扫雷游戏的私钥
+  operatorMine_pk: '09c1ab7be9b739d182c5fc58d122c5c60101a4979c3049746696dd6cfd1152b8',
+
   // 财务账号
   financeBase58Check: 'TVcA9XUcVEZCC5GZCErQQ21WyQWVcgSMAL',
   // 合约地址
@@ -55,6 +59,13 @@ module.exports = {
     TronBetDice20: '4128094fa46cca02c1139495d261b73a846f07e78a',
     TronBetDiceOraclize20: '41281098dbaa7f0f709bd2afc0f8f543ed48a1f34b',
 
+    TronBetMine:'41160af67adaccad61f124485d59f0a33fbb2a86b4',//TBykzzJbxa3FUbat6ast1zajvQ7Zyz9Nua
+    TronBetMineOracle:'41345fce06af0a60ea57c01e7ef35a6d74f19ebdd0',//TEk8ufgEqVEQk2QmvPVTazFkH79WVXXXwd
+    TronBetMinerHero:'4134f90e7e64e30ccb56c707ef4ea2616a1af2df89',//TEoJVnqzUsMT5qNbtQqnTxipn6C32QeZrj
+    TronBetMinerHeroPool:'412eacb07ac4d468c5be2ad2c70da1151778f8c3c1',//TEDzxYvWhETYopeoYSk1soHQpJmspq1j5v
+    TronBetMinerNormal:'41d3eb52c702ff188fbc5561d03d287c28b5eedb7c',//TVHjV64qNMHMbTTac9H7Agx5ZpWHS8JwFY
+
+
     WinTokenBase58Check: 'TQbtSKAhesYpj6LS3WTZdp32MYS6qorSyM',
     TronBetPoolPlusBase58Check: 'TUHoKKDHvVfesvTLjWkbpz9qbyYS1rg8HV',
     BttTokenId: 1000024,
@@ -96,6 +107,8 @@ module.exports = {
     tronbet_backend02: 18056,
     tronbet_event01: 18058,
     tronbet_event02: 18058,
+
+    tronbet_mine:17001,
 
 
     tronlive_emserver: 18060,
