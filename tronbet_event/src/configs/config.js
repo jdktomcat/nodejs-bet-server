@@ -380,6 +380,5 @@ if (
   config = Object.assign(config, require("./config_dev.js"));
 }
 
-console.log("prdCfg.operatorDice_pk is ",prdCfg.operatorDice_pk)
 
 module.exports = config;
