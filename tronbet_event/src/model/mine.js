@@ -409,7 +409,7 @@ const exchangeCard = async function (type, addr) {
                     // send 5000WIN
                     const sql2 =
                         `update tron_bet_event.mine_letter 
-                    set letter_W = letter_W - 10,letter_I = letter_I - 10,letter_N = letter_N - 10
+                    set letter_W = letter_W - 100,letter_I = letter_I - 100,letter_N = letter_N - 100
                     where addr = ? `
                     await updateQuery(sql2, [addr], t)
                     // send
