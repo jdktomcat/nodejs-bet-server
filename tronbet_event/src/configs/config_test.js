@@ -11,7 +11,7 @@ let config = {
   env: "dev",
   debug: false,
   app: {
-    http_port: prdCfg.port.tronbet_event01,
+    http_port: 18058,
     logPath: path.resolve(__dirname, "../../logs"),
     log: true, //开启日志,
     startTs: 1579996800000, //2019-01-26 00:00:00
@@ -46,8 +46,11 @@ let config = {
 
     slaveFullNode: prdCfg.slave_full,
     slaveSolidityNode: prdCfg.slave_solidity,
-    slaveEventNode: prdCfg.slave_event
+    slaveEventNode: prdCfg.slave_event,
+    // 发放win合约
+    winToken:'41b6637187b89b39f736bcd9c753a946f25b132552',
   },
+  //
   boxConf: {
     // 10 种牌 越来越难得 就是这个逻辑
     goodsRate: [

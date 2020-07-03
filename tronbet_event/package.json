@@ -14,11 +14,12 @@
     "koa2": "^2.0.0-alpha.7",
     "lodash": "^4.17.11",
     "log4js": "^4.0.2",
+    "moment": "^2.26.0",
     "mysql2": "^1.6.5",
     "redis": "^2.8.0",
+    "sequelize": "^6.2.3",
     "tronweb": "^2.1.32",
     "uuid": "^3.3.2",
-    "uuid-to-hex": "^1.0.3",
-    "moment": "^2.26.0"
+    "uuid-to-hex": "^1.0.3"
   }
 }
