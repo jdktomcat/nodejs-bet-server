@@ -39,7 +39,7 @@ const DauSql = `
         FROM
             tron_bet_wzc.mine_event_log
         WHERE
-            AND ts >= ?
+            ts >= ?
             AND ts < ? 
             
         union all
