@@ -28,12 +28,26 @@ const getData = async function () {
                 //todo insert record
                 console.log(addr_row, tmp3)
                 //
-                let tx = await tronUtils.sendTRX(addr_row, tmp3)
-                console.log("tx is ", tx)
-                const id = tx.transaction.txID
-                let sql1 = "insert into tron_bet_event.mine_reward_list(addr,trx,tx_id) values (?,?,?)"
-                await updateQuery(sql1, [addr_row, tmp3, id], t)
+                let sql1 = "insert into tron_bet_event.mine_reward_list(addr,amount,tx_id) values (?,?,'')"
+                await updateQuery(sql1, [addr_row, tmp3], t)
             }
+        }
+    })
+}
+
+const sendTRX = async function () {
+    await sequelize.transaction(async (t) => {
+        let querySql = 'select * from tron_bet_event.mine_reward_list'
+        let queryData = await rawQuery(querySql, [], t)
+        for (let e of queryData) {
+            let addr = e.addr
+            let amount = e.amount
+            let tx = await tronUtils.sendTRX(addr, amount)
+            console.log("tx is ", tx)
+            const id = tx.transaction.txID
+            let sql2 = 'update tron_bet_event.mine_reward_list set tx_id = ? where addr = ? and amount = ?'
+            //
+            await updateQuery(sql2, [id, addr, amount])
         }
     })
 }
@@ -43,8 +57,10 @@ const rewardSchedule = async function () {
     // 每个小时30分的时候重启dice扫描
     const schedule = require('node-schedule');
     //
-    const a1 = schedule.scheduleJob('10 * * * *', async function () {
+    const a1 = schedule.scheduleJob('25 * * * *', async function () {
         await getData()
+        //
+        await sendTRX()
     })
 }
 
