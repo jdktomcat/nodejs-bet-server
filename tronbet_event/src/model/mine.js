@@ -1,19 +1,19 @@
 const {sequelize, rawQuery, updateQuery} = require('../utils/mysqlUtils')
 const tronUtils = require("./../utils/tronUtil")
 
-const sendLimit = async function (addr,t) {
+const sendLimit = async function (addr, t) {
     let sql = 'select ts from tron_bet_event.mine_send_log where addr = ? order by ts desc limit 1';
-    const row = await rawQuery(sql,[addr],t)
-    if(row.length === 0){
+    const row = await rawQuery(sql, [addr], t)
+    if (row.length === 0) {
         return false
-    }else {
+    } else {
         let r = row[0]
         let ts = Number(r.ts)
         // 10秒限制
         const tmp5Limit = Date.now() - ts
-        if(tmp5Limit <= 10 * 1000){
+        if (tmp5Limit <= 10 * 1000) {
             return true
-        }else {
+        } else {
             return false
         }
     }
@@ -26,15 +26,16 @@ const sendTRX = async function (addr, amount, t) {
     //insert 流水
     try {
         let insertSql = "insert into tron_bet_event.mine_send_log(addr, amount, currency, tx_id, ts) values (?,?,?,?,?)"
-        await updateQuery(insertSql, [addr, amount, 'TRX', '', Date.now()], t)
+        const now = Date.now()
+        await updateQuery(insertSql, [addr, amount, 'TRX', '', now], t)
         let tx = await tronUtils.sendTRX(addr, amount)
         if (tx.result !== true) {
             return ''
         } else {
             const id = tx.transaction.txID
             //
-            let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ?"
-            await updateQuery(updateSql, [id, addr], t)
+            let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ? and amount = ? and ts = ?"
+            await updateQuery(updateSql, [id, addr, amount, now], t)
         }
     } catch (e) {
         console.log("sendTRX error is " + e.toString())
@@ -44,15 +45,16 @@ const sendTRX = async function (addr, amount, t) {
 const sendWin = async function (addr, amount, t) {
     try {
         //insert 流水
+        const now = Date.now()
         let insertSql = "insert into tron_bet_event.mine_send_log(addr, amount, currency, tx_id, ts) values (?,?,?,?,?)"
-        await updateQuery(insertSql, [addr, amount, 'WIN', '', Date.now()], t)
+        await updateQuery(insertSql, [addr, amount, 'WIN', '', now], t)
         let tx = await tronUtils.sendWin(addr, amount)
         //
         const id = tx
         console.log("win id is ", id)
         //
-        let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ?"
-        await updateQuery(updateSql, [id, addr], t)
+        let updateSql = "update tron_bet_event.mine_send_log set tx_id = ? where addr = ? and amount = ? and ts = ?"
+        await updateQuery(updateSql, [id, addr, amount, now], t)
     } catch (e) {
         console.log("sendWin error is " + e.toString())
         throw new Error("sendWin error")
@@ -371,7 +373,7 @@ const randomTrxNum = function () {
 
 const exchangeCard = async function (type, addr) {
     return await sequelize.transaction(async (t) => {
-        const isLock = await sendLimit(addr,t)
+        const isLock = await sendLimit(addr, t)
         if (isLock) {
             throw new Error("frequency limit !")
         }
@@ -464,7 +466,7 @@ const exchangeCard = async function (type, addr) {
 
 async function sellCard(type, addr, letter_array) {
     return await sequelize.transaction(async (t) => {
-        const isLock = await sendLimit(addr,t)
+        const isLock = await sendLimit(addr, t)
         if (isLock) {
             throw new Error("frequency limit !")
         }
