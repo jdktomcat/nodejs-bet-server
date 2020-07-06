@@ -39,9 +39,11 @@ const sendTRX = async function () {
     await sequelize.transaction(async (t) => {
         let querySql = 'select * from tron_bet_event.mine_reward_list'
         let queryData = await rawQuery(querySql, [], t)
+        console.log("queryData is ",queryData)
         for (let e of queryData) {
             let addr = e.addr
             let amount = e.amount
+            console.log("addr, amount is ",addr, amount)
             let tx = await tronUtils.sendTRX(addr, amount)
             console.log("tx is ", tx)
             const id = tx.transaction.txID
@@ -49,6 +51,8 @@ const sendTRX = async function () {
             //
             await updateQuery(sql2, [id, addr, amount])
         }
+    }).catch(e=>{
+        console.log("error is ",e.toString())
     })
 }
 
@@ -57,7 +61,7 @@ const rewardSchedule = async function () {
     // 每个小时30分的时候重启dice扫描
     const schedule = require('node-schedule');
     //
-    const a1 = schedule.scheduleJob('25 * * * *', async function () {
+    const a1 = schedule.scheduleJob('30 * * * *', async function () {
         await getData()
         //
         await sendTRX()
