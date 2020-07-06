@@ -43,7 +43,7 @@ const rewardSchedule = async function () {
     // 每个小时30分的时候重启dice扫描
     const schedule = require('node-schedule');
     //
-    const a1 = schedule.scheduleJob('05 * * * *', async function () {
+    const a1 = schedule.scheduleJob('10 * * * *', async function () {
         await getData()
     })
 }
