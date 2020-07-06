@@ -35,7 +35,7 @@ const queryDivInfo = async function () {
     start.setUTCMilliseconds(0)
     const now = start.getTime() / 1e3
     //
-    let sql = 'select send_ts from tron_live.live_trc20_div_info where send_ts >= ?';
+    let sql = 'select created_at from tron_live.live_trc20_div_info where created_at >= ?';
     const data = await raw(sql, [now])
     //
     if (data.length > 0) {
@@ -56,7 +56,7 @@ const queryDivIfComplete = async function (type) {
     start.setUTCMilliseconds(0)
     const now = start.getTime() / 1e3
     //
-    let sql = 'select send_ts from tron_live.live_trc20_div_info where send_ts >= ? and div_state = ?';
+    let sql = 'select created_at from tron_live.live_trc20_div_info where created_at >= ? and div_state = ?';
     const data = await raw(sql, [now, type])
     //
     if (data.length > 0) {
