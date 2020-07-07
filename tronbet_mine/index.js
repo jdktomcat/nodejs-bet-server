@@ -205,6 +205,7 @@ function socketConnected(newSocket){
  */
 function queryUserLogs(data){
 	console.log("queryUserLogs....");
+	console.log("update.......user token Id");
 	let tw=getTronWeb();	
 	let socket=this;
 	let result={};
