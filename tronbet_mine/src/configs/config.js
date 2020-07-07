@@ -2,8 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 let NODE_ENV=process.env.NODE_ENV||'production';
-console.log(NODE_ENV);
-
+NODE_ENV='development';
 let gobalConfigFileLocation=process.env.NODE_CONFIG_DIR||"/data/tronbet_config";
 console.log(gobalConfigFileLocation);
 let appConfigFileLocation=__dirname + '/config_'+NODE_ENV+".js";
