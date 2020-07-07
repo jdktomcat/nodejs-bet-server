@@ -1498,7 +1498,7 @@ function getOrderDetail(order){
 	json.mineFieldW=parseInt(order.substring(60,62),16);
 	json.mineFieldH=parseInt(order.substring(58,60),16);	
 	json.gameModel=parseInt(order.substring(56,58),16);	
-	json.orderCloseBlockH=parseInt(order.substring(48,56),16);	
+	json.orderTokenId=parseInt(order.substring(48,56),16);	
 	json.orderNo=parseInt(order.substring(40,48),16);	
 	json.orderAmount=parseInt(order.substring(24,40),16);	
 	json.orderBlockT=parseInt(order.substring(8,24),16);	
