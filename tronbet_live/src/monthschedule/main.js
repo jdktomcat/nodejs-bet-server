@@ -33,62 +33,103 @@ const getMonth = function () {
     }
 }
 
-const coinspaidData = async function () {
-    const attachments = await coinspaid()
-    const p = {
-        mail: mail,
-        attachments: attachments,
-        title: "充值提现"
+// const coinspaidData = async function () {
+//     const attachments = await coinspaid()
+//     const p = {
+//         mail: mail,
+//         attachments: attachments,
+//         title: "充值提现"
+//     }
+//     await sendMail(p)
+//     deleteExcel(attachments)
+// }
+//
+// const financialData = async function (startDate, endDate) {
+//     const attachments = await financial(startDate, endDate)
+//     const p = {
+//         mail: mail,
+//         attachments: attachments,
+//         title: "live_流水"
+//     }
+//     await sendMail(p)
+//     deleteExcel(attachments)
+// }
+//
+// const financialDivData = async function (startDate, endDate) {
+//     const attachments = await financialDiv(startDate, endDate)
+//     const p = {
+//         mail: mail,
+//         attachments: attachments,
+//         title: "live_usdt_divide"
+//     }
+//     await sendMail(p)
+//     deleteExcel(attachments)
+// }
+//
+// const bttDivideData = async function (startDate, endDate) {
+//     const attachments = await btt_divide(startDate, endDate)
+//     const p = {
+//         mail: mail,
+//         attachments: attachments,
+//         title: "btt_monthly_divide"
+//     }
+//     await sendMail(p)
+//     deleteExcel(attachments)
+// }
+
+const zipDeal = function (name, attachments, array) {
+    const zip = new require('node-zip')();
+    for (let e of attachments) {
+        // zip.file('file1.txt', fs.readFileSync(path.join(__dirname, 'file1.txt')));
+        zip.file(e.filename, fs.readFileSync(e.path));
     }
-    await sendMail(p)
+    const data = zip.generate({base64: false, compression: 'DEFLATE'});
+    fs.writeFileSync(name, data, 'binary');
+    //移除
     deleteExcel(attachments)
+    const obj = {
+        filename: name,
+        path: "./" + name
+    }
+    array.push(obj)
 }
 
-const financialData = async function (startDate, endDate) {
-    const attachments = await financial(startDate, endDate)
-    const p = {
-        mail: mail,
-        attachments: attachments,
-        title: "live_流水"
-    }
-    await sendMail(p)
-    deleteExcel(attachments)
-}
-
-const financialDivData = async function (startDate, endDate) {
-    const attachments = await financialDiv(startDate, endDate)
-    const p = {
-        mail: mail,
-        attachments: attachments,
-        title: "live_usdt_divide"
-    }
-    await sendMail(p)
-    deleteExcel(attachments)
-}
-
-const bttDivideData = async function (startDate, endDate) {
-    const attachments = await btt_divide(startDate, endDate)
-    const p = {
-        mail: mail,
-        attachments: attachments,
-        title: "btt_monthly_divide"
-    }
-    await sendMail(p)
-    deleteExcel(attachments)
+const getData = async function (startDate, endDate) {
+    // [ { filename: '2020-06-01-2020-07-01sport流水.xls',
+    //     path: './2020-06-01-2020-07-01sport流水.xls' },
+    //     { filename: '2020-06-01-2020-07-01hub88流水.xls']
+    // deposit withdraw
+    const d_w = await coinspaid()
+    // live流水
+    const live_log = await financial(startDate, endDate)
+    // usdt
+    const usdt_log = await financialDiv(startDate, endDate)
+    // btt 流水
+    const btt_log = await btt_divide(startDate, endDate)
+    // 合并
+    let a = []
+    zipDeal('充值提现', d_w, a)
+    zipDeal('live流水', live_log, a)
+    zipDeal('usdt流水', usdt_log, a)
+    zipDeal('btt流水', btt_log, a)
+    console.log("last a is ",a)
+    deleteExcel(a)
 }
 
 const main = async function () {
     const schedule = require('node-schedule');
     // 每个月1号6点（14点）自动触发
-    const a1 = schedule.scheduleJob('0 6 1 * *', async function () {
+    // const a1 = schedule.scheduleJob('0 6 1 * *', async function () {
+    const a1 = schedule.scheduleJob('10 * * * *', async function () {
         console.log(new Date(), "test_month_schedule")
         const {startDate, endDate} = getMonth()
         console.log(startDate, endDate)
-        await coinspaidData()
-        await financialData(startDate, endDate)
-        await financialDivData(startDate, endDate)
-        // add btt 20200707
-        await bttDivideData(startDate,endDate)
+        await getData(startDate,endDate)
+        // await coinspaidData()
+        // await financialData(startDate, endDate)
+        // await financialDivData(startDate, endDate)
+        // // add btt 20200707
+        // await bttDivideData(startDate, endDate)
     })
 }
 
