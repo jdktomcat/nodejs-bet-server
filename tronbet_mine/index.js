@@ -281,7 +281,7 @@ function queryUserLogs(data){
 		}else{
 			orderIdList.push(userLatestRedisInfo.order.orderNo);
 		}
-		console.log(JSON.stringify(orderIdList));
+		//console.log(JSON.stringify(orderIdList));
 		if(orderIdList.length>0){ 
 			redis.hmget(MINE_REDIS_PREFIX+USER_LOG+addr,orderIdList,function(err,rs){
 				if(err){
@@ -336,6 +336,7 @@ function queryUserLogs(data){
 						"gameResult":tmpInfo.gameResult
 					});
 				}
+				console.log(JSON.stringify(userLogList));
 				result.errorCode=SUCCESS;
 				result.data=userLogList;
 				socket.emit(QUERY_USER_LOGS_RESULT,result);
