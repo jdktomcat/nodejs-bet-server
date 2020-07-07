@@ -266,7 +266,7 @@ function queryUserLogs(data){
 			userLogList.push({
 				"id":userLatestRedisInfo.order.orderNo,
 				"bet":parseInt(userLatestRedisInfo.order.orderAmount._hex),
-				"order":tmpInfo.order,
+				"order":userLatestRedisInfo.order,
 				"orderTokenId":userLatestRedisInfo.order.orderTokenId,
 				"blockNo":userLatestRedisInfo.order.orderBlockH,
 				"now":userLatestRedisInfo.mineHash,
