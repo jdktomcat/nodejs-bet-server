@@ -266,6 +266,7 @@ function queryUserLogs(data){
 			userLogList.push({
 				"id":userLatestRedisInfo.order.orderNo,
 				"bet":parseInt(userLatestRedisInfo.order.orderAmount._hex),
+				"prefix":MINE_REDIS_PREFIX,
 				"order":userLatestRedisInfo.order,
 				"orderTokenId":userLatestRedisInfo.order.orderTokenId,
 				"blockNo":userLatestRedisInfo.order.orderBlockH,
@@ -324,6 +325,7 @@ function queryUserLogs(data){
 					userLogList.push({
 						"id":tmpInfo.order.orderNo,
 						"bet":tmpInfo.order.orderAmount,
+						"prefix":MINE_REDIS_PREFIX,
 						"order":tmpInfo.order,
 						"orderTokenId":tmpInfo.order.orderTokenId,
 						"blockNo":tmpInfo.order.orderBlockH,
