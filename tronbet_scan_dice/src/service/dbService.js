@@ -146,11 +146,11 @@ async function saveDB(blockInfo) {
                         //日志数据入库
                         const insertSQL = 'insert into mine_event_log ' +
                             '(tx_id, addr, amount, win_amount, mentor_addr, mentor_rate, order_id, order_state, order_ts, ' +
-                            ' order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width) ' +
-                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                            ' order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width, token_id) ' +
+                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                         const params = [tx_id, log.addr, log.amount, log.win_amount, log.mentor_addr,
                             log.mentor_rate, log.order_id, log.order_state, log.order_ts, log.order_block_height,
-                            log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width]
+                            log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width, log.token_id]
                         await db.execTrans(insertSQL, params, conn);
                         if(log.win_amount > 0){
                             let userMineContent = await redisNew.hget(MINE_REDIS_PREFIX_KEY+log.addr, log.order_id)
@@ -166,20 +166,22 @@ async function saveDB(blockInfo) {
                         // 发送信息
                         sendGameMsg(log.addr, log.order_id, log.amount);
                         // 统计当前区块玩家数据
-                        let playerInfo = playersThisBlock.get(log.addr);
-                        if (playerInfo) {
-                            playerInfo.total = (new BigNumber(playerInfo.total)).plus(log.amount).toString();
-                            playerInfo.payout = (new BigNumber(playerInfo.payout)).plus(log.amount).toString();
-                            playerInfo.play_times = playerInfo.play_times + 1;
-                            playerInfo.win_times = playerInfo.win_times + (log.win_amount > 0 ? 1 : 0);
-                            playerInfo.mentor = log.mentor_addr;
-                        } else {
-                            playersThisBlock.set(log.addr, {
-                                total: log.amount,
-                                payout: log.amount,
-                                play_times: 1,
-                                win_times: (log.win_amount > 0 ? 1 : 0)
-                            })
+                        if(log.token_id === 1){// 排行榜只统计trx
+                            let playerInfo = playersThisBlock.get(log.addr);
+                            if (playerInfo) {
+                                playerInfo.total = (new BigNumber(playerInfo.total)).plus(log.amount).toString();
+                                playerInfo.payout = (new BigNumber(playerInfo.payout)).plus(log.amount).toString();
+                                playerInfo.play_times = playerInfo.play_times + 1;
+                                playerInfo.win_times = playerInfo.win_times + (log.win_amount > 0 ? 1 : 0);
+                                playerInfo.mentor = log.mentor_addr;
+                            } else {
+                                playersThisBlock.set(log.addr, {
+                                    total: log.amount,
+                                    payout: log.amount,
+                                    play_times: 1,
+                                    win_times: (log.win_amount > 0 ? 1 : 0)
+                                })
+                            }
                         }
                     } else if (log._type === "ante_transfer_log") {
                         //转账数据入库
