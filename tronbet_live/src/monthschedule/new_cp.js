@@ -113,14 +113,14 @@ const task = async function (startDate, endDate) {
     const p1_data = await getPlatius(startDate, endDate)
     if (p1_data.length > 0) {
         const file_name = startDate + "-" + endDate + "platius.xls"
-        const platius_o = await generate_dict(p1_data, file_name)
+        const platius_o = generate_dict(p1_data, file_name)
         a.push(platius_o)
     }
     //
     const binary_data = await getBinary(startDate, endDate)
     if (binary_data.length > 0) {
         const file_name = startDate + "-" + endDate + "binary.xls"
-        const binary_o = await generate_dict(binary_data, file_name)
+        const binary_o = generate_dict(binary_data, file_name)
         a.push(binary_o)
     }
     return a
