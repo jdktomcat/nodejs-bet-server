@@ -15,7 +15,7 @@ const main = async function () {
         await liveBalanceAudit()
     }
 
-    monthSchedule()
+    await monthSchedule()
 
 
 }
