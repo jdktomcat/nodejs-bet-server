@@ -18,7 +18,7 @@ const raw = async function (sql, params) {
     return data
 }
 
-const generateCsv = async function (data) {
+const generateCsv = function (data) {
     if (data.length === 0) {
         return ''
     }
