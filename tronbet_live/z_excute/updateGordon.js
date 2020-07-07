@@ -28,7 +28,7 @@ async function fix() {
         let obj = {};
         obj.addr = item.addr;
         obj.toPay = item.toPay;
-        obj.orderId ="ff61dd81fff75a5a69c4049474dde50305fea0aaed83fd94950ff6fff93013ff";//防止重复发送 
+        obj.orderId ="ff61dd81fff75a5a69c4049474dde50305fea0aaed83fd94950ff6fff93f13ff";//防止重复发送 
         users.push(obj);
     }
     for (let one of users) {
