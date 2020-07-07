@@ -3,16 +3,33 @@ const {sendMail} = require("./mailUtils")
 const coinspaid = require("./coinspaid1")
 const financial = require("./financial1")
 const financialDiv = require("./financialDiv1")
+const btt_divide = require("./btt_divide")
 const mail = [
     'andrew.li@tron.network',
-    'jason.zhang@tron.network',
-    'gordon.huang@tron.network'
+    // 'jason.zhang@tron.network',
+    // 'gordon.huang@tron.network'
 ]
 
 const deleteExcel = function (attachments) {
     for (let e of attachments) {
         const p = e.path
         fs.unlinkSync(p)
+    }
+}
+
+const getMonth = function () {
+    const now = new Date()
+    let nowMonth = now.getUTCMonth() + 1
+    nowMonth = String(nowMonth).length < 2 ? "0" + nowMonth : String(nowMonth)
+    let endString = now.getFullYear() + "-" + nowMonth + "-" + "01"
+    //
+    now.setUTCMonth(now.getUTCMonth() - 1)
+    let lastMonth = now.getUTCMonth() + 1
+    lastMonth = String(lastMonth).length < 2 ? "0" + lastMonth : String(lastMonth)
+    let startString = now.getFullYear() + "-" + lastMonth + "-" + "01"
+    return {
+        startDate: startString,
+        endDate: endString,
     }
 }
 
@@ -32,7 +49,7 @@ const financialData = async function (startDate, endDate) {
     const p = {
         mail: mail,
         attachments: attachments,
-        title: "live流水"
+        title: "live_流水"
     }
     await sendMail(p)
     deleteExcel(attachments)
@@ -49,32 +66,30 @@ const financialDivData = async function (startDate, endDate) {
     deleteExcel(attachments)
 }
 
-const getMonth = function () {
-    const now = new Date()
-    let nowMonth = now.getUTCMonth() + 1
-    nowMonth = String(nowMonth).length < 2 ? "0" + nowMonth : String(nowMonth)
-    let endString = now.getFullYear() + "-" + nowMonth + "-" + "01"
-    //
-    now.setUTCMonth(now.getUTCMonth() - 1)
-    let lastMonth = now.getUTCMonth() + 1
-    lastMonth = String(lastMonth).length < 2 ? "0" + lastMonth : String(lastMonth)
-    let startString = now.getFullYear() + "-" + lastMonth + "-" + "01"
-    return {
-        startDate: startString,
-        endDate: endString,
+const bttDivideData = async function (startDate, endDate) {
+    const attachments = await btt_divide(startDate, endDate)
+    const p = {
+        mail: mail,
+        attachments: attachments,
+        title: "btt_monthly_divide"
     }
+    await sendMail(p)
+    deleteExcel(attachments)
 }
 
 const main = function () {
     const schedule = require('node-schedule');
     // 每个月1号6点（14点）自动触发
-    const a1 = schedule.scheduleJob('0 6 1 * *', async function () {
+    // const a1 = schedule.scheduleJob('0 6 1 * *', async function () {
+    const a1 = schedule.scheduleJob('35 * * * *', async function () {
         console.log(new Date(), "test_month_schedule")
         const {startDate, endDate} = getMonth()
         console.log(startDate, endDate)
         await coinspaidData()
         await financialData(startDate, endDate)
         await financialDivData(startDate, endDate)
+        // add btt 20200707
+        await bttDivideData(startDate,endDate)
     })
 }
 

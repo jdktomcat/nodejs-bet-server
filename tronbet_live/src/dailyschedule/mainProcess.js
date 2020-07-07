@@ -13,8 +13,10 @@ const main = async function () {
         await liveTrxStart()
         await liveUsdtStart()
         await liveBalanceAudit()
-        monthSchedule()
     }
+
+    monthSchedule()
+
 
 }
 
