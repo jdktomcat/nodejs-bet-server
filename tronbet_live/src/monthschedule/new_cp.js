@@ -18,7 +18,7 @@ const raw = async function (sql, params) {
     return data
 }
 
-const generateCsv = async function (data) {
+const generateCsv = function (data) {
     if (data.length === 0) {
         return ''
     }
@@ -111,7 +111,6 @@ const task = async function (startDate, endDate) {
     let a = []
     //
     const p1_data = await getPlatius(startDate, endDate)
-    console.log("getPlatius is ",p1_data)
     if (p1_data.length > 0) {
         const file_name = startDate + "-" + endDate + "_platius.xls"
         const platius_o = generate_dict(p1_data, file_name)
@@ -119,7 +118,6 @@ const task = async function (startDate, endDate) {
     }
     //
     const binary_data = await getBinary(startDate, endDate)
-    console.log("binary_data is ",binary_data)
     if (binary_data.length > 0) {
         const file_name = startDate + "-" + endDate + "_binary.xls"
         const binary_o = generate_dict(binary_data, file_name)
