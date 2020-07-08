@@ -1463,7 +1463,7 @@ async function refreshPrice(){
 			tronSerivce.execute(
 				tronNodePool,
 				config.contract[MAIN_MINE_GAME],
-				MINE_GAME_TOKEN_RATE,[7,usdtRate],0,function(err,rs){
+				MINE_GAME_SET_TOKEN_RATE,[7,usdtRate],0,function(err,rs){
 				PENDING_ORDERS[addr]=ORDER_STATUS_CLOSE;
 				if(err){
 					console.log("upadte usdt rate error:\n"+err);
