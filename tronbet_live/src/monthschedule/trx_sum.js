@@ -174,8 +174,8 @@ const getWinkTRX = async function (startDate, endDate) {
         order by from_unixtime(tmp1.st, '%Y-%m-%d')
     `
     const params = [
-        newUtcTime(startDate).getTime(),
-        newUtcTime(endDate).getTime()
+        newUtcTime(startDate).getTime() / 1e3,
+        newUtcTime(endDate).getTime() / 1e3
     ]
     const data = await raw(sql, params)
     return data
