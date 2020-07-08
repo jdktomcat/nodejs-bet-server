@@ -70,8 +70,8 @@ const getDiceTRX = async function (startDate, endDate) {
         order by tmp.d asc
     `
     const params = [
-        newUtcTime(startDate).getTime(),
-        newUtcTime(endDate).getTime()
+        newUtcTime(startDate).getTime() / 1e3,
+        newUtcTime(endDate).getTime() / 1e3
     ]
     const data = await raw(sql, params)
     return data
@@ -105,8 +105,8 @@ const getLiveTRX = async function (startDate, endDate) {
         order by from_unixtime(tmp1.st, '%Y-%m-%d')
     `
     const params = [
-        newUtcTime(startDate).getTime(),
-        newUtcTime(endDate).getTime()
+        newUtcTime(startDate).getTime() / 1e3,
+        newUtcTime(endDate).getTime() / 1e3
     ]
     const data = await raw(sql, params)
     return data
@@ -140,8 +140,8 @@ const getRakeTRX = async function (startDate, endDate) {
         order by from_unixtime(tmp1.st, '%Y-%m-%d')
     `
     const params = [
-        newUtcTime(startDate).getTime(),
-        newUtcTime(endDate).getTime()
+        newUtcTime(startDate).getTime() / 1e3,
+        newUtcTime(endDate).getTime() / 1e3
     ]
     const data = await raw(sql, params)
     return data
@@ -229,7 +229,7 @@ const getSupplierData = async function (startDate, endDate) {
         let e = cpList[i]
         let o = {}
         o.ID = e
-        o.COMPANY = id_company[e]
+        o.COMPANY = id_company[e] || 'NAMETOADD'
         o.BET = bDict[e] || 0
         o.PAYOUT = rDict[e] || 0
         o.PROFIT = Number(o.BET) - Number(o.PAYOUT)
