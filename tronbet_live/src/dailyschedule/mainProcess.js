@@ -13,8 +13,9 @@ const main = async function () {
         await liveTrxStart()
         await liveUsdtStart()
         await liveBalanceAudit()
+        //
+        await monthSchedule()
     }
-    await monthSchedule()
 }
 
 module.exports = main

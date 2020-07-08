@@ -33,50 +33,6 @@ const getMonth = function () {
     }
 }
 
-// const coinspaidData = async function () {
-//     const attachments = await coinspaid()
-//     const p = {
-//         mail: mail,
-//         attachments: attachments,
-//         title: "充值提现"
-//     }
-//     await sendMail(p)
-//     deleteExcel(attachments)
-// }
-//
-// const financialData = async function (startDate, endDate) {
-//     const attachments = await financial(startDate, endDate)
-//     const p = {
-//         mail: mail,
-//         attachments: attachments,
-//         title: "live_流水"
-//     }
-//     await sendMail(p)
-//     deleteExcel(attachments)
-// }
-//
-// const financialDivData = async function (startDate, endDate) {
-//     const attachments = await financialDiv(startDate, endDate)
-//     const p = {
-//         mail: mail,
-//         attachments: attachments,
-//         title: "live_usdt_divide"
-//     }
-//     await sendMail(p)
-//     deleteExcel(attachments)
-// }
-//
-// const bttDivideData = async function (startDate, endDate) {
-//     const attachments = await btt_divide(startDate, endDate)
-//     const p = {
-//         mail: mail,
-//         attachments: attachments,
-//         title: "btt_monthly_divide"
-//     }
-//     await sendMail(p)
-//     deleteExcel(attachments)
-// }
-
 const zipDeal = function (name, attachments, array) {
     const zip = new require('node-zip')();
     for (let e of attachments) {
@@ -125,17 +81,12 @@ const getData = async function (startDate, endDate) {
 const main = async function () {
     const schedule = require('node-schedule');
     // 每个月1号6点（14点）自动触发
-    // const a1 = schedule.scheduleJob('0 6 1 * *', async function () {
-    const a1 = schedule.scheduleJob('57 * * * *', async function () {
+    const a1 = schedule.scheduleJob('0 6 1 * *', async function () {
+    // const a1 = schedule.scheduleJob('57 * * * *', async function () {
         console.log(new Date(), "test_month_schedule")
         const {startDate, endDate} = getMonth()
         console.log(startDate, endDate)
         await getData(startDate, endDate)
-        // await coinspaidData()
-        // await financialData(startDate, endDate)
-        // await financialDivData(startDate, endDate)
-        // // add btt 20200707
-        // await bttDivideData(startDate, endDate)
     })
 }
 
