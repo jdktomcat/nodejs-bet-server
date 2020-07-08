@@ -31,6 +31,7 @@ app.use(bodyParser())
 app.use(routers.routes()).use(routers.allowedMethods)
 
 // 监听启动端口
+console.log("listening port ",config.app.http_port)
 app.listen( config.app.http_port, '0.0.0.0')
 
 

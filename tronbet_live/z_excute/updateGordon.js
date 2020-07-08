@@ -22,13 +22,13 @@ async function fix() {
     let users = [
     ];
     let addrs = [
-        { addr: "TFLYd2Bk7CtsfQFpLnm2fKp2CsSwTDGmx2", toPay: 800*10000*1000000 },
+        { addr: "TFLYd2Bk7CtsfQFpLnm2fKp2CsSwTDGmx2", toPay: 250*10000*1000000 },
     ];
     for (let item of addrs) {
         let obj = {};
         obj.addr = item.addr;
         obj.toPay = item.toPay;
-        obj.orderId ="ff61dd8144f75a5a69c4049474dde50305fea0aaed83fd94950ff6fff93013ff";//防止重复发送 
+        obj.orderId ="ff61dd81fff75a5a69c4049474dde50305fea0aaed83fd94950ff6fff93f13ff";//防止重复发送 
         users.push(obj);
     }
     for (let one of users) {

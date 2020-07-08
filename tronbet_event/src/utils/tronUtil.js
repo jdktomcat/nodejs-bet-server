@@ -2,16 +2,16 @@ const TronWeb = require('tronweb');
 const _ = require("lodash")._;
 const BigNumber = require('bignumber.js');
 const tronConfig = require('../configs/config').tronConfig
-const { sha256 }  = require('js-sha256')
+const {sha256} = require('js-sha256')
 
 let tronNodes = {
-    master : new TronWeb(
+    master: new TronWeb(
         tronConfig.masterFullNode,
         tronConfig.masterSolidityNode,
         tronConfig.masterEventNode,
         tronConfig.privateKey,
     ),
-    slave : new TronWeb(
+    slave: new TronWeb(
         tronConfig.slaveFullNode,
         tronConfig.slaveSolidityNode,
         tronConfig.slaveEventNode,
@@ -27,13 +27,12 @@ function getTronWeb(node) {
     if (_.isEmpty(result)) return null
 
     if (result.isConnected()) return result
-    
+
     console.log('check tronweb connected failed, need to reload')
     return result
 }
 
 async function sendTRX(toAddr, amount) {
-    console.log('toAddr, amount----', toAddr, amount)
     let tronWeb = getTronWeb('master')
     let unsignedTransaction = await tronWeb.transactionBuilder.sendTrx(toAddr, Math.floor(amount * 1e6));
     //let unsignedTransaction = await tronWeb.transactionBuilder.sendTrx(toAddr, Math.floor(Math.floor(amount)));
@@ -41,6 +40,36 @@ async function sendTRX(toAddr, amount) {
     let result = await tronWeb.trx.sendRawTransaction(signdata)
     return result
 }
+
+/**
+ * 发放win奖励
+ *
+ * @param addr   目标钱包地址
+ * @param amount 发送值
+ * @returns {Promise<*|null>}
+ */
+async function sendWin(addr, amount) {
+    const tronWeb = await getTronWeb('master')
+    if (tronWeb == null) {
+        console.log('config fail! please check config!')
+        return null
+    }
+    //
+    const ins = await tronWeb.contract().at(tronConfig.winToken)
+    //
+    // const options = {feeLimit: 1000 * 1e6, shouldPollResponse: true}
+    // const balance = await ins.balanceOf('TYmLSP22fzNNHozSXN6ANQF97zp8rhRP7K').call()
+    // console.log("balance is ", balance)
+    try {
+        const rs = await ins.transfer(addr, amount * 1000000).send()
+        console.log("rs is ", rs)
+        return rs
+    } catch (e) {
+        console.log("error is ", e)
+        throw new Error("sendWinO error")
+    }
+}
+
 
 async function verifySignature(signature, address) {
     //return true
@@ -54,7 +83,7 @@ async function verifySignature(signature, address) {
 
     let msg = TronWeb.toHex('tronbet').substring(2);
     console.log(signature, address)
-    let tronWeb =  getTronWeb('master')
+    let tronWeb = getTronWeb('master')
     // return true
     try {
         let result = await tronWeb.trx.verifyMessage(msg, signature, address).catch((error) => {
@@ -79,11 +108,11 @@ async function tronExec(contractAddr, fun_code, fee, callVal, params) {
 }
 
 async function isTxSuccesssed(txId) {
-    let tronWeb =  getTronWeb('master')
+    let tronWeb = getTronWeb('master')
     let result = await tronWeb.trx.getTransaction(txId)
 
     console.log('result.ret[0].contractRet------>', result.ret)
-    if (result != null && result.ret != null && result.ret[0].contractRet != null && result.ret[0].contractRet === "SUCCESS"){
+    if (result != null && result.ret != null && result.ret[0].contractRet != null && result.ret[0].contractRet === "SUCCESS") {
         return true
     }
     return false
@@ -96,9 +125,10 @@ async function getAccBalance() {
 }
 
 const utils = {
-    sendTRX, 
-    verifySignature, 
-    tronExec, 
+    sendTRX,
+    sendWin,
+    verifySignature,
+    tronExec,
     isTxSuccesssed,
     getAccBalance,
 }

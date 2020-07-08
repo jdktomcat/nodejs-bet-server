@@ -265,6 +265,7 @@ function queryUserLogs(data){
 			userLogList.push({
 				"id":userLatestRedisInfo.order.orderNo,
 				"bet":parseInt(userLatestRedisInfo.order.orderAmount._hex),
+				"orderTokenId":userLatestRedisInfo.order.orderTokenId,
 				"blockNo":userLatestRedisInfo.order.orderBlockH,
 				"now":userLatestRedisInfo.mineHash,
 				"payout":userLatestRedisInfo.winAmount,//需要计算出来 win 计算出来 lose 0
@@ -321,6 +322,7 @@ function queryUserLogs(data){
 					userLogList.push({
 						"id":tmpInfo.order.orderNo,
 						"bet":tmpInfo.order.orderAmount,
+						"orderTokenId":tmpInfo.order.orderTokenId,
 						"blockNo":tmpInfo.order.orderBlockH,
 						"now":tmpInfo.mineHash,
 						"payout":tmpInfo.order.winAmount,//需要计算出来 win 计算出来 lose 0
@@ -359,6 +361,7 @@ function isTimeOut(data){
 		console.log("用户使用不正确的地址[%s]进行[isTimeOut]",addr);
 		return;	
 	}
+	//多币种增加
 	redis.get(MINE_REDIS_PREFIX+LATEST_GAME_INFO+addr,function(err,info){
 		if(err){
 			console.log("获取Redis失败[%s][isTimeOut]",addr);
@@ -725,21 +728,30 @@ function processMine(socket,data,order){
 			}
 		}
 		//如果用户赢了
-		let boxs=sendGameMsg(data.addr,'trx',order.orderAmount);//有一定概率获取到宝箱
-		if(boxs && boxs.boxCount>0){
-			userLatestRedisInfo.boxs=boxs;
-		}
 		//通关了这个地雷
 		//判断是否到了终点
 		let mineFieldW=order.mineFieldW;
 		if(data.col==order.mineFieldW){
+
 			//结束游戏，用户通关游戏
+			let boxs=sendGameMsg(data.addr,'trx',order.orderAmount,getHeroDropRate(order.mineFieldH,order.mineFieldW,order.gameModel==GAME_MODEL_HERO));//有一定概率获取到宝箱
+			if(boxs && boxs.boxCount>0){
+				userLatestRedisInfo.boxs=boxs;
+			}
 			userLatestRedisInfo.mineSteps[0]=mineFieldW;
 			userLatestRedisInfo.gameResult=GAME_RESULT_WIN;//可以增加赢的金额
 			endGame(socket,data.addr,userLatestRedisInfo,MINE_RESULT);
+			
+
 		}else{
 			//存储到redis里面去，然后返回结果
 			//通关这列雷 通关进度通关进度增加
+
+			let boxs=sendGameMsg(data.addr,'trx',order.orderAmount,0);//有一定概率获取到宝箱
+			if(boxs && boxs.boxCount>0){
+				userLatestRedisInfo.boxs=boxs;
+			}
+
 			userLatestRedisInfo.mineSteps[0]=userLatestRedisInfo.currStep+1;
 			redis.set(MINE_REDIS_PREFIX+LATEST_GAME_INFO+data.addr,JSON.stringify(userLatestRedisInfo),//存储到redis中去
 				function(err,rs){
@@ -767,6 +779,7 @@ function processMine(socket,data,order){
 					result.data.userSteps.push(userLatestRedisInfo.mineSteps[i]);
 					result.data.mines.push(userLatestRedisInfo.mines[i]);
 				}
+				console.log(result);
 				//提交用户step 给它
 				socket.emit(MINE_RESULT,result);	
 				return;
@@ -1124,7 +1137,8 @@ function generateMines(height,width){
 	let mines=new Uint8Array(32);
 	let index=31;//最右边是第一个雷
 	for(var i=0;i<width;i++){
-		mines[index]=Math.floor(Math.random()*height)+1;//地雷的位置
+		let mi=Math.floor(Math.random()*height)+1;//地雷的位置
+		mines[index]=mi;
 		index--;
 	}
 	return mines;
@@ -1203,6 +1217,7 @@ async function endGame(socket,addr,userLatestRedisInfo,eventName,errorCode){
 					}
 				}
 			}
+			console.log(result);
 			socketEmit(socket,addr,eventName,result);//[mark]
 			return;
 		});
@@ -1427,15 +1442,16 @@ async function initCheckOrders(){
 
 /*
  * 刷新USDT对TRX的价格
+ * 同时上传到合约上面去
  */
-function refreshPrice(){
-	setTimeout(() => {
+async function refreshPrice(){
+	setTimeout(async () => {
 		let sql="select count from TRX_USD order by tid desc limit 1";	
-		let res=db.query(sql,);
-		console.log(res);
+		let res=await db.query(sql,[]);
 		if(res){
-			exchangeMap['usdt']=res[0].price;
+			exchangeMap['usdt']=res[0].count;
 		}
+		console.log(JSON.stringify(exchangeMap));
 		refreshPrice();
 	},3000);
 }
@@ -1536,20 +1552,37 @@ function broadcast(eventName, data) {
     io.emit(eventName, data);
 }
 
+/*
+ * 根据雷区的宽度和高度计算通关的概率
+ */
+function getHeroDropRate(h,w,heroModel){
+        let k=1;//分子,英雄模式分子都是为1
+        let p=1;//分母
+        for(let i=0;i<w;i++){
+                if(!heroModel){
+                        k=k*(h-1);
+                }
+                p=p*h;
+        }
+        return parseInt(100/((100*k)/p));
+}
+
 
 /*
  * 发送报销中奖消息
+ * 英雄勋章掉落概率 heroDrapRate 百分数 如果为0 不可能掉落 ,可能的数字如 8，12，14，15，16 等等
  */
-function sendGameMsg(addr,currency,amount) {
+function sendGameMsg(addr,currency,amount,heroDrapRate) {
     let _now = _.now();
+    console.log(ACTIVITY_END_TS);
     if (_now < ACTIVITY_START_TS || _now > ACTIVITY_END_TS) {
 		return false;
     }
     let trxAmount=getEqualTrxAmount(currency,amount);
     if(!trxAmount && trxAmount<mineTrx){
-	    return false ;
+	    return false ;//不支持
     }
-    let treasures=getTreasures(addr,currency,amount,trxAmount);
+    let treasures=getTreasures(addr,currency,amount,trxAmount,heroDrapRate);
     if(treasures.boxCount>0){
     	redis.publish("game_message", JSON.stringify(treasures));
 	return treasures;
@@ -1572,7 +1605,9 @@ function getEqualTrxAmount(currency,amount){
 		return 0;
 	}
 	amount=amount/dp;//去掉小数点 
-	return Math.floor((rate*amount));
+	fm=Math.floor((rate*amount));
+	console.log("fm:%s",fm);
+	return fm;
 }
 
 /*
@@ -1583,33 +1618,41 @@ function getEqualTrxAmount(currency,amount){
  *  box : {
  *      normal : 0,
  *      silver : 0,
- *      gorden : 0
+ *      gorden : 0,
+ *      hero   : 0
  *  }
  */
-function getTreasures(addr,currency,amount,trxAmount){
+function getTreasures(addr,currency,amount,trxAmount,heroDrapRate){
 	let rs={};
 	rs.addr=addr;
 	rs.currency=currency;
-	rs.amount=amount;
+	rs.amount=amount.toNumber();
 	rs.boxCount=0;//宝箱总数
 	rs.gameType=gameType;
 	rs.box={};
-	rs.normal=0;
-	rs.silver=0;
-	rs.gorden=0;
+	rs.box.normal=0;
+	rs.box.silver=0;
+	rs.box.gorden=0;
+	rs.box.hero=0;
 	let boxCount=Math.floor(trxAmount/mineTrx);//获得宝箱的数量 
 	if(Math.floor(Math.random()*2)==1){//50%的概率成功获取到宝箱
 		rs.boxCount=boxCount;//获取到宝箱，现在需要确定宝箱的颜色
 		for(let i=0;i<boxCount;i++){
 			let rn=Math.floor(Math.random()*101);//出现1～100的数字
 			if(rn<=5){
-				rs.gorden=rs.gorden+1;//极小概率获取黄金宝箱
+				rs.box.gorden=rs.box.gorden+1;//极小概率获取黄金宝箱
 			}else if(rn<=25){
-				rs.silver=rs.silver+1;//普通概率获取白银宝箱
+				rs.box.silver=rs.box.silver+1;//普通概率获取白银宝箱
 			}else{
-				rs.normal=rs.normal+1;//大概率获取青铜宝箱
+				rs.box.normal=rs.box.normal+1;//大概率获取青铜宝箱
 			}
 		}
+	}
+	let hrn=Math.floor(Math.random()*101);
+	console.log("hrn:%s heroDrapRate:%s",hrn,heroDrapRate);
+	if(heroDrapRate>0 && hrn<=heroDrapRate){
+		rs.box.hero=rs.box.hero+1;
+		rs.boxCount=rs.boxCount+1;
 	}
 	return rs;
 }

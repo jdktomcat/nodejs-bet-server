@@ -48,7 +48,9 @@ let config = {
 
     slaveFullNode: prdCfg.slave_full,
     slaveSolidityNode: prdCfg.slave_solidity,
-    slaveEventNode: prdCfg.slave_event
+    slaveEventNode: prdCfg.slave_event,
+    // 发放win合约
+    winToken:prdCfg.contract.WinToken,
   },
   boxConf: {
     goodsRate: [
@@ -377,5 +379,6 @@ if (
 } else {
   config = Object.assign(config, require("./config_dev.js"));
 }
+
 
 module.exports = config;
