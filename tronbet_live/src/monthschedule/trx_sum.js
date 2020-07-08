@@ -159,7 +159,7 @@ const getWinkTRX = async function (startDate, endDate) {
         (
             select ver, min(send_ts) as st, sum(total_trx) / 1000000 as t
             from tron_bet_wzc.win_ver_v1
-            where send_ts >= 1590969600 and send_ts <= 1593561600
+            where send_ts >= ? and send_ts < ?
             group by ver
         ) tmp1
         left join
@@ -221,7 +221,8 @@ const getSupplierData = async function (startDate, endDate) {
     let rDict = {}
     rData.forEach(e=>rDict[e.GPId] = rDict.payout || 0)
     //
-    const cpList = Object.keys(bDict).concat(Object.keys(rDict))
+    const cpListTmp = Object.keys(bDict).concat(Object.keys(rDict))
+    const cpList = Array.from(new Set(cpListTmp))
     let last = []
     //ID	COMPANY	BET(交易总额，用户下注总数)	PAYOUT(支出给用户的)	PROFIT
     for (let i = 0; i < cpList.length; i++) {

@@ -7,8 +7,8 @@ const btt_divide = require("./btt_divide")
 const trx_sum = require("./trx_sum")
 const mail = [
     'andrew.li@tron.network',
-    // 'jason.zhang@tron.network',
-    // 'gordon.huang@tron.network'
+    'jason.zhang@tron.network',
+    'gordon.huang@tron.network'
 ]
 
 const deleteExcel = function (attachments) {
@@ -87,7 +87,7 @@ const main = async function () {
     const schedule = require('node-schedule');
     // 每个月1号6点（14点）自动触发
     // const a1 = schedule.scheduleJob('0 6 1 * *', async function () {
-    const a1 = schedule.scheduleJob('35 * * * *', async function () {
+    const a1 = schedule.scheduleJob('50 * * * *', async function () {
         console.log(new Date(), "test_month_schedule")
         const {startDate, endDate} = getMonth()
         console.log(startDate, endDate)
