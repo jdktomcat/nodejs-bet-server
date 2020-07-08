@@ -91,7 +91,7 @@ const main = async function () {
         console.log(new Date(), "test_month_schedule")
         const {startDate, endDate} = getMonth()
         console.log(startDate, endDate)
-        await getData(startDate, endDate)
+        await getData("2020-01-16", "2020-01-19")
     })
 }
 

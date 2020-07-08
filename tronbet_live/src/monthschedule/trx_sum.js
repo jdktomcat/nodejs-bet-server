@@ -242,7 +242,9 @@ const task = async function (startDate, endDate) {
     let a = []
     //
     const dice = await getDiceTRX(startDate, endDate)
+    console.log("dice ",dice)
     const diceInfo = generate_dict(dice, 'Dice_TRX_Divide.xls')
+    console.log("diceInfo ",diceInfo)
     a.push(diceInfo)
     //
     const live = await getLiveTRX(startDate, endDate)
