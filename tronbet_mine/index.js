@@ -42,6 +42,7 @@ const MAIN_MINE_GAME_GET_ORDERS_BY_MINERS='getOrdersByMiners';
 const MINE_GAME_ORACLE_BEGIN_GAME='gameBegin';
 const MINE_GAME_ORACLE_END_GAME='gameEnd';
 const MINE_GAME_CANCEL_MIND='cancleMine';
+const MINE_GAME_SET_TOKEN_RATE='setToken2TrxRate';
 
 //用户登陆签名允许的最大时间偏差值
 const USER_LOGIN_TIME_DEVIATION=3*60*1000;
@@ -205,7 +206,6 @@ function socketConnected(newSocket){
  */
 function queryUserLogs(data){
 	console.log("queryUserLogs....");
-	console.log("update.......user token Id");
 	let tw=getTronWeb();	
 	let socket=this;
 	let result={};
@@ -696,9 +696,6 @@ function processMine(socket,data,order){
 		userLatestRedisInfo.mineSteps[31-userLatestRedisInfo.currStep]=row;
 		userLatestRedisInfo.lastTs=new Date().getTime();
 		userLatestRedisInfo.order=order;
-		if(order.addr=='TQ7UoVpia4VbP8QvCLec5AVtNyavwQr9Ne'){
-			console.log(result.data.mines);
-		}
 		console.log("gameModel:%s",order.gameModel);
 		console.log("用户提交的row:%s",row);
 		console.log("雷的数组index:%s",31-userLatestRedisInfo.currStep);
@@ -1458,6 +1455,19 @@ async function refreshPrice(){
 		let res=await db.query(sql,[]);
 		if(res){
 			exchangeMap['usdt']=res[0].count;
+			let usdtRate=Math.floor(exchangeMap['usdt']*1000);
+			if(usdtRate>100000){//设置一个限制
+				usdtRate=100000;
+			}
+			tronSerivce.execute(
+				tronNodePool,
+				config.contract[MAIN_MINE_GAME],
+				MINE_GAME_TOKEN_RATE,[7,usdtRate],0,function(err,rs){
+				PENDING_ORDERS[addr]=ORDER_STATUS_CLOSE;
+				if(err){
+					console.log("upadte usdt rate error:\n"+err);
+				}
+			});
 		}
 		console.log(JSON.stringify(exchangeMap));
 		refreshPrice();
