@@ -166,22 +166,20 @@ async function saveDB(blockInfo) {
                         // 发送信息
                         sendGameMsg(log.addr, log.order_id, log.amount);
                         // 统计当前区块玩家数据
-                        if(log.token_id === 1){// 排行榜只统计trx
-                            let playerInfo = playersThisBlock.get(log.addr);
-                            if (playerInfo) {
-                                playerInfo.total = (new BigNumber(playerInfo.total)).plus(log.amount).toString();
-                                playerInfo.payout = (new BigNumber(playerInfo.payout)).plus(log.amount).toString();
-                                playerInfo.play_times = playerInfo.play_times + 1;
-                                playerInfo.win_times = playerInfo.win_times + (log.win_amount > 0 ? 1 : 0);
-                                playerInfo.mentor = log.mentor_addr;
-                            } else {
-                                playersThisBlock.set(log.addr, {
-                                    total: log.amount,
-                                    payout: log.amount,
-                                    play_times: 1,
-                                    win_times: (log.win_amount > 0 ? 1 : 0)
-                                })
-                            }
+                        let playerInfo = playersThisBlock.get(log.addr);
+                        if (playerInfo) {
+                            playerInfo.total = (new BigNumber(playerInfo.total)).plus(log.amount).toString();
+                            playerInfo.payout = (new BigNumber(playerInfo.payout)).plus(log.amount).toString();
+                            playerInfo.play_times = playerInfo.play_times + 1;
+                            playerInfo.win_times = playerInfo.win_times + (log.win_amount > 0 ? 1 : 0);
+                            playerInfo.mentor = log.mentor_addr;
+                        } else {
+                            playersThisBlock.set(log.addr, {
+                                total: log.amount,
+                                payout: log.amount,
+                                play_times: 1,
+                                win_times: (log.win_amount > 0 ? 1 : 0)
+                            })
                         }
                     } else if (log._type === "ante_transfer_log") {
                         //转账数据入库
