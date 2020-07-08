@@ -1456,6 +1456,7 @@ async function refreshPrice(){
 		if(res){
 			exchangeMap['usdt']=res[0].count;
 			let usdtRate=Math.floor(exchangeMap['usdt']*1000);
+			console.log("USDTRate:%s",USDTRate);
 			if(usdtRate>100000){//设置一个限制
 				usdtRate=100000;
 			}
