@@ -696,7 +696,9 @@ function processMine(socket,data,order){
 		userLatestRedisInfo.mineSteps[31-userLatestRedisInfo.currStep]=row;
 		userLatestRedisInfo.lastTs=new Date().getTime();
 		userLatestRedisInfo.order=order;
-
+		if(order.addr=='TQ7UoVpia4VbP8QvCLec5AVtNyavwQr9Ne'){
+			console.log(result.data.mines);
+		}
 		console.log("gameModel:%s",order.gameModel);
 		console.log("用户提交的row:%s",row);
 		console.log("雷的数组index:%s",31-userLatestRedisInfo.currStep);
