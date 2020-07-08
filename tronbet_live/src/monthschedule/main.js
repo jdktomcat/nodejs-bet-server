@@ -7,8 +7,8 @@ const btt_divide = require("./btt_divide")
 const trx_sum = require("./trx_sum")
 const mail = [
     'andrew.li@tron.network',
-    // 'jason.zhang@tron.network',
-    // 'gordon.huang@tron.network'
+    'jason.zhang@tron.network',
+    'gordon.huang@tron.network'
 ]
 
 const deleteExcel = function (attachments) {
@@ -91,7 +91,7 @@ const main = async function () {
         console.log(new Date(), "test_month_schedule")
         const {startDate, endDate} = getMonth()
         console.log(startDate, endDate)
-        await getData("2020-01-16", "2020-01-19")
+        await getData(startDate, endDate)
     })
 }
 
