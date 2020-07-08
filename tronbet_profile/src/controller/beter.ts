@@ -352,10 +352,11 @@ export default class extends Base {
         })
         // 扫雷游戏统计
     } else if(game == 6){
+        // 只查询trx类型
         if (result == 1) {
-            where = " and win_amount > 0 "
+            where = " and win_amount > 0 and token_id = 1 "
         } else if (result == 2) {
-            where = " and win_amount = 0 "
+            where = " and win_amount = 0 and token_id = 1 "
         }
         let dataSql = "select order_id, addr, amount / 1000000 amount, win_amount / 1000000 win, tx_id as hash, ts from tron_bet_wzc.mine_event_log where addr = '{0}' {1} order by order_id desc limit {2}, 20"
         dataSql = dataSql.replace('{0}', addr)
