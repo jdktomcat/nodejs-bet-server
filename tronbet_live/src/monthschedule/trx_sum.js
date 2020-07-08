@@ -216,10 +216,11 @@ const getSupplierData = async function (startDate, endDate) {
     const rData = await raw(rSql, params)
     //
     let bDict = {}
-    bData.forEach(e=>bDict[e.GPId] = bDict.amount || 0)
+    // GPId | amount
+    bData.forEach(e=> bDict[e.GPId] = e.amount || 0 )
     //
     let rDict = {}
-    rData.forEach(e=>rDict[e.GPId] = rDict.payout || 0)
+    rData.forEach(e=>rDict[e.GPId] = e.payout || 0)
     //
     const cpListTmp = Object.keys(bDict).concat(Object.keys(rDict))
     const cpList = Array.from(new Set(cpListTmp))
