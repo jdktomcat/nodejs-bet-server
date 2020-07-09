@@ -59,11 +59,18 @@ module.exports = {
     TronBetDice20: '41f44697c352fc12b15718147f625b97720b21c41e',
     TronBetDiceOraclize20: '418ae25f03b57abc538e0c92f7923a95b0252bde81',
 
-    TronBetMine:'41e494f74468e5c3960504e9dc684d67d421e08c35',//TWoqX8MhU6K32shRBKzfzTFsQpkETyXGMA
-    TronBetMineOracle:'41f5fc441b8b5187b66ec29313a50e498483005d31',//TYPrkoucmCiRHcvNo2CFqQxfGyZ4Bbt8zs
-    TronBetMinerHero:'418b08544c7d4d8a6416ecc6d20a7acc6d32606892',//TNeLuTDSevF83awPCAHj2Hif5qy9HnQ8hi
-    TronBetMinerHeroPool:'417e6116fdf4bf49f742ef17e8d1ad91b0e8581376',//TMVST9YNUGKgaAkZKjmDFrrV3xYFsD65Gi
-    TronBetMinerNormal:'41fc0184d8993d843de9ca47ca2b974509f4e60002',//TYwh6wKaa9g2EM9RscQyMaiBy4aw5fNr8R
+    //TronBetMine:'41e494f74468e5c3960504e9dc684d67d421e08c35',//TWoqX8MhU6K32shRBKzfzTFsQpkETyXGMA
+    //TronBetMineOracle:'41f5fc441b8b5187b66ec29313a50e498483005d31',//TYPrkoucmCiRHcvNo2CFqQxfGyZ4Bbt8zs
+    //TronBetMinerHero:'418b08544c7d4d8a6416ecc6d20a7acc6d32606892',//TNeLuTDSevF83awPCAHj2Hif5qy9HnQ8hi
+    //TronBetMinerHeroPool:'417e6116fdf4bf49f742ef17e8d1ad91b0e8581376',//TMVST9YNUGKgaAkZKjmDFrrV3xYFsD65Gi
+    //TronBetMinerNormal:'41fc0184d8993d843de9ca47ca2b974509f4e60002',//TYwh6wKaa9g2EM9RscQyMaiBy4aw5fNr8R
+
+    
+    TronBetMine:'418359bbd9d3ae9284a4a17732d92adf2b49c36b0c',//TMwj214xSNyWh7mSYwtXeTTEzin2Z4QyPE
+    TronBetMineOracle:'41626ebf37a34537373533f4ea66a69cdc37fcfc35',//TJwfth2Jhtzry3bzdUUfK2xcreMMcrZnBC
+    TronBetMinerHero:'41235e357385e7e2a86f49409ef2a75ce99d8a05d9',//TDCDWWp8EqLsnUc6zz88DmrbLN9bDsanSP
+    TronBetMinerHeroPool:'415ac0514bcf41bf9b098ac8c3241d3ff02f6460ca',//TJF4CnKptG42Qt26i8ruuktBzpmNdG3nqB
+    TronBetMinerNormal:'41c8a989eb348fa08abc676a1a78bf8fdb685e98b7',//TUGDFBbvi9bfC2HHfqanfms5mnBDq3pUdu
     
 
 
