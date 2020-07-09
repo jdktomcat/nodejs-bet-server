@@ -265,6 +265,7 @@ function queryUserLogs(data){
 			userLogList.push({
 				"id":userLatestRedisInfo.order.orderNo,
 				"bet":parseInt(userLatestRedisInfo.order.orderAmount._hex),
+				"orderTokenId":userLatestRedisInfo.order.orderTokenId,
 				"blockNo":userLatestRedisInfo.order.orderBlockH,
 				"now":userLatestRedisInfo.mineHash,
 				"payout":userLatestRedisInfo.winAmount,//需要计算出来 win 计算出来 lose 0
@@ -321,6 +322,7 @@ function queryUserLogs(data){
 					userLogList.push({
 						"id":tmpInfo.order.orderNo,
 						"bet":tmpInfo.order.orderAmount,
+						"orderTokenId":tmpInfo.order.orderTokenId,
 						"blockNo":tmpInfo.order.orderBlockH,
 						"now":tmpInfo.mineHash,
 						"payout":tmpInfo.order.winAmount,//需要计算出来 win 计算出来 lose 0
@@ -359,6 +361,7 @@ function isTimeOut(data){
 		console.log("用户使用不正确的地址[%s]进行[isTimeOut]",addr);
 		return;	
 	}
+	//多币种增加
 	redis.get(MINE_REDIS_PREFIX+LATEST_GAME_INFO+addr,function(err,info){
 		if(err){
 			console.log("获取Redis失败[%s][isTimeOut]",addr);
@@ -1439,6 +1442,7 @@ async function initCheckOrders(){
 
 /*
  * 刷新USDT对TRX的价格
+ * 同时上传到合约上面去
  */
 async function refreshPrice(){
 	setTimeout(async () => {
