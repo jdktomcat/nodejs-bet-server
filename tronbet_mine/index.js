@@ -17,7 +17,7 @@ const appDataEvent = new events.EventEmitter();
 
 
 const gameDesc="扫雷游戏";
-const lastUsdtPrice=0;
+let lastUsdtPrice=0;
 
 
 //扫雷活动需求
