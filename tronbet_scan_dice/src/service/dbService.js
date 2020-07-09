@@ -151,7 +151,8 @@ async function saveDB(blockInfo) {
                         const params = [tx_id, log.addr, log.amount, log.win_amount, log.mentor_addr,
                             log.mentor_rate, log.order_id, log.order_state, log.order_ts, log.order_block_height,
                             log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width, log.token_id]
-                        await db.execTrans(insertSQL, params, conn);
+                        console.log('mine event log param:', params)
+                        await db.execTrans(insertSQL, params, conn)
                         if(log.win_amount > 0){
                             let userMineContent = await redisNew.hget(MINE_REDIS_PREFIX_KEY+log.addr, log.order_id)
                             if(userMineContent && userMineContent.length !== 0){
