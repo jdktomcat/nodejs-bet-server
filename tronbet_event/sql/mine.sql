@@ -49,3 +49,14 @@ CREATE TABLE tron_bet_event.mine_letter (
     PRIMARY KEY (log_id),
     KEY mine_letter_addr_idx (addr)
 );
+
+
+
+CREATE TABLE tron_bet_event.mine_reward_list (
+    log_id bigint(20) NOT NULL AUTO_INCREMENT,
+    addr varchar(64) DEFAULT NULL,
+    amount varchar(64) DEFAULT NULL,
+    tx_id varchar(64) DEFAULT NULL,
+    PRIMARY KEY (log_id),
+    KEY mine_reward_list_addr_idx (addr)
+);
