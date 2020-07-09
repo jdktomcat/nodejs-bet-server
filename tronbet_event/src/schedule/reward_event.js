@@ -59,15 +59,10 @@ const sendTRX = async function () {
 
 const rewardSchedule = async function () {
     // 每个小时50分的时候重启dice扫描
-    const schedule = require('node-schedule');
+    // const schedule = require('node-schedule');
+    // //
+    // const a1 = schedule.scheduleJob('58 * * * *', async function () {
     //
-    const a1 = schedule.scheduleJob('58 * * * *', async function () {
-        // console.log("enter_event_s1")
-        // await getData()
-        //
-        console.log("enter_event_s2")
-        await sendTRX()
-    })
+    // })
 }
 
-rewardSchedule()

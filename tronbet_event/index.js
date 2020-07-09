@@ -4,8 +4,6 @@ const koaLogger = require('koa-logger')
 const config = require('./src/configs/config')
 const routers = require('./src/routers/index')
 const activity = require('./src/service/activity')
-//定时任务
-require("./src/schedule/reward_event")
 
 const redis = require("redis").createClient({
         host: config.redisConfig.host,
