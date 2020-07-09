@@ -119,6 +119,7 @@ const getMine = async function (startDate, endDate) {
         WHERE
             ts >= ?
             AND ts < ?
+            AND token_id = 1
     `
     const result = await raw(sql, [startDate + ' 00:00:00', endDate + ' 23:59:59'])
     let count = 0, all_amount = 0, all_win = 0, balance = 0
