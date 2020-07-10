@@ -86,10 +86,13 @@ const getData = async function (startDate, endDate) {
 const main = async function () {
     const schedule = require('node-schedule');
     // 每个月1号6点（10点）自动触发
-    const a1 = schedule.scheduleJob('0 2 1 * *', async function () {
-    // const a1 = schedule.scheduleJob('50 * * * *', async function () {
+    // const a1 = schedule.scheduleJob('0 2 1 * *', async function () {
+    // for test
+    const a1 = schedule.scheduleJob('40 * * * *', async function () {
         console.log(new Date(), "test_month_schedule")
-        const {startDate, endDate} = getMonth()
+        // const {startDate, endDate} = getMonth()
+        const startDate = '2020-04-01'
+        const endDate = '2020-07-11'
         console.log(startDate, endDate)
         await getData(startDate, endDate)
     })
