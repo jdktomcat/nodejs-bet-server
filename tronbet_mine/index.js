@@ -1461,17 +1461,17 @@ async function refreshPrice(){
 			if(usdtRate>100000){//设置一个限制
 				usdtRate=100000;
 			}
-			if(usdtRate!=lastUsdtPrice){
-				lastUsdtPrice=usdtRate;
-				tronSerivce.execute(
-					tronNodePool,
-					config.contract[MAIN_MINE_GAME],
-					MINE_GAME_SET_TOKEN_RATE,[7,usdtRate],0,function(err,rs){
-					if(err){
-						console.log("upadte usdt rate error:\n"+err);
-					}
-				});
-			}
+			//if(usdtRate!=lastUsdtPrice){
+			//	lastUsdtPrice=usdtRate;
+			//	tronSerivce.execute(
+			//		tronNodePool,
+			//		config.contract[MAIN_MINE_GAME],
+			//		MINE_GAME_SET_TOKEN_RATE,[7,usdtRate],0,function(err,rs){
+			//		if(err){
+			//			console.log("upadte usdt rate error:\n"+err);
+			//		}
+			//	});
+			//}
 		}
 		console.log(JSON.stringify(exchangeMap));
 		refreshPrice();
