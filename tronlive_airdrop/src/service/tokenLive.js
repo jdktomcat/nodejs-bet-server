@@ -95,6 +95,12 @@ async function airdrop() {
 
     let extradatas = await usermodel.getSportsAirdropData(startTs, endTs)
     let originDatas = await usermodel.getLiveAirdropData(startTs, endTs)
+    //
+    // new Date(1594378800000)
+    // Fri Jul 10 2020 19:00:00 GMT+0800 (中国标准时间)
+    // new Date(1594551600000)
+    // Sun Jul 12 2020 19:00:00 GMT+0800 (中国标准时间)
+    const ifActivity = Date.now() >= 1594378800000  && Date.now() < 1594551600000
     for (let extradata of extradatas) {
         let one = {
             addr : extradata.addr,
@@ -102,7 +108,13 @@ async function airdrop() {
         }
         for (let originData of originDatas) {
             if (originData.addr == extradata.addr){
-                one.Amount = one.Amount + originData.Amount
+                let tmpAmount = one.Amount + originData.Amount
+                if(ifActivity){
+                    // 活动期间直接*2
+                    one.Amount = tmpAmount * 2
+                }else {
+                    one.Amount = tmpAmount
+                }
             }
         }
         datas.push(one)
