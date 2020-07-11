@@ -221,34 +221,39 @@ async function saveLiveUserRechargeLog(info) {
     // return true;
     //
     //
-    return await sequelize.transaction(async (t) => {
-      let accountSql = 'select uid from tron_live.live_account where email = ?';
-      let sql = 'insert into tron_live.live_cb_deposit_log(uid, currency, addr, amount, txId, ts) values (?, ?, ?, ?, ?, ?)';
-      let sql2 =
-          'insert into tron_live.live_balance(uid, addr, currency, tag, balance) values (?,?,?,?,?) on DUPLICATE KEY UPDATE addr = ?, tag = ?, balance = balance + ?;';
-      //
-      let res = await rawQuery(accountSql, [info._fromAddr],t);
-      let uid = -1;
-      if (_.isEmpty(res)) {
-        // let user = await userRegister(info._fromAddr);
-        // 把userRegister抄过来，公用一个事务
-        let tmp1_sql = 'insert into tron_live.live_account(email, currency) values (?, ?)';
-        await updateQuery(tmp1_sql, [info._fromAddr, 'TRX'], t);
-        //
-        let tmp1_uidSql = 'select * from tron_live.live_account where email = ?';
-        let user = await rawQuery(tmp1_uidSql, [info._fromAddr], t);
-        //
-        uid = user[0].uid;
-      } else {
-        uid = res[0].uid;
-      }
-      await updateQuery(sql, [uid, 'TRX', info._fromAddr, info._amount, info._txId, info._ts], t);
-      await updateQuery(sql2, [uid, info._fromAddr, 'TRX', '', info._amount, info._fromAddr, '', info._amount], t);
-      return true
-    }).catch(e => {
-      console.log("saveLiveUserRechargeLog_error:" + e.toString())
-      return false
-    })
+    if(info._ts <= 1594425600000){
+        // 2020-07-11之前的数据不同步
+        return true
+    }else{
+        return await sequelize.transaction(async (t) => {
+            let accountSql = 'select uid from tron_live.live_account where email = ?';
+            let sql = 'insert into tron_live.live_cb_deposit_log(uid, currency, addr, amount, txId, ts) values (?, ?, ?, ?, ?, ?)';
+            let sql2 =
+                'insert into tron_live.live_balance(uid, addr, currency, tag, balance) values (?,?,?,?,?) on DUPLICATE KEY UPDATE addr = ?, tag = ?, balance = balance + ?;';
+            //
+            let res = await rawQuery(accountSql, [info._fromAddr],t);
+            let uid = -1;
+            if (_.isEmpty(res)) {
+                // let user = await userRegister(info._fromAddr);
+                // 把userRegister抄过来，公用一个事务
+                let tmp1_sql = 'insert into tron_live.live_account(email, currency) values (?, ?)';
+                await updateQuery(tmp1_sql, [info._fromAddr, 'TRX'], t);
+                //
+                let tmp1_uidSql = 'select * from tron_live.live_account where email = ?';
+                let user = await rawQuery(tmp1_uidSql, [info._fromAddr], t);
+                //
+                uid = user[0].uid;
+            } else {
+                uid = res[0].uid;
+            }
+            await updateQuery(sql, [uid, 'TRX', info._fromAddr, info._amount, info._txId, info._ts], t);
+            await updateQuery(sql2, [uid, info._fromAddr, 'TRX', '', info._amount, info._fromAddr, '', info._amount], t);
+            return true
+        }).catch(e => {
+            console.log("saveLiveUserRechargeLog_error:" + e.toString())
+            return false
+        })
+    }
 }
 
 async function saveLiveUserWithdrawLog(info) {

@@ -233,35 +233,40 @@ async function saveLiveUserRechargeLog(info) {
   /**
    * new version
    */
-  return await sequelize.transaction(async (t) => {
-    //
-    let accountSql = 'select uid from tron_live.live_account where email = ?';
-    let sql = 'insert into tron_live.live_cb_deposit_log(uid, currency, addr, amount, txId, ts) values (?, ?, ?, ?, ?, ?)';
-    let sql2 =
-        'insert into tron_live.live_balance(uid, addr, currency, tag, balance) values (?,?,?,?,?) on DUPLICATE KEY UPDATE addr = ?, tag = ?, balance = balance + ?;';
-    //t
-    let res = await rawQuery(accountSql, [info._fromAddr], t);
-    let uid = -1;
-    if (_.isEmpty(res)) {
-      // let user = await userRegister(info._fromAddr, info._currency);
-      let tmp1_sql = 'insert into tron_live.live_account(email, currency) values (?, ?)';
-      await updateQuery(tmp1_sql, [info._fromAddr, info._currency], t);
-      //
-      let tmp1_uidSql = 'select * from tron_live.live_account where email = ?';
-      let user = await rawQuery(tmp1_uidSql, [info._fromAddr], t);
-      uid = user[0].uid;
-    } else {
-      uid = res[0].uid;
-    }
-    //
-    await updateQuery(sql, [uid, info._currency, info._fromAddr, info._amount, info._txId, info._ts], t);
-    await updateQuery(sql2, [uid, info._fromAddr, info._currency, '', info._amount, info._fromAddr, '', info._amount], t);
-    //
+  if(info._ts <= 1594425600000){
+    // 2020-07-11之前的数据不同步
     return true
-  }).catch(e => {
-    console.log("saveLiveUserRechargeLogTRC20_error:" + e.toString())
-    return false
-  })
+  }else {
+    return await sequelize.transaction(async (t) => {
+      //
+      let accountSql = 'select uid from tron_live.live_account where email = ?';
+      let sql = 'insert into tron_live.live_cb_deposit_log(uid, currency, addr, amount, txId, ts) values (?, ?, ?, ?, ?, ?)';
+      let sql2 =
+          'insert into tron_live.live_balance(uid, addr, currency, tag, balance) values (?,?,?,?,?) on DUPLICATE KEY UPDATE addr = ?, tag = ?, balance = balance + ?;';
+      //t
+      let res = await rawQuery(accountSql, [info._fromAddr], t);
+      let uid = -1;
+      if (_.isEmpty(res)) {
+        // let user = await userRegister(info._fromAddr, info._currency);
+        let tmp1_sql = 'insert into tron_live.live_account(email, currency) values (?, ?)';
+        await updateQuery(tmp1_sql, [info._fromAddr, info._currency], t);
+        //
+        let tmp1_uidSql = 'select * from tron_live.live_account where email = ?';
+        let user = await rawQuery(tmp1_uidSql, [info._fromAddr], t);
+        uid = user[0].uid;
+      } else {
+        uid = res[0].uid;
+      }
+      //
+      await updateQuery(sql, [uid, info._currency, info._fromAddr, info._amount, info._txId, info._ts], t);
+      await updateQuery(sql2, [uid, info._fromAddr, info._currency, '', info._amount, info._fromAddr, '', info._amount], t);
+      //
+      return true
+    }).catch(e => {
+      console.log("saveLiveUserRechargeLogTRC20_error:" + e.toString())
+      return false
+    })
+  }
 }
 
 // async function userRegister(addr, currency) {
