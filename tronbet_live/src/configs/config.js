@@ -23,7 +23,7 @@ let config = {
     withdrawMaxTimes: 20, //个人每天最大提取次数
     //withdrawMaxAmount: 100000000000, // 个人每次每天最大提取数量 10w TRX
     // withdrawMaxAmount: 500000000000, // 个人每次每天最大提取数量 50w TRX
-    withdrawMaxAmount: 50*10000*1000000, // 个人每次每天最大提取数量 50w TRX
+    withdrawMaxAmount: 10*10000*1000000, // 个人每次每天最大提取数量 50w TRX
     //withdrawMaxAmountDaily: 1000000000000, // 个人每次每天最大提取数量 100w TRX
     withdrawMaxAmountDaily: 700*10000*1000000, // 个人每次每天最大提取数量 700w TRX
     // withdrawMaxAmountDaily: 7000000000, // 个人每次每天最大提取数量 700w TRX
