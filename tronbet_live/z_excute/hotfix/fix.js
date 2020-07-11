@@ -14,7 +14,7 @@ const rawQuery = async function (sql, params) {
 // | 31 | testback |
 
 const main = async function () {
-    const sql1 = `delete from tron_live.live_fix_log where ts >= 1594469478484`
+    const sql1 = `delete from tron_live.live_fix_log where ts >= 1594350270236`
     await rawQuery(sql1,[])
     //
 }
