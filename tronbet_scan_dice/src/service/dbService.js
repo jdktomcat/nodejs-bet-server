@@ -146,12 +146,13 @@ async function saveDB(blockInfo) {
                         //日志数据入库
                         const insertSQL = 'insert into mine_event_log ' +
                             '(tx_id, addr, amount, win_amount, mentor_addr, mentor_rate, order_id, order_state, order_ts, ' +
-                            ' order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width) ' +
-                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                            ' order_block_height, order_finish_block_height, mode, mine_region_height, mine_region_width, token_id) ' +
+                            " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                         const params = [tx_id, log.addr, log.amount, log.win_amount, log.mentor_addr,
                             log.mentor_rate, log.order_id, log.order_state, log.order_ts, log.order_block_height,
-                            log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width]
-                        await db.execTrans(insertSQL, params, conn);
+                            log.order_finish_block_height, log.mode, log.mine_region_height, log.mine_region_width, log.token_id]
+                        console.log('mine event log param:', params)
+                        await db.execTrans(insertSQL, params, conn)
                         if(log.win_amount > 0){
                             let userMineContent = await redisNew.hget(MINE_REDIS_PREFIX_KEY+log.addr, log.order_id)
                             if(userMineContent && userMineContent.length !== 0){

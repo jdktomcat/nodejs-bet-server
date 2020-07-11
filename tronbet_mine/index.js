@@ -17,6 +17,7 @@ const appDataEvent = new events.EventEmitter();
 
 
 const gameDesc="扫雷游戏";
+let lastUsdtPrice=0;
 
 
 //扫雷活动需求
@@ -42,6 +43,7 @@ const MAIN_MINE_GAME_GET_ORDERS_BY_MINERS='getOrdersByMiners';
 const MINE_GAME_ORACLE_BEGIN_GAME='gameBegin';
 const MINE_GAME_ORACLE_END_GAME='gameEnd';
 const MINE_GAME_CANCEL_MIND='cancleMine';
+const MINE_GAME_SET_TOKEN_RATE='setToken2TrxRate';
 
 //用户登陆签名允许的最大时间偏差值
 const USER_LOGIN_TIME_DEVIATION=3*60*1000;
@@ -96,7 +98,7 @@ const GAME_RESULT_LOSE=0x02;
 const GAME_RESULT_CANCEL=0x03;
 
 
-const MINE_REDIS_PREFIX='MINE:USER:';
+const MINE_REDIS_PREFIX='MINE:MULTI:COIN:USER:';
 const LATEST_GAME_INFO='LATEST:';
 const USER_LOG='player:logs';
 
@@ -265,6 +267,8 @@ function queryUserLogs(data){
 			userLogList.push({
 				"id":userLatestRedisInfo.order.orderNo,
 				"bet":parseInt(userLatestRedisInfo.order.orderAmount._hex),
+				"prefix":MINE_REDIS_PREFIX,
+				"order":userLatestRedisInfo.order,
 				"orderTokenId":userLatestRedisInfo.order.orderTokenId,
 				"blockNo":userLatestRedisInfo.order.orderBlockH,
 				"now":userLatestRedisInfo.mineHash,
@@ -280,7 +284,7 @@ function queryUserLogs(data){
 		}else{
 			orderIdList.push(userLatestRedisInfo.order.orderNo);
 		}
-		console.log(JSON.stringify(orderIdList));
+		//console.log(JSON.stringify(orderIdList));
 		if(orderIdList.length>0){ 
 			redis.hmget(MINE_REDIS_PREFIX+USER_LOG+addr,orderIdList,function(err,rs){
 				if(err){
@@ -322,6 +326,8 @@ function queryUserLogs(data){
 					userLogList.push({
 						"id":tmpInfo.order.orderNo,
 						"bet":tmpInfo.order.orderAmount,
+						"prefix":MINE_REDIS_PREFIX,
+						"order":tmpInfo.order,
 						"orderTokenId":tmpInfo.order.orderTokenId,
 						"blockNo":tmpInfo.order.orderBlockH,
 						"now":tmpInfo.mineHash,
@@ -335,6 +341,7 @@ function queryUserLogs(data){
 						"gameResult":tmpInfo.gameResult
 					});
 				}
+				console.log(JSON.stringify(userLogList));
 				result.errorCode=SUCCESS;
 				result.data=userLogList;
 				socket.emit(QUERY_USER_LOGS_RESULT,result);
@@ -690,7 +697,6 @@ function processMine(socket,data,order){
 		userLatestRedisInfo.mineSteps[31-userLatestRedisInfo.currStep]=row;
 		userLatestRedisInfo.lastTs=new Date().getTime();
 		userLatestRedisInfo.order=order;
-
 		console.log("gameModel:%s",order.gameModel);
 		console.log("用户提交的row:%s",row);
 		console.log("雷的数组index:%s",31-userLatestRedisInfo.currStep);
@@ -1450,10 +1456,26 @@ async function refreshPrice(){
 		let res=await db.query(sql,[]);
 		if(res){
 			exchangeMap['usdt']=res[0].count;
+			let usdtRate=Math.floor(exchangeMap['usdt']*1000);
+			console.log("USDTRate:%s",usdtRate);
+			if(usdtRate>100000){//设置一个限制
+				usdtRate=100000;
+			}
+			if(usdtRate!=lastUsdtPrice){
+				lastUsdtPrice=usdtRate;
+				tronSerivce.execute(
+					tronNodePool,
+					config.contract[MAIN_MINE_GAME],
+					MINE_GAME_SET_TOKEN_RATE,[7,usdtRate],0,function(err,rs){
+					if(err){
+						console.log("upadte usdt rate error:\n"+err);
+					}
+				});
+			}
 		}
 		console.log(JSON.stringify(exchangeMap));
 		refreshPrice();
-	},3000);
+	},60000);
 }
 
 /*
@@ -1492,7 +1514,7 @@ function getOrderDetail(order){
 	json.mineFieldW=parseInt(order.substring(60,62),16);
 	json.mineFieldH=parseInt(order.substring(58,60),16);	
 	json.gameModel=parseInt(order.substring(56,58),16);	
-	json.orderCloseBlockH=parseInt(order.substring(48,56),16);	
+	json.orderTokenId=parseInt(order.substring(48,56),16);	
 	json.orderNo=parseInt(order.substring(40,48),16);	
 	json.orderAmount=parseInt(order.substring(24,40),16);	
 	json.orderBlockT=parseInt(order.substring(8,24),16);	

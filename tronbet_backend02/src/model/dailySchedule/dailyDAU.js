@@ -41,6 +41,7 @@ const DauSql = `
         WHERE
             ts >= ?
             AND ts < ? 
+            AND token_id = 1
             
         union all
         

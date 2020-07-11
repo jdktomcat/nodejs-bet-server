@@ -47,6 +47,7 @@ const getMine = async function(startDate, endDate){
         WHERE
             ts >= ?
             AND ts < ?
+            AND token_id = 1
             group by DATE_FORMAT(ts,'%Y-%m-%d')
     `
     const params = [startDate + ' 00:00:00',endDate + '23:59:59']

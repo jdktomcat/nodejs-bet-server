@@ -188,8 +188,14 @@ async function fixMinData() {
     process.exit(0)
 }
 
-
+async function alterMineLogTable(){
+    const alertSql = 'ALTER TABLE tron_bet_wzc.mine_event_log ADD `token_id` int(11) DEFAULT \'1\' COMMENT \'币种标示：tokenId=1 trx tokenId=5 win tokenId=6 dice tokenId=7 usdt tokenId=1002000 btt\' '
+    const res = await dbUtil.query(alertSql)
+    console.log('alert table mine log table mine_event_log success!')
+    console.log(res)
+    process.exit(0)
+}
 
 // createActivityTable()
-updateAwardStatus()
+alterMineLogTable()
 

@@ -622,7 +622,8 @@ function scanTx(tronWeb, tx, _callback) {
                                     addr: hexStringToTronAddress(hexTopics[2].substr(24, 40)),
                                     mentor_addr: hexStringToTronAddress(hexTopics[3].substr(24, 40)),
                                     mentor_rate: hexStringToBigNumber(hexData.substr(0, 64)).toNumber(),
-                                    win_amount: hexStringToBigNumber(hexData.substr(64, 64)).toNumber()
+                                    win_amount: hexStringToBigNumber(hexData.substr(64, 64)).toNumber(),
+                                    order_finish_block_height: txInfo.blockNumber
                                 };
                                 getOrderDetail(log, hexTopics[1])
                                 console.log('++++++++++:' + log.addr)
@@ -700,7 +701,8 @@ function getOrderDetail(log, order){
     log.order_state = parseInt(order.substring(62, 64),16)
     log.order_ts = new Date(parseInt(order.substring(8, 24),16) * 1000)
     log.order_block_height = parseInt(order.substring(0, 8),16)
-    log.order_finish_block_height = parseInt(order.substring(48, 56),16)
+    // log.order_finish_block_height = parseInt(order.substring(48, 56),16)
+    log.token_id = parseInt(order.substring(48, 56),16)
     log.mode = parseInt(order.substring(56, 58),16)
     log.mine_region_height = parseInt(order.substring(60, 62),16)
     log.mine_region_width = parseInt(order.substring(58, 60),16)
