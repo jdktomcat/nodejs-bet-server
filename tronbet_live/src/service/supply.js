@@ -307,21 +307,23 @@ async function platinusAPI(ctx) {
         return await common.sendMsgToClient(ctx, 1002, 'sign verify failed!!!!!!!!!');
     }
     //
-    const tokenRedisKey = 'TRX' + "_platinusToken_" + addr
-    let val = await redisUtils.get(tokenRedisKey)
-    console.log("platinusAPI_addr: ", addr)
-    console.log("platinusAPI_token: ", val)
-
-    if (val === null) {
-        try {
-            const token = getCpToken(addr, cpConfigKey.Platinus)
-            await redisUtils.set(tokenRedisKey, token)
-            await redisUtils.expire(tokenRedisKey, 3 * 24 * 3600) // 设置过期时间为3天
-            val = await redisUtils.get(tokenRedisKey)
-        } catch (e) {
-            return ctx.body = {code: 500, message: "fail", error: e.toString()}
-        }
-    }
+    const val = getCpToken(addr, cpConfigKey.Platinus)
+    //
+    // const tokenRedisKey = 'TRX' + "_platinusToken_" + addr
+    // let val = await redisUtils.get(tokenRedisKey)
+    // console.log("platinusAPI_addr: ", addr)
+    // console.log("platinusAPI_token: ", val)
+    //
+    // if (val === null) {
+    //     try {
+    //         const token = getCpToken(addr, cpConfigKey.Platinus)
+    //         await redisUtils.set(tokenRedisKey, token)
+    //         await redisUtils.expire(tokenRedisKey, 3 * 24 * 3600) // 设置过期时间为3天
+    //         val = await redisUtils.get(tokenRedisKey)
+    //     } catch (e) {
+    //         return ctx.body = {code: 500, message: "fail", error: e.toString()}
+    //     }
+    // }
     ctx.body = {code: 200, message: "success", data: val}
 }
 
@@ -344,20 +346,23 @@ async function getBinaryToken(ctx) {
         return ctx.body = {code: 500, message: "currency error"}
     }
     const tokenRedisKey = currency + "_BinaryToken_" + addr
-    let val = await redisUtils.get(tokenRedisKey)
-    console.log("tokenRedisKey: ", tokenRedisKey)
-    console.log("BinaryToken_addr: ", addr)
-    console.log("BinaryToken_token: ", val)
-    if (val === null) {
-        try {
-            const token = getCpToken(addr, cpConfigKey.Binary, currency)
-            await redisUtils.set(tokenRedisKey, token)
-            await redisUtils.expire(tokenRedisKey, 24 * 3600) // 设置过期时间为1天
-            val = await redisUtils.get(tokenRedisKey)
-        } catch (e) {
-            return ctx.body = {code: 500, message: "fail", error: e.toString()}
-        }
-    }
+    // 因为redis丢失数据，先改成每次获取，不缓存
+    const val = getCpToken(addr, cpConfigKey.Binary, currency)
+    //
+    // let val = await redisUtils.get(tokenRedisKey)
+    // console.log("tokenRedisKey: ", tokenRedisKey)
+    // console.log("BinaryToken_addr: ", addr)
+    // console.log("BinaryToken_token: ", val)
+    // if (val === null) {
+    //     try {
+    //         const token = getCpToken(addr, cpConfigKey.Binary, currency)
+    //         await redisUtils.set(tokenRedisKey, token)
+    //         await redisUtils.expire(tokenRedisKey, 24 * 3600) // 设置过期时间为1天
+    //         val = await redisUtils.get(tokenRedisKey)
+    //     } catch (e) {
+    //         return ctx.body = {code: 500, message: "fail", error: e.toString()}
+    //     }
+    // }
     ctx.body = {code: 200, message: "success", data: val}
 }
 
