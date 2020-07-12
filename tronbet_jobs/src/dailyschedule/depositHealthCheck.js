@@ -40,14 +40,15 @@ const queryBalance = async function (uid,currency) {
 //更新余额
 const updateBalance= async function(record){
     let res=await queryBalance(record.uid,record.currency);
+    console.log(JSON.stringify(res));
     let sql = "update live_balance set balance=? where uid=? and currency=?";
     let params=[];
-    if(res[0].balance-record.amount>=0){
-        params=[res[0].balance-record.amount,record.uid,record.currency];
+    if(res.balance-record.amount>=0){
+        params=[res.balance-record.amount,record.uid,record.currency];
         let rs = await db.exec(sql,params);
-    }else if(res[0].balance>0){//如果小于0 就没有必要更新了
+    }else if(res.balance>0){//如果小于0 就没有必要更新了
         params=[0,record.uid,record.currency];//我们转给用户的钱损失了
-        lost+=record.amount-res[0].balance;
+        lost+=record.amount-res.balance;
         let rs = await db.exec(sql,params);
     }else{
         lost+=record.amount;
