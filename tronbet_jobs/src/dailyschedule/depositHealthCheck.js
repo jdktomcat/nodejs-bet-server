@@ -6,11 +6,18 @@ let duration = 2 * 60 * 1000;
 let lost=0;
 
 let startLogId=256856;//跑完这次之后，可以设置为1 重新跑一遍
+let finishTerm=0;//每重新跑一次，计数+1
 
 const queryNewRecord = async function (logId) {
     let params = [logId]
     let sql = "select * from live_cb_deposit_log where logId=?";
     let result = await db.query(sql, params);
+    return result;
+}
+const deleteNewRecord = async function (logId) {
+    let params = [logId]
+    let sql = "delete from live_cb_deposit_log where logId=?";
+    let result = await db.exec(sql, params);
     return result;
 }
 const queryOldRecord = async function (txId) {
@@ -43,6 +50,11 @@ const updateBalance= async function(record){
     console.log("Lost:%s",lost/1000000);
 }
 
+const doUpdates=async function(record){
+    await updateBalance(record);
+    await deleteNewRecord(record.logId);
+}
+
 /*
     大概有12万条的数据需要清理 清理live_cb_deposit_log，将重复的数据干掉
  */
@@ -60,10 +72,12 @@ const doJob = async function () {
                oldRecord=oldRecord[0];
                console.log("new Record:"+JSON.stringify(newRecord));
                console.log("old Record:"+JSON.stringify(oldRecord));
-               await updateBalance(newRecord);
+               await doUpdates(newRecord);//同时需要删除这条记录
             }
         }
-        console.log("LogId:%s",startId);
+        if(startId%100==0){
+            console.log("Term:%s LogId:%s",finishTerm,startId);
+        }
         startId++;
     }
 }
@@ -74,6 +88,7 @@ const doJob = async function () {
  */
 const startMission = async function () {
     let start = new Date().getTime();
+    finishTerm++;
     let end;
     try {
         await doJob()
