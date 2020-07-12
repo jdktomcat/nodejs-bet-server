@@ -6,7 +6,7 @@ db.init = async function(config){
 	pool = mysql.createPool({
 	    host:config.mysql['host'],
 	    port:config.mysql['port'],
-	    database:'tron_live_new',
+	    database:config['dbName'],
 	    user: config.mysql['user'],
 	    password:config.mysql['pwd'],
 	    waitForConnections: true,
