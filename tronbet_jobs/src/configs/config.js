@@ -3,7 +3,6 @@ const path = require('path');
 
 let NODE_ENV=process.env.NODE_ENV||'production';
 let gobalConfigFileLocation=process.env.NODE_CONFIG_DIR||"/data/tronbet_config";
-console.log(gobalConfigFileLocation);
 let appConfigFileLocation=__dirname + '/config_'+NODE_ENV+".js";
 
 if(NODE_ENV=== 'test'){
@@ -20,7 +19,8 @@ try {
 } catch (error) {
   console.log('无法找到配置文件:%s',gobalConfigFileLocation);
 }
-
 config= Object.assign(config, require(appConfigFileLocation));
 
+console.log(NODE_ENV);
+console.log(config);
 module.exports = config;
