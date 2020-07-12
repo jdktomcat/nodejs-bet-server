@@ -1,8 +1,6 @@
 const db = require('../utils/dbUtil');
 const config = require('../configs/config');
 
-console.log(db);
-
 let times=1;
 let duration = 2 * 60 * 1000;
 let lost=0;
@@ -25,7 +23,6 @@ const queryBalance = async function (uid,currency) {
     let params = [uid,currency];
     let sql = "select balance from live_balance where uid=? and currency=?";
     let result = await db.query(sql, params);
-    console.log(result);
     return result;
 }
 //更新余额
@@ -35,11 +32,11 @@ const updateBalance= async function(record){
     let params=[];
     if(res[0].balance-record.amount>=0){
         params=[res[0].balance-record.amount,record.uid,record.currency];
-        //let rs = await db.exec(sql,params);
+        let rs = await db.exec(sql,params);
     }else if(res[0].balance>0){//如果小于0 就没有必要更新了
         params=[0,record.uid,record.currency];//我们转给用户的钱损失了
         lost+=record.amount-res[0].balance;
-        //let rs = await db.exec(sql,params);
+        let rs = await db.exec(sql,params);
     }else{
         lost+=record.amount;
     }
@@ -66,6 +63,8 @@ const doJob = async function () {
                await updateBalance(newRecord);
             }
         }
+        console.log("LogId:%s",startId);
+        startId++;
     }
 }
 
