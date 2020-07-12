@@ -22,5 +22,4 @@ try {
 config= Object.assign(config, require(appConfigFileLocation));
 
 console.log(NODE_ENV);
-console.log(config);
 module.exports = config;
