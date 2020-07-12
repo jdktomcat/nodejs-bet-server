@@ -4,6 +4,7 @@ const liveUsdtStart = require("./liveUsdtStart")
 const liveBalanceAudit = require("./liveBalanceAudit")
 // const liveScanReload = require("./liveScanReload")
 const monthSchedule = require("./../monthschedule/main")
+const hub88Black = require("./hub88Black")
 
 const main = async function () {
     await openProductRateSchedule()
@@ -15,6 +16,8 @@ const main = async function () {
         await liveBalanceAudit()
         //
         await monthSchedule()
+        //
+        await hub88Black()
     }
 }
 

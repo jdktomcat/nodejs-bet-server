@@ -196,14 +196,23 @@ async function bet(ctx) {
     let multi = await getAdditionByGameId(game_id)
     let addAmount = amount * multi
     //
-    const isBlack1 = String(account[0].email).trim() === 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj'
-    const isBlack2 = String(account[0].email).trim() === 'TV1jb3L3mHtuyeBk9Vj6oLZ3zzSwjQSHbR'
-    if(isBlack1 || isBlack2){
-        if(amount / 1000000 > 100){
+    const isInBlackSign = await userinfo.isInBlackList(account[0].email)
+    if(isInBlackSign){
+        //大于100trx直接拒绝
+        if(amount / 1000000 >= 100){
             console.log(String(account[0].email).trim() + "bet_amount" + amount / 1000000 + "TRX")
             return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN', request_uuid: params.request_uuid,})
         }
     }
+    //
+    // const isBlack1 = String(account[0].email).trim() === 'TTee3vKWqtZaafkuTEtwFd2QHwcyGkNEnj'
+    // const isBlack2 = String(account[0].email).trim() === 'TV1jb3L3mHtuyeBk9Vj6oLZ3zzSwjQSHbR'
+    // if(isBlack1 || isBlack2){
+    //     if(amount / 1000000 > 100){
+    //         console.log(String(account[0].email).trim() + "bet_amount" + amount / 1000000 + "TRX")
+    //         return sendMsg2Client(ctx, {status: 'RS_ERROR_UNKNOWN', request_uuid: params.request_uuid,})
+    //     }
+    // }
     // blackList filter
     const blackList = config.blackList
     if(blackList.includes(String(account[0].email).trim())){
