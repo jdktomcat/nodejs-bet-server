@@ -306,7 +306,7 @@ async function platinusAPI(ctx) {
     if (!signResult) {
         return await common.sendMsgToClient(ctx, 1002, 'sign verify failed!!!!!!!!!');
     }
-    //
+    // 因为redis丢失数据，先改成每次获取，不缓存,过几天再关闭
     const val = getCpToken(addr, cpConfigKey.Platinus)
     //
     // const tokenRedisKey = 'TRX' + "_platinusToken_" + addr
