@@ -13,18 +13,21 @@ const queryNewRecord = async function (logId) {
     let params = [logId]
     let sql = "select * from live_cb_deposit_log where logId=?";
     let result = await db.query(sql, params);
+    console.log(result);
     return result;
 }
 const queryOldRecord = async function (txId) {
     let params = [txId]
     let sql = "select * from live_charge_log where txId=?";
     let result = await db.query(sql, params);
+    console.log(result);
     return result;
 }
 const queryBalance = async function (uid,currency) {
     let params = [uid,currency];
     let sql = "select balance from live_balance where uid=? and currency=?";
     let result = await db.query(sql, params);
+    console.log(result);
     return result;
 }
 //更新余额
@@ -53,9 +56,9 @@ const doJob = async function () {
     let startId=startLogId;
     while (true){
         let newRecord=await queryNewRecord(startId);
+        console.log(newRecord);
         let oldRecord;
         if(newRecord){//代表还有
-            console.log(newRecord);
             let txId=newRecord[0].txId;
             oldRecord=await queryOldRecord(txId);
             if(oldRecord){//已经更新过了
