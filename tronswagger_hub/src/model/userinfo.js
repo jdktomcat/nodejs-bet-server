@@ -109,6 +109,17 @@ async function getUserBalanceByCurrency(uid, currency) {
     }
 }
 
+async function isInBlackList(addrTmp) {
+    const addr = String(addrTmp).trim()
+    let sql = "select * from tron_live.swagger_hub_black_list where addr = ?"
+    let res = await rawQuery(sql, [addr])
+    if (res.length === 0){
+        return false
+    }else {
+        return true
+    }
+}
+
 module.exports = {
     getUserBalance,
     userWin,
@@ -118,4 +129,5 @@ module.exports = {
     getTransactionById,
     getUserBalanceByCurrency,
     getTransactionByResultTxId,
+    isInBlackList,
 }
