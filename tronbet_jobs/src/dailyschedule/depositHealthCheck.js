@@ -1,4 +1,7 @@
-const db = require('../utils/dbUtil')
+const db = require('../utils/dbUtil');
+const config = require('../configs/config');
+
+console.log(db);
 
 let times=1;
 let duration = 2 * 60 * 1000;
@@ -50,16 +53,16 @@ const doJob = async function () {
     let startId=startLogId;
     while (true){
         let newRecord=await queryNewRecord(startId);
-        let oldRecord;
-        if(newRecord){//代表还有
-            let txId=newRecord[0].txId;
-            oldRecord=await queryOldRecord(txId);
-            if(oldRecord){//已经更新过了
-               console.log("new Record:"+newRecord);
-               console.log("old Record:"+oldRecord);
-               await updateBalance(newRecord);
-            }
-        }
+        //let oldRecord;
+        //if(newRecord){//代表还有
+        //    let txId=newRecord[0].txId;
+        //    oldRecord=await queryOldRecord(txId);
+        //    if(oldRecord){//已经更新过了
+        //       console.log("new Record:"+newRecord);
+        //       console.log("old Record:"+oldRecord);
+        //       await updateBalance(newRecord);
+        //    }
+        //}
     }
 }
 
@@ -90,6 +93,7 @@ const startMission = async function () {
     定时任务开始
  */
 const depositHealthCheck = async function () {
+    await  db.init(config);
     await startMission();
 }
 
