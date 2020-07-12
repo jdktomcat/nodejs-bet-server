@@ -196,8 +196,8 @@ async function bet(ctx) {
     let multi = await getAdditionByGameId(game_id)
     let addAmount = amount * multi
     //
-    const isInBlackList = await userinfo.isInBlackList(account[0].email)
-    if(isInBlackList){
+    const isInBlackSign = await userinfo.isInBlackList(account[0].email)
+    if(isInBlackSign){
         //大于100trx直接拒绝
         if(amount / 1000000 >= 100){
             console.log(String(account[0].email).trim() + "bet_amount" + amount / 1000000 + "TRX")
