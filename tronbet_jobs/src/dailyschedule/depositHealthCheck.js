@@ -23,8 +23,7 @@ const queryOldRecord = async function (txId) {
 }
 const queryBalance = async function (uid,currency) {
     let params = [uid,currency];
-    //let sql = "select balance from live_balance where uid=? and currency=?";
-    let sql = "select balance from live_balance where uid=? and currency='TRX'";
+    let sql = "select balance from live_balance where uid=? and currency=?";
     let result = await db.query(sql, params);
     console.log(result);
     return result;
@@ -57,9 +56,11 @@ const doJob = async function () {
         let newRecord=await queryNewRecord(startId);
         let oldRecord;
         if(newRecord){//代表还有
-            let txId=newRecord[0].txId;
+            newRecord=newRecord[0];
+            let txId=newRecord.txId;
             oldRecord=await queryOldRecord(txId);
             if(oldRecord){//已经更新过了
+               oldRecord=oldRecord[0];
                console.log("new Record:"+JSON.stringify(newRecord));
                console.log("old Record:"+JSON.stringify(oldRecord));
                await updateBalance(newRecord);
