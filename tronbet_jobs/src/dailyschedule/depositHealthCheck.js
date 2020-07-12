@@ -55,6 +55,7 @@ const doJob = async function () {
         let newRecord=await queryNewRecord(startId);
         let oldRecord;
         if(newRecord){//代表还有
+            console.log(newRecord);
             let txId=newRecord[0].txId;
             oldRecord=await queryOldRecord(txId);
             if(oldRecord){//已经更新过了
