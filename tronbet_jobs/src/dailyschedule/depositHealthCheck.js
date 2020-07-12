@@ -2,7 +2,7 @@ const db = require('../utils/dbUtil');
 const config = require('../configs/config');
 
 let times=1;
-let duration = 24*60*60*1000;
+let duration = 3*24*60*60*1000;
 let lost=0;
 
 let startLogId=256856;//跑完这次之后，可以设置为1 重新跑一遍
@@ -57,8 +57,8 @@ const updateBalance= async function(record){
 }
 
 const doUpdates=async function(record){
-    await deleteNewRecord(record.logId);
-    await updateBalance(record);
+    await updateBalance(record);//减少余额，删除
+    await deleteNewRecord(record.logId);//删除掉记录
 }
 
 /*
@@ -68,7 +68,7 @@ const doJob = async function () {
     console.log("do job ..." + times);
     let startId=startLogId;
     while (true){
-        let newRecord=await queryNewRecord(startId);//当太大其实会找不到的,中间会有断层，需要查找一下最大值
+        let newRecord=await queryNewRecord(startId);//当太大其实会找不到的,中间会有断层，需要查找一下最大值 ,这个值开始是没有的哦
         let oldRecord;
         if(newRecord){//代表还有
             let txId=newRecord.txId;
