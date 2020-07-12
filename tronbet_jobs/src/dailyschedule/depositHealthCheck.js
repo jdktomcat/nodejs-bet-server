@@ -7,30 +7,35 @@ let lost=0;
 
 let startLogId=256856;//跑完这次之后，可以设置为1 重新跑一遍
 let finishTerm=0;//每重新跑一次，计数+1
-
+const queryMaxLogId = async function () {
+    let params = []
+    let sql = "select logId from live_cb_deposit_log order by logId desc limit 1";
+    let result = await db.query(sql, params);
+    return result[0];
+}
 const queryNewRecord = async function (logId) {
     let params = [logId]
     let sql = "select * from live_cb_deposit_log where logId=?";
     let result = await db.query(sql, params);
-    return result;
+    return result[0];
 }
 const deleteNewRecord = async function (logId) {
     let params = [logId]
     let sql = "delete from live_cb_deposit_log where logId=?";
     let result = await db.exec(sql, params);
-    return result;
+    return result[0];
 }
 const queryOldRecord = async function (txId) {
     let params = [txId]
     let sql = "select * from live_charge_log where txId=?";
     let result = await db.query(sql, params);
-    return result;
+    return result[0];
 }
 const queryBalance = async function (uid,currency) {
     let params = [uid,currency];
     let sql = "select balance from live_balance where uid=? and currency=?";
     let result = await db.query(sql, params);
-    return result;
+    return result[0];
 }
 //更新余额
 const updateBalance= async function(record){
@@ -51,8 +56,8 @@ const updateBalance= async function(record){
 }
 
 const doUpdates=async function(record){
-    await updateBalance(record);
     await deleteNewRecord(record.logId);
+    await updateBalance(record);
 }
 
 /*
@@ -60,24 +65,29 @@ const doUpdates=async function(record){
  */
 const doJob = async function () {
     console.log("do job ..." + times);
+    let maxRecord=await queryMaxLogId();
+    console.log(maxRecord);
     let startId=startLogId;
     while (true){
-        let newRecord=await queryNewRecord(startId);
+        let newRecord=await queryNewRecord(startId);//当太大其实会找不到的,中间会有断层，需要查找一下最大值
         let oldRecord;
         if(newRecord){//代表还有
-            newRecord=newRecord[0];
+            if(newRecord){//到底了,或者位于断层
+                startId++;
+                continue;
+            }
             let txId=newRecord.txId;
             oldRecord=await queryOldRecord(txId);
             if(oldRecord){//已经更新过了
-               oldRecord=oldRecord[0];
                console.log("new Record:"+JSON.stringify(newRecord));
                console.log("old Record:"+JSON.stringify(oldRecord));
                await doUpdates(newRecord);//同时需要删除这条记录
             }
+        }else{//找不到了
+            let maxRecord=await queryMaxLogId();
+            console.log(maxRecord);
         }
-        if(startId%100==0){
-            console.log("Term:%s LogId:%s",finishTerm,startId);
-        }
+        console.log("Term:%s LogId:%s",finishTerm,startId);
         startId++;
     }
 }
