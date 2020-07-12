@@ -32,9 +32,10 @@ async function checkAll() {
 }
 
 async function main() {
-    await airdropAll()
+    // await airdropAll()
     console.log('===================================================================================')
-    await checkAll()
+    // await checkAll()
+    console.log("close_air_drop")
 }
 
 main()

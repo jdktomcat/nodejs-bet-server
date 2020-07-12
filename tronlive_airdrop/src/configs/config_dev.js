@@ -25,7 +25,7 @@ let config = {
     pwd: ''
   },
   tronConfig: {
-    startBlockNum: 8217400,
+    startBlockNum: 21271165,   //2020-07-07 08:00:48
     privateKey: 'e50c19fc82723d11d3d5fdbc5b4c69b3617945499600456793070ceafd9c3d07',
     // TronBetLiveStaker
     stakerAddr: '41a59b50fc1d079e5b45c867953353a43b62cde423',

@@ -31,7 +31,7 @@ let config = {
     pwd: ''
   },
   tronConfig: {
-    startBlockNum: 8217400,
+    startBlockNum: 21271165,   //2020-07-07 08:00:48
     privateKey: prdCfg.operatorLive_pk,
 
     stakerAddr: prdCfg.contract.TronBetLiveStaker,

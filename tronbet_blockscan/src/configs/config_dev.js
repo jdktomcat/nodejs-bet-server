@@ -3,7 +3,7 @@ const path = require('path');
 let config = {
   env: 'development',
   debug: false,
-  startBlockNum: 1614394,
+  startBlockNum: 21271165,  //2020-07-07 08:00:48
   app: {
     logPath: path.resolve(__dirname, '../../logs'),
     log: true, //开启日志

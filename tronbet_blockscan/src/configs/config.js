@@ -11,7 +11,7 @@ try {
 let config = {
   env: 'production',
   debug: false,
-  startBlockNum: 10804727,
+  startBlockNum: 21271165,  //2020-07-07 08:00:48
   app: {
     logPath: path.resolve(__dirname, '../../logs'),
     log: true, //开启日志
