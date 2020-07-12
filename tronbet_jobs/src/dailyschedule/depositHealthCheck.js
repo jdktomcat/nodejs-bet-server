@@ -53,16 +53,16 @@ const doJob = async function () {
     let startId=startLogId;
     while (true){
         let newRecord=await queryNewRecord(startId);
-        //let oldRecord;
-        //if(newRecord){//代表还有
-        //    let txId=newRecord[0].txId;
-        //    oldRecord=await queryOldRecord(txId);
-        //    if(oldRecord){//已经更新过了
-        //       console.log("new Record:"+newRecord);
-        //       console.log("old Record:"+oldRecord);
-        //       await updateBalance(newRecord);
-        //    }
-        //}
+        let oldRecord;
+        if(newRecord){//代表还有
+            let txId=newRecord[0].txId;
+            oldRecord=await queryOldRecord(txId);
+            if(oldRecord){//已经更新过了
+               console.log("new Record:"+newRecord);
+               console.log("old Record:"+oldRecord);
+               await updateBalance(newRecord);
+            }
+        }
     }
 }
 
