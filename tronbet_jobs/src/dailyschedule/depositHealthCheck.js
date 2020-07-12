@@ -65,31 +65,33 @@ const doUpdates=async function(record){
  */
 const doJob = async function () {
     console.log("do job ..." + times);
-    let maxRecord=await queryMaxLogId();
-    console.log(maxRecord);
-    //let startId=startLogId;
-    //while (true){
-    //    let newRecord=await queryNewRecord(startId);//当太大其实会找不到的,中间会有断层，需要查找一下最大值
-    //    let oldRecord;
-    //    if(newRecord){//代表还有
-    //        if(newRecord){//到底了,或者位于断层
-    //            startId++;
-    //            continue;
-    //        }
-    //        let txId=newRecord.txId;
-    //        oldRecord=await queryOldRecord(txId);
-    //        if(oldRecord){//已经更新过了
-    //           console.log("new Record:"+JSON.stringify(newRecord));
-    //           console.log("old Record:"+JSON.stringify(oldRecord));
-    //           await doUpdates(newRecord);//同时需要删除这条记录
-    //        }
-    //    }else{//找不到了
-    //        let maxRecord=await queryMaxLogId();
-    //        console.log(maxRecord);
-    //    }
-    //    console.log("Term:%s LogId:%s",finishTerm,startId);
-    //    startId++;
-    //}
+    let startId=startLogId;
+    while (true){
+        let newRecord=await queryNewRecord(startId);//当太大其实会找不到的,中间会有断层，需要查找一下最大值
+        let oldRecord;
+        if(newRecord){//代表还有
+            if(!newRecord){//到底了,或者位于断层
+                startId++;
+                continue;
+            }
+            let txId=newRecord.txId;
+            oldRecord=await queryOldRecord(txId);
+            if(oldRecord){//已经更新过了
+               console.log("new Record:"+JSON.stringify(newRecord));
+               console.log("old Record:"+JSON.stringify(oldRecord));
+               await doUpdates(newRecord);//同时需要删除这条记录
+            }
+        }else{//找不到了
+            let maxRecord=await queryMaxLogId();
+            if(maxRecord.logId<startId){
+                finishTerm++;
+                startId=0;
+            }
+            console.log("达到最大值了，从头开始重新检查...");
+        }
+        console.log("Term:%s LogId:%s",finishTerm,startId);
+        startId++;
+    }
 }
 
 /*
