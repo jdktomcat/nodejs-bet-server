@@ -2,7 +2,7 @@ const db = require('../utils/dbUtil');
 const config = require('../configs/config');
 
 let times=1;
-let duration = 2 * 60 * 1000;
+let duration = 24*60*60*1000;
 let lost=0;
 
 let startLogId=256856;//跑完这次之后，可以设置为1 重新跑一遍
@@ -71,10 +71,6 @@ const doJob = async function () {
         let newRecord=await queryNewRecord(startId);//当太大其实会找不到的,中间会有断层，需要查找一下最大值
         let oldRecord;
         if(newRecord){//代表还有
-            if(!newRecord){//到底了,或者位于断层
-                startId++;
-                continue;
-            }
             let txId=newRecord.txId;
             oldRecord=await queryOldRecord(txId);
             if(oldRecord){//已经更新过了
@@ -85,10 +81,11 @@ const doJob = async function () {
         }else{//找不到了
             let maxRecord=await queryMaxLogId();
             if(maxRecord.logId<startId){
+                console.log("达到最大值了，从头开始重新检查...");
                 finishTerm++;
                 startId=0;
+                break;//先停掉
             }
-            console.log("达到最大值了，从头开始重新检查...");
         }
         console.log("Term:%s LogId:%s",finishTerm,startId);
         startId++;
